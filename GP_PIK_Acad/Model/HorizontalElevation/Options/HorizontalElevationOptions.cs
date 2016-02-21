@@ -36,14 +36,14 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// <summary>
       /// Начальный уровень 
       /// </summary>      
-      [Description("Начальный уровень для горизонталей.")]
+      [Description("Начальный уровень для горизонталей поумолчанию.")]
       [DefaultValue(100)]
       public double StartElevation { get; set; } = 100;
 
       /// <summary>
       /// Шаг приращения
       /// </summary>      
-      [Description("Шаг приращения уровня горизонталей.")]
+      [Description("Шаг приращения уровня горизонталей поумолчанию.")]
       [DefaultValue(10)]
       public double StepElevation { get; set; } = 10;
 
