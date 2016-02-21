@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using AcadLib.Files;
 using Autodesk.AutoCAD.ApplicationServices;
 
@@ -13,6 +16,7 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
    /// <summary>
    /// Настройки для горизронталей
    /// </summary>
+   [Serializable]
    public class HorizontalElevationOptions
    {
       private static readonly string fileOptions = Path.Combine(
@@ -31,13 +35,14 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
          }
       }
 
-      private HorizontalElevationOptions() { }      
+      private HorizontalElevationOptions() { }
 
       /// <summary>
       /// Начальный уровень 
       /// </summary>      
       [Description("Начальный уровень для горизонталей поумолчанию.")]
       [DefaultValue(100)]
+      [XmlElement("StartElevation")]
       public double StartElevation { get; set; } = 100;
 
       /// <summary>
@@ -45,7 +50,34 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// </summary>      
       [Description("Шаг приращения уровня горизонталей поумолчанию.")]
       [DefaultValue(10)]
+      [XmlElement("StepElevation")]
       public double StepElevation { get; set; } = 10;
+
+      ///// <summary>
+      ///// Цвет текста
+      ///// </summary>      
+      //[Description("Цвет текста.")]
+      //[DefaultValue(null)]
+      //[XmlIgnore]
+      //[Editor(typeof(ColorEditor), typeof(UITypeEditor))]
+      //public Color TextColor { get; set; } = Color.Aqua;
+
+      //[XmlElement("TextColor")]
+      //[Browsable(false)]
+      //public int TextColorAsArgb
+      //{
+      //   get { return TextColor.ToArgb(); }
+      //   set { TextColor = Color.FromArgb(value); }
+      //}
+
+
+      /// <summary>
+      /// Высота текста - относительно высоте текущего вида
+      /// </summary>      
+      [Description("Высота текста - относительно высоты текущего вида.")]
+      [DefaultValue(0.02)]      
+      [XmlElement("TextHeight")]
+      public double TextHeight { get; set; } = 0.02;
 
       public static HorizontalElevationOptions Load()
       {

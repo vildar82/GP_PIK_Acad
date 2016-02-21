@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.GraphicsInterface;
+using Autodesk.AutoCAD.Runtime;
 
 namespace GP_PIK_Acad.Model.HorizontalElevation
 {
@@ -17,12 +21,14 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       Document doc;
       Database db;
       Editor ed;
-      
+      TransientManager tm;
+      List<DBText> tempTexts;
+
       public HorizontalElevation()
       {
          doc =  Application.DocumentManager.MdiActiveDocument;
          db = doc.Database;
-         ed = doc.Editor;
+         ed = doc.Editor;         
       }   
 
       /// <summary>
@@ -36,37 +42,93 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
          {
             double curElev = formHorElev.StartElevation;
             double stepElev = formHorElev.StepElevation;
-            do
+
+            using (var t = db.TransactionManager.StartTransaction())
             {
-               // Запрос выбора горизонтали - полилинии
-               var plId = getHorizontal(curElev);
-               using (var pl = plId.Open(OpenMode.ForWrite, false, true) as Polyline)
-               {
-                  if (pl == null)
+               tempTexts = new List<DBText>();
+               tm = TransientManager.CurrentTransientManager;
+               bool isContinue = true;
+               do
+               {                  
+                  Point3d ptPicked;
+                  var plId = getHorizontal(curElev, out ptPicked);
+                  if (plId.IsNull)
                   {
-                     throw new Exception("Прервано - Не удалось определить выбранный объект.");
+                     ed.WriteMessage("\nПрервано пользоваателем.");
+                     isContinue = false;
                   }
-                  pl.Elevation = curElev;
-               }
-               curElev += stepElev;
-            } while (true);
+                  else
+                  {
+                     var pl = plId.GetObject(OpenMode.ForWrite, false, true) as Autodesk.AutoCAD.DatabaseServices.Polyline;
+                     if (pl == null)
+                     {
+                        ed.WriteMessage("\nПрервано - Не удалось определить выбранный объект.");
+                        isContinue = false;
+                     }
+                     else
+                     {
+                        pl.Elevation = curElev;
+                        // Текст назначенного уровня для полилинии
+                        addText(curElev, ptPicked);
+                        // Изменение текущего уровня на шаг
+                        curElev += stepElev;
+                     }                     
+                  }                  
+               } while (isContinue);
+               ClearTransientGraphics();
+               t.Commit();
+            }
          }
       }
 
-      private ObjectId getHorizontal(double curElev)
+      private void addText(double level, Point3d pt)
+      {         
+         DBText text = new DBText();
+         text.Position = pt;                  
+         text.TextString = level.ToString();
+         //text.Justify = AttachmentPoint.MiddleCenter;
+         //text.AlignmentPoint = pt;
+         text.Height = ed.GetCurrentView().Height * HorizontalElevationOptions.Instance.TextHeight;
+         //text.ColorIndex = 11;//Color.FromColor(HorizontalElevationOptions.Instance.TextColor);
+         IntegerCollection intCol = new IntegerCollection();
+         tm.AddTransient(text, TransientDrawingMode.Main, 0, intCol);
+         tempTexts.Add(text);
+      }
+
+      private ObjectId getHorizontal(double curElev, out Point3d ptPicked)
       {
          var prOpt = new PromptEntityOptions($"\nВыберите горизонталь для установки ей уровня {curElev}:");
          prOpt.SetRejectMessage("Можно выбрать только полилинию");
-         prOpt.AddAllowedClass(typeof(Polyline), true);
+         prOpt.AddAllowedClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline), true);
          prOpt.AllowNone = false;
          prOpt.AllowObjectOnLockedLayer = true;         
 
          var prRes = ed.GetEntity(prOpt);
          if (prRes.Status == PromptStatus.OK)
          {
+            ptPicked = prRes.PickedPoint;
             return prRes.ObjectId;
          }
-         throw new Exception("Отменено пользователем.");
+         ptPicked = Point3d.Origin;
+         return ObjectId.Null;         
+      }
+
+      // Erases any transient graphics
+      private void ClearTransientGraphics()
+      {         
+         IntegerCollection intCol = new IntegerCollection();
+         if (tempTexts != null)
+         {
+            foreach (DBObject transient in tempTexts)
+            {
+               tm.EraseTransient(
+                                   transient,
+                                   intCol
+                                   );
+               transient.Dispose();
+            }
+            tempTexts.Clear();
+         }         
       }
    }
 }

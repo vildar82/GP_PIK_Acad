@@ -21,5 +21,10 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
          Options = options;
          propertyGrid1.SelectedObject = options;
       }
+
+      private void buttonOk_Click(object sender, EventArgs e)
+      {
+
+      }
    }
 }

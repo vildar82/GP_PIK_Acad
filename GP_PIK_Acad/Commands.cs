@@ -20,6 +20,7 @@ namespace GP_PIK_Acad
       [CommandMethod("PIK", "GP-HorizontalElevationStep", CommandFlags.Modal)]
       public void GP_HorizontalElevationStep()
       {
+         Logger.Log.Info("Start command GP-HorizontalElevationStep");
          Document doc = Application.DocumentManager.MdiActiveDocument;
          if (doc == null) return;
          try
