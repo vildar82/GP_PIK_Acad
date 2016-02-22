@@ -23,6 +23,8 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       Editor ed;
       TransientManager tm;
       List<DBText> tempTexts;
+      double curElev;
+      double stepElev;
 
       public HorizontalElevation()
       {
@@ -36,12 +38,12 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// </summary>
       public void Stepping()
       {
-         FormHorizontalElevation formHorElev = new FormHorizontalElevation(HorizontalElevationOptions.Instance.StartElevation,
-                                                       HorizontalElevationOptions.Instance.StepElevation);
+         loadStartLevels();
+         FormHorizontalElevation formHorElev = new FormHorizontalElevation(curElev, stepElev);
          if (Application.ShowModalDialog(formHorElev) == System.Windows.Forms.DialogResult.OK)
          {
-            double curElev = formHorElev.StartElevation;
-            double stepElev = formHorElev.StepElevation;
+            curElev = formHorElev.StartElevation;
+            stepElev = formHorElev.StepElevation;
 
             using (var t = db.TransactionManager.StartTransaction())
             {
@@ -75,30 +77,47 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
                      }                     
                   }                  
                } while (isContinue);
+               saveStartLevels();
                ClearTransientGraphics();
                t.Commit();
             }
          }
       }
 
+      private void saveStartLevels()
+      {
+         AcadLib.DictNOD nod = new AcadLib.DictNOD("GP-HosizontalElevations");
+         nod.Save(curElev, "StartElevation");
+         nod.Save(stepElev, "StepElevation");
+      }
+
+      private void loadStartLevels()
+      {
+         AcadLib.DictNOD nod = new AcadLib.DictNOD("GP-HosizontalElevations");
+         curElev = nod.Load("StartElevation", HorizontalElevationOptions.Instance.StartElevation);
+         stepElev = nod.Load("StepElevation", HorizontalElevationOptions.Instance.StepElevation);
+      }
+
       private void addText(double level, Point3d pt)
       {         
          DBText text = new DBText();
-         text.Position = pt;                  
+         text.SetDatabaseDefaults(db);
          text.TextString = level.ToString();
-         //text.Justify = AttachmentPoint.MiddleCenter;
-         //text.AlignmentPoint = pt;
          text.Height = ed.GetCurrentView().Height * HorizontalElevationOptions.Instance.TextHeight;
-         //text.ColorIndex = 11;//Color.FromColor(HorizontalElevationOptions.Instance.TextColor);
-         IntegerCollection intCol = new IntegerCollection();
-         tm.AddTransient(text, TransientDrawingMode.Main, 0, intCol);
+         text.ColorIndex = 11;//Color.FromColor(HorizontalElevationOptions.Instance.TextColor);
+         text.Position = pt;                
+         text.Justify = AttachmentPoint.MiddleCenter;
+         text.AlignmentPoint = pt;         
+         text.AdjustAlignment(db);
+         
+         tm.AddTransient(text, TransientDrawingMode.Main, 0, new IntegerCollection());
          tempTexts.Add(text);
       }
 
       private ObjectId getHorizontal(double curElev, out Point3d ptPicked)
       {
          var prOpt = new PromptEntityOptions($"\nВыберите горизонталь для установки ей уровня {curElev}:");
-         prOpt.SetRejectMessage("Можно выбрать только полилинию");
+         prOpt.SetRejectMessage("\nМожно выбрать только полилинию");
          prOpt.AddAllowedClass(typeof(Autodesk.AutoCAD.DatabaseServices.Polyline), true);
          prOpt.AllowNone = false;
          prOpt.AllowObjectOnLockedLayer = true;         

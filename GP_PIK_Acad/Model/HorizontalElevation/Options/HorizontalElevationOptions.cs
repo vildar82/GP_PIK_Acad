@@ -41,7 +41,7 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// Начальный уровень 
       /// </summary>      
       [Description("Начальный уровень для горизонталей поумолчанию.")]
-      [DefaultValue(100)]
+      //[DefaultValue(100)]
       [XmlElement("StartElevation")]
       public double StartElevation { get; set; } = 100;
 
@@ -49,7 +49,7 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// Шаг приращения
       /// </summary>      
       [Description("Шаг приращения уровня горизонталей поумолчанию.")]
-      [DefaultValue(10)]
+      //[DefaultValue(10)]
       [XmlElement("StepElevation")]
       public double StepElevation { get; set; } = 10;
 
@@ -75,7 +75,7 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       /// Высота текста - относительно высоте текущего вида
       /// </summary>      
       [Description("Высота текста - относительно высоты текущего вида.")]
-      [DefaultValue(0.02)]      
+      //[DefaultValue(0.02)]      
       [XmlElement("TextHeight")]
       public double TextHeight { get; set; } = 0.02;
 
