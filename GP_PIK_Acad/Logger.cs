@@ -8,6 +8,6 @@ namespace GP_PIK_Acad
 {
    public static class Logger
    {
-      public static AutoCAD_PIK_Manager.LogAddin Log = new AutoCAD_PIK_Manager.LogAddin("GP_PIK_Acad");
+      public static AutoCAD_PIK_Manager.LogAddin Log = new AutoCAD_PIK_Manager.LogAddin("GP_PIK_Acad ");
    }
 }

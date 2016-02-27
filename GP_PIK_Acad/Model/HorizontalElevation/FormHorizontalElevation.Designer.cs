@@ -42,7 +42,7 @@
          // label1
          // 
          this.label1.AutoSize = true;
-         this.label1.Location = new System.Drawing.Point(12, 9);
+         this.label1.Location = new System.Drawing.Point(21, 15);
          this.label1.Name = "label1";
          this.label1.Size = new System.Drawing.Size(106, 13);
          this.label1.TabIndex = 0;
@@ -52,7 +52,7 @@
          // 
          this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
          this.buttonStart.DialogResult = System.Windows.Forms.DialogResult.OK;
-         this.buttonStart.Location = new System.Drawing.Point(170, 70);
+         this.buttonStart.Location = new System.Drawing.Point(173, 81);
          this.buttonStart.Name = "buttonStart";
          this.buttonStart.Size = new System.Drawing.Size(75, 23);
          this.buttonStart.TabIndex = 3;
@@ -63,7 +63,7 @@
          // label2
          // 
          this.label2.AutoSize = true;
-         this.label2.Location = new System.Drawing.Point(12, 38);
+         this.label2.Location = new System.Drawing.Point(21, 44);
          this.label2.Name = "label2";
          this.label2.Size = new System.Drawing.Size(86, 13);
          this.label2.TabIndex = 0;
@@ -71,14 +71,14 @@
          // 
          // textBoxStartElevation
          // 
-         this.textBoxStartElevation.Location = new System.Drawing.Point(124, 6);
+         this.textBoxStartElevation.Location = new System.Drawing.Point(133, 12);
          this.textBoxStartElevation.Name = "textBoxStartElevation";
          this.textBoxStartElevation.Size = new System.Drawing.Size(100, 20);
          this.textBoxStartElevation.TabIndex = 4;
          // 
          // textBoxStepElevation
          // 
-         this.textBoxStepElevation.Location = new System.Drawing.Point(124, 35);
+         this.textBoxStepElevation.Location = new System.Drawing.Point(133, 41);
          this.textBoxStepElevation.Name = "textBoxStepElevation";
          this.textBoxStepElevation.Size = new System.Drawing.Size(100, 20);
          this.textBoxStepElevation.TabIndex = 4;
@@ -89,9 +89,10 @@
          // 
          // buttonoptions
          // 
+         this.buttonoptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
          this.buttonoptions.BackgroundImage = global::GP_PIK_Acad.Properties.Resources.options;
          this.buttonoptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-         this.buttonoptions.Location = new System.Drawing.Point(3, 79);
+         this.buttonoptions.Location = new System.Drawing.Point(12, 81);
          this.buttonoptions.Name = "buttonoptions";
          this.buttonoptions.Size = new System.Drawing.Size(25, 25);
          this.buttonoptions.TabIndex = 5;
@@ -103,13 +104,14 @@
          this.AcceptButton = this.buttonStart;
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(257, 105);
+         this.ClientSize = new System.Drawing.Size(260, 116);
          this.Controls.Add(this.buttonoptions);
          this.Controls.Add(this.textBoxStepElevation);
          this.Controls.Add(this.textBoxStartElevation);
          this.Controls.Add(this.buttonStart);
          this.Controls.Add(this.label2);
          this.Controls.Add(this.label1);
+         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
          this.MaximizeBox = false;
          this.MinimizeBox = false;
          this.Name = "FormHorizontalElevation";

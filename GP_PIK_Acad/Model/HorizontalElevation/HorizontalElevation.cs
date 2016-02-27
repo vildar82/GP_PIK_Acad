@@ -101,15 +101,15 @@ namespace GP_PIK_Acad.Model.HorizontalElevation
       private void addText(double level, Point3d pt)
       {         
          DBText text = new DBText();
-         text.SetDatabaseDefaults(db);
+         text.SetDatabaseDefaults();
          text.TextString = level.ToString();
          text.Height = ed.GetCurrentView().Height * HorizontalElevationOptions.Instance.TextHeight;
          text.ColorIndex = 11;//Color.FromColor(HorizontalElevationOptions.Instance.TextColor);
          text.Position = pt;                
          text.Justify = AttachmentPoint.MiddleCenter;
          text.AlignmentPoint = pt;         
-         text.AdjustAlignment(db);
-         
+         text.AdjustAlignment(db);         
+
          tm.AddTransient(text, TransientDrawingMode.Main, 0, new IntegerCollection());
          tempTexts.Add(text);
       }
