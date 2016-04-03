@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GP_PIK_Acad.Properties {
+namespace PIK_GP_Acad.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GP_PIK_Acad.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GP_PIK_Acad.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PIK_GP_Acad.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,46 @@ namespace GP_PIK_Acad.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GB_BlockSectionInsert {
+            get {
+                object obj = ResourceManager.GetObject("GB_BlockSectionInsert", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_BlockParking {
+            get {
+                object obj = ResourceManager.GetObject("GP_BlockParking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_BlockSectionTable {
+            get {
+                object obj = ResourceManager.GetObject("GP_BlockSectionTable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_HorizontalElevation {
+            get {
+                object obj = ResourceManager.GetObject("GP_HorizontalElevation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

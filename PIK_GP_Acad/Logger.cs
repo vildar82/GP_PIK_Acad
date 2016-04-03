@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GP_PIK_Acad
+namespace PIK_GP_Acad
 {
    public static class Logger
    {

@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 using AcadLib.Files;
 using Autodesk.AutoCAD.ApplicationServices;
 
-namespace GP_PIK_Acad.Model.HorizontalElevation
+namespace PIK_GP_Acad.Model.HorizontalElevation
 {
    /// <summary>
    /// Настройки для горизронталей

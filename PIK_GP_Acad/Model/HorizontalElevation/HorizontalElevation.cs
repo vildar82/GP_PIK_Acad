@@ -11,7 +11,7 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 
-namespace GP_PIK_Acad.Model.HorizontalElevation
+namespace PIK_GP_Acad.Model.HorizontalElevation
 {
    /// <summary>
    /// Изменение уровней горизонталей

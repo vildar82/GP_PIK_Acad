@@ -1,4 +1,4 @@
-﻿namespace GP_PIK_Acad.Model.HorizontalElevation
+﻿namespace PIK_GP_Acad.Model.HorizontalElevation
 {
    partial class FormOptions
    {

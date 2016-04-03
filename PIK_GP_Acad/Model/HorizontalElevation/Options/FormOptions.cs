@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GP_PIK_Acad.Model.HorizontalElevation
+namespace PIK_GP_Acad.Model.HorizontalElevation
 {
    public partial class FormOptions : Form
    {

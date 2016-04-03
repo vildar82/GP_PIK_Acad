@@ -1,4 +1,4 @@
-﻿namespace GP_PIK_Acad.Model.HorizontalElevation
+﻿namespace PIK_GP_Acad.Model.HorizontalElevation
 {
    partial class FormHorizontalElevation
    {
@@ -90,7 +90,7 @@
          // buttonoptions
          // 
          this.buttonoptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-         this.buttonoptions.BackgroundImage = global::GP_PIK_Acad.Properties.Resources.options;
+         this.buttonoptions.BackgroundImage = PIK_GP_Acad.Properties.Resources.options;
          this.buttonoptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
          this.buttonoptions.Location = new System.Drawing.Point(12, 81);
          this.buttonoptions.Name = "buttonoptions";
