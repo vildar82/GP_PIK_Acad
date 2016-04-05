@@ -100,6 +100,7 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
     <Compile Include="Model\BlockSection\DataSection.cs" />
     <Compile Include="Model\BlockSection\ParserBlockSection.cs" />
     <Compile Include="Model\BlockSection\Section.cs" />
