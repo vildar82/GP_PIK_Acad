@@ -30,6 +30,9 @@ namespace PIK_GP_Acad.BlockSection
 
                 int count = 0;
 
+                AcadLib.Layers.LayerInfo layInfo = new AcadLib.Layers.LayerInfo("Defpoints");
+                ObjectId layerIdPl = AcadLib.Layers.LayerExt.GetLayerOrCreateNew(layInfo);
+
                 ObjectId msId = doc.Database.CurrentSpaceId;
                 foreach (var idBlRefSec in select.IdsBlRefSections)
                 {
@@ -41,6 +44,7 @@ namespace PIK_GP_Acad.BlockSection
                         {
                             var idPlCopy = CopyEnt(pl.Id, msId, doc.Database);
                             var plCopy = idPlCopy.GetObject(OpenMode.ForWrite, false, true) as Polyline;
+                            plCopy.LayerId = layerIdPl;
                             plCopy.TransformBy(blRefSec.BlockTransform);
                             count++;
                         }
