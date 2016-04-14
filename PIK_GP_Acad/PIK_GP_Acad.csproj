@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -102,6 +102,9 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
     <Compile Include="Model\BlockSection\DataSection.cs" />
+    <Compile Include="Model\BlockSection\Estimate.cs" />
+    <Compile Include="Model\BlockSection\EstimateEkb.cs" />
+    <Compile Include="Model\BlockSection\EstimateMoscow.cs" />
     <Compile Include="Model\BlockSection\ParserBlockSection.cs" />
     <Compile Include="Model\BlockSection\Section.cs" />
     <Compile Include="Model\BlockSection\SectionService.cs" />

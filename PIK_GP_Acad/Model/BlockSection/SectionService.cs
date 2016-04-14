@@ -7,6 +7,8 @@ namespace PIK_GP_Acad.BlockSection
 {
     public class SectionService
     {
+        public Estimate Estimate { get; set; }
+
         public SectionService(Document doc)
         {
             Doc = doc;
@@ -34,6 +36,7 @@ namespace PIK_GP_Acad.BlockSection
                 {
                     Doc.Editor.WriteMessage("\nВыбрано {0} блоков блок-секций.", select.IdsBlRefSections.Count);
                 }
+                Estimate = select.Estimate;
 
                 // Обработка выбранных блоков
                 ParserBlockSection parser = new ParserBlockSection(this, select.IdsBlRefSections);

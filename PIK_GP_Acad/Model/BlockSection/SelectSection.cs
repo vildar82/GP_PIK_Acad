@@ -9,6 +9,8 @@ namespace PIK_GP_Acad.BlockSection
     public class SelectSection
     {
         private Document _doc;
+        private string region = "Москва";
+        public Estimate Estimate { get; set; }
 
         public SelectSection(Document doc)
         {
@@ -19,13 +21,27 @@ namespace PIK_GP_Acad.BlockSection
 
         public void Select()
         {
-            var prOpt = new PromptSelectionOptions();
-            prOpt.MessageForAdding = "Выбор блоков блок-секций";
-            var res = _doc.Editor.GetSelection(prOpt);
+            var prOpt = new PromptSelectionOptions();            
+            //prOpt.Keywords.Add("Moscow");
+            prOpt.Keywords.Add("Ekb");
+            //prOpt.Keywords.Default = "Moscow";
+
+            //prOpt.Keywords.Default = "Москва";
+            var keys = prOpt.Keywords.GetDisplayString(true);
+
+            prOpt.MessageForAdding = "\nВыбор блоков блок-секций. " + keys;
+            prOpt.MessageForRemoval = "\nИсключено из набора" + keys;
+
+            prOpt.KeywordInput += (o, e) => { region = e.Input; };            
+            var res = _doc.Editor.GetSelection(prOpt);            
+
             if (res.Status != PromptStatus.OK)
             {
                 throw new Exception("Отменено пользователем.");
             }
+
+            Estimate = Estimate.GetEstimate(region);
+
             IdsBlRefSections = new List<ObjectId>();
             foreach (ObjectId idEnt in res.Value.GetObjectIds())
             {
@@ -37,6 +53,6 @@ namespace PIK_GP_Acad.BlockSection
                     IdsBlRefSections.Add(idEnt);
                 }
             }
-        }
+        }       
     }
 }

@@ -40,6 +40,9 @@ namespace PIK_GP_Acad.BlockSection
                 item.Height = 8;
             }
 
+            // Фон таблицы в зависимости от региона
+            table.Cells.BackgroundColor = _service.Estimate.Color;
+
             //foreach (var column in table.Columns)
             //{
             //    column.Width = 30;
@@ -50,7 +53,7 @@ namespace PIK_GP_Acad.BlockSection
             table.Columns[1].Alignment = CellAlignment.MiddleCenter;
             //table.Rows[1].Height = 15;
 
-            table.Cells[0, 0].TextString = "Московская область (РНГП №713/30)";
+            table.Cells[0, 0].TextString = _service.Estimate.Title;;
             table.Cells[0, 0].Alignment = CellAlignment.MiddleCenter;
 
             //table.Cells[1, 0].TextString = "Наименование блок-секции";
@@ -69,15 +72,15 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[3, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
             table.Cells[4, 0].TextString = "Средняя этажность";
             table.Cells[4, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[5, 0].TextString = "Жителей, чел (28м2/чел)";
+            table.Cells[5, 0].TextString = $"Жителей, чел ({_service.Estimate.LiveAreaPerHuman}м2/чел)";
             table.Cells[5, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[6, 0].TextString = "ДОО, чел (65/1000)";
+            table.Cells[6, 0].TextString = $"ДОО, чел ({_service.Estimate.KindergartenPlacePer1000}/1000)";
             table.Cells[6, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[7, 0].TextString = "СОШ, чел (135/1000)";
+            table.Cells[7, 0].TextString = $"СОШ, чел ({_service.Estimate.SchoolPlacePer1000}/1000)";
             table.Cells[7, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[8, 0].TextString = @"Машиноместа, м/м ((420/1000)х90%)"; // "\\A1;\\pxt8;Машиноместа, м/м\\P\\ptz;{\\H0.6x;420/1 000}"
+            table.Cells[8, 0].TextString = $@"Машиноместа, м/м {_service.Estimate.ParkingPlacePer1000}/1000)х{_service.Estimate.ParkingPlacePercent}%)"; // "\\A1;\\pxt8;Машиноместа, м/м\\P\\ptz;{\\H0.6x;420/1 000}"
             table.Cells[8, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[9, 0].TextString = "Машиноместа гостевые, м/м (25%)";
+            table.Cells[9, 0].TextString = $"Машиноместа гостевые, м/м ({_service.Estimate.ParkingPlaceGuestPercent}%)";
             table.Cells[9, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
 
             var titleCells = CellRange.Create(table, 1, 0, 1, table.Columns.Count - 1);
@@ -113,7 +116,7 @@ namespace PIK_GP_Acad.BlockSection
             // Общие параметры по всем типам секций
 
             // Всего площадь жилого фонда
-            table.Cells[1, 1].TextString = (data.TotalAreaApart + data.TotalAreaBKFN).ToString("0.0");
+            table.Cells[1, 1].TextString = (data.TotalArea).ToString("0.0");
             table.Cells[1, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             // ВСЕГО ПЛОЩАДЬ КВАРТИР
             table.Cells[2, 1].TextString = data.TotalAreaApart.ToString("0.0");
@@ -125,21 +128,21 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[4, 1].TextString = data.AverageFloors.ToString("0.0"); 
             table.Cells[4, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             // Жителей
-            double population = Math.Ceiling(data.TotalAreaApart * 0.035714); // Всего площадь квартир/28
+            double population = Math.Ceiling(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
             table.Cells[5, 1].TextString = population.ToString();
             table.Cells[5, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //ДОО, чел
-            table.Cells[6, 1].TextString =Math.Ceiling(population * 0.065).ToString(); //(("Всего площадь квартир"/28)/1000)*65
+            table.Cells[6, 1].TextString =Math.Ceiling(population/1000*_service.Estimate.KindergartenPlacePer1000).ToString(); //(("Всего площадь квартир"/28)/1000)*65
             table.Cells[6, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //СОШ, чел
-            table.Cells[7, 1].TextString = Math.Ceiling(population * 0.135).ToString();//  (("Всего площадь квартир"/28)/1000)*135
+            table.Cells[7, 1].TextString = Math.Ceiling(population/1000*_service.Estimate.SchoolPlacePer1000).ToString();//  (("Всего площадь квартир"/28)/1000)*135
             table.Cells[7, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //Машиноместа, м/м
-            var mm = population * 0.42;
-            table.Cells[8, 1].TextString = Math.Ceiling(mm*0.9).ToString();//  (("Всего площадь квартир"/28)/1000)*420 90%
+            var mm = population / 1000 * _service.Estimate.ParkingPlacePer1000;// 0.42;
+            table.Cells[8, 1].TextString = Math.Ceiling(mm*_service.Estimate.ParkingPlacePercent/100).ToString();//  (("Всего площадь квартир"/28)/1000)*420 90%
             table.Cells[8, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //Машиноместа гостевые, м/м
-            table.Cells[9, 1].TextString = Math.Ceiling(mm * 0.25).ToString();//  Машиноместа %25
+            table.Cells[9, 1].TextString = Math.Ceiling(mm *_service.Estimate.ParkingPlaceGuestPercent/100).ToString();//  Машиноместа %25
             table.Cells[9, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
 
             table.GenerateLayout();
