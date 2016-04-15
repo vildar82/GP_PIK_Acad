@@ -1,5 +1,6 @@
 ﻿using System;
 using AcadLib.Jigs;
+using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 
@@ -41,14 +42,15 @@ namespace PIK_GP_Acad.BlockSection
             }
 
             // Фон таблицы в зависимости от региона
-            table.Cells.BackgroundColor = _service.Estimate.Color;
+            table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
+            table.Color = _service.Estimate.Color;
 
             //foreach (var column in table.Columns)
             //{
             //    column.Width = 30;
             //    column.Alignment = CellAlignment.MiddleCenter;
             //}
-            
+
             table.Columns[0].Alignment = CellAlignment.MiddleLeft;
             table.Columns[1].Alignment = CellAlignment.MiddleCenter;
             //table.Rows[1].Height = 15;
