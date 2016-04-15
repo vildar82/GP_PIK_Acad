@@ -128,7 +128,7 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[4, 1].TextString = data.AverageFloors.ToString("0.0"); 
             table.Cells[4, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             // Жителей
-            double population = Math.Ceiling(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
+            double population = Math.Floor(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
             table.Cells[5, 1].TextString = population.ToString();
             table.Cells[5, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //ДОО, чел
