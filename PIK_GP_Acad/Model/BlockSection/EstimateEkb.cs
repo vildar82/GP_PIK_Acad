@@ -8,6 +8,8 @@ namespace PIK_GP_Acad.BlockSection
 {
     public class EstimateEkb : Estimate
     {
+        public int ParkingPlace { get; set; }
+
         public EstimateEkb()
         {
             Color = Autodesk.AutoCAD.Colors.Color.FromColor(System.Drawing.Color.Chocolate);
@@ -15,14 +17,24 @@ namespace PIK_GP_Acad.BlockSection
             LiveAreaPerHuman = 30;
             KindergartenPlacePer1000 = 55;
             SchoolPlacePer1000 = 114;
-            ParkingPlacePer1000 = 80;
+            ParkingPlace = 80;
             ParkingPlaceGuestPercent = 20;
             ParkingPlacePercent = 80;
         }
 
-        //public override string GetParkingPlace(DataSection data)
-        //{
-        //    return $"{data.TotalArea}/{ParkingPlacePer1000})х{ParkingPlacePercent}%)";
-        //}
+        public override string GetParkingPlace()
+        {            
+            return $"(Sкв/{ParkingPlace})х{ParkingPlacePercent}%";
+        }
+
+        public override double GetParkingPlace(DataSection data)
+        {
+            return data.TotalAreaApart / ParkingPlace;
+        }
+
+        public override string GetParkingPlaceGuest()
+        {
+            return $"(Sкв/{ParkingPlace})х{ParkingPlaceGuestPercent}%";
+        }
     }
 }

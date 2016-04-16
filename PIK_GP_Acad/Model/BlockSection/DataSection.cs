@@ -6,12 +6,7 @@ namespace PIK_GP_Acad.BlockSection
     // Подсчет площедей и типоак блок-секций
     public class DataSection
     {
-        private SectionService _service;
-
-        public DataSection(SectionService sectionService)
-        {
-            _service = sectionService;
-        }
+        private SectionService _service;       
 
         public double AverageFloors { get; private set; }
         public List<SectionType> SectionTypes { get; private set; }
@@ -20,6 +15,12 @@ namespace PIK_GP_Acad.BlockSection
         public double TotalAreaApart { get; private set; }
 
         public double TotalAreaBKFN { get; private set; }
+        public double Population { get; set; }
+
+        public DataSection(SectionService sectionService)
+        {
+            _service = sectionService;
+        }
 
         /// <summary>
         /// Подсчет площадей блок-секций и типов

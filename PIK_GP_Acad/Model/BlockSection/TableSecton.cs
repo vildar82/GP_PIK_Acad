@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.BlockSection
 
             table.SetSize(10, 2);
 
-            table.Columns[0].Width = 55;
+            table.Columns[0].Width = 70;
             table.Columns[1].Width = 25;
 
             foreach (var item in table.Rows)
@@ -80,9 +80,9 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[6, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
             table.Cells[7, 0].TextString = $"СОШ, чел ({_service.Estimate.SchoolPlacePer1000}/1000)";
             table.Cells[7, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[8, 0].TextString = $@"Машиноместа, м/м {_service.Estimate.ParkingPlacePer1000}/1000)х{_service.Estimate.ParkingPlacePercent}%)"; // "\\A1;\\pxt8;Машиноместа, м/м\\P\\ptz;{\\H0.6x;420/1 000}"
+            table.Cells[8, 0].TextString = $@"Машиноместа, м/м {_service.Estimate.GetParkingPlace()}"; // "\\A1;\\pxt8;Машиноместа, м/м\\P\\ptz;{\\H0.6x;420/1 000}"
             table.Cells[8, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[9, 0].TextString = $"Машиноместа гостевые, м/м ({_service.Estimate.ParkingPlaceGuestPercent}%)";
+            table.Cells[9, 0].TextString = $"Машиноместа гостевые, м/м {_service.Estimate.GetParkingPlaceGuest()}";
             table.Cells[9, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
 
             var titleCells = CellRange.Create(table, 1, 0, 1, table.Columns.Count - 1);
@@ -130,21 +130,22 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[4, 1].TextString = data.AverageFloors.ToString("0.0"); 
             table.Cells[4, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             // Жителей
-            double population = Math.Floor(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
+            data.Population = Math.Floor(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
+            var population = data.Population;
             table.Cells[5, 1].TextString = population.ToString();
             table.Cells[5, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //ДОО, чел
-            table.Cells[6, 1].TextString =Math.Ceiling(population/1000*_service.Estimate.KindergartenPlacePer1000).ToString(); //(("Всего площадь квартир"/28)/1000)*65
+            table.Cells[6, 1].TextString =Math.Ceiling(population*0.001*_service.Estimate.KindergartenPlacePer1000).ToString(); //(("Всего площадь квартир"/28)/1000)*65
             table.Cells[6, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //СОШ, чел
-            table.Cells[7, 1].TextString = Math.Ceiling(population/1000*_service.Estimate.SchoolPlacePer1000).ToString();//  (("Всего площадь квартир"/28)/1000)*135
+            table.Cells[7, 1].TextString = Math.Ceiling(population*0.001*_service.Estimate.SchoolPlacePer1000).ToString();//  (("Всего площадь квартир"/28)/1000)*135
             table.Cells[7, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //Машиноместа, м/м
-            var mm = population / 1000 * _service.Estimate.ParkingPlacePer1000;// 0.42;
-            table.Cells[8, 1].TextString = Math.Ceiling(mm*_service.Estimate.ParkingPlacePercent/100).ToString();//  (("Всего площадь квартир"/28)/1000)*420 90%
+            var mm = _service.Estimate.GetParkingPlace(data);
+            table.Cells[8, 1].TextString = Math.Ceiling(mm*_service.Estimate.ParkingPlacePercent*0.01).ToString();//  (("Всего площадь квартир"/28)/1000)*420 90%
             table.Cells[8, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //Машиноместа гостевые, м/м
-            table.Cells[9, 1].TextString = Math.Ceiling(mm *_service.Estimate.ParkingPlaceGuestPercent/100).ToString();//  Машиноместа %25
+            table.Cells[9, 1].TextString = Math.Ceiling(mm *_service.Estimate.ParkingPlaceGuestPercent*0.01).ToString();//  Машиноместа %25
             table.Cells[9, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
 
             table.GenerateLayout();

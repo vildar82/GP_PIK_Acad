@@ -35,16 +35,22 @@ namespace PIK_GP_Acad.BlockSection
             }
         }
 
-        //public virtual string GetParkingPlace(DataSection data)
-        //{
-        //    // Для москвы
-        //    return $"{ParkingPlacePer1000}/1000)х{ParkingPlacePercent}%)";
-        //}
+        public virtual string GetParkingPlace()
+        {
+            // Для москвы
+            return $"({ParkingPlacePer1000}/1000)х{ParkingPlacePercent}%";
+        }
 
-        //public virtual int GetParkingPlace(DataSection data)
-        //{
-        //    // Для москвы
-        //    return 
-        //}
+        public virtual double GetParkingPlace(DataSection data)
+        {
+            // Для москвы
+            return  data.Population *0.001 * ParkingPlacePer1000;
+        }
+
+        public virtual string GetParkingPlaceGuest()
+        {
+            // Для москвы
+            return $"({ParkingPlacePer1000}/1000)х{ParkingPlaceGuestPercent}%";
+        }
     }
 }
