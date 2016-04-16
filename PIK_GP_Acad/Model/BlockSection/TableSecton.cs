@@ -42,8 +42,7 @@ namespace PIK_GP_Acad.BlockSection
             }
 
             // Фон таблицы в зависимости от региона
-            table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
-            table.Color = _service.Estimate.Color;
+            _service.Estimate.TableFormatting(table);
 
             //foreach (var column in table.Columns)
             //{

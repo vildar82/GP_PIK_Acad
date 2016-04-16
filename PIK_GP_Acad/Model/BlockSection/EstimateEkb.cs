@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.Colors;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.BlockSection
 {
     public class EstimateEkb : Estimate
     {
         public int ParkingPlace { get; set; }
+        
 
         public EstimateEkb()
-        {
-            Color = Autodesk.AutoCAD.Colors.Color.FromColor(System.Drawing.Color.Chocolate);
+        {            
             Title = "Екатеринбург (Иркутск)";
             LiveAreaPerHuman = 30;
             KindergartenPlacePer1000 = 55;
@@ -35,6 +37,12 @@ namespace PIK_GP_Acad.BlockSection
         public override string GetParkingPlaceGuest()
         {
             return $"(Sкв/{ParkingPlace})х{ParkingPlaceGuestPercent}%";
+        }
+
+        public override void TableFormatting(Table table)
+        {
+            //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
+            table.ColorIndex = 5;
         }
     }
 }

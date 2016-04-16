@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Colors;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.BlockSection
 {
@@ -11,8 +12,7 @@ namespace PIK_GP_Acad.BlockSection
     /// Расчетные показатели - расчета численности жителей
     /// </summary>
     public abstract class Estimate
-    {
-        public Color Color { get; set; }
+    {        
         public string Title { get; set; }
         /// <summary>
         /// Жилая площадь на человека - 28м2/чел
@@ -51,6 +51,12 @@ namespace PIK_GP_Acad.BlockSection
         {
             // Для москвы
             return $"({ParkingPlacePer1000}/1000)х{ParkingPlaceGuestPercent}%";
+        }
+
+        public virtual void TableFormatting (Table table)
+        {
+            //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
+            //table.Color = _service.Estimate.Color;
         }
     }
 }

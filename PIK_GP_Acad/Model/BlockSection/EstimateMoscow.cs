@@ -10,7 +10,7 @@ namespace PIK_GP_Acad.BlockSection
     {
         public EstimateMoscow()
         {
-            Color = Autodesk.AutoCAD.Colors.Color.FromColor(System.Drawing.Color.Bisque);
+            //Color = Autodesk.AutoCAD.Colors.Color.FromColor(System.Drawing.Color.Bisque);
             Title = "Московская область (РНГП №713/30)";
             LiveAreaPerHuman = 28;
             KindergartenPlacePer1000 = 65;
