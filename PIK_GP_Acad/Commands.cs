@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AcadLib;
 using AcadLib.Errors;
 using AcadLib.PaletteCommands;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -22,60 +23,57 @@ using PIK_GP_Acad.Model.HorizontalElevation;
 
 namespace PIK_GP_Acad
 {
-    public class Commands : IExtensionApplication
+    public class Commands
     {
         public static string CurDllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static PaletteSetCommands _palette;
-        private readonly Guid PaletteGuid = new Guid("4770C55E-0793-46C3-AEA4-CF0902320E71");
-
-        [CommandMethod("PIK", "PIK-Start", CommandFlags.Modal)]
-        public void Pik_Palette()
-        {
-            if (_palette == null)
-            {
-                var comms = LoadCommands();
-                _palette = PaletteSetCommands.Create("ПИК-ГП", comms, PaletteGuid);
-            }
-            _palette.Visible = true;
-        }
-
 
         /// <summary>
         /// Изменение уровней горизонталей
         /// </summary>
-        [CommandMethod("PIK", "GP-HorizontalElevationStep", CommandFlags.Modal)]
+        [PaletteCommand("Уровни горизонталей", "Установка уровней для полилиний горизонталей с заданным шагом.")]
+        [CommandMethod("PIK", "GP_HorizontalElevationStep", CommandFlags.Modal)]
         public void HorizontalElevationStep()
         {
-            Logger.Log.Info("Start command GP-HorizontalElevationStep");
-            Document doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
-            try
+            CommandStart.Start("GP_HorizontalElevationStep", doc=>
             {
                 Inspector.Clear();
                 HorizontalElevation horElev = new HorizontalElevation();
-                horElev.Stepping();
+                horElev.Stepping();                
+                Inspector.Show();                
+            });
 
-                if (Inspector.HasErrors)
-                {
-                    Inspector.Show();
-                }
-            }
-            catch (System.Exception ex)
-            {
-                if (!ex.Message.Contains("Отменено пользователем"))
-                {
-                    Logger.Log.Error(ex, "GP-HorizontalElevationStep");
-                }
-                doc.Editor.WriteMessage(ex.Message);
-            }
+            //Logger.Log.StartCommand("GP_HorizontalElevationStep");
+            //Document doc = Application.DocumentManager.MdiActiveDocument;
+            //if (doc == null) return;
+            //try
+            //{
+            //    Inspector.Clear();
+            //    HorizontalElevation horElev = new HorizontalElevation();
+            //    horElev.Stepping();
+
+            //    if (Inspector.HasErrors)
+            //    {
+            //        Inspector.Show();
+            //    }
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    if (!ex.Message.Contains(General.CanceledByUser))
+            //    {
+            //        Logger.Log.Error(ex, "GP_HorizontalElevationStep");
+            //    }
+            //    doc.Editor.WriteMessage(ex.Message);
+            //}
         }
 
         /// <summary>
-        /// Создание блоков монтажных планов (создаются блоки с именем вида АКР_Монтажка_2).
+        /// Спецификация блок-секций
         /// </summary>
-        [CommandMethod("PIK", "GP-BlockSectionTable", CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        [CommandMethod("PIK", "GP_BlockSectionTable", CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        [PaletteCommand("Спецификация Блок-Секций", "Вставка таблицы расчета выбранных блоков Блок-Секций.")]
         public void BlockSectionTable()
         {
+            Logger.Log.StartCommand("GP_BlockSectionTable");
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
             try
@@ -92,11 +90,13 @@ namespace PIK_GP_Acad
         /// <summary>
         /// Добавление полилиний контуров у блоков Блок-Секций
         /// </summary>
-        [CommandMethod("PIK", "GP-BlockSectionContour", CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        [CommandMethod("PIK", "GP_BlockSectionContour", CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        [PaletteCommand("Контур Блок-Секций", "Создание полилинии контура вокруг блоков Блок-Секций")]
         public void BlockSectionContour()
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
+            Logger.Log.StartCommand("GP_BlockSectionContour");
             try
             {
                 Inspector.Clear();
@@ -109,11 +109,13 @@ namespace PIK_GP_Acad
             }
         }
 
-        [CommandMethod("PIK", "GP-BlockSectionInsert", CommandFlags.Modal)]
+        [CommandMethod("PIK", "GP_BlockSectionInsert", CommandFlags.Modal)]
+        [PaletteCommand("Блоки Блок-Секций", "Вставка блока Блок-Секции из списка.")]
         public void BlockSectionInsert()
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
+            Logger.Log.StartCommand("GP_BlockSectionInsert");
             try
             {
                 // Файл шаблонов
@@ -131,11 +133,13 @@ namespace PIK_GP_Acad
             }
         }
 
-        [CommandMethod("PIK", "GP-InsertBlockParking", CommandFlags.Modal)]
+        [CommandMethod("PIK", "GP_InsertBlockParking", CommandFlags.Modal)]
+        [PaletteCommand("Блок парковки", "Вставка блока парковки")]
         public void InsertBlockParking()
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
+            Logger.Log.StartCommand("GP_InsertBlockParking");
             try
             {                
                 InsertBlock.Insert("ГП_Линия-Парковки", doc);
@@ -143,18 +147,20 @@ namespace PIK_GP_Acad
             catch (System.Exception ex)
             {
                 doc.Editor.WriteMessage(ex.Message);
-                if (!ex.Message.Contains(AcadLib.General.CanceledByUser))
+                if (!ex.Message.Contains(General.CanceledByUser))
                 {
                     Logger.Log.Error(ex, $"Command: GP-InsertBlockParking. {doc.Name}");
                 }
             }
         }
 
-        [CommandMethod("PIK", "GP-InsertBlockPikLogo", CommandFlags.Modal)]
+        [CommandMethod("PIK", "GP_InsertBlockPikLogo", CommandFlags.Modal)]
+        [PaletteCommand("Блок логотипа","Вставка блока логотипа ПИК")]
         public void InsertBlockPikLogo()
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
+            Logger.Log.StartCommand("GP_InsertBlockPikLogo");
             try
             {
                 InsertBlock.Insert("PIK_Logo", doc);
@@ -162,19 +168,20 @@ namespace PIK_GP_Acad
             catch (System.Exception ex)
             {
                 doc.Editor.WriteMessage(ex.Message);
-                if (!ex.Message.Contains(AcadLib.General.CanceledByUser))
+                if (!ex.Message.Contains(General.CanceledByUser))
                 {
-                    Logger.Log.Error(ex, $"Command: GP-InsertBlockParking. {doc.Name}");
+                    Logger.Log.Error(ex, $"Command: GP_InsertBlockPikLogo. {doc.Name}");
                 }
             }
         }
 
-        [CommandMethod("PIK", "GP-Isoline", CommandFlags.Modal)]
+        [CommandMethod("PIK", "GP_Isoline", CommandFlags.Modal)]
+        [PaletteCommand("Бергштрих", "Включение одиночных бергштрихов для линий и полилиний.")]
         public void GpIsoline()
         {
             Document doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
-            Logger.Log.Info("Start Command: GP-Isoline");
+            Logger.Log.Info("Start Command: GP_Isoline");
             try
             {
                 Isolines.Isoline.Start();
@@ -182,56 +189,11 @@ namespace PIK_GP_Acad
             catch (System.Exception ex)
             {
                 doc.Editor.WriteMessage(ex.Message);
-                if (!ex.Message.Contains(AcadLib.General.CanceledByUser))
+                if (!ex.Message.Contains(General.CanceledByUser))
                 {
-                    Logger.Log.Error(ex, $"Command: GP-Isoline. {doc.Name}");
+                    Logger.Log.Error(ex, $"Command: GP_Isoline. {doc.Name}");
                 }
             }
-        }
-
-        public List<IPaletteCommand> LoadCommands()
-        {
-            List<IPaletteCommand> comms = new List<IPaletteCommand>()
-            {
-             new PaletteCommand("Вставка блока Парковки", ImageSourceForImageControl(Properties.Resources.GP_BlockParking), InsertBlockParking, ""),
-             new PaletteCommand("Вставка блока Блок-Секции", ImageSourceForImageControl(Properties.Resources.GB_BlockSectionInsert), BlockSectionInsert, ""),
-             new PaletteCommand("Спецификация Блок-Секций", ImageSourceForImageControl(Properties.Resources.GP_BlockSectionTable), BlockSectionTable, "Подсчет выбранных на чертеже блоков секций"),
-             new PaletteCommand("Уровни горизонталей", ImageSourceForImageControl(Properties.Resources.GP_HorizontalElevation), HorizontalElevationStep, "Изменение уровня горизонталей"),
-             new PaletteCommand("Бергштрихи одиночные", ImageSourceForImageControl(Properties.Resources.GP_Isoline), GpIsoline, "Одиночные бергштрихи в полилиниях и отрезках.")
-            };
-            return comms;
-        }
-
-        public ImageSource ImageSourceForImageControl(Bitmap image)
-        {            
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    image.GetHbitmap(),
-                    IntPtr.Zero,
-                    Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions());
-        }
-
-        public void Initialize()
-        {
-            //// Добавление иконки в трей
-            //Document doc = Application.DocumentManager.MdiActiveDocument;
-            //if (doc == null) return;
-            //Editor ed = doc.Editor;
-            //Database db = doc.Database;
-
-            //Pane pane = new Pane();
-            //pane.Icon = Properties.Resources.pik_logo;
-            //pane.MouseDown += PikTray_MouseDown;
-            //Application.StatusBar.Panes.Add(pane);
-        }
-
-        private void PikTray_MouseDown(object sender, StatusBarMouseDownEventArgs e)
-        {            
-            Pik_Palette();
-        }
-
-        public void Terminate()
-        {            
-        }
+        }                        
     }
 }

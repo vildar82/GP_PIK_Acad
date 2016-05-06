@@ -35,9 +35,9 @@
     <AssemblyFileVersionSettings>None.None.DayOfYearStamp.Increment</AssemblyFileVersionSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AcadLib">
+    <Reference Include="AcadLib, Version=1.0.106.258, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\AcadLib\AcadLib\bin\Release\AcadLib.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoCAD.NET.Core.20.0.1\lib\45\AcCoreMgd.dll</HintPath>
@@ -160,7 +160,7 @@
       <DependentUpon>FormIsolineOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -181,9 +181,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP_Isoline.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\pik_logo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
