@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings_debug\Script\NET\ГП\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -161,7 +161,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -174,13 +174,19 @@
     <None Include="Resources\GP_BlockSectionTable.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GB_BS.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\GP_BlockParking.PNG" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP_Isoline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_BlockSectionInsert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_BlockSectionContour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_PolylineArrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

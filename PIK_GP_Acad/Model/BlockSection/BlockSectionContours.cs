@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.BlockSection
             {
                 // Выбор блоков            
                 SelectSection select = new SelectSection(doc);
-                select.Select();
+                select.Select(false);
                 if (select.IdsBlRefSections.Count == 0)
                     throw new Exception("Не найдены блоки Блок-Секций");
                 else

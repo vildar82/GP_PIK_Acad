@@ -21,13 +21,11 @@ namespace PIK_GP_Acad.BlockSection
         // Подсчет секций
         public void CalcSections()
         {
-            Inspector.Clear();
-
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 // Выбор блоков
                 SelectSection select = new SelectSection(Doc);
-                select.Select();
+                select.Select(true);
                 if (select.IdsBlRefSections.Count == 0)
                 {
                     throw new Exception("Не найдены блоки блок-секций");
@@ -51,13 +49,7 @@ namespace PIK_GP_Acad.BlockSection
                 TableSecton tableSection = new TableSecton(this);
                 tableSection.CreateTable();
                 t.Commit();
-            }
-
-            if (Inspector.HasErrors)
-            {
-                Inspector.Show();
-                Inspector.Clear();
-            }
+            }           
         }
     }
 }

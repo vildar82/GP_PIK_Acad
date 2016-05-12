@@ -63,9 +63,19 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GB_BlockSectionInsert {
+        public static System.Drawing.Bitmap GP_BlockSectionContour {
             get {
-                object obj = ResourceManager.GetObject("GB_BlockSectionInsert", resourceCulture);
+                object obj = ResourceManager.GetObject("GP_BlockSectionContour", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GP_BlockSectionInsert {
+            get {
+                object obj = ResourceManager.GetObject("GP_BlockSectionInsert", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

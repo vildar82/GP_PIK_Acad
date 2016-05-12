@@ -19,20 +19,20 @@ namespace PIK_GP_Acad.BlockSection
 
         public List<ObjectId> IdsBlRefSections { get; private set; }
 
-        public void Select()
+        public void Select(bool withRegions)
         {
-            var prOpt = new PromptSelectionOptions();            
-            //prOpt.Keywords.Add("Moscow");
-            prOpt.Keywords.Add("Ekb");
-            //prOpt.Keywords.Default = "Moscow";
-
-            //prOpt.Keywords.Default = "Москва";
-            var keys = prOpt.Keywords.GetDisplayString(true);
+            var prOpt = new PromptSelectionOptions();
+            var keys = string.Empty;
+            if (withRegions)
+            {
+                prOpt.Keywords.Add("Ekb");
+                keys = prOpt.Keywords.GetDisplayString(true);
+                prOpt.KeywordInput += (o, e) => { region = e.Input; };
+            }
 
             prOpt.MessageForAdding = "\nВыбор блоков блок-секций. " + keys;
             prOpt.MessageForRemoval = "\nИсключено из набора" + keys;
-
-            prOpt.KeywordInput += (o, e) => { region = e.Input; };            
+            
             var res = _doc.Editor.GetSelection(prOpt);            
 
             if (res.Status != PromptStatus.OK)
