@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -20,14 +21,17 @@ using Autodesk.AutoCAD.Windows;
 using PIK_GP_Acad.Model.HorizontalElevation;
 
 [assembly: CommandClass(typeof(PIK_GP_Acad.Commands))]
+[assembly: ExtensionApplication(typeof(PIK_GP_Acad.Commands))]
 
 namespace PIK_GP_Acad
 {
-    public class Commands
+    public class Commands: IExtensionApplication
     {
+        public static List<IPaletteCommand> CommandsPalette { get; set; }
         public static string CurDllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
+        public const string GroupKP = "Концепция";
         // Комманды
         private const string CommandBlockSectionInsert = "GP_BlockSectionInsert";
         private const string CommandBlockSectionTable = "GP_BlockSectionTable";
@@ -36,10 +40,32 @@ namespace PIK_GP_Acad
         private const string CommandIsoline = "GP_Isoline";
         private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
         private const string CommandPolylineArrow = "GP_PolylineArrow";
-        
+        private const string Command_KP_BlockSectionTable = "GP_KP_BlockSectionTable";
+        private const string Command_KP_BlockSectionInsert = "GP_KP_BlockSectionInsert";
 
-        [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]
-        [PaletteCommand("Блоки Блок-Секций", "Вставка блока Блок-Секции из списка.", GroupBS)]
+        public void InitCommands()
+        {
+            CommandsPalette = new List<IPaletteCommand>()
+            {
+                new PaletteCommand("Блоки Блок-Секций", Properties.Resources.GP_BlockSectionInsert,CommandBlockSectionInsert,"Вставка блока Блок-Секции из списка.", GroupBS),
+                new PaletteCommand("Спецификация Блок-Секций",Properties.Resources.GP_BlockSectionTable, CommandBlockSectionTable, "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
+                new PaletteCommand("Контур Блок-Секций",Properties.Resources.GP_BlockSectionContour, CommandBlockSectionContour, "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
+                new PaletteCommand("Блок парковки",Properties.Resources.GP_InsertBlockParking,CommandInsertBlockParking,"Вставка блока парковки"),
+                new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
+                new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevationStep, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
+                new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Вставка блока блок-секции. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionInsert, Command_KP_BlockSectionInsert, "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
+                new PaletteCommand("Спецификация блок-секций. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionTable, Command_KP_BlockSectionTable, "Таблица подсчета блок-секции концепции.", GroupKP)
+            };
+        }
+
+        [CommandMethod(Group, "PIK_Start", CommandFlags.Modal)]
+        public void PaletteStart()
+        {
+            PaletteSetCommands.Start();
+        }
+
+        [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]        
         public void BlockSectionInsert()
         {
             CommandStart.Start(CommandBlockSectionInsert, doc =>
@@ -56,8 +82,7 @@ namespace PIK_GP_Acad
         /// <summary>
         /// Спецификация блок-секций
         /// </summary>
-        [CommandMethod(Group, CommandBlockSectionTable, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
-        [PaletteCommand("Спецификация Блок-Секций", "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS)]
+        [CommandMethod(Group, CommandBlockSectionTable, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
         public void BlockSectionTable()
         {
             CommandStart.Start(CommandBlockSectionTable, doc =>
@@ -72,8 +97,7 @@ namespace PIK_GP_Acad
         /// <summary>
         /// Добавление полилиний контуров у блоков Блок-Секций
         /// </summary>
-        [CommandMethod(Group, CommandBlockSectionContour, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
-        [PaletteCommand("Контур Блок-Секций", "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS)]
+        [CommandMethod(Group, CommandBlockSectionContour, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
         public void BlockSectionContour()
         {
             CommandStart.Start(CommandBlockSectionContour, doc =>
@@ -84,8 +108,7 @@ namespace PIK_GP_Acad
             });               
         }        
 
-        [CommandMethod(Group, CommandInsertBlockParking, CommandFlags.Modal)]
-        [PaletteCommand("Блок парковки", "Вставка блока парковки")]
+        [CommandMethod(Group, CommandInsertBlockParking, CommandFlags.Modal)]        
         public void InsertBlockParking()
         {
             CommandStart.Start(CommandInsertBlockParking, doc =>
@@ -94,8 +117,7 @@ namespace PIK_GP_Acad
             });            
         }        
 
-        [CommandMethod(Group, CommandIsoline, CommandFlags.Modal)]
-        [PaletteCommand("Бергштрих", "Включение одиночных бергштрихов для линий и полилиний.")]
+        [CommandMethod(Group, CommandIsoline, CommandFlags.Modal)]        
         public void Isoline()
         {
             CommandStart.Start(CommandIsoline, doc =>
@@ -106,8 +128,7 @@ namespace PIK_GP_Acad
 
         /// <summary>
         /// Изменение уровней горизонталей
-        /// </summary>
-        [PaletteCommand("Уровни горизонталей", "Установка уровней для полилиний горизонталей с заданным шагом.")]
+        /// </summary>        
         [CommandMethod(Group, CommandHorizontalElevationStep, CommandFlags.Modal)]
         public void HorizontalElevationStep()
         {
@@ -122,10 +143,7 @@ namespace PIK_GP_Acad
 
         /// <summary>
         /// Изменение уровней горизонталей
-        /// </summary>
-        [PaletteCommand("Линия со стрелками", "Рисование полилинии с типом линии 'ГП-Стрелка3'. " +
-                        "Внимание: в типе линии используется форма из файла acadtopo.shx. " +
-                        "При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл.")]
+        /// </summary>        
         [CommandMethod(Group, CommandPolylineArrow, CommandFlags.Modal)]
         public void PolylineArrow()
         {
@@ -135,6 +153,45 @@ namespace PIK_GP_Acad
                 db.LoadLineTypePIK("ГП-стрелка3", "acadtopo.lin");
                 Draw.Polyline(lineType: "ГП-стрелка3");
             });
+        }
+
+        /// <summary>
+        /// Концепция (КП). Подсчет таблицы блок-секций
+        /// </summary>        
+        [CommandMethod(Group, Command_KP_BlockSectionTable, CommandFlags.Modal)]
+        public void KP_BlockSectionTable()
+        {
+            CommandStart.Start(Command_KP_BlockSectionTable, doc =>
+            {
+                Inspector.Clear();
+                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();
+                Inspector.Show();
+            });
+        }
+
+        [CommandMethod(Group, Command_KP_BlockSectionInsert, CommandFlags.Modal)]
+        public void KP_BlockSectionInsert()
+        {
+            CommandStart.Start(Command_KP_BlockSectionInsert, doc =>
+            {
+                // Файл шаблонов
+                string fileBlocks = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.LocalSettingsFolder,
+                                                @"Blocks\ГП\ГП_Блоки.dwg");
+                // Выбор и вставка блока 
+                AcadLib.Blocks.Visual.VisualInsertBlock.InsertBlock(fileBlocks, n =>
+                    KP.KP_BlockSection.KP_BlockSectionService.IsBlockSection(n));
+            });
+        }
+
+        public void Initialize()
+        {
+            // Передача списка команд для палитры ПИК в AcadLib.  
+            InitCommands();          
+            PaletteSetCommands.InitPalette(CommandsPalette);
+        }
+
+        public void Terminate()
+        {            
         }
     }
 }

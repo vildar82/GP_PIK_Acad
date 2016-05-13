@@ -39,7 +39,7 @@ namespace PIK_GP_Acad.BlockSection
                     var blRefSec = idBlRefSec.GetObject(OpenMode.ForRead, false, true) as BlockReference;
                     try
                     {
-                        var pl = getBtrContour(blRefSec);
+                        var pl = FindContourPolyline(blRefSec);
                         if (pl != null)
                         {
                             var idPlCopy = CopyEnt(pl.Id, msId, doc.Database);
@@ -60,11 +60,15 @@ namespace PIK_GP_Acad.BlockSection
             }
         }
 
-        private static Polyline getBtrContour(BlockReference blRefSec)
+        /// <summary>
+        /// Поиск контурной полилинии в блоке (по максимальной площаде)
+        /// </summary>
+        /// <param name="blRefSec"></param>
+        /// <returns></returns>
+        public static Polyline FindContourPolyline(BlockReference blRefSec)
         {
             double area = 0;
             Polyline resVal = null;
-
             BlockTableRecord btrSec = blRefSec.BlockTableRecord.GetObject(OpenMode.ForRead) as BlockTableRecord;            
             foreach (var idEnt in btrSec)
             {
