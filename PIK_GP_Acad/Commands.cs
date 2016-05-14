@@ -68,7 +68,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]        
         public void BlockSectionInsert()
         {
-            CommandStart.Start(CommandBlockSectionInsert, doc =>
+            CommandStart.Start(doc =>
             {
                 // Файл шаблонов
                 string fileBlocks = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.LocalSettingsFolder,
@@ -85,7 +85,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandBlockSectionTable, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
         public void BlockSectionTable()
         {
-            CommandStart.Start(CommandBlockSectionTable, doc =>
+            CommandStart.Start(doc =>
             {
                 Inspector.Clear();
                 BlockSection.SectionService ss = new BlockSection.SectionService(doc);
@@ -100,7 +100,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandBlockSectionContour, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
         public void BlockSectionContour()
         {
-            CommandStart.Start(CommandBlockSectionContour, doc =>
+            CommandStart.Start(doc =>
             {
                 Inspector.Clear();
                 BlockSection.BlockSectionContours.CreateContour(doc);
@@ -111,7 +111,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandInsertBlockParking, CommandFlags.Modal)]        
         public void InsertBlockParking()
         {
-            CommandStart.Start(CommandInsertBlockParking, doc =>
+            CommandStart.Start(doc =>
             {
                 InsertBlock.Insert("ГП_Линия-Парковки", doc);
             });            
@@ -120,7 +120,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandIsoline, CommandFlags.Modal)]        
         public void Isoline()
         {
-            CommandStart.Start(CommandIsoline, doc =>
+            CommandStart.Start(doc =>
             {
                 Isolines.Isoline.Start();
             });            
@@ -132,7 +132,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandHorizontalElevationStep, CommandFlags.Modal)]
         public void HorizontalElevationStep()
         {
-            CommandStart.Start(CommandHorizontalElevationStep, doc =>
+            CommandStart.Start(doc =>
             {
                 Inspector.Clear();
                 HorizontalElevation horElev = new HorizontalElevation();
@@ -147,7 +147,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, CommandPolylineArrow, CommandFlags.Modal)]
         public void PolylineArrow()
         {
-            CommandStart.Start(CommandPolylineArrow, doc =>
+            CommandStart.Start(doc =>
             {
                 Database db = doc.Database;
                 db.LoadLineTypePIK("ГП-стрелка3", "acadtopo.lin");
@@ -161,7 +161,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, Command_KP_BlockSectionTable, CommandFlags.Modal)]
         public void KP_BlockSectionTable()
         {
-            CommandStart.Start(Command_KP_BlockSectionTable, doc =>
+            CommandStart.Start(doc =>
             {
                 Inspector.Clear();
                 KP.KP_BlockSection.KP_BlockSectionService.CreateTable();
@@ -172,7 +172,7 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, Command_KP_BlockSectionInsert, CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
         {
-            CommandStart.Start(Command_KP_BlockSectionInsert, doc =>
+            CommandStart.Start(doc =>
             {
                 // Файл шаблонов
                 string fileBlocks = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.LocalSettingsFolder,
