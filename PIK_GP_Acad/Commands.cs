@@ -62,7 +62,10 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, "PIK_Start", CommandFlags.Modal)]
         public void PaletteStart()
         {
-            PaletteSetCommands.Start();
+            CommandStart.Start(doc =>
+                {
+                    PaletteSetCommands.Start();
+                });
         }
 
         [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]        
