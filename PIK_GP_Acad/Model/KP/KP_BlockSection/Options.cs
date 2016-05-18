@@ -14,7 +14,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
     class Options
     {        
         static string FileXml = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder,
-                                       @"ГП\KP_BlockSection.xml");        
+                                       @"ГП\GP_KP_BlockSection.xml");        
 
         static Options _instance;
         public static Options Instance
