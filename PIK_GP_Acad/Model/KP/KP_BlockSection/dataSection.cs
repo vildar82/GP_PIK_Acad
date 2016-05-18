@@ -36,8 +36,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             AreaUpperLive = AreaUpperExternalWalls * 0.68;
 
             AreaTotalExternalWalls = AreaFirstExternalWalls + AreaUpperExternalWalls;
-            AreaTotalLive = AreaFirstLive + AreaUpperLive;
-            
+            AreaTotalLive = AreaFirstLive + AreaUpperLive;            
         }
     }
 }

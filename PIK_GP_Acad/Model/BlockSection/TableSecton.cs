@@ -65,11 +65,11 @@ namespace PIK_GP_Acad.BlockSection
             //table.Cells[3, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             //table.Cells[4, 0].TextString = "Количество секций";
             //table.Cells[4, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[1, 0].TextString = "Всего площадь жилого фонда, м.кв.";
+            table.Cells[1, 0].TextString = "Площадь жилого фонда, м.кв.";
             table.Cells[1, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[2, 0].TextString = "Всего площадь квартир, м.кв.";
+            table.Cells[2, 0].TextString = "Площадь квартир, м.кв.";
             table.Cells[2, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[3, 0].TextString = "Всего площадь БКФН, м.кв.";
+            table.Cells[3, 0].TextString = "Площадь БКФН, м.кв.";
             table.Cells[3, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
             table.Cells[4, 0].TextString = "Средняя этажность";
             table.Cells[4, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
