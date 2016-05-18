@@ -40,6 +40,7 @@ namespace PIK_GP_Acad
         private const string CommandIsoline = "GP_Isoline";
         private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
         private const string CommandPolylineArrow = "GP_PolylineArrow";
+        private const string CommandPolylineCross = "GP_PolylineCross";
         private const string Command_KP_BlockSectionTable = "GP_KP_BlockSectionTable";
         private const string Command_KP_BlockSectionInsert = "GP_KP_BlockSectionInsert";
 
@@ -54,6 +55,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevationStep, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Линия с крестиками",Properties.Resources.GP_LineCross, CommandPolylineCross, "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Вставка блока блок-секции. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionInsert, Command_KP_BlockSectionInsert, "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionTable, Command_KP_BlockSectionTable, "Таблица подсчета блок-секции концепции.", GroupKP)
             };

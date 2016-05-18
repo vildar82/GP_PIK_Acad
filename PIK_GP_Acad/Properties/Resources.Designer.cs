@@ -143,6 +143,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GP_LineCross {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineCross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap GP_PolylineArrow {
             get {
                 object obj = ResourceManager.GetObject("GP_PolylineArrow", resourceCulture);
