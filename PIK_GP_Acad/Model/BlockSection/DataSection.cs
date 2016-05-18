@@ -46,7 +46,7 @@ namespace PIK_GP_Acad.BlockSection
             // Подсчет общих значений для всех типов секций
             var bsByFloor = SectionTypes.SelectMany(b => b.Sections).GroupBy(g => g.NumberFloor);
             var totalFloors = bsByFloor.Sum(s=>s.Key*s.Count());
-            AverageFloors = totalFloors/(double)bsByFloor.Count();
+            AverageFloors = totalFloors/(double)bsByFloor.Sum(s=>s.Count());
             TotalAreaApart = SectionTypes.Sum(s => s.AreaApartTotal);
             TotalAreaBKFN = SectionTypes.Sum(s => s.AreaBKFN);
             TotalArea = TotalAreaApart + TotalAreaBKFN;
