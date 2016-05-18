@@ -32,6 +32,7 @@ namespace PIK_GP_Acad
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
         public const string GroupKP = "Концепция";
+        public const string GroupStamp = "Штамп";
         // Комманды
         private const string CommandBlockSectionInsert = "GP_BlockSectionInsert";
         private const string CommandBlockSectionTable = "GP_BlockSectionTable";
@@ -43,6 +44,9 @@ namespace PIK_GP_Acad
         private const string CommandPolylineCross = "GP_PolylineCross";
         private const string Command_KP_BlockSectionTable = "GP_KP_BlockSectionTable";
         private const string Command_KP_BlockSectionInsert = "GP_KP_BlockSectionInsert";
+        private const string Command_KP_BlockFrame = "GP_KP_BlockFrame";
+        private const string Command_KP_BlockStampForm3 = "GP_KP_BlockStampForm3";
+        private const string Command_KP_BlockStampBooklet = "GP_KP_BlockStampBooklet";
 
         public void InitCommands()
         {
@@ -57,7 +61,10 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Линия с крестиками",Properties.Resources.GP_LineCross, CommandPolylineCross, "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Вставка блока блок-секции. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionInsert, Command_KP_BlockSectionInsert, "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
-                new PaletteCommand("Спецификация блок-секций. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionTable, Command_KP_BlockSectionTable, "Таблица подсчета блок-секции концепции.", GroupKP)
+                new PaletteCommand("Спецификация блок-секций. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionTable, Command_KP_BlockSectionTable, "Таблица подсчета блок-секции концепции.", GroupKP),
+                new PaletteCommand("Рамка.",Properties.Resources.GP_KP_BlockFrame, Command_KP_BlockFrame, "Вставка блока рамки.", GroupStamp),
+                new PaletteCommand("Штамп. Форма 3. Основной комплект.",Properties.Resources.GP_KP_BlockStampForm3, Command_KP_BlockStampForm3, "Вставка блока штампа по форме 3 - Основной комплект.", GroupStamp),
+                new PaletteCommand("Рамка для буклета.",Properties.Resources.GP_KP_BlockStampBooklet, Command_KP_BlockStampBooklet, "Вставка блока рамки буклета.", GroupStamp),
             };
         }
 
@@ -185,6 +192,33 @@ namespace PIK_GP_Acad
                 // Выбор и вставка блока 
                 AcadLib.Blocks.Visual.VisualInsertBlock.InsertBlock(fileBlocks, n =>
                     KP.KP_BlockSection.KP_BlockSectionService.IsBlockSection(n));
+            });
+        }
+
+        [CommandMethod(Group, Command_KP_BlockFrame, CommandFlags.Modal)]
+        public void KP_BlockFrame()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert("ГП_Рамка-ПИК", doc);
+            });
+        }
+
+        [CommandMethod(Group, Command_KP_BlockStampForm3, CommandFlags.Modal)]
+        public void KP_BlockStampForm3()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert("ГП_Штамп_Форма3_ПИК", doc);
+            });
+        }
+
+        [CommandMethod(Group, Command_KP_BlockStampBooklet, CommandFlags.Modal)]
+        public void KP_BlockStampBooklet()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert("ГП_Рамка_Буклет", doc);
             });
         }
 

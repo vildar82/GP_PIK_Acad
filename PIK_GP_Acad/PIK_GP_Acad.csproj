@@ -203,6 +203,24 @@
   <ItemGroup>
     <None Include="Resources\GP-LineCross.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ГП_Штамп_Форма3_ПИК.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ГП_Рамка-ПИК.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ГП_Рамка_Буклет.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_KP_BlockStampForm3.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_KP_BlockFrame.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_KP_BlockStampBooklet.PNG" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

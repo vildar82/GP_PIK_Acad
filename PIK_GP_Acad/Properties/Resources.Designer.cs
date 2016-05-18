@@ -123,6 +123,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GP_KP_BlockFrame {
+            get {
+                object obj = ResourceManager.GetObject("GP_KP_BlockFrame", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap GP_KP_BlockSectionInsert {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockSectionInsert", resourceCulture);
@@ -136,6 +146,26 @@ namespace PIK_GP_Acad.Properties {
         public static System.Drawing.Bitmap GP_KP_BlockSectionTable {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockSectionTable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GP_KP_BlockStampBooklet {
+            get {
+                object obj = ResourceManager.GetObject("GP_KP_BlockStampBooklet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GP_KP_BlockStampForm3 {
+            get {
+                object obj = ResourceManager.GetObject("GP_KP_BlockStampForm3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
