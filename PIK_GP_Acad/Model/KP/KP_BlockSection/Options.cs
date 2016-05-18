@@ -11,7 +11,8 @@ using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
-    class Options
+    [Serializable]
+    public class Options
     {        
         static string FileXml = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder,
                                        @"ГП\GP_KP_BlockSection.xml");        
@@ -29,7 +30,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
         }
 
-        Options()
+        public Options()
         {
         }
 
