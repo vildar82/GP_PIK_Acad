@@ -38,13 +38,13 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Имя блока секции")]
         [Description("Соответствие имени блока Блок-Секции. ^ГП_К_Секция - имя блока начинается с ГП_К_Секция. Регистр игнорируется.")]
         [DefaultValue("^ГП_К_Секция")]
-        public string BlockSectionNameMatch { get; set; }
+        public string BlockSectionNameMatch { get; set; } = "^ГП_К_Секция";
 
         [Category("Блок-секция")]
         [DisplayName("Атрибут этажности")]
         [Description("Тег атрибута Этажности в блоке Блок-секции")]
         [DefaultValue("ЭТАЖЕЙ")]
-        public string BlockSectionAtrFloor { get; set; }
+        public string BlockSectionAtrFloor { get; set; } = "ЭТАЖЕЙ";
 
         void SetDefault()
         {
