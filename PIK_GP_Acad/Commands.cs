@@ -72,9 +72,9 @@ namespace PIK_GP_Acad
         public void PaletteStart()
         {
             CommandStart.Start(doc =>
-                {
-                    PaletteSetCommands.Start();
-                });
+            {
+                PaletteSetCommands.Start();
+            });
         }
 
         [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]        
@@ -98,11 +98,9 @@ namespace PIK_GP_Acad
         public void BlockSectionTable()
         {
             CommandStart.Start(doc =>
-            {
-                Inspector.Clear();
+            {                
                 BlockSection.SectionService ss = new BlockSection.SectionService(doc);
-                ss.CalcSections();
-                Inspector.Show();
+                ss.CalcSections();                
             });            
         }
 
@@ -113,10 +111,8 @@ namespace PIK_GP_Acad
         public void BlockSectionContour()
         {
             CommandStart.Start(doc =>
-            {
-                Inspector.Clear();
-                BlockSection.BlockSectionContours.CreateContour(doc);
-                Inspector.Show();
+            {                
+                BlockSection.BlockSectionContours.CreateContour(doc);                
             });               
         }        
 
@@ -145,11 +141,9 @@ namespace PIK_GP_Acad
         public void HorizontalElevationStep()
         {
             CommandStart.Start(doc =>
-            {
-                Inspector.Clear();
+            {                
                 HorizontalElevation horElev = new HorizontalElevation();
-                horElev.Stepping();
-                Inspector.Show();
+                horElev.Stepping();                
             });
         }
 
@@ -174,10 +168,8 @@ namespace PIK_GP_Acad
         public void KP_BlockSectionTable()
         {
             CommandStart.Start(doc =>
-            {
-                Inspector.Clear();
-                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();
-                Inspector.Show();
+            {                
+                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
             });
         }
 
