@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.Properties {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PIK_GP_Acad.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace PIK_GP_Acad.Properties {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_BlockSectionContour {
+        internal static System.Drawing.Bitmap GP_BlockSectionContour {
             get {
                 object obj = ResourceManager.GetObject("GP_BlockSectionContour", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +73,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_BlockSectionInsert {
+        internal static System.Drawing.Bitmap GP_BlockSectionInsert {
             get {
                 object obj = ResourceManager.GetObject("GP_BlockSectionInsert", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +83,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_BlockSectionTable {
+        internal static System.Drawing.Bitmap GP_BlockSectionTable {
             get {
                 object obj = ResourceManager.GetObject("GP_BlockSectionTable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,9 +93,9 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_HorizontalElevationStep {
+        internal static System.Drawing.Bitmap GP_HorizontalElevation {
             get {
-                object obj = ResourceManager.GetObject("GP_HorizontalElevationStep", resourceCulture);
+                object obj = ResourceManager.GetObject("GP_HorizontalElevation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,17 +103,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_InsertBlockParking {
-            get {
-                object obj = ResourceManager.GetObject("GP_InsertBlockParking", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GP_Isoline {
+        internal static System.Drawing.Bitmap GP_Isoline {
             get {
                 object obj = ResourceManager.GetObject("GP_Isoline", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -123,7 +113,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_KP_BlockFrame {
+        internal static System.Drawing.Bitmap GP_KP_BlockFrame {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockFrame", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -133,7 +123,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_KP_BlockSectionInsert {
+        internal static System.Drawing.Bitmap GP_KP_BlockSectionInsert {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockSectionInsert", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -143,7 +133,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_KP_BlockSectionTable {
+        internal static System.Drawing.Bitmap GP_KP_BlockSectionTable {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockSectionTable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -153,7 +143,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_KP_BlockStampBooklet {
+        internal static System.Drawing.Bitmap GP_KP_BlockStampBooklet {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockStampBooklet", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -163,7 +153,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_KP_BlockStampForm3 {
+        internal static System.Drawing.Bitmap GP_KP_BlockStampForm3 {
             get {
                 object obj = ResourceManager.GetObject("GP_KP_BlockStampForm3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -173,7 +163,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_LineCross {
+        internal static System.Drawing.Bitmap GP_LineCross {
             get {
                 object obj = ResourceManager.GetObject("GP_LineCross", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -183,7 +173,27 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GP_PolylineArrow {
+        internal static System.Drawing.Bitmap GP_LineParking {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineParking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineParkingTable {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineParkingTable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_PolylineArrow {
             get {
                 object obj = ResourceManager.GetObject("GP_PolylineArrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -193,7 +203,7 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap options {
+        internal static System.Drawing.Bitmap options {
             get {
                 object obj = ResourceManager.GetObject("options", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

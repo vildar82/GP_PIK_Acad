@@ -38,6 +38,7 @@ namespace PIK_GP_Acad
         private const string CommandBlockSectionTable = "GP_BlockSectionTable";
         private const string CommandBlockSectionContour = "GP_BlockSectionContour";
         private const string CommandInsertBlockParking = "GP_InsertBlockParking";
+        private const string CommandLineParkingCalc = "GP_LineParkingCalc";        
         private const string CommandIsoline = "GP_Isoline";
         private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
         private const string CommandPolylineArrow = "GP_PolylineArrow";
@@ -56,9 +57,10 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Блоки Блок-Секций", Properties.Resources.GP_BlockSectionInsert,CommandBlockSectionInsert,"Вставка блока Блок-Секции из списка.", GroupBS),
                 new PaletteCommand("Спецификация Блок-Секций",Properties.Resources.GP_BlockSectionTable, CommandBlockSectionTable, "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
                 new PaletteCommand("Контур Блок-Секций",Properties.Resources.GP_BlockSectionContour, CommandBlockSectionContour, "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
-                new PaletteCommand("Блок парковки",Properties.Resources.GP_InsertBlockParking,CommandInsertBlockParking,"Вставка блока парковки"),
+                new PaletteCommand("Блок линии парковки",Properties.Resources.GP_LineParking,CommandInsertBlockParking,"Вставка блока линии парковки"),
+                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"выбор блоков линейных парковок и вставка таблицы"),
                 new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
-                new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevationStep, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
+                new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevation, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Линия с крестиками",Properties.Resources.GP_LineCross, CommandPolylineCross, "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Вставка блока блок-секции. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionInsert, Command_KP_BlockSectionInsert, "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
@@ -124,7 +126,16 @@ namespace PIK_GP_Acad
             {
                 InsertBlock.Insert("ГП_Линия-Парковки", doc);
             });            
-        }        
+        }
+
+        [CommandMethod(Group, CommandLineParkingCalc, CommandFlags.Modal)]
+        public void LineParkingCalc()
+        {
+            CommandStart.Start(doc =>
+            {
+                Parking.LineParkingService.CalcAndTable();
+            });
+        }
 
         [CommandMethod(Group, CommandIsoline, CommandFlags.Modal)]        
         public void Isoline()
@@ -175,7 +186,7 @@ namespace PIK_GP_Acad
                 Utils.PolylinePoints.CreatePoints();
             });
         }
-
+        
         [CommandMethod(Group, Command_KP_BlockSectionTable, CommandFlags.Modal)]
         public void KP_BlockSectionTable()
         {

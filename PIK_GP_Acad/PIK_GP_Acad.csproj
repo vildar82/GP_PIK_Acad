@@ -144,6 +144,11 @@
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
+    <Compile Include="Model\Parking\LineParking\LineParking.cs" />
+    <Compile Include="Model\Parking\LineParking\LineParkingService.cs" />
+    <Compile Include="Model\Parking\LineParking\LineParkingOptions.cs" />
+    <Compile Include="Model\Parking\LineParking\LineParkingData.cs" />
+    <Compile Include="Model\Parking\LineParking\LineParkingTable.cs" />
     <Compile Include="Model\Utils\PolylinePoints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -167,60 +172,54 @@
       <DependentUpon>FormIsolineOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\options.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_HorizontalElevation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_BlockSectionTable.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_BlockParking.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_Isoline.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_BlockSectionInsert.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP_BlockSectionContour.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_PolylineArrow.png" />
+    <None Include="Resources\GP_BlockSectionInsert.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionTable.png" />
+    <None Include="Resources\GP_BlockSectionTable.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionInsert.png" />
+    <None Include="Resources\GP_HorizontalElevation.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineCross.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ГП_Штамп_Форма3_ПИК.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ГП_Рамка-ПИК.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ГП_Рамка_Буклет.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP_KP_BlockStampForm3.PNG" />
+    <None Include="Resources\GP_Isoline.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP_KP_BlockFrame.PNG" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\GP_KP_BlockSectionInsert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_KP_BlockSectionTable.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\GP_KP_BlockStampBooklet.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_KP_BlockStampForm3.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_PolylineArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-LineCross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-LineParking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-LineParkingTable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\options.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
