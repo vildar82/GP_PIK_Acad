@@ -144,6 +144,7 @@
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
+    <Compile Include="Model\Utils\PolylinePoints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

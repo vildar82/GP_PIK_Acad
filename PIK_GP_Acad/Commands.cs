@@ -42,6 +42,7 @@ namespace PIK_GP_Acad
         private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
         private const string CommandPolylineArrow = "GP_PolylineArrow";
         private const string CommandPolylineCross = "GP_PolylineCross";
+        private const string CommandPolylinePoints = "GP_PolylinePoints";
         private const string Command_KP_BlockSectionTable = "GP_KP_BlockSectionTable";
         private const string Command_KP_BlockSectionInsert = "GP_KP_BlockSectionInsert";
         private const string Command_KP_BlockFrame = "GP_KP_BlockFrame";
@@ -133,10 +134,7 @@ namespace PIK_GP_Acad
                 Isolines.Isoline.Start();
             });            
         }
-
-        /// <summary>
-        /// Изменение уровней горизонталей
-        /// </summary>        
+           
         [CommandMethod(Group, CommandHorizontalElevationStep, CommandFlags.Modal)]
         public void HorizontalElevationStep()
         {
@@ -146,10 +144,7 @@ namespace PIK_GP_Acad
                 horElev.Stepping();                
             });
         }
-
-        /// <summary>
-        /// Изменение уровней горизонталей
-        /// </summary>        
+             
         [CommandMethod(Group, CommandPolylineArrow, CommandFlags.Modal)]
         public void PolylineArrow()
         {
@@ -160,10 +155,27 @@ namespace PIK_GP_Acad
                 Draw.Polyline(lineType: "ГП-стрелка3");
             });
         }
+             
+        [CommandMethod(Group, CommandPolylineCross, CommandFlags.Modal)]
+        public void PolylineCross()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-крест", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-крест");
+            });
+        }
 
-        /// <summary>
-        /// Концепция (КП). Подсчет таблицы блок-секций
-        /// </summary>        
+        [CommandMethod(Group, CommandPolylinePoints, CommandFlags.Modal)]
+        public void PolylinePoints()
+        {
+            CommandStart.Start(doc =>
+            {
+                Utils.PolylinePoints.CreatePoints();
+            });
+        }
+
         [CommandMethod(Group, Command_KP_BlockSectionTable, CommandFlags.Modal)]
         public void KP_BlockSectionTable()
         {
