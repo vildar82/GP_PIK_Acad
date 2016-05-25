@@ -58,7 +58,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Спецификация Блок-Секций",Properties.Resources.GP_BlockSectionTable, CommandBlockSectionTable, "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
                 new PaletteCommand("Контур Блок-Секций",Properties.Resources.GP_BlockSectionContour, CommandBlockSectionContour, "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
                 new PaletteCommand("Блок линии парковки",Properties.Resources.GP_LineParking,CommandInsertBlockParking,"Вставка блока линии парковки"),
-                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"выбор блоков линейных парковок и вставка таблицы"),
+                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"Выбор блоков линейных парковок и вставка таблицы"),
                 new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevation, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
@@ -242,6 +242,17 @@ namespace PIK_GP_Acad
             // Передача списка команд для палитры ПИК в AcadLib.  
             InitCommands();          
             PaletteSetCommands.InitPalette(CommandsPalette);
+
+            // Загрузка сборки Civil
+            string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
+            if (File.Exists(fileCivilDll))
+            {
+                try
+                {
+                    Assembly.LoadFrom(fileCivilDll);
+                }
+                catch { }
+            }
         }
 
         public void Terminate()
