@@ -115,6 +115,8 @@
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
+    <Compile Include="Model\Parking\AreaParking\AreaParking.cs" />
+    <Compile Include="Model\Parking\AreaParking\AreaParkingservice.cs" />
     <Compile Include="Model\Parking\LineParking\LineParking.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingService.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingOptions.cs" />

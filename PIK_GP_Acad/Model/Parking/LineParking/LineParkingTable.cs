@@ -12,13 +12,19 @@ namespace PIK_GP_Acad.Parking
 {
     public class LineParkingTable
     {
+        LineParkingService service;
         LineParkingData data;
         Database db;
 
-        public void CreateTable(LineParkingData data)
+        public LineParkingTable(LineParkingService service)
         {
-            db = LineParkingService.Db;
-            this.data = data;
+            this.service = service;
+            db = service.Db;
+            this.data = service.Data;
+        }
+
+        public void CreateTable()        {
+            
             Table table = getTable();
             InsertTable(table);
         }
@@ -71,7 +77,7 @@ namespace PIK_GP_Acad.Parking
         // вставка
         private void InsertTable(Table table)
         {
-            Editor ed = LineParkingService.Doc.Editor;
+            Editor ed = service.Doc.Editor;
             TableJig jigTable = new TableJig(table, 1 / db.Cannoscale.Scale, "Вставка таблицы блок-секций");
             if (ed.Drag(jigTable).Status == PromptStatus.OK)
             {

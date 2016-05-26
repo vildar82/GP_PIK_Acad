@@ -37,7 +37,7 @@ namespace PIK_GP_Acad
         private const string CommandBlockSectionInsert = "GP_BlockSectionInsert";
         private const string CommandBlockSectionTable = "GP_BlockSectionTable";
         private const string CommandBlockSectionContour = "GP_BlockSectionContour";
-        private const string CommandInsertBlockParking = "GP_InsertBlockParking";
+        private const string CommandInsertBlockLineParking = "GP_InsertBlockLineParking";
         private const string CommandLineParkingCalc = "GP_LineParkingCalc";        
         private const string CommandIsoline = "GP_Isoline";
         private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
@@ -57,8 +57,8 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Блоки Блок-Секций", Properties.Resources.GP_BlockSectionInsert,CommandBlockSectionInsert,"Вставка блока Блок-Секции из списка.", GroupBS),
                 new PaletteCommand("Спецификация Блок-Секций",Properties.Resources.GP_BlockSectionTable, CommandBlockSectionTable, "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
                 new PaletteCommand("Контур Блок-Секций",Properties.Resources.GP_BlockSectionContour, CommandBlockSectionContour, "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
-                new PaletteCommand("Блок линии парковки",Properties.Resources.GP_LineParking,CommandInsertBlockParking,"Вставка блока линии парковки"),
-                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"Выбор блоков линейных парковок и вставка таблицы"),
+                new PaletteCommand("Блок линии парковки",Properties.Resources.GP_LineParking,CommandInsertBlockLineParking,"Вставка блока линии парковки"),
+                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"Выбор блоков линейных парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevation, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
@@ -119,21 +119,26 @@ namespace PIK_GP_Acad
             });               
         }        
 
-        [CommandMethod(Group, CommandInsertBlockParking, CommandFlags.Modal)]        
+        [CommandMethod(Group, CommandInsertBlockLineParking, CommandFlags.Modal)]        
         public void InsertBlockParking()
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("ГП_Линия-Парковки", doc);
+                List<AcadLib.Blocks.Property> props = new List<AcadLib.Blocks.Property>
+                {
+                    new AcadLib.Blocks.Property ("Длина", 15d)
+                };
+                InsertBlock.Insert("ГП_Линия-Парковки", doc, props);
             });            
         }
 
-        [CommandMethod(Group, CommandLineParkingCalc, CommandFlags.Modal)]
+        [CommandMethod(Group, CommandLineParkingCalc, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
         public void LineParkingCalc()
         {
             CommandStart.Start(doc =>
             {
-                Parking.LineParkingService.CalcAndTable();
+                Parking.LineParkingService lps = new Parking.LineParkingService();
+                lps.CalcAndTable();
             });
         }
 
