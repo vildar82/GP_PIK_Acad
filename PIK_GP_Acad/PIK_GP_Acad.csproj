@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B65CA79F-8F76-441E-A587-0BDFE43614B2}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PIK_GP_Acad</RootNamespace>
@@ -56,11 +57,13 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -116,13 +119,18 @@
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
     <Compile Include="Model\Parking\AreaParking\AreaParking.cs" />
-    <Compile Include="Model\Parking\AreaParking\AreaParkingservice.cs" />
+    <Compile Include="Model\Parking\AreaParking\AreaParkingService.cs" />
+    <Compile Include="Model\Parking\AreaParking\FormAreaParking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\Parking\AreaParking\FormAreaParking.Designer.cs">
+      <DependentUpon>FormAreaParking.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\Parking\LineParking\LineParking.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingService.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingOptions.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingData.cs" />
     <Compile Include="Model\Parking\LineParking\LineParkingTable.cs" />
-    <Compile Include="Model\Utils\PolylinePoints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -143,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Model\Isolines\FormIsolineOptions.resx">
       <DependentUpon>FormIsolineOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Model\Parking\AreaParking\FormAreaParking.resx">
+      <DependentUpon>FormAreaParking.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -193,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\options.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KP_DOO.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

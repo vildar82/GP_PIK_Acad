@@ -19,6 +19,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using PIK_GP_Acad.Model.HorizontalElevation;
+using PIK_GP_Acad.Properties;
 
 [assembly: CommandClass(typeof(PIK_GP_Acad.Commands))]
 [assembly: ExtensionApplication(typeof(PIK_GP_Acad.Commands))]
@@ -32,42 +33,32 @@ namespace PIK_GP_Acad
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
         public const string GroupKP = "Концепция";
-        public const string GroupStamp = "Штамп";
-        // Комманды
-        private const string CommandBlockSectionInsert = "GP_BlockSectionInsert";
-        private const string CommandBlockSectionTable = "GP_BlockSectionTable";
-        private const string CommandBlockSectionContour = "GP_BlockSectionContour";
-        private const string CommandInsertBlockLineParking = "GP_InsertBlockLineParking";
-        private const string CommandLineParkingCalc = "GP_LineParkingCalc";        
-        private const string CommandIsoline = "GP_Isoline";
-        private const string CommandHorizontalElevationStep = "GP_HorizontalElevationStep";
-        private const string CommandPolylineArrow = "GP_PolylineArrow";
-        private const string CommandPolylineCross = "GP_PolylineCross";
-        private const string CommandPolylinePoints = "GP_PolylinePoints";
-        private const string Command_KP_BlockSectionTable = "GP_KP_BlockSectionTable";
-        private const string Command_KP_BlockSectionInsert = "GP_KP_BlockSectionInsert";
-        private const string Command_KP_BlockFrame = "GP_KP_BlockFrame";
-        private const string Command_KP_BlockStampForm3 = "GP_KP_BlockStampForm3";
-        private const string Command_KP_BlockStampBooklet = "GP_KP_BlockStampBooklet";
+        public const string GroupStamp = "Штамп";        
 
         public void InitCommands()
-        {
+        {            
             CommandsPalette = new List<IPaletteCommand>()
             {
-                new PaletteCommand("Блоки Блок-Секций", Properties.Resources.GP_BlockSectionInsert,CommandBlockSectionInsert,"Вставка блока Блок-Секции из списка.", GroupBS),
-                new PaletteCommand("Спецификация Блок-Секций",Properties.Resources.GP_BlockSectionTable, CommandBlockSectionTable, "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
-                new PaletteCommand("Контур Блок-Секций",Properties.Resources.GP_BlockSectionContour, CommandBlockSectionContour, "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
-                new PaletteCommand("Блок линии парковки",Properties.Resources.GP_LineParking,CommandInsertBlockLineParking,"Вставка блока линии парковки"),
-                new PaletteCommand("Спецификация линейных парковок",Properties.Resources.GP_LineParkingTable,CommandLineParkingCalc,"Выбор блоков линейных парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
-                new PaletteCommand("Бергштрих",Properties.Resources.GP_Isoline, CommandIsoline, "Включение одиночных бергштрихов для линий и полилиний."),
-                new PaletteCommand("Уровни горизонталей",Properties.Resources.GP_HorizontalElevation, CommandHorizontalElevationStep, "Установка уровней для полилиний горизонталей с заданным шагом."),
-                new PaletteCommand("Линия со стрелками",Properties.Resources.GP_PolylineArrow, CommandPolylineArrow, "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
-                new PaletteCommand("Линия с крестиками",Properties.Resources.GP_LineCross, CommandPolylineCross, "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
-                new PaletteCommand("Вставка блока блок-секции. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionInsert, Command_KP_BlockSectionInsert, "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
-                new PaletteCommand("Спецификация блок-секций. Раздел Концепция.",Properties.Resources.GP_KP_BlockSectionTable, Command_KP_BlockSectionTable, "Таблица подсчета блок-секции концепции.", GroupKP),
-                new PaletteCommand("Рамка.",Properties.Resources.GP_KP_BlockFrame, Command_KP_BlockFrame, "Вставка блока рамки.", GroupStamp),
-                new PaletteCommand("Штамп. Форма 3. Основной комплект.",Properties.Resources.GP_KP_BlockStampForm3, Command_KP_BlockStampForm3, "Вставка блока штампа по форме 3 - Основной комплект.", GroupStamp),
-                new PaletteCommand("Рамка для буклета.",Properties.Resources.GP_KP_BlockStampBooklet, Command_KP_BlockStampBooklet, "Вставка блока рамки буклета.", GroupStamp),
+                // Главная
+                new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
+                new PaletteCommand("Спецификация линейных парковок",Resources.GP_LineParkingTable,nameof(GP_LineParkingCalc),"Выбор блоков линейных парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
+                new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
+                new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
+                new PaletteCommand("Линия со стрелками",Resources.GP_PolylineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Линия с крестиками",Resources.GP_LineCross, nameof(GP_PolylineCross), "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                // БС
+                new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
+                new PaletteCommand("Спецификация Блок-Секций",Resources.GP_BlockSectionTable, nameof(GP_BlockSectionTable), "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
+                new PaletteCommand("Контур Блок-Секций",Resources.GP_BlockSectionContour, nameof(GP_BlockSectionContour), "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
+                // Концепция
+                new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
+                new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Таблица подсчета блок-секции концепции.", GroupKP),
+                new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
+                new PaletteCommand("Расчет свободной парковки",Resources.KP_DOO, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
+                // Штамп
+                new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupStamp),
+                new PaletteCommand("Штамп. Основной комплект.",Resources.GP_KP_BlockStampForm3, nameof(GP_BlockStampForm3), "Вставка блока штампа по форме 3 - Основной комплект.", GroupStamp),
+                new PaletteCommand("Рамка для буклета.",Resources.GP_KP_BlockStampBooklet, nameof(GP_BlockStampBooklet), "Вставка блока рамки буклета.", GroupStamp)
             };
         }
 
@@ -80,8 +71,82 @@ namespace PIK_GP_Acad
             });
         }
 
-        [CommandMethod(Group, CommandBlockSectionInsert, CommandFlags.Modal)]        
-        public void BlockSectionInsert()
+
+        //
+        // Главная
+        //
+
+        [CommandMethod(Group, nameof(GP_InsertBlockLineParking), CommandFlags.Modal)]
+        public void GP_InsertBlockLineParking()
+        {
+            CommandStart.Start(doc =>
+            {
+                List<AcadLib.Blocks.Property> props = new List<AcadLib.Blocks.Property>
+                {
+                    new AcadLib.Blocks.Property ("Длина", 15d)
+                };
+                InsertBlock.Insert("ГП_Линия-Парковки", doc, props);
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_LineParkingCalc), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        public void GP_LineParkingCalc()
+        {
+            CommandStart.Start(doc =>
+            {
+                Parking.LineParkingService lps = new Parking.LineParkingService();
+                lps.CalcAndTable();
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_Isoline), CommandFlags.Modal)]
+        public void GP_Isoline()
+        {
+            CommandStart.Start(doc =>
+            {
+                Isolines.Isoline.Start();
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_HorizontalElevationStep), CommandFlags.Modal)]
+        public void GP_HorizontalElevationStep()
+        {
+            CommandStart.Start(doc =>
+            {
+                HorizontalElevation horElev = new HorizontalElevation();
+                horElev.Stepping();
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineArrow), CommandFlags.Modal)]
+        public void GP_PolylineArrow()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-стрелка3", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-стрелка3");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineCross), CommandFlags.Modal)]
+        public void GP_PolylineCross()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-крест", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-крест");
+            });
+        }
+
+
+        //
+        // БС
+        //
+
+        [CommandMethod(Group, nameof(GP_BlockSectionInsert), CommandFlags.Modal)]        
+        public void GP_BlockSectionInsert()
         {
             CommandStart.Start(doc =>
             {
@@ -93,12 +158,9 @@ namespace PIK_GP_Acad
                         n.StartsWith(BlockSection.Settings.Default.BlockSectionPrefix));
             });
         }
-
-        /// <summary>
-        /// Спецификация блок-секций
-        /// </summary>
-        [CommandMethod(Group, CommandBlockSectionTable, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
-        public void BlockSectionTable()
+        
+        [CommandMethod(Group, nameof(GP_BlockSectionTable), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
+        public void GP_BlockSectionTable()
         {
             CommandStart.Start(doc =>
             {                
@@ -106,102 +168,22 @@ namespace PIK_GP_Acad
                 ss.CalcSections();                
             });            
         }
-
-        /// <summary>
-        /// Добавление полилиний контуров у блоков Блок-Секций
-        /// </summary>
-        [CommandMethod(Group, CommandBlockSectionContour, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
-        public void BlockSectionContour()
+        
+        [CommandMethod(Group, nameof(GP_BlockSectionContour), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
+        public void GP_BlockSectionContour()
         {
             CommandStart.Start(doc =>
             {                
                 BlockSection.BlockSectionContours.CreateContour(doc);                
             });               
-        }        
-
-        [CommandMethod(Group, CommandInsertBlockLineParking, CommandFlags.Modal)]        
-        public void InsertBlockParking()
-        {
-            CommandStart.Start(doc =>
-            {
-                List<AcadLib.Blocks.Property> props = new List<AcadLib.Blocks.Property>
-                {
-                    new AcadLib.Blocks.Property ("Длина", 15d)
-                };
-                InsertBlock.Insert("ГП_Линия-Парковки", doc, props);
-            });            
         }
 
-        [CommandMethod(Group, CommandLineParkingCalc, CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
-        public void LineParkingCalc()
-        {
-            CommandStart.Start(doc =>
-            {
-                Parking.LineParkingService lps = new Parking.LineParkingService();
-                lps.CalcAndTable();
-            });
-        }
 
-        [CommandMethod(Group, CommandIsoline, CommandFlags.Modal)]        
-        public void Isoline()
-        {
-            CommandStart.Start(doc =>
-            {
-                Isolines.Isoline.Start();
-            });            
-        }
-           
-        [CommandMethod(Group, CommandHorizontalElevationStep, CommandFlags.Modal)]
-        public void HorizontalElevationStep()
-        {
-            CommandStart.Start(doc =>
-            {                
-                HorizontalElevation horElev = new HorizontalElevation();
-                horElev.Stepping();                
-            });
-        }
-             
-        [CommandMethod(Group, CommandPolylineArrow, CommandFlags.Modal)]
-        public void PolylineArrow()
-        {
-            CommandStart.Start(doc =>
-            {
-                Database db = doc.Database;
-                db.LoadLineTypePIK("ГП-стрелка3", "acadtopo.lin");
-                Draw.Polyline(lineType: "ГП-стрелка3");
-            });
-        }
-             
-        [CommandMethod(Group, CommandPolylineCross, CommandFlags.Modal)]
-        public void PolylineCross()
-        {
-            CommandStart.Start(doc =>
-            {
-                Database db = doc.Database;
-                db.LoadLineTypePIK("ГП-крест", "acadtopo.lin");
-                Draw.Polyline(lineType: "ГП-крест");
-            });
-        }
+        //
+        // Концепция
+        //
 
-        [CommandMethod(Group, CommandPolylinePoints, CommandFlags.Modal)]
-        public void PolylinePoints()
-        {
-            CommandStart.Start(doc =>
-            {
-                Utils.PolylinePoints.CreatePoints();
-            });
-        }
-        
-        [CommandMethod(Group, Command_KP_BlockSectionTable, CommandFlags.Modal)]
-        public void KP_BlockSectionTable()
-        {
-            CommandStart.Start(doc =>
-            {                
-                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
-            });
-        }
-
-        [CommandMethod(Group, Command_KP_BlockSectionInsert, CommandFlags.Modal)]
+        [CommandMethod(Group, nameof(KP_BlockSectionInsert), CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
         {
             CommandStart.Start(doc =>
@@ -215,17 +197,50 @@ namespace PIK_GP_Acad
             });
         }
 
-        [CommandMethod(Group, Command_KP_BlockFrame, CommandFlags.Modal)]
-        public void KP_BlockFrame()
+        [CommandMethod(Group, nameof(KP_BlockSectionTable), CommandFlags.Modal)]
+        public void KP_BlockSectionTable()
+        {
+            CommandStart.Start(doc =>
+            {                
+                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
+            });
+        }        
+
+        [CommandMethod(Group, nameof(KP_BlockDOOInsert), CommandFlags.Modal)]
+        public void KP_BlockDOOInsert()
+        {
+            CommandStart.Start(doc =>
+            {                
+                InsertBlock.Insert("КП_ДОО", doc);
+            });
+        }
+
+        [CommandMethod(Group, nameof(KP_AreaParking), CommandFlags.Modal)]
+        public void KP_AreaParking()
+        {
+            CommandStart.Start(doc =>
+            {
+                Parking.AreaParkingService aps = new Parking.AreaParkingService();
+                aps.Calc();
+            });
+        }
+
+
+        //
+        // Штамп
+        //
+
+        [CommandMethod(Group, nameof(GP_BlockFrame), CommandFlags.Modal)]
+        public void GP_BlockFrame()
         {
             CommandStart.Start(doc =>
             {
                 InsertBlock.Insert("ГП_Рамка-ПИК", doc);
             });
-        }
+        }        
 
-        [CommandMethod(Group, Command_KP_BlockStampForm3, CommandFlags.Modal)]
-        public void KP_BlockStampForm3()
+        [CommandMethod(Group, nameof(GP_BlockStampForm3), CommandFlags.Modal)]
+        public void GP_BlockStampForm3()
         {
             CommandStart.Start(doc =>
             {
@@ -233,8 +248,8 @@ namespace PIK_GP_Acad
             });
         }
 
-        [CommandMethod(Group, Command_KP_BlockStampBooklet, CommandFlags.Modal)]
-        public void KP_BlockStampBooklet()
+        [CommandMethod(Group, nameof(GP_BlockStampBooklet), CommandFlags.Modal)]
+        public void GP_BlockStampBooklet()
         {
             CommandStart.Start(doc =>
             {
@@ -259,9 +274,10 @@ namespace PIK_GP_Acad
                 catch { }
             }
         }
-
+        
         public void Terminate()
-        {            
+        {
+            
         }
-    }
+    }        
 }
