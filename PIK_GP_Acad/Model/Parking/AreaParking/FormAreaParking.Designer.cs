@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.labelFloors = new System.Windows.Forms.Label();
             this.textBoxFloors = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonInsertText = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxArea = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,25 +56,26 @@
             this.textBoxFloors.TabIndex = 2;
             this.textBoxFloors.TextChanged += new System.EventHandler(this.textBoxFloors_TextChanged);
             // 
-            // button1
+            // buttonInsertText
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(135, 128);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Текст";
-            this.toolTip1.SetToolTip(this.button1, "Вставка текста машиномест");
-            this.button1.UseVisualStyleBackColor = true;
+            this.buttonInsertText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInsertText.Location = new System.Drawing.Point(135, 128);
+            this.buttonInsertText.Name = "buttonInsertText";
+            this.buttonInsertText.Size = new System.Drawing.Size(75, 23);
+            this.buttonInsertText.TabIndex = 3;
+            this.buttonInsertText.Text = "Текст";
+            this.toolTip1.SetToolTip(this.buttonInsertText, "Вставка текста машиномест");
+            this.buttonInsertText.UseVisualStyleBackColor = true;
+            this.buttonInsertText.Click += new System.EventHandler(this.buttonInsertText_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(20, 53);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.Size = new System.Drawing.Size(74, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Площадь";
+            this.label1.Text = "Площадь, м2";
             // 
             // textBoxArea
             // 
@@ -108,15 +109,21 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(222, 163);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonInsertText);
             this.Controls.Add(this.textBoxPlaces);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxArea);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxFloors);
             this.Controls.Add(this.labelFloors);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormAreaParking";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Свободная парковка";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,7 +133,7 @@
 
         private System.Windows.Forms.Label labelFloors;
         private System.Windows.Forms.TextBox textBoxFloors;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonInsertText;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBoxArea;

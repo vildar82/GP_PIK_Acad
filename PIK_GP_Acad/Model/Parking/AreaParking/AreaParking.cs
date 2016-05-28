@@ -8,6 +8,8 @@ using AcadLib;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using AcadLib.Layers;
+using Autodesk.AutoCAD.Geometry;
 
 namespace PIK_GP_Acad.Parking
 {
@@ -18,7 +20,7 @@ namespace PIK_GP_Acad.Parking
     {
         const string extInnerDictName = "GP_AreaParking";
         const string recFloors = "Floors";
-        AreaParkingService service;
+        public AreaParkingService Service { get; private set; }
         ObjectId idPl; 
         
         /// <summary>
@@ -36,12 +38,13 @@ namespace PIK_GP_Acad.Parking
         
 
         public AreaParking (ObjectId idPolyline, AreaParkingService service)
-        {             
+        {
+            Service = service;
             using (var t = service.Db.TransactionManager.StartTransaction())
             {
                 idPl = idPolyline;
                 var pl = idPl.GetObject(OpenMode.ForRead, false, true) as Polyline;
-                Area = pl.Area;
+                Area = Math.Round(pl.Area, 2);
 
                 Floors = LoadFloors(pl);
 
@@ -49,6 +52,42 @@ namespace PIK_GP_Acad.Parking
             }
         }
 
+        /// <summary>
+        /// Вставка текста
+        /// </summary>
+        public void InsertText()
+        {            
+            using (var t = Service.Db.TransactionManager.StartTransaction())
+            {
+                // Вставка текста
+                DBText text = new DBText();
+                text.SetDatabaseDefaults();
+                text.Height = 2.5 * AcadLib.Scale.ScaleHelper.GetCurrentAnnoScale(Service.Db);
+
+                //Слой                
+                text.LayerId = ParkingHelper.LayerTextId;
+
+                // стиль текста
+                text.TextStyleId = Service.Db.GetTextStylePIK();
+
+                text.TextString = $"Мм={Places}";
+
+                var cs = Service.Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+                cs.AppendEntity(text);
+                t.AddNewlyCreatedDBObject(text, true);
+
+                if (AcadLib.Jigs.DragSel.Drag(Service.Ed, new[] { text.Id }, Point3d.Origin))
+                {
+                    SaveFloors();
+                }
+                else
+                {
+                    text.Erase();
+                }
+                t.Commit();
+            }
+        }
+        
         public void Calc()
         {
             if (Area == 0)
@@ -61,9 +100,21 @@ namespace PIK_GP_Acad.Parking
                 Places = 0;
                 return;
             }
-            Places = Area * Floors / 40;
-        }                                 
-            
+            Places = Math.Round ( Area * Floors / 40, 1);
+        }
+
+        private void SaveFloors()
+        {
+            if (Floors != 0 && Floors != 1)
+            {
+                var pl = idPl.GetObject(OpenMode.ForWrite) as Polyline;
+                using (AcadLib.XData.EntDictExt extD = new AcadLib.XData.EntDictExt(pl, extInnerDictName))
+                {
+                    extD.Save(recFloors, Floors);
+                }
+            }
+        }
+
         private int LoadFloors(Polyline pl)
         {
             int res = 1;

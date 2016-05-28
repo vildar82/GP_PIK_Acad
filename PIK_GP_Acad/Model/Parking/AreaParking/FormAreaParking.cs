@@ -17,10 +17,15 @@ namespace PIK_GP_Acad.Parking
         public FormAreaParking(AreaParking data)
         {
             InitializeComponent();
-            this.data = data;
+            this.data = data;           
                         
             textBoxArea.DataBindings.Add("Text", this.data, nameof(data.Area));
-            textBoxPlaces.DataBindings.Add("Text", this.data, nameof(data.Places));
+
+            var binding = textBoxPlaces.DataBindings.Add("Text", this.data, nameof(data.Places));
+            binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
+
+            binding = textBoxFloors.DataBindings.Add("Text", this.data, nameof(data.Floors));
+            binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
         }
 
         private void textBoxFloors_TextChanged(object sender, EventArgs e)
@@ -29,7 +34,15 @@ namespace PIK_GP_Acad.Parking
             if (int.TryParse(textBoxFloors.Text, out floors))
             {
                 data.Floors = floors;
-                data.Calc();
+                data.Calc();                
+            }
+        }
+
+        private void buttonInsertText_Click(object sender, EventArgs e)
+        {            
+            using (data.Service.Ed.StartUserInteraction(this.Handle))
+            {
+                data.InsertText();
             }
         }
     }

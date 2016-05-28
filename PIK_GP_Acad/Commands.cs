@@ -54,7 +54,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Таблица подсчета блок-секции концепции.", GroupKP),
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
-                new PaletteCommand("Расчет свободной парковки",Resources.KP_DOO, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
+                new PaletteCommand("Расчет свободной парковки", null, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
                 // Штамп
                 new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupStamp),
                 new PaletteCommand("Штамп. Основной комплект.",Resources.GP_KP_BlockStampForm3, nameof(GP_BlockStampForm3), "Вставка блока штампа по форме 3 - Основной комплект.", GroupStamp),

@@ -70,11 +70,7 @@ namespace PIK_GP_Acad.Parking
                     // Вставка текста
                     DBText text = new DBText();
                     text.SetDatabaseDefaults();
-                    text.Height = 2.5;
-
-                    //Слой
-                    LayerInfo layer = new LayerInfo("ГП_Парковки_Текст");
-                    var layerId = layer.CheckLayerState();
+                    text.Height = 2.5 * AcadLib.Scale.ScaleHelper.GetCurrentAnnoScale(Db);                    
 
                     // стиль текста
                     text.TextStyleId = Db.GetTextStylePIK();
@@ -89,13 +85,13 @@ namespace PIK_GP_Acad.Parking
                     }
                     Point3d ptText = Point3d.Origin;
                     text.Position = ptText;
-                    text.LayerId = layerId;
+                    text.LayerId = ParkingHelper.LayerTextId;
 
                     var ms = Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                     ms.AppendEntity(text);
                     t.AddNewlyCreatedDBObject(text, true);
 
-                    PromptSelectionResult prs = Ed.SelectLast();
+                    PromptSelectionResult prs = Ed.SelectLast();                    
                     if (prs.Status == PromptStatus.OK)
                     {
                         PromptPointResult ppr = Ed.Drag(prs.Value, "\nТочка вставки текста:", (Point3d pt, ref Matrix3d mat) =>
@@ -105,7 +101,11 @@ namespace PIK_GP_Acad.Parking
                             text.TransformBy(mat);
                             ptText = pt;
                             return SamplerStatus.OK;
-                        });                        
+                        });    
+                        if (ppr.Status != PromptStatus.OK)
+                        {
+                            text.Erase();
+                        }
                     }                    
                     t.Commit();
                 }                
