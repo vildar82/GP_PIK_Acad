@@ -70,7 +70,7 @@ namespace PIK_GP_Acad.Parking
                 // стиль текста
                 text.TextStyleId = Service.Db.GetTextStylePIK();
 
-                text.TextString = $"Мм={Places}";
+                text.TextString = $"М/м={Places}";
 
                 var cs = Service.Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                 cs.AppendEntity(text);

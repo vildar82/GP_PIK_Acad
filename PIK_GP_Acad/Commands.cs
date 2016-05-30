@@ -54,6 +54,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Таблица подсчета блок-секции концепции.", GroupKP),
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
+                new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
                 new PaletteCommand("Расчет свободной парковки", Resources.KP_KP_AreaParking, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
                 // Штамп
                 new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupStamp),
@@ -212,6 +213,15 @@ namespace PIK_GP_Acad
             CommandStart.Start(doc =>
             {                
                 InsertBlock.Insert("КП_ДОО", doc);
+            });
+        }
+
+        [CommandMethod(Group, nameof(KP_BlockSchoolInsert), CommandFlags.Modal)]
+        public void KP_BlockSchoolInsert()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert("КП_СОШ", doc);
             });
         }
 

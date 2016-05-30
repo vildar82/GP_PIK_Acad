@@ -77,11 +77,11 @@ namespace PIK_GP_Acad.Parking
 
                     if (Data.Places != 0)
                     {
-                        text.TextString = $"Мм={Data.Places}";
+                        text.TextString = $"М/м={Data.Places}";
                     }
                     if (Data.InvalidPlaces != 0)
                     {
-                        text.TextString += $"{(Data.Places == 0? "": ";")} Мм инв.={Data.InvalidPlaces}";
+                        text.TextString += $"{(Data.Places == 0? "": ";")} М/м инв.={Data.InvalidPlaces}";
                     }
                     Point3d ptText = Point3d.Origin;
                     text.Position = ptText;
