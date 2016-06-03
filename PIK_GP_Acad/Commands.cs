@@ -53,6 +53,7 @@ namespace PIK_GP_Acad
                 // Концепция
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Таблица подсчета блок-секции концепции.", GroupKP),
+                new PaletteCommand("Спецификация блок-секций PIK1",Resources.GP_BlockSectionTable, nameof(KP_BlockSectionTableFromGP), "Таблица подсчета блок-секции PIK1.", GroupKP),                
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
                 new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
                 new PaletteCommand("Расчет свободной парковки", Resources.KP_KP_AreaParking, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
@@ -205,7 +206,17 @@ namespace PIK_GP_Acad
             {                
                 KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
             });
-        }        
+        }
+
+        [CommandMethod(Group, nameof(KP_BlockSectionTableFromGP), CommandFlags.Modal)]
+        public void KP_BlockSectionTableFromGP()
+        {
+            CommandStart.Start(doc =>
+            {
+                BlockSection.SectionService ss = new BlockSection.SectionService(doc);
+                ss.CalcSectionsForKP();
+            });
+        }
 
         [CommandMethod(Group, nameof(KP_BlockDOOInsert), CommandFlags.Modal)]
         public void KP_BlockDOOInsert()

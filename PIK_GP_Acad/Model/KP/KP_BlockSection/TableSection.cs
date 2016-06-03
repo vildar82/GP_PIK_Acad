@@ -60,7 +60,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             table.Cells[1, 2].TextString = "Площадь ж.ф.";
 
             table.Cells[2, 0].TextString = "1 этаж";
-            table.Cells[3, 0].TextString = "Верхние этажи";
+            table.Cells[3, 0].TextString = "Типовые этажи";
             table.Cells[4, 0].TextString = "Итого";
             
             table.Cells[2, 1].TextString = dataSec.AreaFirstExternalWalls.ToString("0.00"); //"1 этаж"

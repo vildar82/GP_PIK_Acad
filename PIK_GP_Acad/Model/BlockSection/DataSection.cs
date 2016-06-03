@@ -17,6 +17,11 @@ namespace PIK_GP_Acad.BlockSection
         public double TotalAreaBKFN { get; private set; }
         public double Population { get; set; }
 
+        // КП
+        public double KP_GNS_BKFN { get; set; }
+        public double KP_GNS_Typical { get; set; }
+        public double KP_GNS_Total { get; set; }
+
         public DataSection(SectionService sectionService)
         {
             _service = sectionService;
@@ -39,7 +44,11 @@ namespace PIK_GP_Acad.BlockSection
                     types.Add(key, secType);
                 }
                 secType.AddSection(section);
+
+                KP_GNS_BKFN += section.AreaContour;
+                KP_GNS_Typical += section.AreaContour * (section.NumberFloor - 1);
             }
+            KP_GNS_Total = KP_GNS_BKFN + KP_GNS_Typical;
             SectionTypes = types.Values.ToList();
             SectionTypes.Sort();
 

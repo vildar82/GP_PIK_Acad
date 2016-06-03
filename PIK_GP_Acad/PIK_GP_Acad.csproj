@@ -86,6 +86,7 @@
     <Compile Include="Model\BlockSection\SectionType.cs" />
     <Compile Include="Model\BlockSection\SelectSection.cs" />
     <Compile Include="Model\BlockSection\Settings.cs" />
+    <Compile Include="Model\BlockSection\TableSectonKP.cs" />
     <Compile Include="Model\BlockSection\TableSecton.cs" />
     <Compile Include="Model\HorizontalElevation\FormHorizontalElevation.cs">
       <SubType>Form</SubType>

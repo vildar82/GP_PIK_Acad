@@ -21,6 +21,22 @@ namespace PIK_GP_Acad.BlockSection
         // Подсчет секций
         public void CalcSections()
         {
+            GetData();
+            // Построение таблицы
+            TableSecton tableSection = new TableSecton(this);
+            tableSection.CreateTable();
+        }        
+
+        public void CalcSectionsForKP()
+        {
+            GetData();
+            // Построение таблицы
+            TableSectonKP tableSection = new TableSectonKP(this);
+            tableSection.CreateTable();
+        }
+
+        private void GetData()
+        {
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 // Выбор блоков
@@ -44,12 +60,8 @@ namespace PIK_GP_Acad.BlockSection
                 // Подсчет площадей и типов блок-секций
                 DataSection = new DataSection(this);
                 DataSection.Calc();
-
-                // Построение таблицы
-                TableSecton tableSection = new TableSecton(this);
-                tableSection.CreateTable();
                 t.Commit();
-            }           
+            }
         }
     }
 }
