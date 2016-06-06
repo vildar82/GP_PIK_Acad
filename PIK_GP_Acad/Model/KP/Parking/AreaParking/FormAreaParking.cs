@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.KP.Parking
 {
     public partial class FormAreaParking : Form
     {
@@ -21,11 +21,15 @@ namespace PIK_GP_Acad.Parking
                         
             textBoxArea.DataBindings.Add("Text", this.data, nameof(data.Area));
 
+            BindingSource bs = new BindingSource();
+
             var binding = textBoxPlaces.DataBindings.Add("Text", this.data, nameof(data.Places));
-            binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
+            binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;            
 
             binding = textBoxFloors.DataBindings.Add("Text", this.data, nameof(data.Floors));
             binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
+
+            comboBoxType.SelectedIndex = 0;
         }
 
         private void textBoxFloors_TextChanged(object sender, EventArgs e)
@@ -45,5 +49,26 @@ namespace PIK_GP_Acad.Parking
                 data.InsertText();
             }
         }
+
+        private void comboBoxType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBoxType.Text)
+            {
+                case "Подземная":
+                    textBoxPlaceArea.Text = "40";
+                    data.PlaceArea = 40;
+                    break;
+                case "Надземная":
+                    textBoxPlaceArea.Text = "35";
+                    data.PlaceArea = 35;
+                    break;
+                default:
+                    textBoxPlaceArea.Text = "40";
+                    data.PlaceArea = 40;
+                    break;
+            }            
+            data.Calc();
+            textBoxPlaces.Text = data.Places.ToString();
+        }        
     }
 }

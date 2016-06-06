@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings_debug\Script\NET\ГП\</OutputPath>
+    <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -119,12 +119,12 @@
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
-    <Compile Include="Model\Parking\AreaParking\AreaParking.cs" />
-    <Compile Include="Model\Parking\AreaParking\AreaParkingService.cs" />
-    <Compile Include="Model\Parking\AreaParking\FormAreaParking.cs">
+    <Compile Include="Model\KP\Parking\AreaParking\AreaParking.cs" />
+    <Compile Include="Model\KP\Parking\AreaParking\AreaParkingService.cs" />
+    <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Model\Parking\AreaParking\FormAreaParking.Designer.cs">
+    <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.Designer.cs">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Parking\LineParking\LineParking.cs" />
@@ -154,7 +154,7 @@
     <EmbeddedResource Include="Model\Isolines\FormIsolineOptions.resx">
       <DependentUpon>FormIsolineOptions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Model\Parking\AreaParking\FormAreaParking.resx">
+    <EmbeddedResource Include="Model\KP\Parking\AreaParking\FormAreaParking.resx">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

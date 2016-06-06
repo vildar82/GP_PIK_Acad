@@ -10,8 +10,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AcadLib.Layers;
 using Autodesk.AutoCAD.Geometry;
+using PIK_GP_Acad.Parking;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.KP.Parking
 {
     /// <summary>
     /// Парковка свободной площади - по полилинии
@@ -20,13 +21,14 @@ namespace PIK_GP_Acad.Parking
     {
         const string extInnerDictName = "GP_AreaParking";
         const string recFloors = "Floors";
+        const string recPlaceArea = "placeArea";
         public AreaParkingService Service { get; private set; }
-        ObjectId idPl; 
-        
+        ObjectId idPl;
+
         /// <summary>
         /// Этажность парковки
         /// </summary>
-        public int Floors { get; set; }
+        public int Floors { get; set; } = 1;
         /// <summary>
         /// Площадь одного этажа
         /// </summary>
@@ -35,7 +37,10 @@ namespace PIK_GP_Acad.Parking
         /// Машиномест
         /// </summary>
         public double Places { get; set; }
-        
+        /// <summary>
+        /// Площадь одного парковочного места
+        /// </summary>
+        public double PlaceArea { get; set; } = 40;
 
         public AreaParking (ObjectId idPolyline, AreaParkingService service)
         {
@@ -44,10 +49,8 @@ namespace PIK_GP_Acad.Parking
             {
                 idPl = idPolyline;
                 var pl = idPl.GetObject(OpenMode.ForRead, false, true) as Polyline;
-                Area = Math.Round(pl.Area, 2);
-
-                Floors = LoadFloors(pl);
-
+                Area = Math.Round(pl.Area, 2);                
+                Load(pl);
                 t.Commit();
             }
         }
@@ -100,7 +103,7 @@ namespace PIK_GP_Acad.Parking
                 Places = 0;
                 return;
             }
-            Places = Math.Round ( Area * Floors / 40, 1);
+            Places = Math.Round ( Area * Floors / PlaceArea, 1);
         }
 
         private void SaveFloors()
@@ -111,22 +114,26 @@ namespace PIK_GP_Acad.Parking
                 using (AcadLib.XData.EntDictExt extD = new AcadLib.XData.EntDictExt(pl, extInnerDictName))
                 {
                     extD.Save(recFloors, Floors);
+                    extD.Save(recPlaceArea, PlaceArea);
                 }
             }
         }
 
-        private int LoadFloors(Polyline pl)
-        {
-            int res = 1;
+        private void Load(Polyline pl)
+        {            
             using (AcadLib.XData.EntDictExt extD = new AcadLib.XData.EntDictExt(pl, extInnerDictName))
-            {
+            {                 
                 var value = extD.Load<int>(recFloors);
                 if (value != 0)
                 {
-                    res = value;
+                    Floors = value;
                 }
-            }
-            return res;
+                var valuePlaceArea = extD.Load<double>(recPlaceArea);
+                if (valuePlaceArea != 0)
+                {
+                    PlaceArea = valuePlaceArea;
+                }
+            }            
         }        
     }
 }
