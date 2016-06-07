@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AcadLib.Layers;
 using Autodesk.AutoCAD.DatabaseServices;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.Parkings
 {
     public static class ParkingHelper
     {

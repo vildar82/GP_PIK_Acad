@@ -127,12 +127,14 @@
     <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.Designer.cs">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\Parking\LineParking\LineParking.cs" />
-    <Compile Include="Model\Parking\LineParking\LineParkingService.cs" />
-    <Compile Include="Model\Parking\LineParking\LineParkingOptions.cs" />
-    <Compile Include="Model\Parking\LineParking\LineParkingData.cs" />
-    <Compile Include="Model\Parking\LineParking\LineParkingTable.cs" />
-    <Compile Include="Model\Parking\ParkingHelper.cs" />
+    <Compile Include="Model\Parkings\Parking.cs" />
+    <Compile Include="Model\Parkings\Service\IParking.cs" />
+    <Compile Include="Model\Parkings\LineParking.cs" />
+    <Compile Include="Model\Parkings\Service\ParkingFactory.cs" />
+    <Compile Include="Model\Parkings\Service\ParkingService.cs" />
+    <Compile Include="Model\Parkings\Service\ParkingData.cs" />
+    <Compile Include="Model\Parkings\Service\ParkingTable.cs" />
+    <Compile Include="Model\Parkings\Service\ParkingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -215,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\KP_School.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-ParkingTable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP_Parking.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

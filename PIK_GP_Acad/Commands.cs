@@ -41,7 +41,8 @@ namespace PIK_GP_Acad
             {
                 // Главная
                 new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
-                new PaletteCommand("Спецификация линейных парковок",Resources.GP_LineParkingTable,nameof(GP_LineParkingCalc),"Выбор блоков линейных парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
+                new PaletteCommand("Блок парковки",Resources.GP_Parking,nameof(GP_InsertBlockParking),"Вставка блока парковки"),
+                new PaletteCommand("Спецификация линейных парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок (2 вида блока) и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Resources.GP_PolylineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
@@ -87,17 +88,26 @@ namespace PIK_GP_Acad
                 {
                     new AcadLib.Blocks.Property ("Длина", 15d)
                 };
-                InsertBlock.Insert("ГП_Линия-Парковки", doc, props);
+                InsertBlock.Insert(Parkings.LineParking.LineParkingBlockName, doc, props);
             });
         }
 
-        [CommandMethod(Group, nameof(GP_LineParkingCalc), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
-        public void GP_LineParkingCalc()
+        [CommandMethod(Group, nameof(GP_InsertBlockParking), CommandFlags.Modal)]
+        public void GP_InsertBlockParking()
+        {
+            CommandStart.Start(doc =>
+            {                
+                InsertBlock.Insert(Parkings.Parking.ParkingBlockName, doc);
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_ParkingCalc), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        public void GP_ParkingCalc()
         {
             CommandStart.Start(doc =>
             {
-                Parking.LineParkingService lps = new Parking.LineParkingService();
-                lps.CalcAndTable();
+                Parkings.ParkingService ps = new Parkings.ParkingService();
+                ps.CalcAndTable();
             });
         }
 

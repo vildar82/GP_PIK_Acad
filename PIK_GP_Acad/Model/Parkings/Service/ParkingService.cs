@@ -12,18 +12,17 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using AcadLib.Layers;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.Parkings
 {
     /// <summary>
     /// Линейные парковки
     /// </summary>
-    public class LineParkingService
+    public class ParkingService
     {
         public Document Doc { get; set; }
         public Database Db { get; set; }
-        public Editor Ed { get; set; }
-        public LineParkingOptions Options { get; set; }
-        public LineParkingData Data { get; set; }
+        public Editor Ed { get; set; }        
+        public ParkingData Data { get; set; }
         public bool IsTableOrText { get; set; }
 
         /// <summary>
@@ -33,13 +32,12 @@ namespace PIK_GP_Acad.Parking
         {
             Doc = Application.DocumentManager.MdiActiveDocument;
             Db = Doc.Database;
-            Ed = Doc.Editor;
-            Options = LineParkingOptions.Load();
+            Ed = Doc.Editor;            
 
             var parkings = Select();
             if (parkings.Count==0)
             {
-                Ed.WriteMessage($"\nБлоки линейных парковок не найдены.");
+                Ed.WriteMessage($"\nБлоки парковок не найдены.");
                 return;
             }
 
@@ -48,7 +46,7 @@ namespace PIK_GP_Acad.Parking
                 parking.Calc();            
 
             // Суммирование парковок
-            Data = new LineParkingData(parkings);
+            Data = new ParkingData(parkings);
             Data.Calc();
 
             if (Data.Places ==0 && Data.InvalidPlaces==0)
@@ -60,7 +58,7 @@ namespace PIK_GP_Acad.Parking
             // Вставка таблицы
             if (IsTableOrText)
             {
-                LineParkingTable table = new LineParkingTable(this);
+                ParkingTable table = new ParkingTable(this);
                 table.CreateTable();
             }
             else
@@ -75,14 +73,16 @@ namespace PIK_GP_Acad.Parking
                     // стиль текста
                     text.TextStyleId = Db.GetTextStylePIK();
 
+                    string mm = string.Empty;                        
                     if (Data.Places != 0)
                     {
-                        text.TextString = $"М/м={Data.Places}";
+                        mm = $"{Data.Places} м/м ";
                     }
                     if (Data.InvalidPlaces != 0)
                     {
-                        text.TextString += $"{(Data.Places == 0? "": ";")} М/м инв.={Data.InvalidPlaces}";
+                        mm += $"({Data.InvalidPlaces} ММГН)";
                     }
+                    text.TextString = mm;
                     Point3d ptText = Point3d.Origin;
                     text.Position = ptText;
                     text.LayerId = ParkingHelper.LayerTextId;
@@ -112,9 +112,9 @@ namespace PIK_GP_Acad.Parking
             }
         }
 
-        private List<LineParking> Select()
+        private List<IParking> Select()
         {
-            List<LineParking> parkings = new List<LineParking>();
+            List<IParking> parkings = new List<IParking>();
 
             IEnumerable ids = null;
             try
@@ -123,6 +123,7 @@ namespace PIK_GP_Acad.Parking
             }
             catch (ArgumentNullException)
             {                
+                // Выбрано ключевое слово!
             }            
 
             using (var t = Db.TransactionManager.StartTransaction())
@@ -141,24 +142,23 @@ namespace PIK_GP_Acad.Parking
                     if (blRef == null) continue;
 
                     var blName = blRef.GetEffectiveName();
-                    if (IsBlockLineParking(blName))
+
+                    var p = ParkingFactory.CreateParking(blRef, blName);
+                    
+                    var res = p.Define(blRef);
+                    if (res.Failure)
                     {
-                        LineParking lp = new LineParking();
-                        var res = lp.Define(blRef);
-                        if (res.Failure)
-                        {
-                            Inspector.AddError("Пропущен блок парковки с ошибками:" + res.Error,
-                                blRef, System.Drawing.SystemIcons.Error);
-                        }
-                        else
-                        {
-                            countBlParking++;
-                            parkings.Add(lp);
-                        }
+                        Inspector.AddError("Пропущен блок парковки с ошибками:" + res.Error,
+                            blRef, System.Drawing.SystemIcons.Error);
+                    }
+                    else
+                    {
+                        countBlParking++;
+                        parkings.Add(p);
                     }
                 }
                 t.Commit();
-                Doc.Editor.WriteMessage($"\nВыбрано блоков линейной парковки: {countBlParking}");
+                Doc.Editor.WriteMessage($"\nВыбрано блоков парковки: {countBlParking}");
             }
             return parkings;
         }
@@ -169,7 +169,7 @@ namespace PIK_GP_Acad.Parking
             var selOpt = new PromptSelectionOptions();
             selOpt.Keywords.Add("Table");
             var keys = selOpt.Keywords.GetDisplayString(true);
-            selOpt.MessageForAdding = "\nВыбор блоков линейных парковок: " + keys;
+            selOpt.MessageForAdding = "\nВыбор блоков парковок: " + keys;
             selOpt.MessageForRemoval = "\nИсключение блоков: " + keys;
 
             selOpt.KeywordInput += (o, e) =>
@@ -187,12 +187,6 @@ namespace PIK_GP_Acad.Parking
                 throw new Exception(AcadLib.General.CanceledByUser);
             }
             return ids;
-        }
-
-        private bool IsBlockLineParking(string blName)
-        {
-            return Regex.IsMatch(blName, Options.BlockNameLineParkingMatch, 
-                RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);            
-        }
+        }        
     }
 }

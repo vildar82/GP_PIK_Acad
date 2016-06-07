@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 using AcadLib;
 using Autodesk.AutoCAD.DatabaseServices;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.Parkings
 {
     /// <summary>
     /// Линия парковки
     /// </summary>
-    public class LineParking
+    public class LineParking : IParking
     {
+        public const string LineParkingBlockName = "ГП_Линия-Парковки";
+
         public ObjectId IdBlRef { get; set; }
         /// <summary>
         /// Ширина одного парковочного места
@@ -34,7 +36,7 @@ namespace PIK_GP_Acad.Parking
         /// <summary>
         /// Кол машиномест в парковке
         /// </summary>
-        public double Places { get; set; }
+        public double Places { get; set; }        
 
         public Result Define(BlockReference blRef)
         {

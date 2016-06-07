@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AcadLib.Layers;
 using Autodesk.AutoCAD.Geometry;
-using PIK_GP_Acad.Parking;
+using PIK_GP_Acad.Parkings;
 
 namespace PIK_GP_Acad.KP.Parking
 {

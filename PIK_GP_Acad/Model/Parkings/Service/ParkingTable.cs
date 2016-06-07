@@ -8,22 +8,23 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using AcadLib;
 
-namespace PIK_GP_Acad.Parking
+namespace PIK_GP_Acad.Parkings
 {
-    public class LineParkingTable
+    public class ParkingTable
     {
-        LineParkingService service;
-        LineParkingData data;
+        ParkingService service;
+        ParkingData data;
         Database db;
 
-        public LineParkingTable(LineParkingService service)
+        public ParkingTable(ParkingService service)
         {
             this.service = service;
             db = service.Db;
             this.data = service.Data;
         }
 
-        public void CreateTable()        {
+        public void CreateTable()
+        {
             
             Table table = getTable();
             InsertTable(table);
@@ -48,7 +49,7 @@ namespace PIK_GP_Acad.Parking
             table.Columns[0].Alignment = CellAlignment.MiddleLeft;
             table.Columns[1].Alignment = CellAlignment.MiddleCenter;            
 
-            table.Cells[0, 0].TextString = "Линейные парковочные места";
+            table.Cells[0, 0].TextString = "Парковочные места";
             table.Cells[0, 0].Alignment = CellAlignment.MiddleCenter;            
 
             table.Cells[1, 0].TextString = "Наименование";
@@ -59,7 +60,7 @@ namespace PIK_GP_Acad.Parking
             var cells = CellRange.Create(table, 1, 0, 1, table.Columns.Count - 1);
             cells.Borders.Bottom.LineWeight = boldLw;
 
-            table.Cells[2, 0].TextString = "Машиномест";
+            table.Cells[2, 0].TextString = "Всего Машиномест";
             table.Cells[3, 0].TextString = "Машиномест для инвалидов";
 
             // Машиномест
@@ -78,7 +79,7 @@ namespace PIK_GP_Acad.Parking
         private void InsertTable(Table table)
         {
             Editor ed = service.Doc.Editor;
-            TableJig jigTable = new TableJig(table, 1 / db.Cannoscale.Scale, "Вставка таблицы блок-секций");
+            TableJig jigTable = new TableJig(table, 1 / db.Cannoscale.Scale, "Вставка таблицы");
             if (ed.Drag(jigTable).Status == PromptStatus.OK)
             {
                 using (var t = db.TransactionManager.StartTransaction())

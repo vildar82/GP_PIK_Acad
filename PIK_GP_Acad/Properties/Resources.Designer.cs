@@ -183,9 +183,19 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GP_LineParkingTable {
+        internal static System.Drawing.Bitmap GP_Parking {
             get {
-                object obj = ResourceManager.GetObject("GP_LineParkingTable", resourceCulture);
+                object obj = ResourceManager.GetObject("GP_Parking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_ParkingTable {
+            get {
+                object obj = ResourceManager.GetObject("GP_ParkingTable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
