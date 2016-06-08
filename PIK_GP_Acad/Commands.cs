@@ -45,7 +45,8 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Спецификация линейных парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок (2 вида блока) и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
-                new PaletteCommand("Линия со стрелками",Resources.GP_PolylineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Линия со стрелками",Resources.GP_LineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Линия направления движения",Resources.GP_LineDirMove, nameof(GP_PolylineDirMove), "Рисование полилинии с типом линии 'ГП-НапрДвижения'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),                
                 new PaletteCommand("Линия с крестиками",Resources.GP_LineCross, nameof(GP_PolylineCross), "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
@@ -136,8 +137,19 @@ namespace PIK_GP_Acad
             CommandStart.Start(doc =>
             {
                 Database db = doc.Database;
-                db.LoadLineTypePIK("ГП-стрелка3", "acadtopo.lin");
-                Draw.Polyline(lineType: "ГП-стрелка3");
+                db.LoadLineTypePIK("ГП-Стрелка", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Стрелка");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineDirMove), CommandFlags.Modal)]
+        public void GP_PolylineDirMove()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-НапрДвижения", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-НапрДвижения");
             });
         }
 
@@ -147,10 +159,10 @@ namespace PIK_GP_Acad
             CommandStart.Start(doc =>
             {
                 Database db = doc.Database;
-                db.LoadLineTypePIK("ГП-крест", "acadtopo.lin");
-                Draw.Polyline(lineType: "ГП-крест");
+                db.LoadLineTypePIK("ГП-Крест", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Крест");
             });
-        }
+        }       
 
 
         //

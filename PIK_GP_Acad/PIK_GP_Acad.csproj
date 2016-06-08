@@ -195,16 +195,10 @@
     <None Include="Resources\GP_KP_BlockStampForm3.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_PolylineArrow.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\GP-LineCross.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP-LineParking.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\GP-LineParkingTable.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\options.png" />
@@ -223,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GP_Parking.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-LineArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GP-LineDirMove.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

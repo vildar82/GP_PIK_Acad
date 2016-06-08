@@ -163,9 +163,29 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GP_LineArrow {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GP_LineCross {
             get {
                 object obj = ResourceManager.GetObject("GP_LineCross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineDirMove {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineDirMove", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,16 +216,6 @@ namespace PIK_GP_Acad.Properties {
         internal static System.Drawing.Bitmap GP_ParkingTable {
             get {
                 object obj = ResourceManager.GetObject("GP_ParkingTable", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap GP_PolylineArrow {
-            get {
-                object obj = ResourceManager.GetObject("GP_PolylineArrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
