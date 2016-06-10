@@ -63,6 +63,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ArcGIS {
+            get {
+                object obj = ResourceManager.GetObject("ArcGIS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GP_BlockSectionContour {
             get {
                 object obj = ResourceManager.GetObject("GP_BlockSectionContour", resourceCulture);

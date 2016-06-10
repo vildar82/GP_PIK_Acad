@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Model\ArcGIS\ArcGisService.cs" />
     <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
     <Compile Include="Model\BlockSection\DataSection.cs" />
     <Compile Include="Model\BlockSection\Estimate.cs" />
@@ -224,6 +225,10 @@
   <ItemGroup>
     <None Include="Resources\GP-LineDirMove.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ArcGIS.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
