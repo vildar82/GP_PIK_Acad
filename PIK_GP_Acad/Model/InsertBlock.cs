@@ -15,11 +15,16 @@ namespace PIK_GP_Acad
         // Файл шаблонов блоков
         static string fileBlocks = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.LocalSettingsFolder, @"Blocks\ГП\ГП_Блоки.dwg");
 
-        public static void Insert(string blName, Document doc, List<Property> props = null)
-        {            
-            // Выбор и вставка блока                 
-            Block.CopyBlockFromExternalDrawing(blName, fileBlocks, doc.Database, DuplicateRecordCloning.Ignore);
+        public static void Insert(string blName, Database db, List<Property> props = null)
+        {
+            // Выбор и вставка блока     
+            LoadBlock(new List<string> { blName }, db);            
             BlockInsert.Insert(blName, null, props);
+        }
+
+        public static void LoadBlock(List<string> blNames, Database db)
+        {
+            Block.CopyBlockFromExternalDrawing(blNames, fileBlocks, db, DuplicateRecordCloning.Ignore);
         }
     }
 }

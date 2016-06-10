@@ -90,7 +90,7 @@ namespace PIK_GP_Acad
                 {
                     new AcadLib.Blocks.Property ("Длина", 15d)
                 };
-                InsertBlock.Insert(Parkings.LineParking.LineParkingBlockName, doc, props);
+                InsertBlock.Insert(Parkings.LineParking.LineParkingBlockName, doc.Database, props);
             });
         }
 
@@ -99,7 +99,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert(Parkings.Parking.ParkingBlockName, doc);
+                InsertBlock.Insert(Parkings.Parking.ParkingBlockName, doc.Database);
             });
         }
 
@@ -255,7 +255,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert("КП_ДОО", doc);
+                InsertBlock.Insert("КП_ДОО", doc.Database);
             });
         }
 
@@ -264,7 +264,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("КП_СОШ", doc);
+                InsertBlock.Insert("КП_СОШ", doc.Database);
             });
         }
 
@@ -288,7 +288,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("ГП_Рамка-ПИК", doc);
+                InsertBlock.Insert("ГП_Рамка-ПИК", doc.Database);
             });
         }        
 
@@ -297,7 +297,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("ГП_Штамп_Форма3_ПИК", doc);
+                InsertBlock.Insert("ГП_Штамп_Форма3_ПИК", doc.Database);
             });
         }
 
@@ -306,7 +306,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("ГП_Рамка_Буклет", doc);
+                InsertBlock.Insert("ГП_Рамка_Буклет", doc.Database);
             });
         }
 
