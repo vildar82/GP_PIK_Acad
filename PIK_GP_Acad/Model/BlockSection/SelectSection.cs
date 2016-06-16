@@ -48,11 +48,11 @@ namespace PIK_GP_Acad.BlockSection
                 var blRef = idEnt.GetObject(OpenMode.ForRead, false, true) as BlockReference;
                 if (blRef == null) continue;
                 var name = blRef.GetEffectiveName();
-                if (name.StartsWith(Settings.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase))
+                if (SectionService.IsBlockNameSection(name))
                 {
                     IdsBlRefSections.Add(idEnt);
                 }
             }
-        }       
+        }        
     }
 }

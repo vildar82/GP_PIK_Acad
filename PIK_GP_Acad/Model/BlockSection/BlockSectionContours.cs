@@ -14,7 +14,8 @@ namespace PIK_GP_Acad.BlockSection
     public static class BlockSectionContours
     {
         /// <summary>
-        /// Построение полилиний контура у блоков Блок-Секций
+        /// Построение полилиний контура у блоков Блок-Секций.
+        /// Выбор блоков пользователем.
         /// </summary>
         public static void CreateContour(Document doc)
         {
@@ -42,7 +43,7 @@ namespace PIK_GP_Acad.BlockSection
                         var pl = FindContourPolyline(blRefSec);
                         if (pl != null)
                         {
-                            var idPlCopy = CopyEnt(pl.Id, msId, doc.Database);
+                            var idPlCopy = pl.Id.CopyEnt(msId);
                             var plCopy = idPlCopy.GetObject(OpenMode.ForWrite, false, true) as Polyline;
                             plCopy.LayerId = layerIdPl;
                             plCopy.TransformBy(blRefSec.BlockTransform);
@@ -81,14 +82,6 @@ namespace PIK_GP_Acad.BlockSection
                 }
             }
             return resVal;
-        }
-
-        private static ObjectId CopyEnt(ObjectId idEnt , ObjectId idBtrOwner, Database db)
-        {
-            IdMapping map = new IdMapping();
-            ObjectIdCollection ids = new ObjectIdCollection(new[] { idEnt });
-            db.DeepCloneObjects(ids, idBtrOwner, map, false);
-            return map[idEnt].Value;
-        }
+        }        
     }
 }

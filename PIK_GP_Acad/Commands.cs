@@ -33,7 +33,11 @@ namespace PIK_GP_Acad
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
         public const string GroupKP = "Концепция";
-        public const string GroupStamp = "Штамп";        
+        public const string GroupStamp = "Штамп";
+
+        //Имена блоков
+        public const string BlockNameDOO = "КП_ДОО";
+        public const string BlockNameSchool = "КП_СОШ";
 
         public void InitCommands()
         {            
@@ -255,7 +259,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert("КП_ДОО", doc.Database);
+                InsertBlock.Insert(BlockNameDOO, doc.Database);
             });
         }
 
@@ -264,7 +268,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert("КП_СОШ", doc.Database);
+                InsertBlock.Insert(BlockNameSchool, doc.Database);
             });
         }
 

@@ -63,5 +63,10 @@ namespace PIK_GP_Acad.BlockSection
                 t.Commit();
             }
         }
+
+        public static bool IsBlockNameSection (string name)
+        {
+            return name.StartsWith(Settings.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

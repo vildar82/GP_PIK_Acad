@@ -34,6 +34,7 @@
     <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
     <AssemblyVersionSettings>None.None.DayOfYearStamp.Increment</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.DayOfYearStamp.Increment</AssemblyFileVersionSettings>
+    <DocumentationFile>bin\Release\PIK_GP_Acad.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AcadLib">
