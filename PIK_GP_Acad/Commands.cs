@@ -38,6 +38,7 @@ namespace PIK_GP_Acad
         //Имена блоков
         public const string BlockNameDOO = "КП_ДОО";
         public const string BlockNameSchool = "КП_СОШ";
+        public const string BlockNameKpParking = "КП_Паркинг";
 
         public void InitCommands()
         {            
@@ -63,6 +64,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Спецификация блок-секций PIK1",Resources.GP_BlockSectionTable, nameof(KP_BlockSectionTableFromGP), "Таблица подсчета блок-секции PIK1.", GroupKP),                
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
                 new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
+                new PaletteCommand("Блок паркинга",Resources.KP_Parking, nameof(KP_BlockParkingInsert), "Вставка блока паркинга.", GroupKP),
                 new PaletteCommand("Расчет свободной парковки", Resources.KP_KP_AreaParking, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
                 // Штамп
                 new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupStamp),
@@ -271,6 +273,15 @@ namespace PIK_GP_Acad
                 InsertBlock.Insert(BlockNameSchool, doc.Database);
             });
         }
+
+        [CommandMethod(Group, nameof(KP_BlockParkingInsert), CommandFlags.Modal)]
+        public void KP_BlockParkingInsert ()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert(BlockNameKpParking, doc.Database);
+            });
+        }        
 
         [CommandMethod(Group, nameof(KP_AreaParking), CommandFlags.Modal)]
         public void KP_AreaParking()

@@ -253,6 +253,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap KP_Parking {
+            get {
+                object obj = ResourceManager.GetObject("KP_Parking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap KP_School {
             get {
                 object obj = ResourceManager.GetObject("KP_School", resourceCulture);
