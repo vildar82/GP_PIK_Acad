@@ -13,6 +13,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 {
     public static class KP_BlockSectionService
     {
+        public const string blKpParkingLayerContour = "ГП_секции_посадка";
         public static Document Doc { get; private set; }
         public static Database Db { get; private set; }
         public static Editor Ed { get; private set; }

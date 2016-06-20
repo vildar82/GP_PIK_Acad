@@ -16,6 +16,10 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// </summary>
         public double AreaByExternalWalls { get; set; }
         /// <summary>
+        /// Полащадь секции - жилой площади
+        /// </summary>
+        public double AreaLive { get; set; }
+        /// <summary>
         /// Кол этажей
         /// </summary>
         public int Floors { get; set; } = 1;
@@ -29,10 +33,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         private void Define(BlockReference blRef)
         {
             // Контурная полилиния - внешняя граница блок-секции по стенам.
-            var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef);
+            Polyline plAxis;
+            var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef, out plAxis,KP_BlockSectionService.blKpParkingLayerContour);
             if(plContour == null)
             {
-                Inspector.AddError("Не определен контур блок-секции",                    blRef, System.Drawing.SystemIcons.Error);
+                Inspector.AddError("Не определен контур блок-секции", blRef, System.Drawing.SystemIcons.Error);
             }
             else
             {
@@ -44,14 +49,24 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 {
                     AreaByExternalWalls = plContour.Area;
                 }                
-            }            
+            } 
+            
+            if (plAxis == null || plAxis.Area == 0)
+            {
+                Inspector.AddError($"Не определена площадь жилой площади блок-секции - по полилинии на слое {KP_BlockSectionService.blKpParkingLayerContour}",
+                    blRef, System.Drawing.SystemIcons.Error);
+            }
+            else
+            {
+                AreaLive = plAxis.Area;
+            }
 
             // Определение этажности по атрибуту
             var attrs = AttributeInfo.GetAttrRefs(blRef);
             var atrFloor = attrs.Find(a => a.Tag.Equals(Options.Instance.BlockSectionAtrFloor));
             if(atrFloor == null)
             {
-                Inspector.AddError("Не определен атрибут этажности блок-секции.",                     blRef, System.Drawing.SystemIcons.Error);                
+                Inspector.AddError("Не определен атрибут этажности блок-секции.", blRef, System.Drawing.SystemIcons.Error);                
             }
             else
             {

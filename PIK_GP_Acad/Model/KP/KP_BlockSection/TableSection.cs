@@ -62,11 +62,12 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             table.Cells[2, 0].TextString = "1 этаж";
             table.Cells[3, 0].TextString = "Типовые этажи";
             table.Cells[4, 0].TextString = "Итого";
-            
+
+            // Площадь в г.н.с.
             table.Cells[2, 1].TextString = dataSec.AreaFirstExternalWalls.ToString("0.00"); //"1 этаж"
             table.Cells[3, 1].TextString = dataSec.AreaUpperExternalWalls.ToString("0.00"); //"Верхние этажи"
             table.Cells[4, 1].TextString = dataSec.AreaTotalExternalWalls.ToString("0.00"); //"Итого"
-
+            // Площадь ж.ф.
             table.Cells[2, 2].TextString = dataSec.AreaFirstLive.ToString("0.00"); //"1 этаж"
             table.Cells[3, 2].TextString = dataSec.AreaUpperLive.ToString("0.00"); //"Верхние этажи"
             table.Cells[4, 2].TextString = dataSec.AreaTotalLive.ToString("0.00"); //"Итого"

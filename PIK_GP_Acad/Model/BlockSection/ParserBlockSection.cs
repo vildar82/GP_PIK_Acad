@@ -28,7 +28,8 @@ namespace PIK_GP_Acad.BlockSection
                 string errMsg = string.Empty;
                 var blRef = idBlRefSection.GetObject(OpenMode.ForRead, false, true) as BlockReference;
                 // Площадь по внешней полилинии
-                var plContour = BlockSectionContours.FindContourPolyline(blRef);
+                Polyline plLayer;
+                var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
                 section.AreaContour = plContour.Area;
                 // обработка атрибутов
                 parseAttrs(blRef.AttributeCollection, section, ref errMsg);

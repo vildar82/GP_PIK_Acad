@@ -40,7 +40,8 @@ namespace PIK_GP_Acad.BlockSection
                     var blRefSec = idBlRefSec.GetObject(OpenMode.ForRead, false, true) as BlockReference;
                     try
                     {
-                        var pl = FindContourPolyline(blRefSec);
+                        Polyline plLayer;                             
+                        var pl = FindContourPolyline(blRefSec, out plLayer);
                         if (pl != null)
                         {
                             var idPlCopy = pl.Id.CopyEnt(msId);
@@ -64,17 +65,24 @@ namespace PIK_GP_Acad.BlockSection
         /// <summary>
         /// Поиск контурной полилинии в блоке (по максимальной площаде)
         /// </summary>
-        /// <param name="blRefSec"></param>
-        /// <returns></returns>
-        public static Polyline FindContourPolyline(BlockReference blRefSec)
+        /// <param name="blRefSec">Блок</param>
+        /// <param name="plLayer">Полилиния на слое outPlLayer</param>
+        /// <param name="outPlLayer">Поиск полилинии на слое - out plLayer</param>        
+        public static Polyline FindContourPolyline(BlockReference blRefSec, out Polyline plLayer, string outPlLayer = null)
         {
             double area = 0;
             Polyline resVal = null;
+            plLayer = null;
             BlockTableRecord btrSec = blRefSec.BlockTableRecord.GetObject(OpenMode.ForRead) as BlockTableRecord;            
             foreach (var idEnt in btrSec)
             {
                 var pl = idEnt.GetObject(OpenMode.ForRead, false, true) as Polyline;
                 if (pl == null || !pl.Visible) continue;
+                if (pl.Layer.Equals (outPlLayer, StringComparison.OrdinalIgnoreCase))
+                {
+                    plLayer = pl;
+                    continue;
+                }
                 if (pl.Area>area)
                 {
                     resVal = pl;
