@@ -8,11 +8,15 @@ using Autodesk.AutoCAD.DatabaseServices;
 using AcadLib;
 using Autodesk.AutoCAD.EditorInput;
 using System.Text.RegularExpressions;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
     public static class KP_BlockSectionService
     {
+        /// <summary>
+        /// Слой контура в блоке блок-секции
+        /// </summary>
         public const string blKpParkingLayerContour = "ГП_секции_посадка";
         public static Document Doc { get; private set; }
         public static Database Db { get; private set; }
@@ -51,8 +55,22 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     string blName = blRef.GetEffectiveName();
                     if(IsBlockSection(blName))
                     {
-                        var blSec = new BlockSection(blRef);
-                        blocks.Add(blSec);
+                        try
+                        {
+                            var blSec = new BlockSection(blRef, blName);
+                            if (blSec.Error != null)
+                            {
+                                Inspector.AddError(blSec.Error);
+                            }
+                            else
+                            {
+                                blocks.Add(blSec);
+                            }                            
+                        }
+                        catch (Exception ex)
+                        {
+                            Inspector.AddError(ex.Message, blRef, System.Drawing.SystemIcons.Error);
+                        }                        
                     }
                 }
                 t.Commit();

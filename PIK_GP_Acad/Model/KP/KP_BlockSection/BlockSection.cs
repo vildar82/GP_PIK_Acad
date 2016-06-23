@@ -9,7 +9,10 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
-    class BlockSection
+    /// <summary>
+    /// блок-секции концепции - пока общий класс для Рядовой и Угловой
+    /// </summary>
+    public class BlockSection : BlockBase
     {
         /// <summary>
         /// Полащадь секции по внешним границам стен
@@ -24,7 +27,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// </summary>
         public int Floors { get; set; } = 1;
 
-        public BlockSection(BlockReference blRef)
+        public BlockSection(BlockReference blRef, string blName) : base (blRef, blName)
         {
             // Определить параметры блок-секции: площадь,этажность
             Define(blRef);
@@ -37,13 +40,13 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef, out plAxis,KP_BlockSectionService.blKpParkingLayerContour);
             if(plContour == null)
             {
-                Inspector.AddError("Не определен контур блок-секции", blRef, System.Drawing.SystemIcons.Error);
+                throw new Exception("Не определен контур блок-секции");
             }
             else
             {
                 if(plContour.Area == 0)
                 {
-                    Inspector.AddError("Не определена площадь контура блок-секции", blRef, System.Drawing.SystemIcons.Error);
+                    throw new Exception("Не определена площадь контура блок-секции");
                 }
                 else
                 {
@@ -53,8 +56,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             
             if (plAxis == null || plAxis.Area == 0)
             {
-                Inspector.AddError($"Не определена площадь жилой площади блок-секции - по полилинии на слое {KP_BlockSectionService.blKpParkingLayerContour}",
-                    blRef, System.Drawing.SystemIcons.Error);
+                throw new Exception($"Не определена площадь жилой площади блок-секции - по полилинии на слое {KP_BlockSectionService.blKpParkingLayerContour}");
             }
             else
             {
@@ -62,25 +64,26 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
 
             // Определение этажности по атрибуту
-            var attrs = AttributeInfo.GetAttrRefs(blRef);
-            var atrFloor = attrs.Find(a => a.Tag.Equals(Options.Instance.BlockSectionAtrFloor));
-            if(atrFloor == null)
-            {
-                Inspector.AddError("Не определен атрибут этажности блок-секции.", blRef, System.Drawing.SystemIcons.Error);                
-            }
-            else
-            {
-                int floor;
-                if(int.TryParse(atrFloor.Text, out floor))
-                {
-                    Floors = floor;
-                }
-                else
-                {
-                    Inspector.AddError($"Не определена этажность по значению '{atrFloor.Text}' атрибута в блок-секции", blRef,
-                        System.Drawing.SystemIcons.Error);
-                }
-            }
+            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);
+            //var attrs = AttributeInfo.GetAttrRefs(blRef);            
+            //var atrFloor = attrs.Find(a => a.Tag.Equals(Options.Instance.BlockSectionAtrFloor));
+            //if(atrFloor == null)
+            //{
+            //    Inspector.AddError("Не определен атрибут этажности блок-секции.", blRef, System.Drawing.SystemIcons.Error);                
+            //}
+            //else
+            //{
+            //    int floor;
+            //    if(int.TryParse(atrFloor.Text, out floor))
+            //    {
+            //        Floors = floor;
+            //    }
+            //    else
+            //    {
+            //        Inspector.AddError($"Не определена этажность по значению '{atrFloor.Text}' атрибута в блок-секции", blRef,
+            //            System.Drawing.SystemIcons.Error);
+            //    }
+            //}
         }
     }
 }

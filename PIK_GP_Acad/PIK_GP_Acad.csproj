@@ -37,7 +37,8 @@
     <DocumentationFile>bin\Release\PIK_GP_Acad.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AcadLib">
+    <Reference Include="AcadLib, Version=1.0.175.357, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\AcadLib\AcadLib\bin\Release\AcadLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -129,6 +130,10 @@
     <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.Designer.cs">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\KP\Parking\ParkingBlock.cs" />
+    <Compile Include="Model\KP\Social\SchoolBlock.cs" />
+    <Compile Include="Model\KP\Social\KindergartenBlock.cs" />
+    <Compile Include="Model\KP\Social\SocialBlock.cs" />
     <Compile Include="Model\Parkings\Parking.cs" />
     <Compile Include="Model\Parkings\Service\IParking.cs" />
     <Compile Include="Model\Parkings\LineParking.cs" />
@@ -232,6 +237,7 @@
   <ItemGroup>
     <None Include="Resources\KP_Parking.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

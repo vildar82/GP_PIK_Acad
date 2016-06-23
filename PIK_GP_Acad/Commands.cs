@@ -36,8 +36,8 @@ namespace PIK_GP_Acad
         public const string GroupStamp = "Штамп";
 
         //Имена блоков
-        public const string BlockNameDOO = "КП_ДОО";
-        public const string BlockNameSchool = "КП_СОШ";
+        //public const string BlockNameDOO = "КП_ДОО";
+        //public const string BlockNameSchool = "КП_СОШ";
         public const string BlockNameKpParking = "КП_Паркинг";
 
         public void InitCommands()
@@ -261,7 +261,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert(BlockNameDOO, doc.Database);
+                InsertBlock.Insert(KP.Social.KindergartenBlock.BlockName, doc.Database);
             });
         }
 
@@ -270,7 +270,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert(BlockNameSchool, doc.Database);
+                InsertBlock.Insert(KP.Social.SchoolBlock.BlockName, doc.Database);
             });
         }
 
