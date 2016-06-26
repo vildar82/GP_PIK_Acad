@@ -106,6 +106,17 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolaion\Constructions\Building.cs" />
+    <Compile Include="Model\Insolaion\Constructions\BuildingFactory.cs" />
+    <Compile Include="Model\Insolaion\Constructions\IBuilding.cs" />
+    <Compile Include="Model\Insolaion\Constructions\Surround.cs" />
+    <Compile Include="Model\Insolaion\InsolationService.cs" />
+    <Compile Include="Model\Insolaion\Map.cs" />
+    <Compile Include="Model\Insolaion\Options.cs" />
+    <Compile Include="Model\Insolaion\Radar.cs" />
+    <Compile Include="Model\Insolaion\Scope.cs" />
+    <Compile Include="Model\Insolaion\SunlightRule\ISunlightRule.cs" />
+    <Compile Include="Model\Insolaion\SunlightRule\SimpleRule.cs" />
     <Compile Include="Model\Isolines\ContextMenuIsoline.cs" />
     <Compile Include="Model\Isolines\FormIsolineOptions.cs">
       <SubType>Form</SubType>
