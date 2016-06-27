@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIK_GP_Acad.Insolaion.SunlightRule
+namespace PIK_GP_Acad.Insolation.SunlightRule
 {
     public interface ISunlightRule
     {

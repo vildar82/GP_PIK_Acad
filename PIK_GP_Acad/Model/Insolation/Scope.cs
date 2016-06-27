@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
-using PIK_GP_Acad.Insolaion.Constructions;
+using PIK_GP_Acad.Insolation.Constructions;
 
-namespace PIK_GP_Acad.Insolaion
+namespace PIK_GP_Acad.Insolation
 {
     /// <summary>
     /// Расчетная область
@@ -14,14 +14,14 @@ namespace PIK_GP_Acad.Insolaion
     public class Scope
     {
         Extents3d ext;
-        List<IBuilding> items;
+        public List<IBuilding> Buildings { get; set; }
         public int Radius { get; set; }
 
         public Scope (int radius, Extents3d ext, List<IBuilding> items)
         {
             Radius = radius;
             this.ext = ext;
-            this.items = items;
+            Buildings = items;
         }
     }
 }

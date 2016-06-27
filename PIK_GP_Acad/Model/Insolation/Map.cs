@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using PIK_GP_Acad.Insolaion.Constructions;
+using PIK_GP_Acad.Insolation.Constructions;
 
-namespace PIK_GP_Acad.Insolaion
+namespace PIK_GP_Acad.Insolation
 {
     /// <summary>
     /// карта - чертеж с объектами расчета инсоляции

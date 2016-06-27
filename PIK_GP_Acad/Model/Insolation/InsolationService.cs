@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using PIK_GP_Acad.Insolaion.Constructions;
-using PIK_GP_Acad.Insolaion.SunlightRule;
+using PIK_GP_Acad.Insolation.Constructions;
+using PIK_GP_Acad.Insolation.SunlightRule;
 
-namespace PIK_GP_Acad.Insolaion
+namespace PIK_GP_Acad.Insolation
 {
     /// <summary>
     /// Инсоляция - расчет инсоляции в указанных точках
@@ -23,19 +23,20 @@ namespace PIK_GP_Acad.Insolaion
         {
             this.db = db;
             this.options = options;
-            radar = new Radar(options);
+            radar = new Radar(db, options);
             map = new Map(db, options);            
         }
 
         /// <summary>
         /// Расчет инсоляции в точке
         /// </summary>
-        public void CalcPoint(Point3d pt)
+        public void CalcPoint (Point3d pt)
         {
+            var ms = db.CurrentSpaceId.GetObject( OpenMode.ForWrite) as BlockTableRecord;
             // Объекты в области действия точки
             var scope = map.GetScope(pt);
             // радар
-            radar.Scan(pt, scope);
-        }        
+            radar.Scan(pt, scope, ms);
+        }
     }
 }

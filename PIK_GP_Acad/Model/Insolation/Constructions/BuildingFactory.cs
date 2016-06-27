@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
-using PIK_GP_Acad.Insolaion.Constructions;
+using PIK_GP_Acad.Insolation.Constructions;
 
-namespace PIK_GP_Acad.Insolaion.Constructions
+namespace PIK_GP_Acad.Insolation.Constructions
 {
     /// <summary>
     /// Создание зданий
