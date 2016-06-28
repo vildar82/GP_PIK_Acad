@@ -27,11 +27,14 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             Doc = Application.DocumentManager.MdiActiveDocument;
             Db = Doc.Database;
             Ed = Doc.Editor;
+
+            Options.PromptOptions();
+
             // Выбор блоков блок-секций
             var blocks = selectBlocksection();
 
             // Подсчет блок-секций
-            var dataSec = new DataSection(blocks);
+            var dataSec = new DataSection(blocks, Options.Instance);
             dataSec.Calc();
 
             // Создание таблицы и вставка

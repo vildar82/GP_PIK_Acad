@@ -12,11 +12,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 {
     class TableSection
     {
-        private DataSection dataSec;
+        private DataSection data;
 
         public TableSection(DataSection dataSec)
         {
-            this.dataSec = dataSec;
+            this.data = dataSec;
         }
 
         internal void Create()
@@ -31,7 +31,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             table.SetDatabaseDefaults();
             table.TableStyle = KP_BlockSectionService.Db.GetTableStylePIK();
 
-            table.SetSize(5,3);
+            table.SetSize(5, 9);
             table.SetBorders(LineWeight.LineWeight050);
             table.SetRowHeight(8);
 
@@ -40,43 +40,58 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             var lwBold = rowHeaders.Borders.Top.LineWeight;
             rowHeaders.Borders.Bottom.LineWeight = lwBold;
 
-            var col = table.Columns[0];
-            col.Alignment = CellAlignment.MiddleLeft;
-            col.Width = 30;
-
-            col = table.Columns[1];
-            col.Alignment = CellAlignment.MiddleCenter;
-            col.Width = 30;
-
-            col = table.Columns[2];
-            col.Alignment = CellAlignment.MiddleCenter;
-            col.Width = 30;
-
             var titleCells = table.Cells[0, 0];
             titleCells.TextString = DateTime.Now.ToString();
             titleCells.Alignment = CellAlignment.MiddleCenter;
 
-            table.Cells[1, 1].TextString = "Площадь в г.н.с.";
-            table.Cells[1, 2].TextString = "Площадь ж.ф.";
-
-            table.Cells[2, 0].TextString = "1 этаж";
-            table.Cells[3, 0].TextString = "Типовые этажи";
-            table.Cells[4, 0].TextString = "Итого";
+            var col = table.Columns[0];
+            col[2, 0].TextString = "1 этаж";
+            col[3, 0].TextString = "Типовые этажи";
+            col[4, 0].TextString = "Итого";
+            col.Alignment = CellAlignment.MiddleCenter;
+            col.Width = 30;
 
             // Площадь в г.н.с.
-            table.Cells[2, 1].TextString = dataSec.AreaFirstExternalWalls.ToString("0.00"); //"1 этаж"
-            table.Cells[3, 1].TextString = dataSec.AreaUpperExternalWalls.ToString("0.00"); //"Верхние этажи"
-            table.Cells[4, 1].TextString = dataSec.AreaTotalExternalWalls.ToString("0.00"); //"Итого"
+            col = table.Columns[1];
+            col[1, 1].TextString = "Площадь в Г.Н.С.";
+            col[2, 1].TextString = data.AreaFirstExternalWalls.ToString("N2"); //"1 этаж"
+            col[3, 1].TextString = data.AreaUpperExternalWalls.ToString("N2"); //"Верхние этажи"
+            col[4, 1].TextString = data.AreaTotalExternalWalls.ToString("N2"); //"Итого"
+            col.Alignment = CellAlignment.MiddleCenter;
+            col.Width = 20;
+
             // Площадь ж.ф.
-            table.Cells[2, 2].TextString = dataSec.AreaFirstLive.ToString("0.00"); //"1 этаж"
-            table.Cells[3, 2].TextString = dataSec.AreaUpperLive.ToString("0.00"); //"Верхние этажи"
-            table.Cells[4, 2].TextString = dataSec.AreaTotalLive.ToString("0.00"); //"Итого"
+            col = table.Columns[2];
+            col[1, 2].TextString = "Площадь Ж.Ф.";
+            col[2, 2].TextString = data.AreaFirstLive.ToString("N2"); //"1 этаж"
+            col[3, 2].TextString = data.AreaUpperLive.ToString("N2"); //"Верхние этажи"
+            col[4, 2].TextString = data.AreaTotalLive.ToString("N2"); //"Итого"
+            col.Alignment = CellAlignment.MiddleCenter;
+            col.Width = 20;
+            
+            SetNorm("Население, чел", data.Population.ToString(), table, 3);
+            SetNorm("СОШ, мест", data.SchoolPlaces.ToString(), table, 4);
+            SetNorm("ДОО, мест", data.KinderPlaces.ToString(), table, 5);
+            SetNorm("Постоянный паркинг, м/м", data.PersistentParking.ToString(), table, 6);
+            SetNorm("Временный паркинг, м/м", data.TemproraryParking.ToString(), table, 7);
+            SetNorm("Паркинг для БКФН, м/м", data.ParkingBKFN.ToString(), table, 8);
 
             var lastRow = table.Rows.Last();
             lastRow.Borders.Bottom.LineWeight = lwBold;
 
             table.GenerateLayout();
             return table;
+        }
+
+        private void SetNorm (string title, string value, Table table, int colIndex)
+        {
+            var col = table.Columns[colIndex];
+            col[1, colIndex].TextString = title;
+            var mCells = CellRange.Create(table, 2, colIndex, 4, colIndex);
+            table.MergeCells(mCells);
+            col[2, colIndex].TextString = value;
+            col.Alignment = CellAlignment.MiddleCenter;
+            col.Width = 20;
         }
 
         private void InsertTable(Table table)

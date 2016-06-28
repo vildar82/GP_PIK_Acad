@@ -12,6 +12,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
     class DataSection
     {
         private List<BlockSection> blocks;
+        private Options options;
 
         public double AreaFirstExternalWalls { get; private set; }
         public double AreaFirstLive { get; private set; }
@@ -20,12 +21,39 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public double AreaTotalExternalWalls { get; private set; }
         public double AreaTotalLive { get; private set; }
 
-        public DataSection(List<BlockSection> blocks)
+        /// <summary>
+        /// Населегние, чел.
+        /// </summary>
+        public int Population { get; private set; }
+        /// <summary>
+        /// СОШ мест
+        /// </summary>
+        public int SchoolPlaces { get; private set; }
+        /// <summary>
+        /// ДОО мест
+        /// </summary>
+        public int KinderPlaces { get; private set; }
+
+        /// <summary>
+        /// Постоянный паркинг м/м
+        /// </summary>
+        public int PersistentParking { get; private set; }
+        /// <summary>
+        /// Временный паркинг м/м
+        /// </summary>
+        public int TemproraryParking { get; private set; }
+        /// <summary>
+        /// Паркинг для БКФН
+        /// </summary>
+        public int ParkingBKFN { get; private set; }
+
+        public DataSection(List<BlockSection> blocks, Options options)
         {
             this.blocks = blocks;
+            this.options = options;
         }
 
-        internal void Calc()
+        internal void Calc ()
         {
             foreach (var blSec in blocks)
             {
@@ -40,7 +68,14 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             AreaUpperLive *= 0.7;
 
             AreaTotalExternalWalls = AreaFirstExternalWalls + AreaUpperExternalWalls;
-            AreaTotalLive = AreaFirstLive + AreaUpperLive;            
-        }
+            AreaTotalLive = AreaFirstLive + AreaUpperLive;
+
+            Population = Convert.ToInt32(AreaUpperExternalWalls / options.NormAreaPerPerson);
+            SchoolPlaces = Convert.ToInt32(Population * options.NormSchoolPlace * 0.001);
+            KinderPlaces = Convert.ToInt32(Population * options.NormKinderPlace * 0.001);
+            PersistentParking = Convert.ToInt32(Population * options.NormParking * 0.001);
+            TemproraryParking = Convert.ToInt32(PersistentParking * 0.25);
+            ParkingBKFN = Convert.ToInt32( (AreaFirstLive/options.NormParkingAreaPerPerson)*0.01 * options.NormParkingPlaceFor100);
+        }                
     }
 }
