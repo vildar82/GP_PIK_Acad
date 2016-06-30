@@ -243,7 +243,7 @@ namespace PIK_GP_Acad
             CommandStart.Start(doc =>
             {                
                 KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
-            });
+            });            
         }
 
         [CommandMethod(Group, nameof(KP_BlockSectionTableFromGP), CommandFlags.Modal)]
