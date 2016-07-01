@@ -192,7 +192,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             nod.Save(NormKinderPlace, KeyNormKinderPlace);
             nod.Save(NormParking, KeyNormParking);
             nod.Save(NormParkingAreaPerPerson, KeyNormParkingAreaPerPerson);
-            nod.Save(KeyNormParkingPlaceFor100, KeyNormParkingPlaceFor100);
+            nod.Save(NormParkingPlaceFor100, KeyNormParkingPlaceFor100);
         }
 
         void LoadFromNOD()

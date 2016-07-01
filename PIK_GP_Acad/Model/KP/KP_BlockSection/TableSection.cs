@@ -54,18 +54,18 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             // Площадь в г.н.с.
             col = table.Columns[1];
             col[1, 1].TextString = "Площадь в Г.Н.С.";
-            col[2, 1].TextString = data.AreaFirstExternalWalls.ToString("N2"); //"1 этаж"
-            col[3, 1].TextString = data.AreaUpperExternalWalls.ToString("N2"); //"Верхние этажи"
-            col[4, 1].TextString = data.AreaTotalExternalWalls.ToString("N2"); //"Итого"
+            col[2, 1].TextString = data.AreaFirstExternalWalls.ToString("0.00"); //"1 этаж"
+            col[3, 1].TextString = data.AreaUpperExternalWalls.ToString("0.00"); //"Верхние этажи"
+            col[4, 1].TextString = data.AreaTotalExternalWalls.ToString("0.00"); //"Итого"
             col.Alignment = CellAlignment.MiddleCenter;
             col.Width = 20;
 
             // Площадь ж.ф.
             col = table.Columns[2];
             col[1, 2].TextString = "Площадь Ж.Ф.";
-            col[2, 2].TextString = data.AreaFirstLive.ToString("N2"); //"1 этаж"
-            col[3, 2].TextString = data.AreaUpperLive.ToString("N2"); //"Верхние этажи"
-            col[4, 2].TextString = data.AreaTotalLive.ToString("N2"); //"Итого"
+            col[2, 2].TextString = data.AreaFirstLive.ToString("0.00"); //"1 этаж"
+            col[3, 2].TextString = data.AreaUpperLive.ToString("0.00"); //"Верхние этажи"
+            col[4, 2].TextString = data.AreaTotalLive.ToString("0.00"); //"Итого"
             col.Alignment = CellAlignment.MiddleCenter;
             col.Width = 20;
             
