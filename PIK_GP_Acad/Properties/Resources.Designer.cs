@@ -203,9 +203,59 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GP_LineNoizeBarrier1 {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineNoizeBarrier1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineNoizeBarrier2 {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineNoizeBarrier2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineNoizeBarrier3 {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineNoizeBarrier3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GP_LineParking {
             get {
                 object obj = ResourceManager.GetObject("GP_LineParking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineRiverside {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineRiverside", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GP_LineWaterProtectZone {
+            get {
+                object obj = ResourceManager.GetObject("GP_LineWaterProtectZone", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

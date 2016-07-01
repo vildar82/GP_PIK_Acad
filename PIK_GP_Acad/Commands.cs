@@ -53,6 +53,12 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Линия со стрелками",Resources.GP_LineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Линия направления движения",Resources.GP_LineDirMove, nameof(GP_PolylineDirMove), "Рисование полилинии с типом линии 'ГП-НапрДвижения'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),                
                 new PaletteCommand("Линия с крестиками",Resources.GP_LineCross, nameof(GP_PolylineCross), "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Прибрежная полоса",Resources.GP_LineRiverside, nameof(GP_PolylineRiverside), "Рисование полилинии с типом линии 'ГП-Прибрежная'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Водоохранная зона",Resources.GP_LineWaterProtectZone, nameof(GP_PolylineWaterProtectZone), "Рисование полилинии с типом линии 'ГП-ВОДООХРАННАЯ'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Шумовое заграждение 1",Resources.GP_LineNoizeBarrier1, nameof(GP_PolylineNoizeBarrier1), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_1'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Шумовое заграждение 2",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier2), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_2'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+                new PaletteCommand("Шумовое заграждение 3",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier3), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
+
                 new PaletteCommand("ArcGIS",Resources.ArcGIS, nameof(GP_ArcGIS), "Запуск программы ArcGis"),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
@@ -168,6 +174,61 @@ namespace PIK_GP_Acad
                 Database db = doc.Database;
                 db.LoadLineTypePIK("ГП-Крест", "acadtopo.lin");
                 Draw.Polyline(lineType: "ГП-Крест");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineRiverside), CommandFlags.Modal)]
+        public void GP_PolylineRiverside ()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-Прибрежная", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Прибрежная");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineWaterProtectZone), CommandFlags.Modal)]
+        public void GP_PolylineWaterProtectZone ()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-ВОДООХРАННАЯ", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-ВОДООХРАННАЯ");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineNoizeBarrier1), CommandFlags.Modal)]
+        public void GP_PolylineNoizeBarrier1 ()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-Шумовое_ограждение_1", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Шумовое_ограждение_1");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineNoizeBarrier2), CommandFlags.Modal)]
+        public void GP_PolylineNoizeBarrier2 ()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-Шумовое_ограждение_2", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Шумовое_ограждение_2");
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_PolylineNoizeBarrier3), CommandFlags.Modal)]
+        public void GP_PolylineNoizeBarrier3 ()
+        {
+            CommandStart.Start(doc =>
+            {
+                Database db = doc.Database;
+                db.LoadLineTypePIK("ГП-Шумовое_ограждение_3", "acadtopo.lin");
+                Draw.Polyline(lineType: "ГП-Шумовое_ограждение_3");
             });
         }
 
