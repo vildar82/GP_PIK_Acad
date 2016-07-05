@@ -83,6 +83,7 @@
     <Compile Include="Model\BlockSection\Estimate.cs" />
     <Compile Include="Model\BlockSection\EstimateEkb.cs" />
     <Compile Include="Model\BlockSection\EstimateMoscow.cs" />
+    <Compile Include="Model\BlockSection\EstimateMoscowRegion.cs" />
     <Compile Include="Model\BlockSection\ParserBlockSection.cs" />
     <Compile Include="Model\BlockSection\Section.cs" />
     <Compile Include="Model\BlockSection\SectionService.cs" />

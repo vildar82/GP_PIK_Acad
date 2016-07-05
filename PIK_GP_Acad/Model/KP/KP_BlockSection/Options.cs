@@ -36,6 +36,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         }
 
         [Browsable(false)]
+        public string LayerBSContourGNS { get; set; } = "ГП_Секции_ГНС";
+
+        [Browsable(false)]
         [Category("Блок-секция")]
         [DisplayName("Имя блока секции")]
         [Description("Соответствие имени блока Блок-Секции. ^ГП_К_Секция - имя блока начинается с ГП_К_Секция. Регистр игнорируется.")]
@@ -100,10 +103,10 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// М/м на 1000
         /// </summary>
-        [Category("Нормативные показатели")]
+        [Category("Нормы парковки")]
         [DisplayName("М/м на 1000чел")]
         [DefaultValue(350)]
-        [Description("Количество м/м на 1000 жителей")]
+        [Description("Количество м/м на 1000 жителей при расчете постоянного паркинга.")]
         [TypeConverter(typeof(NormParkingConverter))]
         public int NormParking { get; set; } = 350;
 
@@ -112,9 +115,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// Площадь парковки на человека
         /// </summary>
         [Category("Нормы парковки")]
-        [DisplayName("Площадь парковки на человека")]
+        [DisplayName("Площадь БКФН на человека")]
         [DefaultValue(20)]
-        [Description("Кол м2 на человека")]
+        [Description("Кол м2 БКФН на одного человека.")]
         public int NormParkingAreaPerPerson {
             get { return _normParkingAreaPerPerson; }
             set {
@@ -130,7 +133,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [Category("Нормы парковки")]
         [DisplayName("М/м на 100чел")]
         [DefaultValue(5)]
-        [Description("Кол м/м на 100 человек.")]
+        [Description("Кол м/м на 100 человек при расчете паркинга БКФН.")]
         public int NormParkingPlaceFor100 {
             get { return _normParkingPlaceFor100; }
             set {

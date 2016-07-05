@@ -7,16 +7,16 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.BlockSection
 {
-    public class EstimateMoscow : Estimate
+    public class EstimateMoscowRegion : Estimate
     {
-        public EstimateMoscow()
+        public EstimateMoscowRegion()
         {
             //Color = Autodesk.AutoCAD.Colors.Color.FromColor(System.Drawing.Color.Bisque);
-            Title = "Москва (Временный порядок)";
-            LiveAreaPerHuman = 40;
-            KindergartenPlacePer1000 = 54;
-            SchoolPlacePer1000 = 124;
-            ParkingPlacePer1000 = 350;
+            Title = "Московская область (РНГП №713/30)";
+            LiveAreaPerHuman = 28;
+            KindergartenPlacePer1000 = 65;
+            SchoolPlacePer1000 = 135;
+            ParkingPlacePer1000 = 420;
             ParkingPlaceGuestPercent = 25;
             ParkingPlacePercent = 90;
         }
@@ -24,9 +24,7 @@ namespace PIK_GP_Acad.BlockSection
         public override void TableFormatting (Table table)
         {
             base.TableFormatting(table);
-            //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
-            table.ColorIndex = 1;
+            table.ColorIndex = 250;
         }
-        
     }
 }

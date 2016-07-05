@@ -30,8 +30,10 @@ namespace PIK_GP_Acad.BlockSection
             {                
                 case "Ekb":
                     return new EstimateEkb();
-                default: // Москва
-                    return new EstimateMoscow();                    
+                case "Msk":
+                    return new EstimateMoscow();
+                default: // Московская область
+                    return new EstimateMoscowRegion();                    
             }
         }
 
@@ -57,6 +59,7 @@ namespace PIK_GP_Acad.BlockSection
         {
             //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
             //table.Color = _service.Estimate.Color;
+            table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);            
         }
     }
 }

@@ -66,7 +66,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Контур Блок-Секций",Resources.GP_BlockSectionContour, nameof(GP_BlockSectionContour), "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
                 // Концепция
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
-                new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Таблица подсчета блок-секции концепции.", GroupKP),
+                new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Расчет ТЭП для неутвержденной стадии.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций PIK1",Resources.GP_BlockSectionTable, nameof(KP_BlockSectionTableFromGP), "Таблица подсчета блок-секции PIK1.", GroupKP),                
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
                 new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
@@ -303,8 +303,24 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                KP.KP_BlockSection.KP_BlockSectionService.CreateTable();                
+                KP.KP_BlockSection.KP_BlockSectionService.CreateTable(false);                
             });            
+        }
+        [CommandMethod(Group, nameof(KP_BlockSectionTableNew), CommandFlags.Modal)]
+        public void KP_BlockSectionTableNew ()
+        {
+            CommandStart.Start(doc =>
+            {
+                KP.KP_BlockSection.KP_BlockSectionService.CreateTable(true);
+            });
+        }
+        [CommandMethod(Group, nameof(KP_BlockSectionFill), CommandFlags.Modal)]
+        public void KP_BlockSectionFill ()
+        {
+            CommandStart.Start(doc =>
+            {
+                KP.KP_BlockSection.KP_BlockSectionService.Fill();
+            });
         }
 
         [CommandMethod(Group, nameof(KP_BlockSectionTableFromGP), CommandFlags.Modal)]

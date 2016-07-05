@@ -16,14 +16,22 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
     /// </summary>
     public class BlockSection : BlockBase
     {
+        private Rectangle r;
+        public Rectangle Rectangle {
+            get {
+                if (r == null)
+                    r = GetRectangle();
+                return r;
+            }
+        }
         /// <summary>
         /// Полилиния по осям - в блоке БС
         /// </summary>
-        private ObjectId plAxisId;
+        public ObjectId PlAxisId { get; set; }
         /// <summary>
         /// Полилиния по ГНС (границы наружных стен) - в блоке БС
         /// </summary>
-        private ObjectId plExternalId;
+        public ObjectId PlExternalId { get; set; }
 
         /// <summary>
         /// Полащадь секции по внешним границам стен
@@ -74,11 +82,14 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 AreaLive = plAxis.Area;
             }
 
+            PlAxisId = plAxis.Id;
+            PlExternalId = plContour.Id;
+
             // Определение этажности по атрибуту
             Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);            
         }
 
-        public Rectangle GetRectangle ()
+        private Rectangle GetRectangle ()
         {
             Extents3d ext;
             if (Bounds != null)

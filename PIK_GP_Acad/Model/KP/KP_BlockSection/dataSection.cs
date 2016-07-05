@@ -60,12 +60,17 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 AreaFirstExternalWalls += blSec.AreaByExternalWalls;
                 AreaUpperExternalWalls += blSec.AreaByExternalWalls * (blSec.Floors - 1);
 
-                AreaFirstLive += blSec.AreaLive;
-                AreaUpperLive += blSec.AreaLive * (blSec.Floors - 1);
+                if (blSec.Floors <= 18)
+                {
+                    AreaFirstLive += (AreaFirstExternalWalls - 70) * 0.68;                    
+                }
+                else
+                {
+                    AreaFirstLive += (AreaFirstExternalWalls - 77) * 0.68;
+                }
             }
-
-            AreaFirstLive *= 0.7;
-            AreaUpperLive *= 0.7;
+            
+            AreaUpperLive = AreaUpperExternalWalls * 0.68;
 
             AreaTotalExternalWalls = AreaFirstExternalWalls + AreaUpperExternalWalls;
             AreaTotalLive = AreaFirstLive + AreaUpperLive;

@@ -41,8 +41,9 @@ namespace PIK_GP_Acad.BlockSection
 
         public override void TableFormatting(Table table)
         {
+            base.TableFormatting(table);
             //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
-            table.ColorIndex = 5;
+            table.ColorIndex = 5;            
         }
     }
 }

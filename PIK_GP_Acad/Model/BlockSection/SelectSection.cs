@@ -19,22 +19,28 @@ namespace PIK_GP_Acad.BlockSection
 
         public List<ObjectId> IdsBlRefSections { get; private set; }
 
-        public void Select(bool withRegions)
+        public void Select (bool withRegions)
         {
+            PromptSelectionResult res;
             var prOpt = new PromptSelectionOptions();
             var keys = string.Empty;
             if (withRegions)
             {
                 prOpt.Keywords.Add("Ekb");
-                keys = prOpt.Keywords.GetDisplayString(true);
-                prOpt.KeywordInput += (o, e) => { region = e.Input; };
-            }
+                prOpt.Keywords.Add("Msk");
+                prOpt.Keywords.Add("mO");                
 
+                prOpt.KeywordInput += (o, e) =>
+                {
+                    region = e.Input;                    
+                };
+            }           
+
+            keys = prOpt.Keywords.GetDisplayString(false);
             prOpt.MessageForAdding = "\nВыбор блоков блок-секций. " + keys;
             prOpt.MessageForRemoval = "\nИсключено из набора" + keys;
-            
-            var res = _doc.Editor.GetSelection(prOpt);            
-
+            res = _doc.Editor.GetSelection(prOpt);
+                
             if (res.Status != PromptStatus.OK)
             {
                 throw new Exception("Отменено пользователем.");
@@ -53,6 +59,6 @@ namespace PIK_GP_Acad.BlockSection
                     IdsBlRefSections.Add(idEnt);
                 }
             }
-        }        
+        }       
     }
 }
