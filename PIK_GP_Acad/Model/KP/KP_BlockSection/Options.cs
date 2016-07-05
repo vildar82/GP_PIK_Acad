@@ -49,6 +49,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DefaultValue("ЭТАЖЕЙ")]
         public string BlockSectionAtrFloor { get; set; } = "ЭТАЖЕЙ";
 
+        private int _normAreaPerPerson =40;
         /// <summary>
         /// Обеспеченность
         /// </summary>
@@ -56,7 +57,15 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Обеспеченность")]
         [DefaultValue(40)]
         [Description("Количество м2 ж.ф. на человека")]
-        public int NormAreaPerPerson { get; set; }
+        public int NormAreaPerPerson {
+            get { return _normAreaPerPerson; }
+            set {
+                if (value > 0)
+                    _normAreaPerPerson = value;                
+            }
+        }
+
+        private int _normSchoolPlace = 124;
         /// <summary>
         /// Норма мест СОШ на 1000
         /// </summary>
@@ -64,7 +73,15 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Мест СОШ на 1000чел")]
         [DefaultValue(124)]
         [Description("Количество мест СОШ на 1000 жителей")]
-        public int NormSchoolPlace { get; set; } = 124;
+        public int NormSchoolPlace {
+            get { return _normSchoolPlace; }
+            set {
+                if (value > 0)
+                    _normSchoolPlace = value;
+            }
+        }
+
+        private int _normKinderPlace = 54;
         /// <summary>
         /// Норма мест ДОО на 1000
         /// </summary>
@@ -72,7 +89,14 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Мест ДОО на 1000чел")]
         [DefaultValue(54)]
         [Description("Количество мест ДОО на 1000 жителей")]
-        public int NormKinderPlace { get; set; } = 54;
+        public int NormKinderPlace {
+            get { return _normKinderPlace; }
+            set {
+                if (value > 0)
+                    _normKinderPlace = value;
+            }
+        }
+        
         /// <summary>
         /// М/м на 1000
         /// </summary>
@@ -83,6 +107,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [TypeConverter(typeof(NormParkingConverter))]
         public int NormParking { get; set; } = 350;
 
+        private int _normParkingAreaPerPerson = 20;
         /// <summary>
         /// Площадь парковки на человека
         /// </summary>
@@ -90,7 +115,15 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Площадь парковки на человека")]
         [DefaultValue(20)]
         [Description("Кол м2 на человека")]
-        public int NormParkingAreaPerPerson { get; set; } = 20;
+        public int NormParkingAreaPerPerson {
+            get { return _normParkingAreaPerPerson; }
+            set {
+                if (value > 0)
+                    _normParkingAreaPerPerson = value;
+            }
+        }
+
+        private int _normParkingPlaceFor100 =5;
         /// <summary>
         /// Площадь парковки на человека
         /// </summary>
@@ -98,7 +131,13 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("М/м на 100чел")]
         [DefaultValue(5)]
         [Description("Кол м/м на 100 человек.")]
-        public int NormParkingPlaceFor100 { get; set; } = 5;
+        public int NormParkingPlaceFor100 {
+            get { return _normParkingPlaceFor100; }
+            set {
+                if (value > 0)
+                    _normParkingPlaceFor100 = value;
+            }
+        }
 
         public Options()
         {

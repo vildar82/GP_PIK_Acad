@@ -20,6 +20,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public const string blKpParkingLayerContour = "ГП_секции_посадка";
         public static Document Doc { get; private set; }
         public static Database Db { get; private set; }
+
         public static Editor Ed { get; private set; }
 
         public static void CreateTable()
@@ -32,6 +33,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
             // Выбор блоков блок-секций
             var blocks = selectBlocksection();
+
+            // Определение домов из блоков блок-секций и определение точных контуров ГНС - с учетом стыковки блок-секций
+
 
             // Подсчет блок-секций
             var dataSec = new DataSection(blocks, Options.Instance);

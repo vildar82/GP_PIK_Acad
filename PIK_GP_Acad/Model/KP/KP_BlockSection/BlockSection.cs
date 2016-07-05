@@ -15,6 +15,15 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
     public class BlockSection : BlockBase
     {
         /// <summary>
+        /// Полилиния по осям - в блоке БС
+        /// </summary>
+        private ObjectId plAxisId;
+        /// <summary>
+        /// Полилиния по ГНС (границы наружных стен) - в блоке БС
+        /// </summary>
+        private ObjectId plExternalId;
+
+        /// <summary>
         /// Полащадь секции по внешним границам стен
         /// </summary>
         public double AreaByExternalWalls { get; set; }
@@ -64,26 +73,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
 
             // Определение этажности по атрибуту
-            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);
-            //var attrs = AttributeInfo.GetAttrRefs(blRef);            
-            //var atrFloor = attrs.Find(a => a.Tag.Equals(Options.Instance.BlockSectionAtrFloor));
-            //if(atrFloor == null)
-            //{
-            //    Inspector.AddError("Не определен атрибут этажности блок-секции.", blRef, System.Drawing.SystemIcons.Error);                
-            //}
-            //else
-            //{
-            //    int floor;
-            //    if(int.TryParse(atrFloor.Text, out floor))
-            //    {
-            //        Floors = floor;
-            //    }
-            //    else
-            //    {
-            //        Inspector.AddError($"Не определена этажность по значению '{atrFloor.Text}' атрибута в блок-секции", blRef,
-            //            System.Drawing.SystemIcons.Error);
-            //    }
-            //}
+            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);            
         }
     }
 }
