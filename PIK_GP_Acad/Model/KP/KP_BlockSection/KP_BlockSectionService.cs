@@ -9,6 +9,7 @@ using AcadLib;
 using Autodesk.AutoCAD.EditorInput;
 using System.Text.RegularExpressions;
 using AcadLib.Errors;
+using AcadLib.RTree.SpatialIndex;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
@@ -34,8 +35,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             // Выбор блоков блок-секций
             var blocks = selectBlocksection();
 
-            // Определение домов из блоков блок-секций и определение точных контуров ГНС - с учетом стыковки блок-секций
-
+            // Определение точных контуров ГНС - с учетом стыковки блок-секций
+            DefineHouses(blocks);
 
             // Подсчет блок-секций
             var dataSec = new DataSection(blocks, Options.Instance);
@@ -44,7 +45,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             // Создание таблицы и вставка
             var tableSec = new TableSection(dataSec);
             tableSec.Create();
-        }
+        }        
 
         private static List<BlockSection> selectBlocksection()
         {
@@ -88,6 +89,31 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public static bool IsBlockSection(string blName)
         {
             return Regex.IsMatch(blName, Options.Instance.BlockSectionNameMatch);
+        }
+
+        /// <summary>
+        /// Определение точных габаритов Блок-Секций - по стыковке Блок-Секций
+        /// </summary>        
+        private static void DefineHouses (List<BlockSection> blocks)
+        {
+            // Дерево блок-секций
+            var rtreeBs = GetRtreeBs(blocks);
+            foreach (var item in blocks)
+            {
+
+            }
+
+        }
+
+        private static RTree<BlockSection> GetRtreeBs (List<BlockSection> blocks)
+        {
+            RTree<BlockSection> rtree = new RTree<BlockSection>  ();
+            foreach (var item in blocks)
+            {
+                Rectangle r = item.GetRectangle();
+                rtree.Add(r, item);
+            }
+            return rtree;
         }
     }
 }

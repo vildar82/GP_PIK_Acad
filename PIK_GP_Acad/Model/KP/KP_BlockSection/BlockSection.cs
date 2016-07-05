@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using AcadLib.Blocks;
 using AcadLib.Errors;
+using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
@@ -39,7 +41,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public BlockSection(BlockReference blRef, string blName) : base (blRef, blName)
         {
             // Определить параметры блок-секции: площадь,этажность
-            Define(blRef);
+            Define(blRef);            
         }
 
         private void Define(BlockReference blRef)
@@ -74,6 +76,23 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
             // Определение этажности по атрибуту
             Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);            
+        }
+
+        public Rectangle GetRectangle ()
+        {
+            Extents3d ext;
+            if (Bounds != null)
+            {
+                ext = Bounds.Value;
+            }
+            else
+            {
+                int halfBs = 20;
+                ext = new Extents3d(new Point3d(Position.X - halfBs, Position.Y - halfBs, 0),
+                    new Point3d(Position.X + halfBs, Position.Y + halfBs, 0));
+            }
+            Rectangle r = new Rectangle (ext);
+            return r;
         }
     }
 }

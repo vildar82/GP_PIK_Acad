@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PIK_GP_Acad.KP.Parking
+namespace PIK_GP_Acad.KP.Parking.Area
 {
     public partial class FormAreaParking : Form
     {
@@ -17,6 +17,7 @@ namespace PIK_GP_Acad.KP.Parking
         public FormAreaParking(AreaParking data)
         {
             InitializeComponent();
+            fillComboBoxType();
             this.data = data;           
                         
             textBoxArea.DataBindings.Add("Text", this.data, nameof(data.Area));
@@ -52,23 +53,26 @@ namespace PIK_GP_Acad.KP.Parking
 
         private void comboBoxType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (comboBoxType.Text)
+            var parkingType = comboBoxType.SelectedItem as ParkingType;
+            if (parkingType != null)
             {
-                case "Подземная":
-                    textBoxPlaceArea.Text = "40";
-                    data.PlaceArea = 40;
-                    break;
-                case "Надземная":
-                    textBoxPlaceArea.Text = "35";
-                    data.PlaceArea = 35;
-                    break;
-                default:
-                    textBoxPlaceArea.Text = "40";
-                    data.PlaceArea = 40;
-                    break;
-            }            
+                data.PlaceArea = parkingType.PlaceArea;
+                textBoxPlaceArea.Text = parkingType.PlaceArea.ToString();
+                if (!parkingType.IsBuilding)
+                {
+                    data.Floors = 1;
+                }
+            }
+            
             data.Calc();
             textBoxPlaces.Text = data.Places.ToString();
         }        
+
+        private void fillComboBoxType()
+        {
+            comboBoxType.Items.Add(ParkingType.ParkingBuilding);
+            comboBoxType.Items.Add(ParkingType.ParkingBuildingUnderground);
+            comboBoxType.Items.Add(ParkingType.ParkingArea);            
+        }
     }
 }

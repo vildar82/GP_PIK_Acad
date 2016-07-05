@@ -7,7 +7,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 
-namespace PIK_GP_Acad.KP.Parking
+namespace PIK_GP_Acad.KP.Parking.Area
 {
     /// <summary>
     /// Расчет парковок свободной площади

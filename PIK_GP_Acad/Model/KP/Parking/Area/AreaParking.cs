@@ -12,7 +12,7 @@ using AcadLib.Layers;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Parkings;
 
-namespace PIK_GP_Acad.KP.Parking
+namespace PIK_GP_Acad.KP.Parking.Area
 {
     /// <summary>
     /// Парковка свободной площади - по полилинии

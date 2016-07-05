@@ -134,14 +134,15 @@
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
     <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
-    <Compile Include="Model\KP\Parking\AreaParking\AreaParking.cs" />
-    <Compile Include="Model\KP\Parking\AreaParking\AreaParkingService.cs" />
-    <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.cs">
+    <Compile Include="Model\KP\Parking\Area\AreaParking.cs" />
+    <Compile Include="Model\KP\Parking\Area\AreaParkingService.cs" />
+    <Compile Include="Model\KP\Parking\Area\FormAreaParking.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Model\KP\Parking\AreaParking\FormAreaParking.Designer.cs">
+    <Compile Include="Model\KP\Parking\Area\FormAreaParking.Designer.cs">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\KP\Parking\Area\ParkingType.cs" />
     <Compile Include="Model\KP\Parking\ParkingBlock.cs" />
     <Compile Include="Model\KP\Social\SchoolBlock.cs" />
     <Compile Include="Model\KP\Social\KindergartenBlock.cs" />
@@ -175,7 +176,7 @@
     <EmbeddedResource Include="Model\Isolines\FormIsolineOptions.resx">
       <DependentUpon>FormIsolineOptions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Model\KP\Parking\AreaParking\FormAreaParking.resx">
+    <EmbeddedResource Include="Model\KP\Parking\Area\FormAreaParking.resx">
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

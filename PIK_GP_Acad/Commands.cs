@@ -349,7 +349,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                KP.Parking.AreaParkingService aps = new KP.Parking.AreaParkingService();
+                KP.Parking.Area.AreaParkingService aps = new KP.Parking.Area.AreaParkingService();
                 aps.Calc();
             });
         }
