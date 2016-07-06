@@ -61,5 +61,10 @@ namespace PIK_GP_Acad.BlockSection
             //table.Color = _service.Estimate.Color;
             table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);            
         }
+
+        public virtual double CalcPopulation (DataSection data)
+        {
+            return Math.Floor(data.TotalAreaApart / LiveAreaPerHuman); // Всего площадь квартир/28
+        }
     }
 }

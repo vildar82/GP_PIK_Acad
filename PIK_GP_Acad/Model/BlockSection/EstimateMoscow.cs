@@ -27,6 +27,10 @@ namespace PIK_GP_Acad.BlockSection
             //table.Cells.BackgroundColor = Color.FromColor(System.Drawing.Color.White);
             table.ColorIndex = 1;
         }
-        
+
+        public override double CalcPopulation (DataSection data)
+        {
+            return Math.Floor(data.KP_GNS_Total / LiveAreaPerHuman);
+        }
     }
 }

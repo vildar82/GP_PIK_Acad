@@ -53,7 +53,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             this.options = options;
         }
 
-        internal void Calc ()
+        public void Calc ()
         {
             foreach (var blSec in blocks)
             {
@@ -62,11 +62,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
                 if (blSec.Floors <= 18)
                 {
-                    AreaFirstLive += (AreaFirstExternalWalls - 70) * 0.68;                    
+                    AreaFirstLive += (blSec.AreaByExternalWalls - 70) * 0.68;                    
                 }
                 else
                 {
-                    AreaFirstLive += (AreaFirstExternalWalls - 77) * 0.68;
+                    AreaFirstLive += (blSec.AreaByExternalWalls - 77) * 0.68;
                 }
             }
             
