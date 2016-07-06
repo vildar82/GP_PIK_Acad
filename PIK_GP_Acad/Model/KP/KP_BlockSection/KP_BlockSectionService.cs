@@ -20,7 +20,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// Слой контура в блоке блок-секции
         /// </summary>
-        public const string blKpParkingLayerContour = "ГП_секции_посадка";
+        public const string blKpParkingLayerContour ="UP_Секции_Оси";// "ГП_секции_посадка";
+        public const string blKpParkingLayerContourOld ="ГП_секции_посадка";
         public static Document Doc { get; private set; }
         public static Database Db { get; private set; }
         public static Editor Ed { get; private set; }        
@@ -80,8 +81,12 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             // Запрос выбора блоков
             var sel = Ed.Select("\nВыбор блоков блок-секций (Концепции):");
 
+            // Перенос полилиний со старого слоя на новый 
+            TransferLayerPlContours();
+
             using (var t = Db.TransactionManager.StartTransaction())
-            {
+            {   
+
                 foreach (var idBlRef in sel)
                 {
                     if (isNew)
@@ -139,6 +144,41 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             return blocks;
         }
 
+        private static void TransferLayerPlContours ()
+        {
+            using (var t = Db.TransactionManager.StartTransaction())
+            {
+                // Новый слой для контура ГНС внутри блок-секций - UP_Секции_ГНС
+                var layerGNSInBS = AcadLib.Layers.LayerExt.CheckLayerState(blKpParkingLayerContour);
+                var bt = Db.BlockTableId.GetObject( OpenMode.ForRead) as BlockTable;
+                foreach (var btrId in bt)
+                {
+                    var btr = btrId.GetObject(OpenMode.ForRead) as BlockTableRecord;
+                    if (btr == null) continue;
+                    if (IsBlockSection(btr.Name))
+                    {
+                        bool hasChanges = false;
+                        foreach (var idEnt in btr)
+                        {
+                            var pl = idEnt.GetObject(OpenMode.ForRead, false, true) as Polyline;
+                            if (pl == null) continue;
+                            if (pl.Layer.Equals(blKpParkingLayerContourOld, StringComparison.OrdinalIgnoreCase))
+                            {
+                                pl.UpgradeOpen();
+                                pl.Layer = blKpParkingLayerContour;
+                                hasChanges = true;
+                            }
+                        }
+                        if (hasChanges)
+                        {
+                            btr.UpdateAnonymousBlocks();
+                        }
+                    }
+                }
+                t.Commit();
+            }
+        }
+
         public static bool IsBlockSection(string blName)
         {
             return Regex.IsMatch(blName, Options.Instance.BlockSectionNameMatch);
@@ -167,21 +207,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     plExtern.ColorIndex = 256;
                     plExtern.Linetype = SymbolUtilityServices.LinetypeByLayerName;
                     plExtern.LineWeight = LineWeight.ByLayer;
-                    plExtern.TransformBy(bs.Transform);
-
-                    if (fill)
-                    {
-                        // Заливка контура штриховкой
-                        try
-                        {
-                            FillContour(bs, plExtern, cs, t);
-                        }
-                        catch (Exception ex)
-                        {
-                            Inspector.AddError($"Ошибка заполнения штриховки контура ГНС блок-секции - {ex}",
-                                bs.IdBlRef, System.Drawing.SystemIcons.Warning);
-                        }
-                    }
+                    plExtern.TransformBy(bs.Transform);                    
 
                     try
                     {
@@ -222,7 +248,21 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         Inspector.AddError($"Ошибка определения точного контура ГНС блок-секции - {ex}",
                             bs.IdBlRef, System.Drawing.SystemIcons.Warning);
                     }
-                    bs.AreaByExternalWalls = plExtern.Area;           
+                    bs.AreaByExternalWalls = plExtern.Area;
+
+                    if (fill)
+                    {
+                        // Заливка контура штриховкой
+                        try
+                        {
+                            FillContour(bs, plExtern, cs, t);
+                        }
+                        catch (Exception ex)
+                        {
+                            Inspector.AddError($"Ошибка заполнения штриховки контура ГНС блок-секции - {ex}",
+                                bs.IdBlRef, System.Drawing.SystemIcons.Warning);
+                        }
+                    }
                 }
                 t.Commit();
             }
