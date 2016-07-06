@@ -349,10 +349,17 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
         private static Color GetFillColor (BlockSection bs)
         {
-            byte r = Convert.ToByte(255 - bs.Floors*5);
-            byte g = Convert.ToByte(255 - bs.Floors*5);
-            byte b = Convert.ToByte(255 - bs.Floors*5);
-            return Color.FromRgb(r, g, b);
+            if (bs.Floors <= 15)
+                return Color.FromRgb(255, 255, 255);
+            else if (bs.Floors > 20)
+                return Color.FromColorIndex(ColorMethod.ByAci, 253);
+            else            
+                return Color.FromColorIndex(ColorMethod.ByAci, 254);
+            
+            //byte r = Convert.ToByte(255 - bs.Floors*5);
+            //byte g = Convert.ToByte(255 - bs.Floors*5);
+            //byte b = Convert.ToByte(255 - bs.Floors*5);
+
         }
     }
 }
