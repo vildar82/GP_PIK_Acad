@@ -342,6 +342,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             ids.Add(plExtern.Id);
             h.AppendLoop(HatchLoopTypes.Default, ids);
             h.EvaluateHatch(true);
+            
+            var orders = cs.DrawOrderTableId.GetObject(OpenMode.ForWrite) as DrawOrderTable;
+            orders.MoveToBottom(new ObjectIdCollection(new[] { h.Id }));
         }
 
         private static Color GetFillColor (BlockSection bs)
