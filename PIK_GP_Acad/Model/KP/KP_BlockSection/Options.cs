@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -23,6 +26,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         const string KeyNormParking = "NormParking";
         const string KeyNormParkingAreaPerPerson = "NormParkingAreaPerPerson";
         const string KeyNormParkingPlaceFor100 = "NormParkingPlaceFor100";
+        const string KeyTextStyleItalic = "TextStyleItalic";
 
         static Options _instance;
         public static Options Instance {
@@ -142,6 +146,17 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
         }
 
+        /// <summary>
+        /// Курсив
+        /// </summary>
+        [Category("Оформление")]
+        [DisplayName("Курсив")]
+        [DefaultValue(false)]
+        [Description("Курсивный шрифт в таблице.")]
+        [Editor(typeof(CheckBoxEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BooleanTypeConverter))]
+        public bool TextStyleItalic { get; set; } = false;
+
         public Options()
         {
         }        
@@ -160,7 +175,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             AcadLib.UI.FormProperties formProp = new AcadLib.UI.FormProperties();
             Options newOptions = (Options)Instance.MemberwiseClone();
             formProp.propertyGrid1.SelectedObject = newOptions;
-            if (Application.ShowModalDialog(formProp) != System.Windows.Forms.DialogResult.OK)
+            if (Autodesk.AutoCAD.ApplicationServices.Application.ShowModalDialog(formProp) != System.Windows.Forms.DialogResult.OK)
             {
                 throw new Exception(General.CanceledByUser);
             }
@@ -235,6 +250,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             nod.Save(NormParking, KeyNormParking);
             nod.Save(NormParkingAreaPerPerson, KeyNormParkingAreaPerPerson);
             nod.Save(NormParkingPlaceFor100, KeyNormParkingPlaceFor100);
+            nod.Save(TextStyleItalic, KeyTextStyleItalic);
         }
 
         void LoadFromNOD()
@@ -246,6 +262,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             NormParking = nod.Load(KeyNormParking, 350);
             NormParkingAreaPerPerson = nod.Load(KeyNormParkingAreaPerPerson, 20);
             NormParkingPlaceFor100 = nod.Load(KeyNormParkingPlaceFor100, 5);
+            TextStyleItalic = nod.Load(KeyTextStyleItalic, false);
         }
     }
 
@@ -277,6 +294,60 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
             return base.ConvertFrom(context, culture, value);
         }
+    }
 
+    public class BooleanTypeConverter : BooleanConverter
+    {
+        public override object ConvertFrom (ITypeDescriptorContext context,
+          CultureInfo culture,
+          object value)
+        {
+            return (string)value == "Да";
+        }
+
+        public override object ConvertTo (ITypeDescriptorContext context,
+                CultureInfo culture,
+          object value,
+          Type destType)
+        {
+            return (bool)value ?
+              "Да" : "Нет";
+        }
+    }
+
+    public class CheckBoxEditor : UITypeEditor
+    {
+        public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+        {
+            return UITypeEditorEditStyle.Modal;
+        }
+
+        public override bool GetPaintValueSupported (ITypeDescriptorContext context)
+        {
+            return true;
+        }                     
+        
+
+        public override void PaintValue (PaintValueEventArgs e)
+        {            
+            ButtonState State;
+            bool res=Convert.ToBoolean((e.Value));
+            if (res)
+            {
+                State =ButtonState.Checked;                
+            }
+            else
+            {
+                State = ButtonState.Normal;
+            }
+            
+            ControlPaint.DrawCheckBox(e.Graphics, e.Bounds, State);                        
+            e.Graphics.ExcludeClip(e.Bounds);            
+        }
+
+        public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            return base.EditValue(context, provider, "Курсив");
+        }
     }
 }

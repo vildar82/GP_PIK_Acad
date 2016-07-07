@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
         internal void Create()
         {
-            Table table = getTable();
+            Table table = getTable();            
             InsertTable(table);
         }        
 
@@ -29,11 +29,23 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         {
             Table table = new Table();
             table.SetDatabaseDefaults();
-            table.TableStyle = KP_BlockSectionService.Db.GetTableStylePIK();
+            table.TableStyle = KP_BlockSectionService.Db.GetTableStylePIK();            
 
             table.SetSize(5, 9);
             table.SetBorders(LineWeight.LineWeight050);
             table.SetRowHeight(8);
+
+            ObjectId textStyleItalic;
+            if (Options.Instance.TextStyleItalic)
+            {
+                // Использование курсивного стиля для таблицы
+                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK("PIK-KP-i");
+            }
+            else
+            {
+                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK("PIK-KP");
+            }
+            table.Cells.TextStyleId = textStyleItalic;
 
             var rowHeaders = table.Rows[1];
             rowHeaders.Height = 15;
@@ -89,7 +101,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             col[1, colIndex].TextString = title;
             var mCells = CellRange.Create(table, 2, colIndex, 4, colIndex);
             table.MergeCells(mCells);
-            col[2, colIndex].TextString = value;
+            col[2, colIndex].TextString = value;            
             col.Alignment = CellAlignment.MiddleCenter;
             col.Width = 20;
         }
