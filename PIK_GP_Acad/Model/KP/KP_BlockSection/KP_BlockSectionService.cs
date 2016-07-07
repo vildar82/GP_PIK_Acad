@@ -20,8 +20,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// Слой контура в блоке блок-секции
         /// </summary>
-        public const string blKpParkingLayerContour ="UP_Секции_Оси";// "ГП_секции_посадка";
-        public const string blKpParkingLayerContourOld ="ГП_секции_посадка";
+        public const string blKpParkingLayerAxisContour ="UP_Секции_Оси";// "ГП_секции_посадка";
+        public const string blKpParkingLayerAxisContourOld ="ГП_секции_посадка";
         public static Document Doc { get; private set; }
         public static Database Db { get; private set; }
         public static Editor Ed { get; private set; }        
@@ -144,12 +144,12 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             return blocks;
         }
 
-        private static void TransferLayerPlContours ()
+        public static void TransferLayerPlContours ()
         {
             using (var t = Db.TransactionManager.StartTransaction())
             {
                 // Новый слой для контура ГНС внутри блок-секций - UP_Секции_ГНС
-                var layerGNSInBS = AcadLib.Layers.LayerExt.CheckLayerState(blKpParkingLayerContour);
+                var layerGNSInBS = AcadLib.Layers.LayerExt.CheckLayerState(blKpParkingLayerAxisContour);
                 var bt = Db.BlockTableId.GetObject( OpenMode.ForRead) as BlockTable;
                 foreach (var btrId in bt)
                 {
@@ -162,10 +162,10 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         {
                             var pl = idEnt.GetObject(OpenMode.ForRead, false, true) as Polyline;
                             if (pl == null) continue;
-                            if (pl.Layer.Equals(blKpParkingLayerContourOld, StringComparison.OrdinalIgnoreCase))
+                            if (pl.Layer.Equals(blKpParkingLayerAxisContourOld, StringComparison.OrdinalIgnoreCase))
                             {
                                 pl.UpgradeOpen();
-                                pl.Layer = blKpParkingLayerContour;
+                                pl.Layer = blKpParkingLayerAxisContour;
                                 hasChanges = true;
                             }
                         }
@@ -178,7 +178,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 t.Commit();
             }
         }
-
+        
         public static bool IsBlockSection(string blName)
         {
             return Regex.IsMatch(blName, Options.Instance.BlockSectionNameMatch);
@@ -215,12 +215,6 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         var bsIntersects = rtreeBs.Intersects(bs.Rectangle);
                         if (bsIntersects.Count > 1)
                         {
-                            // Осевая полилиния этой секции
-                            var plAxis =bs.PlAxisId.GetObject( OpenMode.ForRead, false, true) as Polyline;
-                            plAxis = plAxis.Clone() as Polyline;
-                            plAxis.ColorIndex = 1;
-                            plAxis.TransformBy(bs.Transform);
-
                             List<Point2d> vertexModified = new List<Point2d> ();
 
                             foreach (var bsIntersect in bsIntersects)
@@ -230,16 +224,16 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
                                 // Проверка пересечения полилиний контуров
 
-                                // Осевая линия пересекаемой секции
-                                var plAxisItem =bsIntersect.PlAxisId.GetObject( OpenMode.ForRead, false, true) as Polyline;
-                                plAxisItem = plAxisItem.Clone() as Polyline;
-                                plAxisItem.TransformBy(bsIntersect.Transform);
+                                // ГНС линия пересекаемой секции
+                                var plExternItem =bsIntersect.PlExternalId.GetObject( OpenMode.ForRead, false, true) as Polyline;
+                                plExternItem = plExternItem.Clone() as Polyline;
+                                plExternItem.TransformBy(bsIntersect.Transform);
 
                                 // Точки пересечения блок секций
                                 Point3dCollection ptIntersects = new Point3dCollection ();
-                                plAxis.IntersectWith(plAxisItem, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
+                                plExtern.IntersectWith(plExternItem, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
 
-                                ModifyPlExternal(plExtern, ptIntersects, tolerance, ref vertexModified, bs);
+                                ModifyPlExternal(plExtern, plExternItem, ptIntersects, bs);
                             }
                         }
                     }
@@ -266,9 +260,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 }
                 t.Commit();
             }
-        }
-
-        
+        }        
 
         private static RTree<BlockSection> GetRtreeBs (List<BlockSection> blocks)
         {
@@ -281,86 +273,46 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             return rtree;
         }
 
-        private static void ModifyPlExternal (Polyline pl, Point3dCollection ptIntersects, Tolerance tolerance,
-           ref List<Point2d> vertexModified, BlockSection bs)
+        private static void ModifyPlExternal (Polyline pl, Polyline plItem, Point3dCollection ptIntersects,
+            BlockSection bs)
         {            
             if (ptIntersects.Count == 0) return;
-            if (ptIntersects.Count > 2)
-            {
-                Extents3d extIntersect = new Extents3d ();
-                foreach (Point3d item in ptIntersects)
-                {
-                    extIntersect.AddPoint(item);
-                }
-                Inspector.AddError($"Больше двух точек пересечения осевых контуров блок-секций", 
-                    extIntersect, bs.IdBlRef, System.Drawing.SystemIcons.Warning);
-                return;
-            }
+
             int numVertex = pl.NumberOfVertices;
-            var ptIntersect1 =ptIntersects[0];
-            var ptIntersect2 =ptIntersects[1];
-            var ptClosest1 = pl.GetClosestPointTo(ptIntersect1, true);
-            var ptClosest2 = pl.GetClosestPointTo(ptIntersect2, true);
-            var param1 = pl.GetParameterAtPoint(ptClosest1);
-            var param2 = pl.GetParameterAtPoint(ptClosest2);
-            var paramIndex1 = Convert.ToInt32(param1);
-            var paramIndex2 = Convert.ToInt32(param2);
-            var ptVertexNearest1 = pl.GetPointAtParameter(paramIndex1).Convert2d();
-            var ptVertexNearest2 = pl.GetPointAtParameter(paramIndex2).Convert2d();    
-            
-            if (vertexModified.Contains(ptVertexNearest1) ||
-                vertexModified.Contains(ptVertexNearest2))
-            {
-                Extents3d extIntersect = new Extents3d ();               
-                extIntersect.AddPoint(ptVertexNearest1.Convert3d());
-                extIntersect.AddPoint(ptVertexNearest2.Convert3d());
+            var modifiedPoints = new List<Point2d> ();            
 
-                // Эти точки контура блок-секции уже изменялись - недопустимая ситуация
-                Inspector.AddError($"Повторное изменение точек внешнего контура блок-секции. Ошибка.",
-                    extIntersect, bs.IdBlRef, System.Drawing.SystemIcons.Warning);
-                return;
-            }
+            // для каждой точки пересечения найти ближайшую вершину на двух полилиниях
+            foreach (Point3d ptIntersect in ptIntersects)
+            {                
+                var ptClosest = pl.GetClosestPointTo(ptIntersect, true);
+                var param = pl.GetParameterAtPoint(ptClosest);
+                var paramIndex = Convert.ToInt32(param);
+                var ptVertexNearest = pl.GetPointAtParameter(paramIndex).Convert2d();
+                int vertexIndex = paramIndex == numVertex? 0: paramIndex;
 
-            LineSegment2d seg1;
-            LineSegment2d seg2;
-            int vertexIndex1 = paramIndex1 == numVertex? 0: paramIndex1;
-            int vertexIndex2 = paramIndex2 == numVertex? 0: paramIndex2;
-            int segIndex1 =vertexIndex1;
-            int segIndex2 =vertexIndex2;
-            if (paramIndex2 - paramIndex1 == 1)
-            {
-                segIndex1 = paramIndex1 == 0 ? numVertex - 1 : paramIndex1 - 1;                
-            }
-            else if (paramIndex1 - paramIndex2 == 1)
-            {
-                segIndex2 = paramIndex2 == 0 ? numVertex - 1 : paramIndex2 - 1;                
-            }
-            else
-            {
-                if (paramIndex1 > paramIndex2)
+                if (modifiedPoints.Contains(ptVertexNearest))
                 {
-                    segIndex1 = paramIndex1 - 1;                    
+                    continue;
                 }
-                else
+
+                var ptClosestItem = plItem.GetClosestPointTo(ptIntersect, true);                
+                var paramItem = plItem.GetParameterAtPoint(ptClosestItem);
+                var paramIndexItem = Convert.ToInt32(paramItem);
+                var ptVertexNearestItem = plItem.GetPointAtParameter(paramIndexItem).Convert2d();
+
+                if ((ptVertexNearest - ptVertexNearestItem).Length>5)
                 {
-                    segIndex2 = paramIndex2 - 1;
+                    continue;
                 }
-            }
 
-            seg1 = pl.GetLineSegment2dAt(segIndex1);
-            seg2 = pl.GetLineSegment2dAt(segIndex2);
+                Point2d ptInsert =   ptVertexNearest.Center(ptVertexNearestItem);
 
-            var ptInsert1 = seg1.GetNormalPoint(ptIntersect1.Convert2d()).Point;
-            var ptInsert2 = seg2.GetNormalPoint(ptIntersect2.Convert2d()).Point;
+                pl.RemoveVertexAt(vertexIndex);
+                pl.AddVertexAt(vertexIndex, ptInsert, 0, 0, 0);
 
-            pl.RemoveVertexAt(vertexIndex1);
-            pl.AddVertexAt(vertexIndex1, ptInsert1, 0, 0, 0);
-            pl.RemoveVertexAt(vertexIndex2);
-            pl.AddVertexAt(vertexIndex2, ptInsert2, 0, 0, 0);
-
-            vertexModified.Add(ptInsert1);
-            vertexModified.Add(ptInsert1);
-        }
+                modifiedPoints.Add(ptInsert);
+            }            
+        }        
 
         private static void FillContour (BlockSection bs, Polyline plExtern, BlockTableRecord cs, Transaction t)
         {
