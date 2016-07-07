@@ -72,8 +72,8 @@ namespace PIK_GP_Acad
                 // Концепция
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Расчет ТЭП для неутвержденной стадии.", GroupKP),
-                new PaletteCommand(ResponsibleUsers, "Спецификация блок-секций (новая)",Resources.GP_KP_BlockSectionTableNew, nameof(KP_BlockSectionTableNew), "Расчет ТЭП для неутвержденной стадии (новый).", GroupKP),
-                new PaletteCommand(ResponsibleUsers, "Заливка блок-секций",Resources.GP_KP_BlockSectionFill, nameof(KP_BlockSectionFill), "Заливка контуров блок-секций сплошной штриховкой.", GroupKP),
+                new PaletteCommand("Спецификация блок-секций (новая)",Resources.GP_KP_BlockSectionTableNew, nameof(KP_BlockSectionTableNew), "Расчет ТЭП для неутвержденной стадии (новый).", GroupKP),
+                new PaletteCommand("Заливка блок-секций",Resources.GP_KP_BlockSectionFill, nameof(KP_BlockSectionFill), "Заливка контуров блок-секций сплошной штриховкой.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций PIK1",Resources.GP_BlockSectionTable, nameof(KP_BlockSectionTableFromGP), "Таблица подсчета блок-секции PIK1.", GroupKP),                
                 new PaletteCommand("Блок ДОО",Resources.KP_DOO, nameof(KP_BlockDOOInsert), "Вставка блока детского сада (ДОО).", GroupKP),
                 new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
