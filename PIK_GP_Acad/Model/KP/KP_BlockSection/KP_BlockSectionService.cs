@@ -82,7 +82,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             var sel = Ed.Select("\nВыбор блоков блок-секций (Концепции):");
 
             // Перенос полилиний со старого слоя на новый 
-            TransferLayerPlContours();
+            TransferLayerPlContours(Db);
 
             using (var t = Db.TransactionManager.StartTransaction())
             {   
@@ -144,9 +144,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             return blocks;
         }
 
-        public static void TransferLayerPlContours ()
+        public static void TransferLayerPlContours (Database db)
         {
-            using (var t = Db.TransactionManager.StartTransaction())
+            using (var t = db.TransactionManager.StartTransaction())
             {
                 // Новый слой для контура ГНС внутри блок-секций - UP_Секции_ГНС
                 var layerGNSInBS = AcadLib.Layers.LayerExt.CheckLayerState(blKpParkingLayerAxisContour);
