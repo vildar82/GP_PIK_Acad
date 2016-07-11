@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.BlockSection
         // Подсчет секций
         public void CalcSections()
         {
-            GetData();
+            GetData(true);
             // Построение таблицы
             TableSecton tableSection = new TableSecton(this);
             tableSection.CreateTable();
@@ -29,19 +29,19 @@ namespace PIK_GP_Acad.BlockSection
 
         public void CalcSectionsForKP()
         {
-            GetData();
+            GetData(false);
             // Построение таблицы
             TableSectonKP tableSection = new TableSectonKP(this);
             tableSection.CreateTable();
         }
 
-        private void GetData()
+        private void GetData(bool withRegions)
         {
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 // Выбор блоков
                 SelectSection select = new SelectSection(Doc);
-                select.Select(true);
+                select.Select(withRegions);
                 if (select.IdsBlRefSections.Count == 0)
                 {
                     throw new Exception("Не найдены блоки блок-секций");

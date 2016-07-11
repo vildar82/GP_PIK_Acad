@@ -122,8 +122,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     if(IsBlockSection(blName))
                     {
                         try
-                        {
-                            var blSec = new BlockSection(blRef, blName);
+                        {                            
+                            var blSec = BlockSectionFactory.CreateBS(blRef, blName);
                             if (blSec.Error != null)
                             {
                                 Inspector.AddError(blSec.Error);
@@ -150,7 +150,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             {
                 // Новый слой для контура ГНС внутри блок-секций - UP_Секции_ГНС
                 var layerGNSInBS = AcadLib.Layers.LayerExt.CheckLayerState(blKpParkingLayerAxisContour);
-                var bt = Db.BlockTableId.GetObject( OpenMode.ForRead) as BlockTable;
+                var bt = db.BlockTableId.GetObject( OpenMode.ForRead) as BlockTable;
                 foreach (var btrId in bt)
                 {
                     var btr = btrId.GetObject(OpenMode.ForRead) as BlockTableRecord;
@@ -242,7 +242,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         Inspector.AddError($"Ошибка определения точного контура ГНС блок-секции - {ex}",
                             bs.IdBlRef, System.Drawing.SystemIcons.Warning);
                     }
-                    bs.AreaByExternalWalls = plExtern.Area;
+                    bs.AreaGNS = plExtern.Area;
 
                     if (fill)
                     {

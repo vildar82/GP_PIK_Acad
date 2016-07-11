@@ -14,11 +14,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         private List<BlockSection> blocks;
         private Options options;
 
-        public double AreaFirstExternalWalls { get; private set; }
+        public double AreaFirstGNS { get; private set; }
         public double AreaFirstLive { get; private set; }
-        public double AreaUpperExternalWalls { get; private set; }
+        public double AreaUpperGNS { get; private set; }
         public double AreaUpperLive { get; private set; }
-        public double AreaTotalExternalWalls { get; private set; }
+        public double AreaTotalGNS { get; private set; }
         public double AreaTotalLive { get; private set; }
 
         /// <summary>
@@ -55,27 +55,36 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
         public void Calc ()
         {
-            foreach (var blSec in blocks)
+            // Расчет площадей обычных блок-секций - без башень
+            foreach (var blSec in blocks.Where(b=>!(b is TowerBS)))
             {
-                AreaFirstExternalWalls += blSec.AreaByExternalWalls;
-                AreaUpperExternalWalls += blSec.AreaByExternalWalls * (blSec.Floors - 1);
+                AreaFirstGNS += blSec.AreaGNS;
+                AreaUpperGNS += blSec.AreaGNS * (blSec.Floors - 1);
 
                 if (blSec.Floors <= 18)
                 {
-                    AreaFirstLive += (blSec.AreaByExternalWalls - 70) * 0.68;                    
+                    AreaFirstLive += (blSec.AreaGNS - 70) * 0.68;                    
                 }
                 else
                 {
-                    AreaFirstLive += (blSec.AreaByExternalWalls - 77) * 0.68;
+                    AreaFirstLive += (blSec.AreaGNS - 77) * 0.68;
                 }
-            }
-            
-            AreaUpperLive = AreaUpperExternalWalls * 0.68;
+            }            
+            AreaUpperLive = AreaUpperGNS * 0.68;
 
-            AreaTotalExternalWalls = AreaFirstExternalWalls + AreaUpperExternalWalls;
+            // Расчет башен    
+            foreach (var tower in blocks.OfType<TowerBS>())
+            {
+                AreaFirstGNS += tower.AreaGNS;
+                AreaUpperGNS += tower.AreaGNS * (tower.Floors - 1);
+                AreaFirstLive += tower.AreaBKFN;
+                AreaUpperLive += tower.AreaLive * (tower.Floors - 1);
+            }
+
+            AreaTotalGNS = AreaFirstGNS + AreaUpperGNS;
             AreaTotalLive = AreaFirstLive + AreaUpperLive;
 
-            Population = Convert.ToInt32(AreaUpperExternalWalls / options.NormAreaPerPerson);
+            Population = Convert.ToInt32(AreaUpperGNS / options.NormAreaPerPerson);
             SchoolPlaces = Convert.ToInt32(Population * options.NormSchoolPlace * 0.001);
             KinderPlaces = Convert.ToInt32(Population * options.NormKinderPlace * 0.001);
             PersistentParking = Convert.ToInt32(Population * options.NormParking * 0.001);

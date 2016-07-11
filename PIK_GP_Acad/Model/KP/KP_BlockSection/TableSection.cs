@@ -66,9 +66,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             // Площадь в г.н.с.
             col = table.Columns[1];
             col[1, 1].TextString = "Площадь в Г.Н.С.,\nтыс. м" + General.Symbols.Square;
-            col[2, 1].TextString = (data.AreaFirstExternalWalls*0.001).ToString("0.00"); //"1 этаж"
-            col[3, 1].TextString = (data.AreaUpperExternalWalls*0.001).ToString("0.00"); //"Верхние этажи"
-            col[4, 1].TextString = (data.AreaTotalExternalWalls*0.001).ToString("0.00"); //"Итого"
+            col[2, 1].TextString = (data.AreaFirstGNS*0.001).ToString("0.00"); //"1 этаж"
+            col[3, 1].TextString = (data.AreaUpperGNS*0.001).ToString("0.00"); //"Верхние этажи"
+            col[4, 1].TextString = (data.AreaTotalGNS*0.001).ToString("0.00"); //"Итого"
             col.Alignment = CellAlignment.MiddleCenter;
             col.Width = 20;
 

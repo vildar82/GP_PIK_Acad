@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// Полащадь секции по внешним границам стен
         /// </summary>
-        public double AreaByExternalWalls { get; set; }
+        public double AreaGNS { get; set; }
         /// <summary>
         /// Полащадь секции - жилой площади
         /// </summary>
@@ -44,15 +44,15 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// Кол этажей
         /// </summary>
-        public int Floors { get; set; } = 1;
+        public int Floors { get; set; } = 1;        
 
         public BlockSection(BlockReference blRef, string blName) : base (blRef, blName)
         {
-            // Определить параметры блок-секции: площадь,этажность
+            // Определить параметры блок-секции: площадь,этажность            
             Define(blRef);            
         }
 
-        private void Define(BlockReference blRef)
+        protected virtual void Define(BlockReference blRef)
         {
             // Контурная полилиния - внешняя граница блок-секции по стенам.
             Polyline plAxis;
@@ -69,7 +69,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 }
                 else
                 {
-                    AreaByExternalWalls = plContour.Area;
+                    AreaGNS = plContour.Area;
                 }                
             } 
             
@@ -86,7 +86,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             PlExternalId = plContour.Id;
 
             // Определение этажности по атрибуту
-            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor);            
+            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor, exactMatch: false);                                   
         }
 
         private Rectangle GetRectangle ()

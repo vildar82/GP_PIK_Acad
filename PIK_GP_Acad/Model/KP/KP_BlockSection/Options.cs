@@ -53,8 +53,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [Category("Блок-секция")]
         [DisplayName("Атрибут этажности")]
         [Description("Тег атрибута Этажности в блоке Блок-секции")]
-        [DefaultValue("ЭТАЖНОСТЬ")]
-        public string BlockSectionAtrFloor { get; set; } = "ЭТАЖНОСТЬ";
+        [DefaultValue("ЭТАЖ")]
+        public string BlockSectionAtrFloor { get; set; } = "ЭТАЖ";
 
         private int _normAreaPerPerson =40;
         /// <summary>
