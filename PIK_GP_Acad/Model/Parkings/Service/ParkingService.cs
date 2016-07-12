@@ -123,7 +123,7 @@ namespace PIK_GP_Acad.Parkings
             }
             catch (ArgumentNullException)
             {                
-                // Выбрано ключевое слово!
+                // Выбрано ключевое слово!                
             }            
 
             using (var t = Db.TransactionManager.StartTransaction())
@@ -144,7 +144,8 @@ namespace PIK_GP_Acad.Parkings
                     var blName = blRef.GetEffectiveName();
 
                     var p = ParkingFactory.CreateParking(blRef, blName);
-                    
+                    if (p == null) continue;
+
                     var res = p.Define(blRef);
                     if (res.Failure)
                     {

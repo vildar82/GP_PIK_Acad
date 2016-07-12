@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Constructions;
@@ -36,7 +37,23 @@ namespace PIK_GP_Acad.Insolation
             // Объекты в области действия точки
             var scope = map.GetScope(pt);
             // радар
-            radar.Scan(pt, scope, ms);
+            var res = radar.Scan(pt, scope, ms);
+
+            // Построение зон освещенности
+            cretateIllumAreas(res);
+        }
+
+        private void cretateIllumAreas (List<IlluminationArea> res)
+        {
+            using (var t = db.TransactionManager.StartTransaction())
+            {
+                var cs = db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+                foreach (var illum in res)
+                {
+                    illum.Create(cs, t);                                  
+                }
+                t.Commit();
+            }
         }
     }
 }

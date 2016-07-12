@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Constructions
 
         public override Polyline GetCurve ()
         {
-            var pl = idPl.GetObject( OpenMode.ForRead, false, true) as Polyline;
+            var pl = idPl.GetObject(OpenMode.ForRead, false, true) as Polyline;
             return pl;
         }
     }

@@ -111,6 +111,7 @@
     <Compile Include="Model\Insolation\Constructions\BuildingFactory.cs" />
     <Compile Include="Model\Insolation\Constructions\IBuilding.cs" />
     <Compile Include="Model\Insolation\Constructions\Surround.cs" />
+    <Compile Include="Model\Insolation\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\InsolationService.cs" />
     <Compile Include="Model\Insolation\Map.cs" />
     <Compile Include="Model\Insolation\MoscowOptions.cs" />

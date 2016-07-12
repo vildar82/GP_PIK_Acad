@@ -14,6 +14,8 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         public int MaxHeight { get; internal set; }
         public ISunlightRule SunlightRule { get; set; }
+        public double ScaningStepLarge { get; set; } = 1;
+        public double ScaningStepSmall { get; set; } = 0.1;
 
         public Options (ISunlightRule rule, int maxHeight)
         {
