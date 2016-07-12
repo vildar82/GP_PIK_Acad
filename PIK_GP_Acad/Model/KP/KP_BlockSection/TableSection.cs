@@ -39,11 +39,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             if (Options.Instance.TextStyleItalic)
             {
                 // Использование курсивного стиля для таблицы
-                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK("PIK-KP-i");
+                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK(GPHelper.TextStylePikKPItalic);
             }
             else
             {
-                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK("PIK-KP");
+                textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK(GPHelper.TextStylePikKP);
             }
             table.Cells.TextStyleId = textStyleItalic;
 
