@@ -56,20 +56,12 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public void Calc ()
         {
             // Расчет площадей обычных блок-секций - без башень
-            foreach (var blSec in blocks.Where(b=>!(b is TowerBS)))
+            foreach (var blSec in blocks.Where(b => !(b is TowerBS)))
             {
                 AreaFirstGNS += blSec.AreaGNS;
                 AreaUpperGNS += blSec.AreaGNS * (blSec.Floors - 1);
-
-                if (blSec.Floors <= 18)
-                {
-                    AreaFirstLive += (blSec.AreaGNS - 70) * 0.68;                    
-                }
-                else
-                {
-                    AreaFirstLive += (blSec.AreaGNS - 77) * 0.68;
-                }
-            }            
+                AreaFirstLive += (blSec.AreaGNS - 77) * 0.68;
+            }
             AreaUpperLive = AreaUpperGNS * 0.68;
 
             // Расчет башен    
@@ -88,8 +80,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             SchoolPlaces = Convert.ToInt32(Population * options.NormSchoolPlace * 0.001);
             KinderPlaces = Convert.ToInt32(Population * options.NormKinderPlace * 0.001);
             PersistentParking = Convert.ToInt32(Population * options.NormParking * 0.9 * 0.001);
-            TemproraryParking = Convert.ToInt32(PersistentParking * 0.25);
-            ParkingBKFN = Convert.ToInt32((AreaFirstLive/options.NormParkingAreaPerPerson)*0.01 * options.NormParkingPlaceFor100);
+            TemproraryParking = Convert.ToInt32(Population * options.NormParking * 0.25 * 0.001);
+            ParkingBKFN = Convert.ToInt32((AreaFirstLive/options.NormAreaBKFNPerPerson)*0.01 * options.NormParkingPlaceFor100);
         }                
     }
 }

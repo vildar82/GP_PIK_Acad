@@ -56,13 +56,13 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DefaultValue("ЭТАЖ")]
         public string BlockSectionAtrFloor { get; set; } = "ЭТАЖ";
 
-        private int _normAreaPerPerson =40;
+        private int _normAreaPerPerson =30;
         /// <summary>
         /// Обеспеченность
         /// </summary>
         [Category("Нормативные показатели")]
         [DisplayName("Обеспеченность")]
-        [DefaultValue(40)]
+        [DefaultValue(30)]
         [Description("Количество м2 ж.ф. на человека.\nЖители = <ЖФ типовых этажей> / <Обеспеченность>.")]
         public int NormAreaPerPerson {
             get { return _normAreaPerPerson; }
@@ -114,7 +114,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [TypeConverter(typeof(NormParkingConverter))]
         public int NormParking { get; set; } = 350;
 
-        private int _normParkingAreaPerPerson = 20;
+        private int _normAreaBKFNPerPerson = 20;
         /// <summary>
         /// Площадь парковки на человека
         /// </summary>
@@ -122,11 +122,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [DisplayName("Площадь БКФН на человека")]
         [DefaultValue(20)]
         [Description("Кол м2 БКФН на одного человека.")]
-        public int NormParkingAreaPerPerson {
-            get { return _normParkingAreaPerPerson; }
+        public int NormAreaBKFNPerPerson {
+            get { return _normAreaBKFNPerPerson; }
             set {
                 if (value > 0)
-                    _normParkingAreaPerPerson = value;
+                    _normAreaBKFNPerPerson = value;
             }
         }
 
@@ -248,7 +248,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             nod.Save(NormSchoolPlace, KeyNormSchoolPlace);
             nod.Save(NormKinderPlace, KeyNormKinderPlace);
             nod.Save(NormParking, KeyNormParking);
-            nod.Save(NormParkingAreaPerPerson, KeyNormParkingAreaPerPerson);
+            nod.Save(NormAreaBKFNPerPerson, KeyNormParkingAreaPerPerson);
             nod.Save(NormParkingPlaceFor100, KeyNormParkingPlaceFor100);
             nod.Save(TextStyleItalic, KeyTextStyleItalic);
         }
@@ -256,11 +256,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         void LoadFromNOD()
         {
             var nod = new DictNOD(DictName, true);
-            NormAreaPerPerson = nod.Load(KeyNormAreaPepPerson, 40);
+            NormAreaPerPerson = nod.Load(KeyNormAreaPepPerson, 30);
             NormSchoolPlace = nod.Load(KeyNormSchoolPlace, 124);
             NormKinderPlace = nod.Load(KeyNormKinderPlace, 54);
             NormParking = nod.Load(KeyNormParking, 350);
-            NormParkingAreaPerPerson = nod.Load(KeyNormParkingAreaPerPerson, 20);
+            NormAreaBKFNPerPerson = nod.Load(KeyNormParkingAreaPerPerson, 20);
             NormParkingPlaceFor100 = nod.Load(KeyNormParkingPlaceFor100, 5);
             TextStyleItalic = nod.Load(KeyTextStyleItalic, false);
         }
