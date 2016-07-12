@@ -63,7 +63,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [Category("Нормативные показатели")]
         [DisplayName("Обеспеченность")]
         [DefaultValue(40)]
-        [Description("Количество м2 ж.ф. на человека")]
+        [Description("Количество м2 ж.ф. на человека.\nЖители = <ЖФ типовых этажей> / <Обеспеченность>.")]
         public int NormAreaPerPerson {
             get { return _normAreaPerPerson; }
             set {
@@ -110,7 +110,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [Category("Нормы парковки")]
         [DisplayName("М/м на 1000чел")]
         [DefaultValue(350)]
-        [Description("Количество м/м на 1000 жителей при расчете постоянного паркинга.")]
+        [Description("Количество м/м на 1000 жителей при расчете постоянного паркинга.\nПостоянный паркинг = <Жители> * <М/м на 1000чел> * 0.9 / 1000")]
         [TypeConverter(typeof(NormParkingConverter))]
         public int NormParking { get; set; } = 350;
 
@@ -268,7 +268,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
     class NormParkingConverter : TypeConverter
     {
-        private List<int> values = new List<int> () { 350,315 };
+        private List<int> values = new List<int> () { 420,350 };
         public override bool GetStandardValuesSupported (ITypeDescriptorContext context) { return true; }
 
         public override bool GetStandardValuesExclusive (ITypeDescriptorContext context) { return true; }

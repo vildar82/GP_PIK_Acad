@@ -84,10 +84,10 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             AreaTotalGNS = AreaFirstGNS + AreaUpperGNS;
             AreaTotalLive = AreaFirstLive + AreaUpperLive;
 
-            Population = Convert.ToInt32(AreaUpperGNS / options.NormAreaPerPerson);
+            Population = Convert.ToInt32(AreaUpperLive / options.NormAreaPerPerson);
             SchoolPlaces = Convert.ToInt32(Population * options.NormSchoolPlace * 0.001);
             KinderPlaces = Convert.ToInt32(Population * options.NormKinderPlace * 0.001);
-            PersistentParking = Convert.ToInt32(Population * options.NormParking * 0.001);
+            PersistentParking = Convert.ToInt32(Population * options.NormParking * 0.9 * 0.001);
             TemproraryParking = Convert.ToInt32(PersistentParking * 0.25);
             ParkingBKFN = Convert.ToInt32((AreaFirstLive/options.NormParkingAreaPerPerson)*0.01 * options.NormParkingPlaceFor100);
         }                
