@@ -409,21 +409,6 @@ namespace PIK_GP_Acad
             });
         }
 
-        //[CommandMethod(Group, nameof(KP_InsolationPoint), CommandFlags.Modal)]
-        //public void KP_InsolationPoint ()
-        //{
-        //    CommandStart.Start(doc =>
-        //    {
-        //        using (var t = doc.TransactionManager.StartTransaction())
-        //        {
-        //            var inso = new Insolation.InsolationService (doc.Database, new Insolation.MoscowOptions());
-        //            var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
-        //            inso.CalcPoint(pt);
-        //            t.Commit();
-        //        }
-        //    });
-        //}
-
         public void Initialize()
         {
             // Передача списка команд для палитры ПИК в AcadLib.  
