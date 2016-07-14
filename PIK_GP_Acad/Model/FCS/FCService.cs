@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
+using AcadLib.Errors;
 using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.FCS
@@ -10,43 +12,53 @@ namespace PIK_GP_Acad.FCS
     public static class FCService
     {
         static List<Tuple<ObjectId, string>> tags;
-        public static void Init(Database db)
+        public static void Init (Database db)
         {
-            tags = new List<Tuple<ObjectId, string>>();
-            // Чтение всех классификаторов чертежа
-            using (var t = db.TransactionManager.StartTransaction())
-            {   
-                var nod = db.NamedObjectsDictionaryId.GetObject(OpenMode.ForRead) as DBDictionary;
-                if (nod.Contains("ACAD_OC"))
+            try
+            {
+
+
+                tags = new List<Tuple<ObjectId, string>>();
+                // Чтение всех классификаторов чертежа
+                using (var t = db.TransactionManager.StartTransaction())
                 {
-                    var fcsDict = ((ObjectId)nod["ACAD_OC"]).GetObject(OpenMode.ForRead) as DBDictionary;
-                    if (fcsDict.Contains("GP"))
+                    var nod = db.NamedObjectsDictionaryId.GetObject(OpenMode.ForRead) as DBDictionary;
+                    if (nod.Contains("ACAD_OC"))
                     {
-                        var fcsGpDict = ((ObjectId)fcsDict["GP"]).GetObject(OpenMode.ForRead) as DBDictionary;
-                        foreach (var item in fcsGpDict)
+                        var fcsDict = ((ObjectId)nod["ACAD_OC"]).GetObject(OpenMode.ForRead) as DBDictionary;
+                        foreach (var dictSchema in fcsDict)
                         {
-                            var dtItem = item.Value.GetObject(OpenMode.ForRead) as DataTable;
-                            for (int r = 0; r < dtItem.NumRows; r++)
+                            var fcsGpDict = dictSchema.Value.GetObject(OpenMode.ForRead) as DBDictionary;
+                            foreach (var item in fcsGpDict)
                             {
-                                var col = dtItem.GetColumnIndexAtName("isTagged");
-                                var cel = dtItem.GetCellAt(r, col);
-                                var isTagged = (bool)cel.Value;
-                                if (!isTagged)
+                                var dtItem = item.Value.GetObject(OpenMode.ForRead) as DataTable;
+                                for (int r = 0; r < dtItem.NumRows; r++)
                                 {
-                                    continue;
-                                }
-                                col = dtItem.GetColumnIndexAtName("id");
-                                cel = dtItem.GetCellAt(r, col);
-                                ObjectId idSoft = (ObjectId)cel.Value;
-                                if (idSoft.IsValid || !idSoft.IsNull)
-                                {
-                                    tags.Add(new Tuple<ObjectId, string>(idSoft, item.Key));
+                                    var col = dtItem.GetColumnIndexAtName("isTagged");
+                                    var cel = dtItem.GetCellAt(r, col);
+                                    var isTagged = (bool)cel.Value;
+                                    if (!isTagged)
+                                    {
+                                        continue;
+                                    }
+                                    col = dtItem.GetColumnIndexAtName("id");
+                                    cel = dtItem.GetCellAt(r, col);
+                                    ObjectId idSoft = (ObjectId)cel.Value;
+                                    if (idSoft.IsValid || !idSoft.IsNull)
+                                    {
+                                        tags.Add(new Tuple<ObjectId, string>(idSoft, item.Key));
+                                    }
                                 }
                             }
                         }
                     }
+                    t.Commit();
                 }
-                t.Commit();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex, $"FCService Init - {db.Filename}");
+                Inspector.AddError($"Ошибка считывания классификации объектов чертежа - {ex.Message}");
             }
         }
 

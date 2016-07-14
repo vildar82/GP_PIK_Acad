@@ -73,43 +73,44 @@ namespace PIK_GP_Acad.BlockSection
             //table.Cells[4, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
 
             // Площадь ГНС всех этажей
+            var numForInf = new System.Globalization.CultureInfo("ru-RU", false).NumberFormat;
             int row = 1;
             if (data.FC_LandArea != 0)
             {
                 table.Cells[row, 0].TextString = "Площадь участка, га";
                 table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-                table.Cells[row, 1].TextString = (data.FC_LandArea).ToString("0.0");
+                table.Cells[row, 1].TextString = (data.FC_LandArea).ToString("N2", numForInf);
                 table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
                 row++;
                 table.Cells[row, 0].TextString = "Площадь квартала, га";
                 table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-                table.Cells[row, 1].TextString = (data.FC_QuarterArea).ToString("0.0");
+                table.Cells[row, 1].TextString = (data.FC_QuarterArea).ToString("N2", numForInf);
                 table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
                 row++;
             }
             table.Cells[row, 0].TextString = "Площадь в габ.наружных стен, м.кв.";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;            
-            table.Cells[row, 1].TextString = (data.KP_GNS_Total).ToString("0.0");
+            table.Cells[row, 1].TextString = (data.KP_GNS_Total).ToString("N", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
             table.Cells[row, 0].TextString = "Площадь жилого фонда, м.кв.";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[row, 1].TextString = (data.TotalArea).ToString("0.0");
+            table.Cells[row, 1].TextString = (data.TotalArea).ToString("N", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
             table.Cells[row, 0].TextString = "Площадь квартир, м.кв.";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[row, 1].TextString = data.TotalAreaApart.ToString("0.0");
+            table.Cells[row, 1].TextString = data.TotalAreaApart.ToString("N", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
             table.Cells[row, 0].TextString = "Площадь БКФН, м.кв.";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[row, 1].TextString = data.TotalAreaBKFN.ToString("0.0");
+            table.Cells[row, 1].TextString = data.TotalAreaBKFN.ToString("N", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
             table.Cells[row, 0].TextString = "Средняя этажность";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-            table.Cells[row, 1].TextString = data.AverageFloors.ToString("0.0");
+            table.Cells[row, 1].TextString = data.AverageFloors.ToString("N", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
             table.Cells[row, 0].TextString = $"Жителей, чел ({_service.Estimate.LiveAreaPerHuman}м2/чел)";
@@ -145,7 +146,7 @@ namespace PIK_GP_Acad.BlockSection
                 row++;
                 table.Cells[row, 0].TextString = "Плотность, га";
                 table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-                table.Cells[row, 1].TextString = (data.FC_Density).ToString("0.0");
+                table.Cells[row, 1].TextString = (data.FC_Density).ToString("N", numForInf);
                 table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             }
 
