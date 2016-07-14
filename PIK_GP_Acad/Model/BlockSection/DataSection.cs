@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.BlockSection
 {
@@ -21,6 +23,11 @@ namespace PIK_GP_Acad.BlockSection
         public double KP_GNS_BKFN { get; set; }
         public double KP_GNS_Typical { get; set; }
         public double KP_GNS_Total { get; set; }
+
+        // По классификации
+        public double FC_LandArea { get; set; } // Площадь участа, га
+        public double FC_QuarterArea { get; set; } // Площадь квартала, га
+        public double FC_Density { get; set; } // Плотность м2/га
 
         public DataSection(SectionService sectionService)
         {
@@ -59,6 +66,43 @@ namespace PIK_GP_Acad.BlockSection
             TotalAreaApart = SectionTypes.Sum(s => s.AreaApartTotal);
             TotalAreaBKFN = SectionTypes.Sum(s => s.AreaBKFN);
             TotalArea = TotalAreaApart + TotalAreaBKFN;
+
+            // По классификатору
+            if (_service.Classes.Count>0)
+            {
+                var landClass = _service.Classes.Find(c => c.ClassType.ClassName == "Участок");
+                if (landClass != null)
+                {
+                    FC_LandArea = landClass.Value * 0.0001;
+                    FC_QuarterArea = FC_LandArea;
+                    foreach (var item in _service.Classes)
+                    {
+                        double val = GetreduceArea(item);
+                        if (val != 0)
+                        {
+                            FC_QuarterArea -= val * 0.0001;
+                        }
+                    }
+                    FC_Density = KP_GNS_Total / FC_QuarterArea;
+                }
+            }
+        }
+
+        private double GetreduceArea (IClassificator item)
+        {
+            double val = 0;
+            switch (item.ClassType.ClassName)
+            {
+                case "УДС":
+                case "ПК":
+                case "Паркинг":
+                case "Для вычитания":
+                case "Участок СОШ":
+                case "Участок ДОО":
+                    val = item.Value;
+                    break;
+            }
+            return val;
         }
     }
 }

@@ -1,47 +1,73 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.BlockSection
 {
-    public class ParserBlockSection
+    public static class ParserBlockSection
     {
-        private List<ObjectId> _idsBlRefSections;
-        private SectionService _service;
-
-        public ParserBlockSection(SectionService sectionService, List<ObjectId> idsBlRefSections)
-        {
-            _service = sectionService;
-            _idsBlRefSections = idsBlRefSections;
-        }
-
-        public List<Section> Sections { get; private set; }
+        static List<ClassType> classTypes = new List<ClassType>() {
+             new ClassType("Участок", "Площадь участка, га", null, 0),
+             new ClassType("УДС", "", null, 1),
+             new ClassType("ПК", "", null, 1),
+             new ClassType("Паркинг", "", null, 1),
+             new ClassType("Для вычитания", "", null, 1),
+             new ClassType("Участок СОШ", "", null, 1),
+             new ClassType("Участок ДОО", "", null, 1)
+        };
 
         // Перебор блоков блок-секции и создание списка блок-секций
-        public void Parse()
+        public static List<Section> Parse (List<ObjectId> ids, out List<IClassificator> classes)
         {
-            Sections = new List<Section>();
-            foreach (var idBlRefSection in _idsBlRefSections)
+            classes = new List<IClassificator>();
+           var sections = new List<Section>();
+            foreach (var idEnt in ids)
             {
-                Section section = new Section();
-                string errMsg = string.Empty;
-                var blRef = idBlRefSection.GetObject(OpenMode.ForRead, false, true) as BlockReference;
-                // Площадь по внешней полилинии
-                Polyline plLayer;
-                var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
-                section.AreaContour = plContour.Area;
-                // обработка атрибутов
-                parseAttrs(blRef.AttributeCollection, section, ref errMsg);
-                if (!string.IsNullOrEmpty(errMsg))
+                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+
+                if (ent is BlockReference)
                 {
-                    Inspector.AddError(errMsg, blRef, icon: System.Drawing.SystemIcons.Error);
+                    var blRef = (BlockReference)ent;
+                    string blName = blRef.GetEffectiveName();
+                    if (SectionService.IsBlockNameSection(blName))
+                    {
+                        Section section = new Section();
+                        string errMsg = string.Empty;
+                        // Площадь по внешней полилинии
+                        Polyline plLayer;
+                        var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
+                        section.AreaContour = plContour.Area;
+                        // обработка атрибутов
+                        parseAttrs(blRef.AttributeCollection, section, ref errMsg);
+                        if (!string.IsNullOrEmpty(errMsg))
+                        {
+                            Inspector.AddError(errMsg, blRef, icon: System.Drawing.SystemIcons.Error);
+                        }
+                        sections.Add(section);
+                    }
                 }
-                Sections.Add(section);
+                else if (ent is Curve || ent is Hatch)
+                {
+                    var tags = FCService.GetAllTags(ent.Id);
+                    var classType = classTypes.Find(c => tags.Any(t => t.Equals(c.ClassName, StringComparison.OrdinalIgnoreCase)));
+                    if (classType != null)
+                    {
+                        var value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
+                        if (value != 0)
+                        {
+                            Classificator c = new Classificator(idEnt, classType, value);
+                            classes.Add(c);
+                        }
+                    }
+                }
             }
+            return sections;
         }
 
-        private void checkParam(Section section, ref string errMsg)
+        private static void checkParam(Section section, ref string errMsg)
         {
             // Наименование
             if (string.IsNullOrEmpty(section.Name))
@@ -50,7 +76,7 @@ namespace PIK_GP_Acad.BlockSection
             }
         }
 
-        private void parseAttrs(AttributeCollection attrs, Section section, ref string errMsg)
+        private static void parseAttrs(AttributeCollection attrs, Section section, ref string errMsg)
         {
             if (attrs == null)
             {
@@ -88,6 +114,34 @@ namespace PIK_GP_Acad.BlockSection
                 }
             }
             checkParam(section, ref errMsg);
+        }
+
+        private static double GetValue (ObjectId idEnt, double unitFactor, string tag)
+        {
+            double res = 0;
+            var ent = idEnt.GetObject(OpenMode.ForRead, false, true);
+
+            if (ent is Curve)
+            {
+                var curve = ent as Curve;
+                res = curve.Area * unitFactor;
+            }
+            else if (ent is Hatch)
+            {
+                var h = ent as Hatch;
+                res = h.Area * unitFactor;
+            }
+            else
+            {
+                Inspector.AddError($"Неподдерживаемый тип объекта - {idEnt.ObjectClass.Name}. Классификатор - {tag}",
+                        idEnt, System.Drawing.SystemIcons.Error);
+            }
+            if (res == 0)
+            {
+                Inspector.AddError($"Не определена площадь объекта", idEnt, System.Drawing.SystemIcons.Error);
+            }
+
+            return res;
         }
     }
 }

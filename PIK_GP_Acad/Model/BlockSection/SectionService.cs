@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.BlockSection
 {
     public class SectionService
     {
-        public Estimate Estimate { get; set; }
+        public Document Doc { get; private set; }
+        public Database Db { get; private set; }
+        public Estimate Estimate { get; set; }      
+        public DataSection DataSection { get; private set; }        
+        public List<Section> Sections { get; private set; }
+        public List<IClassificator> Classes { get; private set; }
 
-        public SectionService(Document doc)
+        public SectionService (Document doc)
         {
             Doc = doc;
+            Db = doc.Database;
         }
-
-        public DataSection DataSection { get; private set; }
-        public Document Doc { get; private set; }
-        public List<Section> Sections { get; private set; }
 
         // Подсчет секций
         public void CalcSections()
         {
+            FCS.FCService.Init(Db);
             GetData(true);
             // Построение таблицы
             TableSecton tableSection = new TableSecton(this);
@@ -41,21 +46,21 @@ namespace PIK_GP_Acad.BlockSection
             {
                 // Выбор блоков
                 SelectSection select = new SelectSection(Doc);
-                select.Select(withRegions);
-                if (select.IdsBlRefSections.Count == 0)
+                var selIds = select.Select(withRegions);
+                if (selIds.Count == 0)
                 {
                     throw new Exception("Не найдены блоки блок-секций");
                 }
                 else
                 {
-                    Doc.Editor.WriteMessage("\nВыбрано {0} блоков блок-секций.", select.IdsBlRefSections.Count);
+                    Doc.Editor.WriteMessage("\nВыбрано {0} блоков блок-секций.", selIds.Count);
                 }
                 Estimate = select.Estimate;
 
-                // Обработка выбранных блоков
-                ParserBlockSection parser = new ParserBlockSection(this, select.IdsBlRefSections);
-                parser.Parse();
-                Sections = parser.Sections;
+                // Обработка выбранных блоков           
+                List<IClassificator> classes;
+                Sections = ParserBlockSection.Parse(selIds, out classes);
+                Classes = classes;
 
                 // Подсчет площадей и типов блок-секций
                 DataSection = new DataSection(this);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -15,11 +16,9 @@ namespace PIK_GP_Acad.BlockSection
         public SelectSection(Document doc)
         {
             _doc = doc;
-        }
+        }        
 
-        public List<ObjectId> IdsBlRefSections { get; private set; }
-
-        public void Select (bool withRegions)
+        public List<ObjectId> Select (bool withRegions)
         {
             // Запрос региона
             if (withRegions)
@@ -38,19 +37,8 @@ namespace PIK_GP_Acad.BlockSection
                 throw new Exception("Отменено пользователем.");
             }
 
-            
-
-            IdsBlRefSections = new List<ObjectId>();
-            foreach (ObjectId idEnt in res.Value.GetObjectIds())
-            {
-                var blRef = idEnt.GetObject(OpenMode.ForRead, false, true) as BlockReference;
-                if (blRef == null) continue;
-                var name = blRef.GetEffectiveName();
-                if (SectionService.IsBlockNameSection(name))
-                {
-                    IdsBlRefSections.Add(idEnt);
-                }
-            }
+            var idsSel = res.Value.GetObjectIds().ToList();
+            return idsSel;
         }
 
         private Estimate PromptRegion ()
