@@ -24,21 +24,25 @@ namespace PIK_GP_Acad.FCS
                     {
                         var fcsGpDict = ((ObjectId)fcsDict["GP"]).GetObject(OpenMode.ForRead) as DBDictionary;
                         foreach (var item in fcsGpDict)
-                        {                            
+                        {
                             var dtItem = item.Value.GetObject(OpenMode.ForRead) as DataTable;
-                            for (int c = 0; c < dtItem.NumColumns; c++)
+                            for (int r = 0; r < dtItem.NumRows; r++)
                             {
-                                var col = dtItem.GetColumnAt(c);
-                                if (col.ColumnName.Equals("id", StringComparison.OrdinalIgnoreCase))
+                                var col = dtItem.GetColumnIndexAtName("isTagged");
+                                var cel = dtItem.GetCellAt(r, col);
+                                var isTagged = (bool)cel.Value;
+                                if (!isTagged)
                                 {
-                                    for (int r = 0; r < dtItem.NumRows; r++)
-                                    {
-                                        var cel = col.GetCellAt(r);
-                                        ObjectId idSoft = (ObjectId)cel.Value;
-                                        tags.Add(new Tuple<ObjectId, string>(idSoft, item.Key));
-                                    }                                    
+                                    continue;
                                 }
-                            }                            
+                                col = dtItem.GetColumnIndexAtName("id");
+                                cel = dtItem.GetCellAt(r, col);
+                                ObjectId idSoft = (ObjectId)cel.Value;
+                                if (idSoft.IsValid || !idSoft.IsNull)
+                                {
+                                    tags.Add(new Tuple<ObjectId, string>(idSoft, item.Key));
+                                }
+                            }
                         }
                     }
                 }
