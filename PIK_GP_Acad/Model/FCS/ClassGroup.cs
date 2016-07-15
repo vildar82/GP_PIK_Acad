@@ -6,17 +6,28 @@ using System.Threading.Tasks;
 
 namespace PIK_GP_Acad.FCS
 {
-    public class ClassGroup
+    public class ClassGroup : IEquatable<ClassGroup>
     {
-        public static readonly ClassGroup HardCoating = new ClassGroup("Твердые покрытия", "Всего площадь твердых покрытий:");        
-
         public string Name { get; set; }
         public string TotalName { get; set; }
 
-        private ClassGroup(string name, string totalName)
+        public ClassGroup(string name, string totalName)
         {
             Name = name;
             TotalName = totalName;        
+        }
+
+        public bool Equals (ClassGroup other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var res = Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
+            return res;
+        }
+
+        public override int GetHashCode ()
+        {
+            return Name.GetHashCode();
         }
     }
 }

@@ -8,20 +8,11 @@ using PIK_GP_Acad.FCS;
 namespace PIK_GP_Acad.BlockSection
 {
     public static class ParserBlockSection
-    {
-        static List<ClassType> classTypes = new List<ClassType>() {
-             new ClassType("Участок", "Площадь участка, га", null, 0),
-             new ClassType("УДС", "", null, 1),
-             new ClassType("ПК", "", null, 1),
-             new ClassType("Паркинг", "", null, 1),
-             new ClassType("Для вычитания", "", null, 1),
-             new ClassType("Участок СОШ", "", null, 1),
-             new ClassType("Участок ДОО", "", null, 1)
-        };
-
+    {      
         // Перебор блоков блок-секции и создание списка блок-секций
         public static List<Section> Parse (List<ObjectId> ids, out List<IClassificator> classes)
         {
+            ClassTypeService classService = new ClassTypeService();
             classes = new List<IClassificator>();
            var sections = new List<Section>();
             foreach (var idEnt in ids)
@@ -51,15 +42,18 @@ namespace PIK_GP_Acad.BlockSection
                 }
                 else if (ent is Curve || ent is Hatch)
                 {
-                    var tags = FCService.GetAllTags(ent.Id);
-                    var classType = classTypes.Find(c => tags.Any(t => t.Equals(c.ClassName, StringComparison.OrdinalIgnoreCase)));
-                    if (classType != null)
+                    KeyValuePair<string, List<FCProperty>> tag;
+                    if (FCService.GetTag(ent.Id, out tag))
                     {
-                        var value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
-                        if (value != 0)
+                        var classType = classService.GetClassType(tag.Key);
+                        if (classType != null)
                         {
-                            Classificator c = new Classificator(idEnt, classType, value);
-                            classes.Add(c);
+                            var value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
+                            if (value != 0)
+                            {
+                                Classificator c = new Classificator(idEnt, classType, value);
+                                classes.Add(c);
+                            }
                         }
                     }
                 }

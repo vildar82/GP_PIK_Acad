@@ -63,7 +63,6 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Шумовое заграждение 1",Resources.GP_LineNoizeBarrier1, nameof(GP_PolylineNoizeBarrier1), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_1'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Шумовое заграждение 2",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier2), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_2'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Шумовое заграждение 3",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier3), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
-
                 new PaletteCommand("ArcGIS",Resources.ArcGIS, nameof(GP_ArcGIS), "Запуск программы ArcGis"),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
@@ -99,6 +98,7 @@ namespace PIK_GP_Acad
         //
         // Главная
         //
+        #region Главная        
 
         [CommandMethod(Group, nameof(GP_InsertBlockLineParking), CommandFlags.Modal)]
         public void GP_InsertBlockLineParking()
@@ -240,7 +240,7 @@ namespace PIK_GP_Acad
         }
 
         [CommandMethod(Group, nameof(GP_ArcGIS), CommandFlags.Modal)]
-        public void GP_ArcGIS()
+        public void GP_ArcGIS ()
         {
             CommandStart.Start(doc =>
             {
@@ -248,10 +248,12 @@ namespace PIK_GP_Acad
             });
         }
 
+        #endregion Главная
 
         //
         // БС
         //
+        #region ГП        
 
         [CommandMethod(Group, nameof(GP_BlockSectionInsert), CommandFlags.Modal)]        
         public void GP_BlockSectionInsert()
@@ -276,20 +278,22 @@ namespace PIK_GP_Acad
                 ss.CalcSections();                
             });            
         }
-        
-        [CommandMethod(Group, nameof(GP_BlockSectionContour), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]        
-        public void GP_BlockSectionContour()
+
+        [CommandMethod(Group, nameof(GP_BlockSectionContour), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
+        public void GP_BlockSectionContour ()
         {
             CommandStart.Start(doc =>
-            {                
-                BlockSection.BlockSectionContours.CreateContour(doc);                
-            });               
+            {
+                BlockSection.BlockSectionContours.CreateContour(doc);
+            });
         }
 
+        #endregion ГП
 
         //
         // Концепция
         //
+        #region Концепция       
 
         [CommandMethod(Group, nameof(KP_BlockSectionInsert), CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
@@ -365,10 +369,10 @@ namespace PIK_GP_Acad
             {
                 InsertBlock.Insert(BlockNameKpParking, doc.Database);
             });
-        }        
+        }
 
         [CommandMethod(Group, nameof(KP_AreaParking), CommandFlags.Modal)]
-        public void KP_AreaParking()
+        public void KP_AreaParking ()
         {
             CommandStart.Start(doc =>
             {
@@ -376,11 +380,12 @@ namespace PIK_GP_Acad
                 aps.Calc();
             });
         }
-
+        #endregion Концепция
 
         //
         // Штамп
         //
+        #region Штамп        
 
         [CommandMethod(Group, nameof(GP_BlockFrame), CommandFlags.Modal)]
         public void GP_BlockFrame()
@@ -400,6 +405,13 @@ namespace PIK_GP_Acad
             });
         }
 
+        #endregion Штамп
+
+        //
+        // В разработке    
+        //        
+        #region В разработке        
+
         [CommandMethod(Group, nameof(GP_BlockStampBooklet), CommandFlags.Modal)]
         public void GP_BlockStampBooklet()
         {
@@ -408,6 +420,35 @@ namespace PIK_GP_Acad
                 InsertBlock.Insert("ГП_Рамка_Буклет", doc.Database);
             });
         }
+
+        [CommandMethod(Group, nameof(GP_FCS_Balance), CommandFlags.Modal)]
+        public static void GP_FCS_Balance ()
+        {
+            CommandStart.Start(doc =>
+            {
+                FCS.FCSTable tep = new FCS.FCSTable(doc,
+                    new FCS.Balance.BalanceTableService(doc.Database),
+                    new FCS.Balance.BalanceClassService());
+                tep.Calc();
+            });
+        }
+
+
+        [CommandMethod(Group, nameof(KP_InsolationPoint), CommandFlags.Modal)]
+        public void KP_InsolationPoint ()
+        {
+            CommandStart.Start(doc =>
+            {
+                using (var t = doc.TransactionManager.StartTransaction())
+                {
+                    var inso = new Insolation.InsolationService(doc.Database, new Insolation.MoscowOptions());
+                    var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
+                    inso.CalcPoint(pt);
+                    t.Commit();
+                }
+            });
+        }
+        #endregion В разработке
 
         public void Initialize()
         {

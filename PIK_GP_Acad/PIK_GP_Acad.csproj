@@ -79,6 +79,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Model\ArcGIS\ArcGisService.cs" />
     <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
+    <Compile Include="Model\BlockSection\ClassTypeService.cs" />
     <Compile Include="Model\BlockSection\DataSection.cs" />
     <Compile Include="Model\BlockSection\Estimate.cs" />
     <Compile Include="Model\BlockSection\EstimateEkb.cs" />
@@ -92,11 +93,24 @@
     <Compile Include="Model\BlockSection\Settings.cs" />
     <Compile Include="Model\BlockSection\TableSecton.cs" />
     <Compile Include="Model\BlockSection\TableSectonKP.cs" />
+    <Compile Include="Model\Elements\Buildings\Building.cs" />
+    <Compile Include="Model\Elements\Buildings\BuildingFactory.cs" />
+    <Compile Include="Model\Elements\Buildings\IBuilding.cs" />
+    <Compile Include="Model\Elements\Buildings\Surround.cs" />
+    <Compile Include="Model\FCS\Balance\BalanceClassService.cs" />
+    <Compile Include="Model\FCS\Balance\BalanceRow.cs" />
+    <Compile Include="Model\FCS\Balance\BalanceTableService.cs" />
+    <Compile Include="Model\FCS\ClassFactory.cs" />
     <Compile Include="Model\FCS\ClassGroup.cs" />
     <Compile Include="Model\FCS\Classificator.cs" />
     <Compile Include="Model\FCS\ClassType.cs" />
+    <Compile Include="Model\FCS\FCProperty.cs" />
     <Compile Include="Model\FCS\FCService.cs" />
     <Compile Include="Model\FCS\IClassificator.cs" />
+    <Compile Include="Model\FCS\IClassTypeService.cs" />
+    <Compile Include="Model\FCS\IFCRow.cs" />
+    <Compile Include="Model\FCS\ITableService.cs" />
+    <Compile Include="Model\FCS\FCSTable.cs" />
     <Compile Include="Model\GPHelper.cs" />
     <Compile Include="Model\HorizontalElevation\FormHorizontalElevation.cs">
       <SubType>Form</SubType>
@@ -113,6 +127,15 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\IlluminationArea.cs" />
+    <Compile Include="Model\Insolation\InsolationService.cs" />
+    <Compile Include="Model\Insolation\Map.cs" />
+    <Compile Include="Model\Insolation\MoscowOptions.cs" />
+    <Compile Include="Model\Insolation\Options.cs" />
+    <Compile Include="Model\Insolation\Radar.cs" />
+    <Compile Include="Model\Insolation\Scope.cs" />
+    <Compile Include="Model\Insolation\SunlightRule\ISunlightRule.cs" />
+    <Compile Include="Model\Insolation\SunlightRule\SimpleRule.cs" />
     <Compile Include="Model\Isolines\ContextMenuIsoline.cs" />
     <Compile Include="Model\Isolines\FormIsolineOptions.cs">
       <SubType>Form</SubType>
