@@ -56,7 +56,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         {
             // Контурная полилиния - внешняя граница блок-секции по стенам.
             Polyline plAxis;
-            var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef, out plAxis,KP_BlockSectionService.blKpParkingLayerAxisContour);
+            var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef, out plAxis);// KP_BlockSectionService.blKpParkingLayerAxisContour);
             if(plContour == null)
             {
                 throw new Exception("Не определен контур блок-секции");
@@ -73,16 +73,16 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 }                
             } 
             
-            if (plAxis == null || plAxis.Area == 0)
-            {
-                throw new Exception($"Не определена площадь жилой площади блок-секции - по полилинии на слое {KP_BlockSectionService.blKpParkingLayerAxisContour}");
-            }
-            else
-            {
-                AreaLive = plAxis.Area;
-            }
+            //if (plAxis == null || plAxis.Area == 0)
+            //{
+            //    throw new Exception($"Не определена жилая площадь (в осях) блок-секции по полилинии на слое {KP_BlockSectionService.blKpParkingLayerAxisContour}");
+            //}
+            //else
+            //{
+            //    AreaLive = plAxis.Area;
+            //}
 
-            PlAxisId = plAxis.Id;
+            //PlAxisId = plAxis.Id;
             PlExternalId = plContour.Id;
 
             // Определение этажности по атрибуту
