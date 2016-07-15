@@ -29,24 +29,29 @@ namespace PIK_GP_Acad.FCS
             double res = 0;
             var ent = idEnt.GetObject(OpenMode.ForRead, false, true);
 
-            if (ent is Curve)
+            try
             {
-                var curve = ent as Curve;
-                res = curve.Area * unitFactor;
+                if (ent is Curve)
+                {
+                    var curve = ent as Curve;
+                    res = curve.Area * unitFactor;
+                }
+                else if (ent is Hatch)
+                {
+                    var h = ent as Hatch;
+                    res = h.Area * unitFactor;
+                }
+                else
+                {
+                    Inspector.AddError($"Неподдерживаемый тип объекта - {idEnt.ObjectClass.Name}. Классификатор - {tag}",
+                            idEnt, System.Drawing.SystemIcons.Error);
+                }
             }
-            else if (ent is Hatch)
-            {
-                var h = ent as Hatch;
-                res = h.Area * unitFactor;
-            }
-            else
-            {
-                Inspector.AddError($"Неподдерживаемый тип объекта - {idEnt.ObjectClass.Name}. Классификатор - {tag}",
-                        idEnt, System.Drawing.SystemIcons.Error);
-            }
+            catch { }
+
             if (res == 0)
             {
-                Inspector.AddError($"Не определена площадь объекта", idEnt, System.Drawing.SystemIcons.Error);
+                Inspector.AddError($"Не определена площадь объекта {tag}", idEnt, System.Drawing.SystemIcons.Error);
             }
 
             return res;

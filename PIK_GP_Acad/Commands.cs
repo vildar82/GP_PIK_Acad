@@ -450,6 +450,7 @@ namespace PIK_GP_Acad
         }
         #endregion В разработке
 
+
         public void Initialize()
         {
             // Передача списка команд для палитры ПИК в AcadLib.  

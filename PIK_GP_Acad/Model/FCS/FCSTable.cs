@@ -33,6 +33,7 @@ namespace PIK_GP_Acad.FCS
 
         public void Calc ()
         {
+            FCService.Init(db);
             var sel = ed.Select("\nВыбор:");
             var classifivators = GetClassificators(sel);
             // Группировка и суммирование
