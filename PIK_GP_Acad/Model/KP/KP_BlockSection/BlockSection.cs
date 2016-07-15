@@ -23,11 +23,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     r = GetRectangle();
                 return r;
             }
-        }
-        /// <summary>
-        /// Полилиния по осям - в блоке БС
-        /// </summary>
-        public ObjectId PlAxisId { get; set; }
+        }        
         /// <summary>
         /// Полилиния по ГНС (границы наружных стен) - в блоке БС
         /// </summary>
@@ -44,7 +40,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// <summary>
         /// Кол этажей
         /// </summary>
-        public int Floors { get; set; } = 1;        
+        public int Floors { get; set; } = 1;   
+        
+        public ObjectId IdPlContour { get; set; }     
 
         public BlockSection(BlockReference blRef, string blName) : base (blRef, blName)
         {
@@ -52,41 +50,30 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             Define(blRef);            
         }
 
-        protected virtual void Define(BlockReference blRef)
+        protected virtual void Define (BlockReference blRef)
         {
             // Контурная полилиния - внешняя граница блок-секции по стенам.
             Polyline plAxis;
             var plContour = PIK_GP_Acad.BlockSection.BlockSectionContours.FindContourPolyline(blRef, out plAxis);// KP_BlockSectionService.blKpParkingLayerAxisContour);
-            if(plContour == null)
+            if (plContour == null)
             {
                 throw new Exception("Не определен контур блок-секции");
             }
+
+            IdPlContour = plContour.Id;
+            if (plContour.Area == 0)
+            {
+                throw new Exception("Не определена площадь контура блок-секции");
+            }
             else
             {
-                if(plContour.Area == 0)
-                {
-                    throw new Exception("Не определена площадь контура блок-секции");
-                }
-                else
-                {
-                    AreaGNS = plContour.Area;
-                }                
-            } 
+                AreaGNS = plContour.Area;
+            }            
             
-            //if (plAxis == null || plAxis.Area == 0)
-            //{
-            //    throw new Exception($"Не определена жилая площадь (в осях) блок-секции по полилинии на слое {KP_BlockSectionService.blKpParkingLayerAxisContour}");
-            //}
-            //else
-            //{
-            //    AreaLive = plAxis.Area;
-            //}
-
-            //PlAxisId = plAxis.Id;
             PlExternalId = plContour.Id;
 
             // Определение этажности по атрибуту
-            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor, exactMatch: false);                                   
+            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor, exactMatch: false);
         }
 
         private Rectangle GetRectangle ()

@@ -1,9 +1,12 @@
-﻿using AcadLib.Errors;
+﻿using System;
+using AcadLib.Blocks;
+using AcadLib.Errors;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.BlockSection
 {
     // Блок-секция
-    public class Section
+    public class Section : BlockBase
     {
         // Площадь полилинии контура
         public double AreaContour { get; set; }
@@ -21,50 +24,31 @@ namespace PIK_GP_Acad.BlockSection
 
         // Кол этажей
         public int NumberFloor { get; private set; }
+        public ObjectId IdPlContour { get; set; }
 
-        public void SetAreaApart(string textString)
-        {
-            AreaApart = getArea(textString, Settings.Default.AttrAreaApart);
+        public Section(BlockReference blRef, string blName) : base(blRef, blName)
+        {            
+            // Площадь по внешней полилинии
+            Polyline plLayer;
+            var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
+            IdPlContour = plContour.Id;
+            AreaContour = plContour.Area;
+            // обработка атрибутов
+            parseAttrs();            
         }
 
-        public void SetAreaApartTotal(string textString)
+        private void parseAttrs ()
         {
-            AreaApartTotal = getArea(textString, Settings.Default.AttrAreaApartTotal);
-        }
-
-        public void SetAreaBKFN(string textString)
-        {
-            AreaBKFN = getArea(textString, Settings.Default.AttrAreaBKFN);
-        }
-
-        public void SetName(string textString)
-        {
-            Name = textString.Trim();
-        }
-
-        public void SetNumberFloor(string textString)
-        {
-            NumberFloor = getNum(textString, Settings.Default.AttrNumberFloor);
-        }
-
-        private double getArea(string textString, string areaName)
-        {
-            double val = 0;
-            if (!double.TryParse(textString, out val))
-            {
-                Inspector.AddError($"Не определена площадь в атрибуте {areaName} - значение {textString}", icon: System.Drawing.SystemIcons.Error);
-            }
-            return val;
-        }
-
-        private int getNum(string textString, string attrNumberFloor)
-        {
-            int val = 0;
-            if (!int.TryParse(textString, out val))
-            {
-                Inspector.AddError($"Не определено кол этажей в атрибуте {attrNumberFloor} - значение {textString}", icon: System.Drawing.SystemIcons.Error);
-            }
-            return val;
-        }
+            // Наименование
+            Name = GetPropValue<string>(Settings.Default.AttrName);
+            // Площадь БКФН
+            AreaBKFN = GetPropValue<double>(Settings.Default.AttrAreaBKFN);
+            // Площадь квартир на одном этаже
+            AreaApart = GetPropValue<double>(Settings.Default.AttrAreaApart);
+            // Площадь квартир общая на секцию (по всем этажам кроме 1)
+            AreaApartTotal = GetPropValue<double>(Settings.Default.AttrAreaApartTotal);
+            // Кол этажей
+            NumberFloor = GetPropValue<int>(Settings.Default.AttrNumberFloor);                                                       
+        }        
     }
 }
