@@ -17,6 +17,12 @@ namespace PIK_GP_Acad.Elements.Buildings
         public static IBuilding CreateBuilding(Entity ent)
         {
             IBuilding res = null;
+
+            if (ent is BlockReference)
+            {
+                var blRef = (BlockReference)ent;
+            }
+
             var pl = ent as Polyline;
             if (pl != null)
             {

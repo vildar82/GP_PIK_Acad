@@ -54,7 +54,10 @@ namespace PIK_GP_Acad.FCS
 
                                     if (idSoft.IsValid || !idSoft.IsNull)
                                     {
-                                        tags.Add(idSoft, new KeyValuePair<string, List<FCProperty>> (item.Key, props));
+                                        if (!tags.ContainsKey(idSoft))
+                                        {
+                                            tags.Add(idSoft, new KeyValuePair<string, List<FCProperty>>(item.Key, props));
+                                        }                                                                                
                                     }
                                 }
                             }
@@ -85,6 +88,10 @@ namespace PIK_GP_Acad.FCS
             return props;
         }
 
+        /// <summary>
+        /// Получение классификации объекта - имени класса и свойств
+        /// Перед использованием нужно первый раз вызвать Init для сканирования объектов чертежа
+        /// </summary>        
         public static bool GetTag(ObjectId idEnt, out KeyValuePair<string, List<FCProperty>> tag)
         {
             bool foundTag = false;     

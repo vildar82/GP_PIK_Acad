@@ -5,18 +5,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AcadLib;
+using AcadLib.Blocks;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Parkings;
 
-namespace PIK_GP_Acad.Parkings
+namespace PIK_GP_Acad.Elements.Blocks.Parkings
 {
     /// <summary>
     /// Линия парковки
     /// </summary>
-    public class LineParking : IParking
+    public class LineParking : BlockBase, IParking, IElement
     {
-        public const string LineParkingBlockName = "ГП_Линия-Парковки";
-
-        public ObjectId IdBlRef { get; set; }
+        public const string BlockName = "ГП_Линия-Парковки";        
+        
         /// <summary>
         /// Ширина одного парковочного места
         /// </summary>
@@ -36,36 +37,32 @@ namespace PIK_GP_Acad.Parkings
         /// <summary>
         /// Кол машиномест в парковке
         /// </summary>
-        public double Places { get; set; }        
+        public int Places { get; set; }
+        public int InvalidPlaces { get; set; }
 
-        public Result Define(BlockReference blRef)
+        public LineParking (BlockReference blRef, string blName) : base(blRef, blName)
         {
-            IdBlRef = blRef.Id;
-            foreach (DynamicBlockReferenceProperty prop in blRef.DynamicBlockReferencePropertyCollection)
-            {
-                switch (prop.PropertyName)
-                {
-                    case "Вид":
-                        parseView(prop.Value.ToString());
-                        break;
-                    case "Длина":
-                        Length = getDouble(prop.Value.ToString());
-                        break;
-                    default:
-                        break;
-                }
-            }
-            // проверка определенных параметров
-            return check();
+            var view = GetPropValue<string>("Вид");
+            parseView(view);
+            Length = GetPropValue<double>("Длина");
+            check();
         }
 
         public void Calc()
         {
-            var b = WidthOnePlace / (Math.Sin(Angle.ToRadians()));
-            Places = Math.Floor(Length / b);
+            var b = WidthOnePlace / (Math.Sin(Angle.ToRadians()));            
+            var places =Convert.ToInt32(Math.Floor(Length / b));
+            if (IsInvalid)
+            {
+                InvalidPlaces = places;
+            }
+            else
+            {
+                Places = places;
+            }
         }
 
-        private Result check()
+        private void check()
         {
             string err = string.Empty;
             if (WidthOnePlace == 0)            
@@ -75,10 +72,10 @@ namespace PIK_GP_Acad.Parkings
             if (Angle == 0)
                 err += " Угол парковочных мест не определен.";
 
-            if (string.IsNullOrEmpty(err))
-                return Result.Ok();
-            else
-                return Result.Fail(err);
+            if (!string.IsNullOrEmpty(err))
+            {
+                AddError(err);
+            }                
         }
 
         private void parseView(string value)

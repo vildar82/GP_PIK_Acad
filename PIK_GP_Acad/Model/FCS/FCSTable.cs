@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
+using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.FCS
 {
@@ -35,23 +36,23 @@ namespace PIK_GP_Acad.FCS
         {
             FCService.Init(db);
             var sel = ed.Select("\nВыбор:");
-            var classifivators = GetClassificators(sel);
+            var areas = GetAreas(sel);
             // Группировка и суммирование
-            CalcData(classifivators);
+            CalcData(areas);
             // Таблица            
             var table = tableService.Create();
             tableService.Insert(table, doc);
         }
 
-        private void CalcData (List<IClassificator> classificators)
+        private void CalcData (List<IArea> areas)
         {
-            var groups = classificators.GroupBy(g => g.ClassType.TableName).OrderBy(o => o.First().ClassType.Index).ToList();
+            var groups = areas.GroupBy(g => g.ClassType.TableName).OrderBy(o => o.First().ClassType.Index).ToList();
             tableService.CalcRows(groups);
         }
 
-        private List<IClassificator> GetClassificators (List<ObjectId> ids)
+        private List<IArea> GetAreas (List<ObjectId> ids)
         {
-            List<IClassificator> classificators = new List<IClassificator>();
+            var areas = new List<IArea>();
             using (var t = db.TransactionManager.StartTransaction())
             {
                 foreach (var idEnt in ids)
@@ -62,25 +63,16 @@ namespace PIK_GP_Acad.FCS
                         continue;
                     }
 
-
-                    KeyValuePair<string, List<FCProperty>> tag;
-                    if(FCService.GetTag(idEnt, out tag))                    
-                    {
-                        var classificator = ClassFactory.Create(idEnt, tag.Key, classService);
-                        if (classificator == null)
-                        {
-                            Inspector.AddError($"Пропущен объект класса - {string.Join(",", tag.Key)}",
-                                idEnt, System.Drawing.SystemIcons.Warning);
-                        }
-                        else
-                        {
-                            classificators.Add(classificator);
-                        }
+                    var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+                    var area = ElementFactory.Create<IArea>(ent);
+                    if (area != null)
+                    {                        
+                        areas.Add(area);
                     }
                 }
                 t.Commit();
             }
-            return classificators;
+            return areas;
         }
     }
 }

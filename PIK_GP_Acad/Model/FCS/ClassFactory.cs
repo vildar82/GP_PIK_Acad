@@ -11,16 +11,25 @@ namespace PIK_GP_Acad.FCS
 {
     public static class ClassFactory
     {
-        public static IClassificator Create (ObjectId idEnt, string tag, IClassTypeService classService)
-        {
-            Classificator res = null;
-            var classType = classService.GetClassType(tag);
-            if (classType == null) return null;
-            double value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
-            if (value != 0)
+        /// <summary>
+        /// !!! Перед использование не забудь вызвать первый раз FCService.Init()
+        /// </summary>        
+        public static IClassificator Create (ObjectId idEnt, IClassTypeService classService)
+        {            
+            IClassificator res = null;
+            KeyValuePair<string, List<FCProperty>> tag;
+            if (FCService.GetTag(idEnt, out tag))
             {
-                res = new Classificator(idEnt, classType, value);
-            }                        
+                var classType = classService.GetClassType(tag.Key);
+                if (classType != null)
+                {
+                    double value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
+                    if (value != 0)
+                    {
+                        res = new Classificator(idEnt, classType, value);
+                    }
+                }
+            }                       
             return res;
         }
 

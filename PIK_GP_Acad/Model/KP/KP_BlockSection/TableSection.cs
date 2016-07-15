@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             table.SetRowHeight(8);
 
             ObjectId textStyleItalic;
-            if (Options.Instance.TextStyleItalic)
+            if (OptionsKPBS.Instance.TextStyleItalic)
             {
                 // Использование курсивного стиля для таблицы
                 textStyleItalic = KP_BlockSectionService.Db.GetTextStylePIK(GPHelper.TextStylePikKPItalic);

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using AcadLib.Blocks;
 using Autodesk.AutoCAD.DatabaseServices;
 
-namespace PIK_GP_Acad.KP.Social
+namespace PIK_GP_Acad.Elements.Blocks.Social
 {
     /// <summary>
     /// Блок социального назначения - СОШ, ДОШ и т.п
     /// </summary>
-    public abstract class SocialBlock : BlockBase
+    public abstract class SocialBlock : BlockBase, IElement
     {
         /// <summary>
         /// Этажей

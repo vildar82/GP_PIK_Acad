@@ -9,7 +9,7 @@ namespace PIK_GP_Acad.Insolation
 {
     public class MoscowOptions : Options
     {
-        public MoscowOptions () : base(new SimpleRule() , 80)
+        public MoscowOptions () : base(new SimpleRule())
         {
         }
     }

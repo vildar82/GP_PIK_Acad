@@ -15,8 +15,8 @@ namespace PIK_GP_Acad.Elements.Buildings
     {
         int Floors { get; }
         Extents3d ExtentsInModel { get; }
-        Polyline Contour { get; }
-        int Height { get; set; }
+        Polyline ContourInModel { get; }
+        int Height { get; }
 
         //Polyline GetContour ();
     }

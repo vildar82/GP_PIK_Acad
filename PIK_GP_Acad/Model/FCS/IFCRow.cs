@@ -10,7 +10,7 @@ namespace PIK_GP_Acad.FCS
     {
         string Name { get;  }
         string Units { get;  }
-        double Value { get;  }
+        double Area { get;  }
         ClassType ClassType { get; }
     }
 }

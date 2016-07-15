@@ -14,7 +14,7 @@ namespace PIK_GP_Acad.Insolation.SunlightRule
     /// </summary>
     public class SimpleRule : ISunlightRule
     {
-        private double ratioLength = 1.42814;
+        private double ratioLength = 1.428147987;
 
         public double EndAngle { get; set; } = 168;
 
@@ -38,27 +38,16 @@ namespace PIK_GP_Acad.Insolation.SunlightRule
         public double GetHeightAtPoint (Point3d point, Point3d origin)
         {
             // Определение длины проекции на ось Y
-            var vec = point - origin;
-            var vecHeight = vec.OrthoProjectTo(Vector3d.YAxis);
-            var height = vecHeight.Length / ratioLength;
+            var vec = point.Convert2d() - origin.Convert2d();            
+            var height = Math.Abs(vec.Y / ratioLength);
             return height;
         }
 
         public Point3d GetPointByHeightInVector (Point3d ptOrigin, Vector2d vec, int height)
         {
-            Point2d ptRes = Point2d.Origin;
-
-            var len = GetLength(height);
-            var vecHeight = new Vector2d(0, -len);
-            var vecHeightProjection = vecHeight.GetPerpendicularVector();
-
-            var angleToHeight = vecHeight.GetAngleTo(vec);
-
-            var a = len * Math.Tan(angleToHeight);
-
-            ptRes = ptOrigin.Convert2d() + vecHeight;
-            ptRes = ptRes + vecHeightProjection * a;
-
+            var b = GetLength(height); 
+            var c = b / Math.Abs(Math.Sin(vec.Angle));                        
+            var ptRes = ptOrigin.Convert2d() + vec.GetNormal() * c;
             return ptRes.Convert3d();
         }
 

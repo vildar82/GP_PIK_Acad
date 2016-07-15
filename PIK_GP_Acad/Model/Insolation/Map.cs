@@ -32,6 +32,7 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         private void LoadMap ()
         {
+            FCS.FCService.Init(db);
             buildings = new List<IBuilding>();
             rtree = new RTree<IBuilding>();
             var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;

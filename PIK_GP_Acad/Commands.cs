@@ -109,7 +109,7 @@ namespace PIK_GP_Acad
                 {
                     new AcadLib.Blocks.Property ("Длина", 15d)
                 };
-                InsertBlock.Insert(Parkings.LineParking.LineParkingBlockName, doc.Database, props);
+                InsertBlock.Insert(Elements.Blocks.Parkings.LineParking.BlockName, doc.Database, props);
             });
         }
 
@@ -118,7 +118,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert(Parkings.Parking.ParkingBlockName, doc.Database);
+                InsertBlock.Insert(Elements.Blocks.Parkings.Parking.BlockName, doc.Database);
             });
         }
 
@@ -265,7 +265,7 @@ namespace PIK_GP_Acad
                                                 @"Blocks\ГП\ГП_Блоки.dwg");
                 // Выбор и вставка блока 
                 AcadLib.Blocks.Visual.VisualInsertBlock.InsertBlock(fileBlocks, n =>
-                        n.StartsWith(BlockSection.Settings.Default.BlockSectionPrefix));
+                        n.StartsWith(BlockSection.SettingsBS.Default.BlockSectionPrefix));
             });
         }
         
@@ -349,7 +349,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                InsertBlock.Insert(KP.Social.KindergartenBlock.BlockName, doc.Database);
+                InsertBlock.Insert(Elements.Blocks.Social.KindergartenBlock.BlockName, doc.Database);
             });
         }
 
@@ -358,7 +358,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                InsertBlock.Insert(KP.Social.SchoolBlock.BlockName, doc.Database);
+                InsertBlock.Insert(Elements.Blocks.Social.SchoolBlock.BlockName, doc.Database);
             });
         }
 

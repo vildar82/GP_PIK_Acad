@@ -20,7 +20,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         protected ObjectId IdEnt { get; set; }
         public int Floors { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Polyline Contour { get; set; }
+        public Polyline ContourInModel { get; set; }
         public List<FCProperty> FCProperties { get; set; }
         public int Height { get; set; }       
 
@@ -28,7 +28,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
             IdEnt = pl.Id;
             ExtentsInModel = pl.GeometricExtents;
-            Contour = pl;
+            ContourInModel = pl;
             FCProperties = props;
             Floors = FCService.GetPropertyValue<int>(PropFloors, props, IdEnt, false);
             Height = height;            

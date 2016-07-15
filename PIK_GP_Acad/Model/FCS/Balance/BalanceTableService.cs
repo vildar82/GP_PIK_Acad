@@ -8,6 +8,7 @@ using AcadLib.Errors;
 using AcadLib.Tables;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.FCS.Balance
@@ -23,7 +24,7 @@ namespace PIK_GP_Acad.FCS.Balance
         {
         }       
 
-        public void CalcRows (List<IGrouping<string, IClassificator>> groups)
+        public void CalcRows (List<IGrouping<string, IArea>> groups)
         {
             data = new List<BalanceRow>();
             foreach (var item in groups)
@@ -39,7 +40,7 @@ namespace PIK_GP_Acad.FCS.Balance
                 // Процент остальных площадей
                 foreach (var item in data)
                 {
-                    item.PercentTerritory = Math.Round(item.Value / homeRow.Value * 100,2);
+                    item.PercentTerritory = Math.Round(item.Area / homeRow.Area * 100,2);
                 }
             }
             else
@@ -127,7 +128,7 @@ namespace PIK_GP_Acad.FCS.Balance
                     cell.TextString = itemRow.Name;
 
                     cell = table.Cells[row, 2];
-                    cell.TextString = itemRow.Value.ToString();
+                    cell.TextString = itemRow.Area.ToString();
 
                     cell = table.Cells[row, 3];
                     cell.TextString = itemRow.PercentTerritory.ToString();                    
@@ -151,7 +152,7 @@ namespace PIK_GP_Acad.FCS.Balance
                     cell.Borders.Horizontal.Margin = 2;
 
                     cell = table.Cells[row, 2];
-                    cell.TextString = itemGroup.Sum(s => s.Value).ToString();
+                    cell.TextString = itemGroup.Sum(s => s.Area).ToString();
 
                     cell = table.Cells[row, 3];
                     cell.TextString = itemGroup.Sum(s => s.PercentTerritory).ToString();

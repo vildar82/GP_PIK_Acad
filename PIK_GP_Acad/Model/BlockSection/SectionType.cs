@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using PIK_GP_Acad.Elements.Blocks;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
 
 namespace PIK_GP_Acad.BlockSection
 {
@@ -102,7 +104,7 @@ namespace PIK_GP_Acad.BlockSection
       {
          Name = name;
          NumberFloor = numberFloor;
-         Sections = new List<Section>();
+         Sections = new List<BlockSectionGP>();
       }
 
       public double AreaApartTotal { get; private set; }
@@ -110,9 +112,9 @@ namespace PIK_GP_Acad.BlockSection
       public int Count { get; private set; }
       public string Name { get; private set; }
       public int NumberFloor { get; private set; }
-      public List<Section> Sections { get; private set; }
+      public List<BlockSectionGP> Sections { get; private set; }
 
-      public void AddSection(Section section)
+      public void AddSection(BlockSectionGP section)
       {
          // ? проверять соответствие добавляемой секции этому типу секций - Имя, кол этажей
          AreaApartTotal += section.AreaApartTotal;

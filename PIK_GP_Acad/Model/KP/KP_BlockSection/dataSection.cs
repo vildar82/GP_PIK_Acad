@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
@@ -11,8 +12,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
     /// </summary>
     class DataSection
     {
-        private List<BlockSection> blocks;
-        private Options options;
+        private List<BlockSectionKP> blocks;
+        private OptionsKPBS options;
 
         public double AreaFirstGNS { get; private set; }
         public double AreaFirstLive { get; private set; }
@@ -47,7 +48,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         /// </summary>
         public int ParkingBKFN { get; private set; }
 
-        public DataSection(List<BlockSection> blocks, Options options)
+        public DataSection(List<BlockSectionKP> blocks, OptionsKPBS options)
         {
             this.blocks = blocks;
             this.options = options;
@@ -56,7 +57,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         public void Calc ()
         {
             // Расчет площадей обычных блок-секций - без башень
-            foreach (var blSec in blocks.Where(b => !(b is TowerBS)))
+            foreach (var blSec in blocks.Where(b => !(b is TowerKPBS)))
             {
                 AreaFirstGNS += blSec.AreaGNS;
                 AreaUpperGNS += blSec.AreaGNS * (blSec.Floors - 1);
@@ -65,7 +66,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             AreaUpperLive = AreaUpperGNS * 0.68;
 
             // Расчет башен    
-            foreach (var tower in blocks.OfType<TowerBS>())
+            foreach (var tower in blocks.OfType<TowerKPBS>())
             {
                 AreaFirstGNS += tower.AreaGNS;
                 AreaUpperGNS += tower.AreaGNS * (tower.Floors - 1);

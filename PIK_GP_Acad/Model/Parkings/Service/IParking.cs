@@ -1,15 +1,14 @@
 ﻿using AcadLib;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.Parkings
 {
-    public interface IParking
+    public interface IParking : IElement
     {
         ObjectId IdBlRef { get; set; }
-        bool IsInvalid { get; set; }
-        double Places { get; set; }
-
-        void Calc();
-        Result Define(BlockReference blRef);
+        int InvalidPlaces { get; set; }
+        int Places { get; set; }
+        void Calc();        
     }
 }

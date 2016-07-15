@@ -81,12 +81,11 @@
     <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
     <Compile Include="Model\BlockSection\ClassTypeService.cs" />
     <Compile Include="Model\BlockSection\DataSection.cs" />
-    <Compile Include="Model\BlockSection\Estimate.cs" />
-    <Compile Include="Model\BlockSection\EstimateEkb.cs" />
-    <Compile Include="Model\BlockSection\EstimateMoscow.cs" />
-    <Compile Include="Model\BlockSection\EstimateMoscowRegion.cs" />
-    <Compile Include="Model\BlockSection\ParserBlockSection.cs" />
-    <Compile Include="Model\BlockSection\Section.cs" />
+    <Compile Include="Model\BlockSection\Estimates\Estimate.cs" />
+    <Compile Include="Model\BlockSection\Estimates\EstimateEkb.cs" />
+    <Compile Include="Model\BlockSection\Estimates\EstimateMoscow.cs" />
+    <Compile Include="Model\BlockSection\Estimates\EstimateMoscowRegion.cs" />
+    <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionGP.cs" />
     <Compile Include="Model\BlockSection\SectionService.cs" />
     <Compile Include="Model\BlockSection\SectionType.cs" />
     <Compile Include="Model\BlockSection\SelectSection.cs" />
@@ -97,6 +96,9 @@
     <Compile Include="Model\Elements\Buildings\BuildingFactory.cs" />
     <Compile Include="Model\Elements\Buildings\IBuilding.cs" />
     <Compile Include="Model\Elements\Buildings\Surround.cs" />
+    <Compile Include="Model\Elements\ElementFactory.cs" />
+    <Compile Include="Model\Elements\IArea.cs" />
+    <Compile Include="Model\Elements\IElement.cs" />
     <Compile Include="Model\FCS\Balance\BalanceClassService.cs" />
     <Compile Include="Model\FCS\Balance\BalanceRow.cs" />
     <Compile Include="Model\FCS\Balance\BalanceTableService.cs" />
@@ -151,9 +153,9 @@
     <Compile Include="Model\KP\KP_BlockSection\DataSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\KP_BlockSectionService.cs" />
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
-    <Compile Include="Model\KP\KP_BlockSection\BlockSection.cs" />
+    <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionKP.cs" />
     <Compile Include="Model\KP\KP_BlockSection\TableSection.cs" />
-    <Compile Include="Model\KP\KP_BlockSection\TowerBS.cs" />
+    <Compile Include="Model\Elements\Blocks\BlockSection\TowerKPBS.cs" />
     <Compile Include="Model\KP\Parking\Area\AreaParking.cs" />
     <Compile Include="Model\KP\Parking\Area\AreaParkingService.cs" />
     <Compile Include="Model\KP\Parking\Area\FormAreaParking.cs">
@@ -163,14 +165,13 @@
       <DependentUpon>FormAreaParking.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\KP\Parking\Area\ParkingType.cs" />
-    <Compile Include="Model\KP\Parking\ParkingBlock.cs" />
-    <Compile Include="Model\KP\Social\SchoolBlock.cs" />
-    <Compile Include="Model\KP\Social\KindergartenBlock.cs" />
-    <Compile Include="Model\KP\Social\SocialBlock.cs" />
-    <Compile Include="Model\Parkings\Parking.cs" />
+    <Compile Include="Model\Elements\Blocks\Parkings\ParkingBuilding.cs" />
+    <Compile Include="Model\Elements\Blocks\Social\SchoolBlock.cs" />
+    <Compile Include="Model\Elements\Blocks\Social\KindergartenBlock.cs" />
+    <Compile Include="Model\Elements\Blocks\Social\SocialBlock.cs" />
+    <Compile Include="Model\Elements\Blocks\Parkings\Parking.cs" />
     <Compile Include="Model\Parkings\Service\IParking.cs" />
-    <Compile Include="Model\Parkings\LineParking.cs" />
-    <Compile Include="Model\Parkings\Service\ParkingFactory.cs" />
+    <Compile Include="Model\Elements\Blocks\Parkings\LineParking.cs" />
     <Compile Include="Model\Parkings\Service\ParkingService.cs" />
     <Compile Include="Model\Parkings\Service\ParkingData.cs" />
     <Compile Include="Model\Parkings\Service\ParkingTable.cs" />

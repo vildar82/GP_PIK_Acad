@@ -8,14 +8,17 @@ using AcadLib.Errors;
 using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using PIK_GP_Acad.KP.KP_BlockSection;
 
-namespace PIK_GP_Acad.KP.KP_BlockSection
+namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 {
     /// <summary>
     /// блок-секции концепции - пока общий класс для Рядовой и Угловой
     /// </summary>
-    public class BlockSection : BlockBase
+    public class BlockSectionKP : BlockBase
     {
+        public const string BlockNameMatch = "ГП_К_Секция";
+
         private Rectangle r;
         public Rectangle Rectangle {
             get {
@@ -44,7 +47,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         
         public ObjectId IdPlContour { get; set; }     
 
-        public BlockSection(BlockReference blRef, string blName) : base (blRef, blName)
+        public BlockSectionKP(BlockReference blRef, string blName) : base (blRef, blName)
         {
             // Определить параметры блок-секции: площадь,этажность            
             Define(blRef);            
@@ -73,7 +76,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             PlExternalId = plContour.Id;
 
             // Определение этажности по атрибуту
-            Floors = GetPropValue<int>(Options.Instance.BlockSectionAtrFloor, exactMatch: false);
+            Floors = GetPropValue<int>(OptionsKPBS.Instance.BlockSectionAtrFloor, exactMatch: false);
         }
 
         private Rectangle GetRectangle ()

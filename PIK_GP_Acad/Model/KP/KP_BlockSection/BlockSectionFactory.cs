@@ -4,21 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
     public class BlockSectionFactory
     {
-        public static BlockSection CreateBS (BlockReference blRef, string blName)
+        public static BlockSectionKP CreateBS (BlockReference blRef, string blName)
         {
-            BlockSection bs = null;
+            BlockSectionKP bs = null;
             if (blName.Contains("Башня", StringComparison.OrdinalIgnoreCase))
             {
-                bs = new TowerBS(blRef, blName);
+                bs = new TowerKPBS(blRef, blName);
             }
             else
             {
-                bs = new BlockSection(blRef, blName);
+                bs = new BlockSectionKP(blRef, blName);
             }
             return bs;
         }

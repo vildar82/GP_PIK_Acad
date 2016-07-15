@@ -6,12 +6,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 
-namespace PIK_GP_Acad.KP.Social
+namespace PIK_GP_Acad.Elements.Blocks.Social
 {
     /// <summary>
     /// Блок школы.
     /// </summary>
-    public class SchoolBlock : SocialBlock
+    public class SchoolBlock : SocialBlock, IElement
     {
         public const string BlockName = "КП_СОШ";
 

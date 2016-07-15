@@ -15,7 +15,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
     [Serializable]
-    public class Options
+    public class OptionsKPBS
     {
         //static string FileXml = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder,
         //                               @"ГП\KP_BlockSection.xml");        
@@ -28,8 +28,8 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         const string KeyNormParkingPlaceFor100 = "NormParkingPlaceFor100";
         const string KeyTextStyleItalic = "TextStyleItalic";
 
-        static Options _instance;
-        public static Options Instance {
+        static OptionsKPBS _instance;
+        public static OptionsKPBS Instance {
             get {
                 if (_instance == null)
                 {
@@ -157,7 +157,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         [TypeConverter(typeof(BooleanTypeConverter))]
         public bool TextStyleItalic { get; set; } = false;
 
-        public Options()
+        public OptionsKPBS()
         {
         }        
 
@@ -173,7 +173,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         {            
             //Запрос начальных значений
             AcadLib.UI.FormProperties formProp = new AcadLib.UI.FormProperties();
-            Options newOptions = (Options)Instance.MemberwiseClone();
+            OptionsKPBS newOptions = (OptionsKPBS)Instance.MemberwiseClone();
             formProp.propertyGrid1.SelectedObject = newOptions;
             if (Autodesk.AutoCAD.ApplicationServices.Application.ShowModalDialog(formProp) != System.Windows.Forms.DialogResult.OK)
             {
@@ -190,9 +190,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }            
         }
 
-        static Options Load()
+        static OptionsKPBS Load()
         {
-            Options options = new Options();
+            OptionsKPBS options = new OptionsKPBS();
             options.LoadFromNOD();
             //Options options = null;
             //if (File.Exists(FileXml))

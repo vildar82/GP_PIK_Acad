@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Elements.Blocks;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.BlockSection
@@ -13,7 +15,7 @@ namespace PIK_GP_Acad.BlockSection
         public Database Db { get; private set; }
         public Estimate Estimate { get; set; }      
         public DataSection DataSection { get; private set; }        
-        public List<Section> Sections { get; private set; }
+        public List<BlockSectionGP> Sections { get; private set; }
         public List<IClassificator> Classes { get; private set; }
 
         public SectionService (Document doc)
@@ -25,7 +27,7 @@ namespace PIK_GP_Acad.BlockSection
         // Подсчет секций
         public void CalcSections()
         {
-            FCS.FCService.Init(Db);
+            FCService.Init(Db);
             GetData(true);
             // Построение таблицы
             TableSecton tableSection = new TableSecton(this);
@@ -59,7 +61,7 @@ namespace PIK_GP_Acad.BlockSection
 
                 // Обработка выбранных блоков           
                 List<IClassificator> classes;
-                Sections = ParserBlockSection.Parse(selIds, out classes);
+                Sections = Parse(selIds, out classes);
                 Classes = classes;
 
                 // Подсчет площадей и типов блок-секций
@@ -71,7 +73,41 @@ namespace PIK_GP_Acad.BlockSection
 
         public static bool IsBlockNameSection (string name)
         {
-            return name.StartsWith(Settings.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
+            return name.StartsWith(SettingsBS.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static List<BlockSectionGP> Parse (List<ObjectId> ids, out List<IClassificator> classes)
+        {
+            ClassTypeService classService = new ClassTypeService();
+            classes = new List<IClassificator>();
+            var sections = new List<BlockSectionGP>();
+            foreach (var idEnt in ids)
+            {
+                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+
+                if (ent is BlockReference)
+                {
+                    var section = Elements.ElementFactory.Create<BlockSectionGP>(ent);
+                    if (section == null) continue;
+                    if (section.Error == null)
+                    {
+                        sections.Add(section);
+                    }
+                    else
+                    {
+                        Inspector.AddError(section.Error);
+                    }
+                }
+                else if (ent is Curve || ent is Hatch)
+                {
+                    var c = ClassFactory.Create(idEnt, classService);
+                    if (c != null)
+                    {
+                        classes.Add(c);
+                    }
+                }
+            }
+            return sections;
         }
     }
 }

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.FCS
 {
-    public interface IClassificator
+    public interface IClassificator : IElement
     {
         ObjectId IdEnt { get;  }
-        ClassType ClassType { get; }        
-        double Value { get;  }
+        ClassType ClassType { get; }                
     }
 }

@@ -12,6 +12,7 @@ using AcadLib.Errors;
 using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Colors;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
@@ -47,7 +48,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             Db = Doc.Database;
             Ed = Doc.Editor;
 
-            Options.PromptOptions();
+            OptionsKPBS.PromptOptions();
 
             // Выбор блоков блок-секций
             var blocks = SelectBlocksection(isNew, false);
@@ -66,7 +67,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
 
             // Подсчет блок-секций
-            var dataSec = new DataSection(blocks, Options.Instance);
+            var dataSec = new DataSection(blocks, OptionsKPBS.Instance);
             dataSec.Calc();
 
             // Создание таблицы и вставка
@@ -74,9 +75,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             tableSec.Create();
         }        
 
-        private static List<BlockSection> SelectBlocksection(bool isNew, bool fill)
+        private static List<BlockSectionKP> SelectBlocksection(bool isNew, bool fill)
         {
-            List<BlockSection> blocks = new List<BlockSection>();
+            List<BlockSectionKP> blocks = new List<BlockSectionKP>();
 
             // Запрос выбора блоков
             var sel = Ed.Select("\nВыбор блоков блок-секций (Концепции):");
@@ -94,7 +95,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         var plGns = idBlRef.GetObject( OpenMode.ForRead, false, true) as Polyline;
                         if (plGns != null)
                         {
-                            if (plGns.Layer.Equals(Options.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
+                            if (plGns.Layer.Equals(OptionsKPBS.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
                             {
                                 plGns.UpgradeOpen();
                                 plGns.Erase();                                
@@ -107,7 +108,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         var plHatch = idBlRef.GetObject( OpenMode.ForRead, false, true) as Hatch;
                         if (plHatch != null)
                         {
-                            if (plHatch.Layer.Equals(Options.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
+                            if (plHatch.Layer.Equals(OptionsKPBS.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
                             {
                                 plHatch.UpgradeOpen();
                                 plHatch.Erase();
@@ -181,13 +182,13 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         
         public static bool IsBlockSection(string blName)
         {
-            return Regex.IsMatch(blName, Options.Instance.BlockSectionNameMatch);
+            return Regex.IsMatch(blName, OptionsKPBS.Instance.BlockSectionNameMatch);
         }
 
         /// <summary>
         /// Определение точных габаритов Блок-Секций - по стыковке Блок-Секций
         /// </summary>        
-        private static void DefineHouses (List<BlockSection> blocks, bool fill)
+        private static void DefineHouses (List<BlockSectionKP> blocks, bool fill)
         {
             // Дерево блок-секций
             var rtreeBs = GetRtreeBs(blocks);
@@ -195,7 +196,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
             using (var t = Db.TransactionManager.StartTransaction())
             {
-                var layerGNS = AcadLib.Layers.LayerExt.CheckLayerState(Options.Instance.LayerBSContourGNS);
+                var layerGNS = AcadLib.Layers.LayerExt.CheckLayerState(OptionsKPBS.Instance.LayerBSContourGNS);
 
                 var cs = Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                 foreach (var bs in blocks)
@@ -203,7 +204,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     // Полилиния ГНС этой секции скопированная в модель
                     var idPlExtern = bs.PlExternalId.CopyEnt(cs.Id);
                     var plExtern = idPlExtern.GetObject(OpenMode.ForWrite, false, true) as Polyline;
-                    plExtern.Layer = Options.Instance.LayerBSContourGNS;
+                    plExtern.Layer = OptionsKPBS.Instance.LayerBSContourGNS;
                     plExtern.ColorIndex = 256;
                     plExtern.Linetype = SymbolUtilityServices.LinetypeByLayerName;
                     plExtern.LineWeight = LineWeight.ByLayer;
@@ -262,9 +263,9 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }
         }        
 
-        private static RTree<BlockSection> GetRtreeBs (List<BlockSection> blocks)
+        private static RTree<BlockSectionKP> GetRtreeBs (List<BlockSectionKP> blocks)
         {
-            RTree<BlockSection> rtree = new RTree<BlockSection>  ();
+            RTree<BlockSectionKP> rtree = new RTree<BlockSectionKP>  ();
             foreach (var item in blocks)
             {
                 Rectangle r = item.Rectangle;
@@ -274,7 +275,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
         }
 
         private static void ModifyPlExternal (Polyline pl, Polyline plItem, Point3dCollection ptIntersects,
-            BlockSection bs)
+            BlockSectionKP bs)
         {            
             if (ptIntersects.Count == 0) return;
 
@@ -314,11 +315,11 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             }            
         }        
 
-        private static void FillContour (BlockSection bs, Polyline plExtern, BlockTableRecord cs, Transaction t)
+        private static void FillContour (BlockSectionKP bs, Polyline plExtern, BlockTableRecord cs, Transaction t)
         {
             var h = new Hatch();
             h.SetDatabaseDefaults();
-            h.Layer = Options.Instance.LayerBSContourGNS;
+            h.Layer = OptionsKPBS.Instance.LayerBSContourGNS;
             h.LineWeight = LineWeight.LineWeight015;
             h.Linetype = SymbolUtilityServices.LinetypeContinuousName;
             h.Color = GetFillColor(bs); // Color.FromRgb(250, 250, 250);
@@ -339,7 +340,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             orders.MoveToBottom(new ObjectIdCollection(new[] { h.Id }));
         }
 
-        private static Color GetFillColor (BlockSection bs)
+        private static Color GetFillColor (BlockSectionKP bs)
         {
             if (bs.Floors <= 15)
                 return Color.FromRgb(255, 255, 255);

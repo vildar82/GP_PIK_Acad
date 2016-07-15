@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Parkings
         public void Calc()
         {
             Places = Parkings.Sum(p => p.Places);
-            InvalidPlaces = Parkings.Where(p => p.IsInvalid).Sum(p => p.Places);
+            InvalidPlaces = Parkings.Sum(p => p.InvalidPlaces);
         }
     }
 }

@@ -11,6 +11,7 @@ using AcadLib.Errors;
 using PIK_GP_Acad.Insolation.SunlightRule;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Buildings;
+using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation
 {
@@ -43,21 +44,22 @@ namespace PIK_GP_Acad.Insolation
             // Сканирование с крупным шагом, до обнаружения препятствия
             int countLargeStep = Convert.ToInt32((rule.EndAngle - rule.StartAngle) / options.ScaningStepLarge);
 
-            IlluminationArea illumArea = null;
-            bool scanToStartIllumArea = true;
+            IlluminationArea illumArea = null;            
             Point3d ptIntersectNearest = Point3d.Origin;
             Point3d ptEndScanPoint = Point3d.Origin;
+            Point3d ptStartScanPoint = Point3d.Origin;
 
             Vector2d vecRay = Vector2d.XAxis;
-            vecRay.RotateBy(rule.StartAngle.ToRadians());
-
-            // Test
-            List<Point3d> ptsEdge = new List<Point3d>();
+            vecRay = vecRay.RotateBy(-rule.StartAngle.ToRadians());            
 
             for (double i = 0; i < countLargeStep; i += options.ScaningStepLarge)
-            {
+            {                
                 var ptScanEnd = rule.GetPointByHeightInVector(ptScan, vecRay, options.MaxHeight);
-                ptsEdge.Add(ptScanEnd);
+                if (i == 0)
+                {
+                    ptStartScanPoint = ptScanEnd;
+                }
+                                
                 using (Line ray = new Line(ptScan, ptScanEnd))
                 {
                     ptEndScanPoint = ray.EndPoint;
@@ -66,19 +68,18 @@ namespace PIK_GP_Acad.Insolation
                     {
                         // Найдено пересечение луча со зданием
                         ptIntersectNearest = ptFound;                        
-                        if (!scanToStartIllumArea)
+                        if (illumArea != null)
                         {
                             // Конец освещенного участка
                             illumArea.EndPoint = CorrectScan(ray, buildings, true);
                             illuminations.Add(illumArea);
-                            illumArea = null;
-                            scanToStartIllumArea = true;
+                            illumArea = null;                            
                         }
                     }
                     else
                     {
                         // Не найдено пересечений
-                        if (scanToStartIllumArea)
+                        if (illumArea == null)
                         {
                             // Начало освещенного участка
                             illumArea = new IlluminationArea(options, rule, db, ray.StartPoint);
@@ -90,12 +91,11 @@ namespace PIK_GP_Acad.Insolation
                             {
                                 // найти точку пересечения
                                 illumArea.StartPoint = CorrectScan(ray, buildings, false);
-                            }
-                            scanToStartIllumArea = false;
+                            }                            
                         }
-                    }
+                    }                    
                 }
-                vecRay.RotateBy(options.ScaningStepLarge.ToRadians());
+                vecRay = vecRay.RotateBy(-options.ScaningStepLarge.ToRadians());
                 //RotateRay(ray, options.ScaningStepLarge);
             }
 
@@ -105,12 +105,17 @@ namespace PIK_GP_Acad.Insolation
                 illumArea.EndPoint = ptEndScanPoint;
                 illuminations.Add(illumArea);
             }
-
-            // Test 
-            Polyline3d pl3dEdge = new Polyline3d(Poly3dType.SimplePoly, new Point3dCollection(ptsEdge.ToArray()), false);
-            var cs = db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-            cs.AppendEntity(pl3dEdge);
-            db.TransactionManager.TopTransaction.AddNewlyCreatedDBObject(pl3dEdge, true);
+            else
+            {
+                if (illuminations.Count == 0)
+                {
+                    // Вся зона освещена
+                    illumArea = new IlluminationArea(options, rule, db, ptScan);
+                    illumArea.StartPoint =ptStartScanPoint;
+                    illumArea.EndPoint = ptEndScanPoint;
+                    illuminations.Add(illumArea);
+                }
+            }            
 
             return illuminations;
         }        
@@ -131,7 +136,7 @@ namespace PIK_GP_Acad.Insolation
             foreach (var build in buildings)
             {
                 var ptIntersects = new Point3dCollection();
-                ray.IntersectWith(build.Contour, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
+                ray.IntersectWith(build.ContourInModel, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
                 if (ptIntersects.Count > 0)
                 {
                     Point3d ptNearest;
@@ -139,17 +144,17 @@ namespace PIK_GP_Acad.Insolation
                     {
                         // Проверка высоты точки и здания
                         var heightPoint = rule.GetHeightAtPoint(ptNearest, ray.StartPoint);
-                        var heightBuilding = build.Height;
+                        var heightBuilding = build.Height;                                      
+
                         // Если высота дома выше высоты инсоляции в этой точки, то добаляем точку в найденные
                         if (heightBuilding >= heightPoint)
                         {
                             if (findRes)
                             {
-                                if ((ptIntersectNearest - ray.StartPoint).Length > (ptNearest - ray.StartPoint).Length)
+                                if ((ptNearest - ray.StartPoint).Length < (ptIntersectNearest - ray.StartPoint).Length)
                                 {
                                     ptIntersectNearest = ptNearest;
                                 }
-
                             }
                             else
                             {
@@ -179,16 +184,15 @@ namespace PIK_GP_Acad.Insolation
                     if (wasIntersect)
                     {
                         // Если изначально было пересечение, то надо найти пустую область без пересечений, тогда точка последнего пересечения будет результатом
-                        repeat = true;
-                        ptRes = ptIntersect;
+                        repeat = true;                        
                     }
                     else
                     {
                         // Если изначально не было пересечения, то результат определен
-                        repeat = false;
-                        ptRes = ptIntersect;
+                        repeat = false;                        
                         defineRes = true;
                     }
+                    ptRes = rayCorrect.EndPoint;
                 }
                 else
                 {
@@ -224,7 +228,7 @@ namespace PIK_GP_Acad.Insolation
             var ptsArray = new Point3d[pts.Count];
             pts.CopyTo(ptsArray, 0);
             // Минимальное расстояние до центра (точки сканирования) > 5м.
-            var find = ptsArray.Select(p=>new { point = p, length = (p - ptDest).Length }).OrderBy(p => p.length).First(p=>p.length>5);
+            var find = ptsArray.Select(p=>new { point = p, length = (p - ptDest).Length }).OrderBy(p => p.length).FirstOrDefault(p=>p.length>5);
             if (find != null)
             {
                 ptNearest = find.point;

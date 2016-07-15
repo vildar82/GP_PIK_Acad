@@ -6,12 +6,12 @@ using AcadLib.Files;
 namespace PIK_GP_Acad.BlockSection
 {
     [Serializable]
-    public class Settings
+    public class SettingsBS
     {
         private static string _curDllDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static Settings _settings;
+        private static SettingsBS _settings;
 
-        public static Settings Default
+        public static SettingsBS Default
         {
             get
             {
@@ -28,25 +28,25 @@ namespace PIK_GP_Acad.BlockSection
         public string AttrNumberFloor { get; set; }
         public string BlockSectionPrefix { get; set; }
 
-        private static Settings Load()
+        private static SettingsBS Load()
         {
-            Settings res;
+            SettingsBS res;
             if (File.Exists(FileSettings))
             {
                 try
                 {
                     SerializerXml ser = new SerializerXml(FileSettings);
-                    res = ser.DeserializeXmlFile<Settings>();
+                    res = ser.DeserializeXmlFile<SettingsBS>();
                 }
                 catch
                 {
-                    res = new Settings();
+                    res = new SettingsBS();
                     res.SetDefault();
                 }
             }
             else
             {
-                res = new Settings();
+                res = new SettingsBS();
                 res.SetDefault();
                 res.Save();
             }

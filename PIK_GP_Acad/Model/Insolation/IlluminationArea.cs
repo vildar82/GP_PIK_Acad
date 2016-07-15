@@ -36,13 +36,41 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>        
         public void Create (BlockTableRecord cs)
         {
+            Point3d ptLewelEndW;
+            Point3d ptLewelEndH;
+            // Низкоэтажный уровень
+            createPlByLevel(cs, Origin, Origin, options.LowHeight, options.LowHeightColor,out ptLewelEndW,out ptLewelEndH);
+            // Средний уровень
+            createPlByLevel(cs, ptLewelEndH, ptLewelEndW, options.MediumHeight, options.MediumHeightColor,
+                out ptLewelEndW, out ptLewelEndH);
+            // Высотный уровень
+            createPlByLevel(cs, ptLewelEndH, ptLewelEndW, options.MaxHeight, options.MaxHeightColor,
+                out ptLewelEndW, out ptLewelEndH);
+        }
+
+        private void createPlByLevel (BlockTableRecord cs, Point3d ptStartH, Point3d ptStartW, int level, Color color, 
+            out Point3d ptLewelEndW, out Point3d ptLewelEndH)
+        {
             Transaction t = cs.Database.TransactionManager.TopTransaction;
-            Point3dCollection pts = new Point3dCollection(new Point3d[] { Origin, StartPoint, EndPoint });
+            ptLewelEndW = rule.GetPointByHeightInVector(Origin,
+                            StartPoint.Convert2d() - Origin.Convert2d(), level);
+            ptLewelEndH = rule.GetPointByHeightInVector(Origin,
+                EndPoint.Convert2d() - Origin.Convert2d(), level);
+
+            Point3dCollection pts = new Point3dCollection(new Point3d[]{
+                                    ptStartH, ptStartW, ptLewelEndW, ptLewelEndH
+                                });
             Polyline3d pl3d = new Polyline3d(Poly3dType.SimplePoly, pts, true);
+            pl3d.Color = color;
+            pl3d.Transparency = new Transparency(options.Transparence);
             cs.AppendEntity(pl3d);
             t.AddNewlyCreatedDBObject(pl3d, true);
             var h = AcadLib.Hatches.HatchExt.CreateAssociativeHatch(pl3d, cs, t);
-            h.Color = Color.FromColorIndex(ColorMethod.ByAci, 50);
+            if (h != null)
+            {
+                h.Color = color;
+                h.Transparency = new Transparency(options.Transparence);
+            }
         }
     }
 }

@@ -2,12 +2,16 @@
 using AcadLib.Blocks;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.BlockSection;
+using PIK_GP_Acad.Elements.Buildings;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 {
     // Блок-секция
-    public class Section : BlockBase
+    public class BlockSectionGP : BlockBase, IBuilding, IElement
     {
+        public const string BlockNameMatch = "ГП_Блок-секция";
+
         // Площадь полилинии контура
         public double AreaContour { get; set; }
         // Площадь квартир
@@ -22,11 +26,25 @@ namespace PIK_GP_Acad.BlockSection
         // Имя блок-секции
         public string Name { get; private set; } = string.Empty;
 
-        // Кол этажей
-        public int NumberFloor { get; private set; }
+        // Кол этажей        
         public ObjectId IdPlContour { get; set; }
 
-        public Section(BlockReference blRef, string blName) : base(blRef, blName)
+        public int Floors { get; set; }
+
+        public Extents3d ExtentsInModel { get; set; }
+
+        public Polyline ContourInModel {
+            get {
+                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+                pl.Clone();
+                pl.TransformBy(Transform);
+                return pl;
+            }
+        }
+
+        public int Height { get; set; }
+
+        public BlockSectionGP(BlockReference blRef, string blName) : base(blRef, blName)
         {            
             // Площадь по внешней полилинии
             Polyline plLayer;
@@ -40,15 +58,15 @@ namespace PIK_GP_Acad.BlockSection
         private void parseAttrs ()
         {
             // Наименование
-            Name = GetPropValue<string>(Settings.Default.AttrName);
+            Name = GetPropValue<string>(SettingsBS.Default.AttrName);
             // Площадь БКФН
-            AreaBKFN = GetPropValue<double>(Settings.Default.AttrAreaBKFN);
+            AreaBKFN = GetPropValue<double>(SettingsBS.Default.AttrAreaBKFN);
             // Площадь квартир на одном этаже
-            AreaApart = GetPropValue<double>(Settings.Default.AttrAreaApart);
+            AreaApart = GetPropValue<double>(SettingsBS.Default.AttrAreaApart);
             // Площадь квартир общая на секцию (по всем этажам кроме 1)
-            AreaApartTotal = GetPropValue<double>(Settings.Default.AttrAreaApartTotal);
+            AreaApartTotal = GetPropValue<double>(SettingsBS.Default.AttrAreaApartTotal);
             // Кол этажей
-            NumberFloor = GetPropValue<int>(Settings.Default.AttrNumberFloor);                                                       
+            Floors = GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);                                                       
         }        
     }
 }

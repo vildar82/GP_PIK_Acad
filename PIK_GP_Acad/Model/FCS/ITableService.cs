@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib.Tables;
+using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.FCS
 {
@@ -16,6 +17,6 @@ namespace PIK_GP_Acad.FCS
         /// <summary>
         /// Ссписок объектов сгруппированных по имени в таблице
         /// </summary>        
-        void CalcRows (List<IGrouping<string, IClassificator>> groups);
+        void CalcRows (List<IGrouping<string, IArea>> groups);
     }
 }

@@ -138,19 +138,14 @@ namespace PIK_GP_Acad.Parkings
                 int countBlParking = 0;
                 foreach (ObjectId idEnt in ids)
                 {
-                    var blRef = idEnt.GetObject(OpenMode.ForRead, false, true) as BlockReference;
-                    if (blRef == null) continue;
+                    var ent = idEnt.GetObject(OpenMode.ForRead, false, true) as Entity;
 
-                    var blName = blRef.GetEffectiveName();
-
-                    var p = ParkingFactory.CreateParking(blRef, blName);
+                    var p = Elements.ElementFactory.Create<IParking>(ent);
                     if (p == null) continue;
-
-                    var res = p.Define(blRef);
-                    if (res.Failure)
+                                        
+                    if (p.Error != null)
                     {
-                        Inspector.AddError("Пропущен блок парковки с ошибками:" + res.Error,
-                            blRef, System.Drawing.SystemIcons.Error);
+                        Inspector.AddError(p.Error);
                     }
                     else
                     {
