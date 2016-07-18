@@ -38,7 +38,7 @@ namespace PIK_GP_Acad
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
         public const string GroupKP = "Концепция";
-        public const string GroupStamp = "Штамп";
+        public const string GroupCommon = "Общие";
 
         //Имена блоков
         //public const string BlockNameDOO = "КП_ДОО";
@@ -78,10 +78,10 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Блок СОШ",Resources.KP_School, nameof(KP_BlockSchoolInsert), "Вставка блока школы (СОШ).", GroupKP),
                 new PaletteCommand("Блок паркинга",Resources.KP_Parking, nameof(KP_BlockParkingInsert), "Вставка блока паркинга.", GroupKP),
                 new PaletteCommand("Расчет свободной парковки", Resources.KP_KP_AreaParking, nameof(KP_AreaParking), "Расчет машиномест свободной парковки", GroupKP),
-                // Штамп
-                new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupStamp),
-                new PaletteCommand("Штамп. Основной комплект.",Resources.GP_KP_BlockStampForm3, nameof(GP_BlockStampForm3), "Вставка блока штампа по форме 3 - Основной комплект.", GroupStamp),
-                new PaletteCommand("Рамка для буклета.",Resources.GP_KP_BlockStampBooklet, nameof(GP_BlockStampBooklet), "Вставка блока рамки буклета.", GroupStamp)
+                // Общие - штамп
+                new PaletteCommand("Рамка.",Resources.GP_KP_BlockFrame, nameof(GP_BlockFrame), "Вставка блока рамки.", GroupCommon),
+                new PaletteCommand("Штамп. Основной комплект.",Resources.GP_KP_BlockStampForm3, nameof(GP_BlockStampForm3), "Вставка блока штампа по форме 3 - Основной комплект.", GroupCommon),
+                new PaletteCommand("Рамка для буклета.",Resources.GP_KP_BlockStampBooklet, nameof(GP_BlockStampBooklet), "Вставка блока рамки буклета.", GroupCommon)
             };
         }
 
