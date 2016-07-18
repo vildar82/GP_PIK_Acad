@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.BlockSection
@@ -50,8 +51,8 @@ namespace PIK_GP_Acad.BlockSection
                 }
                 secType.AddSection(section);
 
-                KP_GNS_BKFN += section.AreaContour;
-                KP_GNS_Typical += section.AreaContour * (section.Floors - 1);
+                KP_GNS_BKFN += section.AreaGNS;
+                KP_GNS_Typical += section.AreaGNS * (section.Floors - 1);
             }
             KP_GNS_Total = KP_GNS_BKFN + KP_GNS_Typical;
             SectionTypes = types.Values.ToList();
@@ -71,7 +72,7 @@ namespace PIK_GP_Acad.BlockSection
                 var landClass = _service.Classes.Find(c => c.ClassType.ClassName == "Участок");
                 if (landClass != null)
                 {
-                    FC_LandArea = landClass.Value * 0.0001;
+                    FC_LandArea = landClass.Area * 0.0001;
                     FC_QuarterArea = FC_LandArea;
                     foreach (var item in _service.Classes)
                     {
@@ -86,7 +87,7 @@ namespace PIK_GP_Acad.BlockSection
             }
         }
 
-        private double GetreduceArea (IClassificator item)
+        private double GetreduceArea (IArea item)
         {
             double val = 0;
             switch (item.ClassType.ClassName)
@@ -97,7 +98,7 @@ namespace PIK_GP_Acad.BlockSection
                 case "Для вычитания":
                 case "Участок СОШ":
                 case "Участок ДОО":
-                    val = item.Value;
+                    val = item.Area;
                     break;
             }
             return val;

@@ -13,6 +13,7 @@ using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Colors;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
+using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.KP.KP_BlockSection
 {
@@ -77,7 +78,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
         private static List<BlockSectionKP> SelectBlocksection(bool isNew, bool fill)
         {
-            List<BlockSectionKP> blocks = new List<BlockSectionKP>();
+            List<BlockSectionKP> blocksKP = new List<BlockSectionKP>();
 
             // Запрос выбора блоков
             var sel = Ed.Select("\nВыбор блоков блок-секций (Концепции):");
@@ -86,26 +87,27 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             TransferLayerPlContours(Db);
 
             using (var t = Db.TransactionManager.StartTransaction())
-            {   
+            {
+                List<string> filteredBlocks = new List<string>();                
 
-                foreach (var idBlRef in sel)
+                foreach (var idEnt in sel)
                 {
                     if (isNew)
                     {
-                        var plGns = idBlRef.GetObject( OpenMode.ForRead, false, true) as Polyline;
+                        var plGns = idEnt.GetObject(OpenMode.ForRead) as Polyline;
                         if (plGns != null)
                         {
                             if (plGns.Layer.Equals(OptionsKPBS.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
                             {
                                 plGns.UpgradeOpen();
-                                plGns.Erase();                                
+                                plGns.Erase();
                             }
                             continue;
-                        }                        
+                        }
                     }
                     if (fill)
                     {
-                        var plHatch = idBlRef.GetObject( OpenMode.ForRead, false, true) as Hatch;
+                        var plHatch = idEnt.GetObject(OpenMode.ForRead) as Hatch;
                         if (plHatch != null)
                         {
                             if (plHatch.Layer.Equals(OptionsKPBS.Instance.LayerBSContourGNS, StringComparison.OrdinalIgnoreCase))
@@ -117,32 +119,52 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         }
                     }
 
-                    var blRef = idBlRef.GetObject(OpenMode.ForRead, false, true) as BlockReference;
-                    if (blRef == null) continue;
-                    string blName = blRef.GetEffectiveName();
-                    if(IsBlockSection(blName))
+                    try
                     {
-                        try
-                        {                            
-                            var blSec = BlockSectionFactory.CreateBS(blRef, blName);
-                            if (blSec.Error != null)
+                        var blRef = idEnt.GetObject(OpenMode.ForRead) as BlockReference;
+                        if (blRef != null)
+                        {
+                            var blSecKP = ElementFactory.Create<BlockSectionKP>(blRef);
+                            if (blSecKP != null)
                             {
-                                Inspector.AddError(blSec.Error);
+                                var contor = blSecKP.ContourInModel;
+
+                                if (blSecKP.Error != null)
+                                {
+                                    Inspector.AddError(blSecKP.Error);
+                                }
+                                else
+                                {
+                                    blocksKP.Add(blSecKP);
+                                }
                             }
                             else
                             {
-                                blocks.Add(blSec);
-                            }                            
+                                filteredBlocks.Add(blRef.GetEffectiveName());                                
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            Inspector.AddError(ex.Message, blRef, System.Drawing.SystemIcons.Error);
-                        }                        
+                    }
+                    catch (Exception ex)
+                    {
+                        Inspector.AddError(ex.Message, idEnt, System.Drawing.SystemIcons.Error);
                     }
                 }
+
+                if (filteredBlocks.Count > 0)
+                {
+                    Ed.WriteMessage("\nОтфильтрованные блоки:");
+                    var filteredBlockGroups = filteredBlocks.GroupBy(g => g);
+                    foreach (var item in filteredBlockGroups)
+                    {
+                        Ed.WriteMessage($"\n{item.Key} - {item.Count()} шт.");
+                    }
+                }
+
+                Ed.WriteMessage($"\nОпределено блоков блок-секций КП - {blocksKP.Count}");
+
                 t.Commit();
             }
-            return blocks;
+            return blocksKP;
         }
 
         public static void TransferLayerPlContours (Database db)
@@ -202,7 +224,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                 foreach (var bs in blocks)
                 {
                     // Полилиния ГНС этой секции скопированная в модель
-                    var idPlExtern = bs.PlExternalId.CopyEnt(cs.Id);
+                    var idPlExtern = bs.IdPlContour.CopyEnt(cs.Id);
                     var plExtern = idPlExtern.GetObject(OpenMode.ForWrite, false, true) as Polyline;
                     plExtern.Layer = OptionsKPBS.Instance.LayerBSContourGNS;
                     plExtern.ColorIndex = 256;
@@ -226,7 +248,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                                 // Проверка пересечения полилиний контуров
 
                                 // ГНС линия пересекаемой секции
-                                var plExternItem =bsIntersect.PlExternalId.GetObject( OpenMode.ForRead, false, true) as Polyline;
+                                var plExternItem =bsIntersect.IdPlContour.GetObject( OpenMode.ForRead, false, true) as Polyline;
                                 plExternItem = plExternItem.Clone() as Polyline;
                                 plExternItem.TransformBy(bsIntersect.Transform);
 

@@ -38,8 +38,8 @@ namespace PIK_GP_Acad.Insolation
             var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
             foreach (var idEnt in ms)
             {
-                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;                
-                var building = BuildingFactory.CreateBuilding(ent);
+                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+                var building = ElementFactory.Create<IBuilding>(ent);
                 if (building != null)
                 {
                     buildings.Add(building);

@@ -17,7 +17,7 @@ namespace PIK_GP_Acad.FCS
         /// value key (string) - имя класса,
         /// value (List FCProperty) - свойства класса объекта
         /// </summary>
-        static Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>> tags;
+        static Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>> tags = new Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>> ();
         public static void Init (Database db)
         {
             try
@@ -92,17 +92,17 @@ namespace PIK_GP_Acad.FCS
         /// Получение классификации объекта - имени класса и свойств
         /// Перед использованием нужно первый раз вызвать Init для сканирования объектов чертежа
         /// </summary>        
-        public static bool GetTag(ObjectId idEnt, out KeyValuePair<string, List<FCProperty>> tag)
+        public static bool GetTag (ObjectId idEnt, out KeyValuePair<string, List<FCProperty>> tag)
         {
-            bool foundTag = false;     
+            bool foundTag = false;
             if (tags.TryGetValue(idEnt, out tag))
             {
-                foundTag = true;                                
+                foundTag = true;
             }
             return foundTag;
         }
 
-        public static T GetPropertyValue<T> (string name, List<FCProperty> props, ObjectId idEnt, bool isRequired)
+        public static T GetPropertyValue<T> (this List<FCProperty> props, string name, ObjectId idEnt, bool isRequired)
         {
             T resVal = default(T);
             var prop = props.Find(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));

@@ -52,7 +52,7 @@ namespace PIK_GP_Acad
                 // Главная
                 new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
                 new PaletteCommand("Блок парковки",Resources.GP_Parking,nameof(GP_InsertBlockParking),"Вставка блока парковки"),
-                new PaletteCommand("Спецификация линейных парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок (2 вида блока) и вставка текста машиномест или таблицы всех блоков в Модели."),
+                new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Линия со стрелками",Resources.GP_LineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
+using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Blocks;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.FCS;
@@ -16,7 +19,7 @@ namespace PIK_GP_Acad.BlockSection
         public Estimate Estimate { get; set; }      
         public DataSection DataSection { get; private set; }        
         public List<BlockSectionGP> Sections { get; private set; }
-        public List<IClassificator> Classes { get; private set; }
+        public List<IArea> Classes { get; private set; }
 
         public SectionService (Document doc)
         {
@@ -60,8 +63,8 @@ namespace PIK_GP_Acad.BlockSection
                 Estimate = select.Estimate;
 
                 // Обработка выбранных блоков           
-                List<IClassificator> classes;
-                Sections = Parse(selIds, out classes);
+                List<IArea> classes;
+                Sections = Parse(selIds, out classes, Doc.Editor);
                 Classes = classes;
 
                 // Подсчет площадей и типов блок-секций
@@ -76,37 +79,59 @@ namespace PIK_GP_Acad.BlockSection
             return name.StartsWith(SettingsBS.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static List<BlockSectionGP> Parse (List<ObjectId> ids, out List<IClassificator> classes)
+        public static List<BlockSectionGP> Parse (List<ObjectId> ids, out List<IArea> classes, Editor ed)
         {
             ClassTypeService classService = new ClassTypeService();
-            classes = new List<IClassificator>();
+            classes = new List<IArea>();
             var sections = new List<BlockSectionGP>();
+
+            var filteredBlocks = new List<string>();
+
             foreach (var idEnt in ids)
             {
-                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+                var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;                
 
                 if (ent is BlockReference)
                 {
-                    var section = Elements.ElementFactory.Create<BlockSectionGP>(ent);
-                    if (section == null) continue;
-                    if (section.Error == null)
+                    var section = ElementFactory.Create<BlockSectionGP>(ent);
+                    if (section != null)
                     {
-                        sections.Add(section);
+                        if (section.Error == null)
+                        {
+                            sections.Add(section);
+                        }
+                        else
+                        {
+                            Inspector.AddError(section.Error);
+                        }
                     }
                     else
                     {
-                        Inspector.AddError(section.Error);
+                        filteredBlocks.Add(((BlockReference)ent).GetEffectiveName());
                     }
                 }
                 else if (ent is Curve || ent is Hatch)
                 {
-                    var c = ClassFactory.Create(idEnt, classService);
-                    if (c != null)
+                    var area = ElementFactory.Create<IArea>(ent, classService);                    
+                    if (area != null)
                     {
-                        classes.Add(c);
+                        classes.Add(area);
                     }
                 }
             }
+
+            if (filteredBlocks.Count>0)
+            {
+                ed.WriteMessage("\nОтфильтрованные блоки:");
+                var groupsFilteredBlock = filteredBlocks.GroupBy(g=>g);
+                foreach (var item in groupsFilteredBlock)
+                {
+                    ed.WriteMessage($"\n{item.Key} - {item.Count()} шт.");
+                }
+            }
+
+            ed.WriteMessage($"\nОпределено блоков блок-секций ГП - {sections.Count}");
+
             return sections;
         }
     }

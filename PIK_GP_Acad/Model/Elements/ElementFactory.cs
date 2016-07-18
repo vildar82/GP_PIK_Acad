@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.Elements.Blocks.Parkings;
 using PIK_GP_Acad.Elements.Blocks.Social;
+using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.FCS;
 
 namespace PIK_GP_Acad.Elements
@@ -27,11 +28,21 @@ namespace PIK_GP_Acad.Elements
                 { SchoolBlock.BlockName, typeof(SchoolBlock) }                
             };
 
+        /// <summary>
+        /// Создание объекта.
+        /// Или блока,
+        /// Или классификатора, если задан classService
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ent"></param>
+        /// <param name="classService"></param>
+        /// <returns></returns>
         public static T Create<T>(Entity ent, IClassTypeService classService = null) where T : class, IElement
-        {
+        {            
             T res = default(T);
-            IElement elem = null;      
-            
+            IElement elem = null;
+            if (ent == null) return res;
+
             // Блок
             if (ent is BlockReference)
             {
@@ -43,10 +54,10 @@ namespace PIK_GP_Acad.Elements
                     elem = (IElement)Activator.CreateInstance(blockType, blRef, blName);                    
                 }
             }
-            else
+            else if (ent is Curve || ent is Hatch)
             {
                 // Классифицируемый объект
-                elem = GetClassificator(ent.Id, classService);
+                elem = GetClassificator(ent, classService);
             }       
 
             if (elem?.Error != null)
@@ -70,32 +81,45 @@ namespace PIK_GP_Acad.Elements
         /// <summary>
         /// !!! Перед использование не забудь вызвать первый раз FCService.Init()
         /// </summary>        
-        public static IClassificator GetClassificator (ObjectId idEnt, IClassTypeService classService)
+        private static IClassificator GetClassificator (Entity ent, IClassTypeService classService)
         {
-            IClassificator res = null;
+            IClassificator res = null;            
             KeyValuePair<string, List<FCProperty>> tag;
-            if (FCService.GetTag(idEnt, out tag))
+            if (FCService.GetTag(ent.Id, out tag))
             {
-                if (classService != null)
+                ClassType clType;
+                if (classService == null)
                 {
-                    var classType = classService.GetClassType(tag.Key);
-                    if (classType != null)
-                    {                        
-                    }
+                    clType = new ClassType(tag.Key, tag.Key, null, 0);
                 }
-                double value = GetValue(idEnt, classType.UnitFactor, classType.ClassName);
-                if (value != 0)
+                else
                 {
-                    res = new Classificator(idEnt, classType);
+                    clType = classService?.GetClassType(tag.Key);
                 }
-            }
+
+                // Если есть параметр высоты, то это здание
+                var height = tag.Value.GetPropertyValue<int>(Building.PropHeight, ent.Id, false);
+                if (height != 0)
+                {
+                    var building = new Building(ent, height, tag.Value, clType);
+                    res = building;
+                }
+                else
+                {
+                    double area = GetArea(ent, clType.UnitFactor, clType.ClassName);
+                    if (area != 0)
+                    {
+                        var classificator = new Classificator(ent.Id, clType, area);
+                        res = classificator;
+                    }                    
+                }
+            }                     
             return res;
         }
 
-        private static double GetValue (ObjectId idEnt, double unitFactor=1, string tag = "")
+        private static double GetArea (Entity ent, double unitFactor=1, string tag = "")
         {
-            double res = 0;
-            var ent = idEnt.GetObject(OpenMode.ForRead);
+            double res = 0;            
             try
             {
                 if (ent is Curve)
@@ -110,15 +134,15 @@ namespace PIK_GP_Acad.Elements
                 }
                 else
                 {
-                    Inspector.AddError($"Неподдерживаемый тип объекта - {idEnt.ObjectClass.Name}. Классификатор - {tag}",
-                            idEnt, System.Drawing.SystemIcons.Error);
+                    Inspector.AddError($"Неподдерживаемый тип объекта - {ent.GetType().Name}. Классификатор - {tag}",
+                            ent, System.Drawing.SystemIcons.Error);
                 }
             }
             catch { }
 
             if (res == 0)
             {
-                Inspector.AddError($"Не определена площадь объекта {tag}", idEnt, System.Drawing.SystemIcons.Error);
+                Inspector.AddError($"Не определена площадь объекта {tag}", ent, System.Drawing.SystemIcons.Error);
             }
 
             return res;

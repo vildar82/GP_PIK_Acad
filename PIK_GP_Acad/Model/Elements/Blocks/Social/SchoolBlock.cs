@@ -11,20 +11,16 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
     /// <summary>
     /// Блок школы.
     /// </summary>
-    public class SchoolBlock : SocialBlock, IElement
+    public class SchoolBlock : SocialBuilding
     {
         public const string BlockName = "КП_СОШ";
+        const string contourLayer = "_ГП_здания СОШ";
 
-        private const string ParamPlaces = "^Количество мест"; // параметр видимости. Должен начинаться с числа мест
+        public override ObjectId IdPlContour { get; set; }    
 
-        /// <summary>
-        /// Кол мест
-        /// </summary>
-        public int Places { get; set; }
-
-        public SchoolBlock (BlockReference blRef, string blName) : base(blRef, blName)
+        public SchoolBlock (BlockReference blRef, string blName) : base(blRef, blName, contourLayer)
         {
-            Places = GetPlaces(ParamPlaces);
+            
         }        
     }
 }

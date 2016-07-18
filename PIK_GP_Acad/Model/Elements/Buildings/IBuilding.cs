@@ -11,11 +11,11 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// <summary>
     /// Здание
     /// </summary>
-    public interface IBuilding
+    public interface IBuilding: IElement
     {
         int Floors { get; }
         Extents3d ExtentsInModel { get; }
-        Polyline ContourInModel { get; }
+        Entity ContourInModel { get; }
         int Height { get; }
 
         //Polyline GetContour ();

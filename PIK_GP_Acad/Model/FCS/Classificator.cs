@@ -9,16 +9,21 @@ using PIK_GP_Acad.Elements;
 
 namespace PIK_GP_Acad.FCS
 {
-    public class Classificator : IClassificator
+    /// <summary>
+    /// Классифицированный объект. - Пока только контур или штриховка площадного объекта (участка)
+    /// </summary>
+    public class Classificator : IClassificator, IArea
     {
         public ObjectId IdEnt { get; set; }
         public ClassType ClassType { get; set; }                
         public Error Error { get; set; }
+        public double Area { get; set; }
 
-        public Classificator (ObjectId idEnt, ClassType classType)
+        public Classificator (ObjectId idEnt, ClassType classType, double area)
         {
             IdEnt = idEnt;
-            ClassType = classType;            
+            ClassType = classType;
+            Area = area;
         }
     }
 }

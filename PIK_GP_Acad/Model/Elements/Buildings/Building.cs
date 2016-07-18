@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib.Errors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.FCS;
@@ -10,28 +11,31 @@ using PIK_GP_Acad.FCS;
 namespace PIK_GP_Acad.Elements.Buildings
 {
     /// <summary>
-    /// Здание - по контуру полилинии
+    /// Здание - по классифицированному контуру полилинии
     /// </summary>
-    public abstract class Building : IBuilding
+    public class Building : IBuilding, IClassificator
     {
         public const string PropHeight = "Высота";
         public const string PropFloors = "Этажность";
 
-        protected ObjectId IdEnt { get; set; }
+        public ObjectId IdEnt { get; set; }
         public int Floors { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Polyline ContourInModel { get; set; }
+        public Entity ContourInModel { get; set; }
         public List<FCProperty> FCProperties { get; set; }
-        public int Height { get; set; }       
+        public int Height { get; set; }  
+        public Error Error { get; set; }        
+        public ClassType ClassType { get; set; }
 
-        public Building (Polyline pl, int height, List<FCProperty> props)
+        public Building (Entity ent, int height, List<FCProperty> props, ClassType classType)
         {
-            IdEnt = pl.Id;
-            ExtentsInModel = pl.GeometricExtents;
-            ContourInModel = pl;
+            IdEnt = ent.Id;
+            ExtentsInModel = ent.GeometricExtents;
+            ContourInModel = ent;
+            ClassType = classType;
             FCProperties = props;
-            Floors = FCService.GetPropertyValue<int>(PropFloors, props, IdEnt, false);
+            Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
             Height = height;            
-        }        
+        }       
     }
 }

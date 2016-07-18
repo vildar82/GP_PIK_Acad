@@ -35,6 +35,8 @@
     <AssemblyVersionSettings>None.None.DayOfYearStamp.Increment</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.DayOfYearStamp.Increment</AssemblyFileVersionSettings>
     <DocumentationFile>bin\Release\PIK_GP_Acad.XML</DocumentationFile>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AcadLib, Version=1.0.175.357, Culture=neutral, processorArchitecture=MSIL">
@@ -85,6 +87,7 @@
     <Compile Include="Model\BlockSection\Estimates\EstimateEkb.cs" />
     <Compile Include="Model\BlockSection\Estimates\EstimateMoscow.cs" />
     <Compile Include="Model\BlockSection\Estimates\EstimateMoscowRegion.cs" />
+    <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionBase.cs" />
     <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionGP.cs" />
     <Compile Include="Model\BlockSection\SectionService.cs" />
     <Compile Include="Model\BlockSection\SectionType.cs" />
@@ -93,16 +96,14 @@
     <Compile Include="Model\BlockSection\TableSecton.cs" />
     <Compile Include="Model\BlockSection\TableSectonKP.cs" />
     <Compile Include="Model\Elements\Buildings\Building.cs" />
-    <Compile Include="Model\Elements\Buildings\BuildingFactory.cs" />
     <Compile Include="Model\Elements\Buildings\IBuilding.cs" />
-    <Compile Include="Model\Elements\Buildings\Surround.cs" />
     <Compile Include="Model\Elements\ElementFactory.cs" />
     <Compile Include="Model\Elements\IArea.cs" />
     <Compile Include="Model\Elements\IElement.cs" />
+    <Compile Include="Model\Elements\InfraworksExport\IInfraworksExport.cs" />
     <Compile Include="Model\FCS\Balance\BalanceClassService.cs" />
     <Compile Include="Model\FCS\Balance\BalanceRow.cs" />
     <Compile Include="Model\FCS\Balance\BalanceTableService.cs" />
-    <Compile Include="Model\FCS\ClassFactory.cs" />
     <Compile Include="Model\FCS\ClassGroup.cs" />
     <Compile Include="Model\FCS\Classificator.cs" />
     <Compile Include="Model\FCS\ClassType.cs" />
@@ -149,7 +150,6 @@
     <Compile Include="Model\Isolines\IsolineDrawableOverrule.cs" />
     <Compile Include="Model\Isolines\IsolineOptions..cs" />
     <Compile Include="Model\Isolines\IsolineTransformOverrule.cs" />
-    <Compile Include="Model\KP\KP_BlockSection\BlockSectionFactory.cs" />
     <Compile Include="Model\KP\KP_BlockSection\DataSection.cs" />
     <Compile Include="Model\KP\KP_BlockSection\KP_BlockSectionService.cs" />
     <Compile Include="Model\KP\KP_BlockSection\Options.cs" />
@@ -168,8 +168,14 @@
     <Compile Include="Model\Elements\Blocks\Parkings\ParkingBuilding.cs" />
     <Compile Include="Model\Elements\Blocks\Social\SchoolBlock.cs" />
     <Compile Include="Model\Elements\Blocks\Social\KindergartenBlock.cs" />
-    <Compile Include="Model\Elements\Blocks\Social\SocialBlock.cs" />
+    <Compile Include="Model\Elements\Blocks\Social\SocialBuilding.cs" />
     <Compile Include="Model\Elements\Blocks\Parkings\Parking.cs" />
+    <Compile Include="Model\OD\DataType.cs" />
+    <Compile Include="Model\OD\IODRecord.cs" />
+    <Compile Include="Model\OD\Records\ODBuilding.cs" />
+    <Compile Include="Model\OD\Records\ODCoverage.cs" />
+    <Compile Include="Model\OD\ODParameter.cs" />
+    <Compile Include="Model\OD\ODRecord.cs" />
     <Compile Include="Model\Parkings\Service\IParking.cs" />
     <Compile Include="Model\Elements\Blocks\Parkings\LineParking.cs" />
     <Compile Include="Model\Parkings\Service\ParkingService.cs" />
