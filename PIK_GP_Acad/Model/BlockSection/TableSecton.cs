@@ -79,12 +79,12 @@ namespace PIK_GP_Acad.BlockSection
             {
                 table.Cells[row, 0].TextString = "Площадь участка, га";
                 table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-                table.Cells[row, 1].TextString = (data.FC_LandArea).ToString("N2", numForInf);
+                table.Cells[row, 1].TextString = (data.FC_LandArea).ToString("N1", numForInf);
                 table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
                 row++;
                 table.Cells[row, 0].TextString = "Площадь квартала, га";
                 table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
-                table.Cells[row, 1].TextString = (data.FC_QuarterArea).ToString("N2", numForInf);
+                table.Cells[row, 1].TextString = (data.FC_QuarterArea).ToString("N1", numForInf);
                 table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
                 row++;
             }
