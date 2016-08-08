@@ -65,6 +65,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Шумовое заграждение 2",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier2), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_2'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Шумовое заграждение 3",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier3), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("ArcGIS",Resources.ArcGIS, nameof(GP_ArcGIS), "Запуск программы ArcGis"),
+                new PaletteCommand("Enla",Resources.enla, nameof(GP_Enla), "Подсчет длин и площадей."),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
                 new PaletteCommand("Спецификация Блок-Секций",Resources.GP_BlockSectionTable, nameof(GP_BlockSectionTable), "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
@@ -255,6 +256,21 @@ namespace PIK_GP_Acad
             CommandStart.Start(doc =>
             {
                 ArcGIS.ArcGisService.Start();
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_Enla), CommandFlags.Modal)]
+        public void GP_Enla ()
+        {
+            CommandStart.Start(doc =>
+            {
+                // Загрузка программы подсчета суммы длин и площадей
+                var enlaDll = Path.Combine(CurDllDir, @"enla\enla-free.dll");
+                if (File.Exists(enlaDll))
+                {
+                    Assembly.LoadFrom(enlaDll);
+                    doc.Editor.Command("enla");
+                }                
             });
         }
 
