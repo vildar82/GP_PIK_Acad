@@ -55,6 +55,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
+                new PaletteCommand("Дождеприемная решетка",Resources.GP_RainGrid,nameof(GP_InsertBlockRainGrid),"Вставка блока дождеприемной решетки"),
                 new PaletteCommand("Линия со стрелками",Resources.GP_LineArrow, nameof(GP_PolylineArrow), "Рисование полилинии с типом линии 'ГП-Стрелка3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("Линия направления движения",Resources.GP_LineDirMove, nameof(GP_PolylineDirMove), "Рисование полилинии с типом линии 'ГП-НапрДвижения'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),                
                 new PaletteCommand("Линия с крестиками",Resources.GP_LineCross, nameof(GP_PolylineCross), "Рисование полилинии с типом линии 'ГП-крест'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
@@ -148,6 +149,15 @@ namespace PIK_GP_Acad
             {
                 HorizontalElevation horElev = new HorizontalElevation();
                 horElev.Stepping();
+            });
+        }
+
+        [CommandMethod(Group, nameof(GP_InsertBlockRainGrid), CommandFlags.Modal)]
+        public void GP_InsertBlockRainGrid ()
+        {
+            CommandStart.Start(doc =>
+            {
+                InsertBlock.Insert("ГП_Дождеприемная решетка", doc.Database);
             });
         }
 
