@@ -19,7 +19,7 @@ namespace PIK_GP_Acad.Insolation
         private List<IBuilding> buildings;
         Database db;
         Options options;
-        RTree<IBuilding> rtree;
+        RTree<IBuilding> treeBuildings;
         public Map(Database db, Options options)
         {
             this.db = db;
@@ -34,7 +34,7 @@ namespace PIK_GP_Acad.Insolation
         {
             FCS.FCService.Init(db);
             buildings = new List<IBuilding>();
-            rtree = new RTree<IBuilding>();
+            treeBuildings = new RTree<IBuilding>();
             var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
             foreach (var idEnt in ms)
             {
@@ -44,7 +44,7 @@ namespace PIK_GP_Acad.Insolation
                 {
                     buildings.Add(building);
                     Extents3d ext = building.ExtentsInModel;                    
-                    rtree.Add(new Rectangle(ext), building);
+                    treeBuildings.Add(new Rectangle(ext), building);
                 }
             }            
         }
@@ -54,12 +54,12 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         /// <param name="pt"></param>
         /// <returns></returns>
-        public Scope GetScope (Point3d pt)
+        public Scope GetScopeInPoint (Point3d pt)
         {
             int maxHeight = options.MaxHeight;
             Extents3d ext = options.SunlightRule.GetScanExtents (pt, maxHeight);            
             Rectangle rectScope = new Rectangle(ext);
-            var items = rtree.Intersects(rectScope);
+            var items = treeBuildings.Intersects(rectScope);
             Scope scope = new Scope (ext, items);
             return scope;
         }

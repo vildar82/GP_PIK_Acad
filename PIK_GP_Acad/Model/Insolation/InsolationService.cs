@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation
         {
             var ms = db.CurrentSpaceId.GetObject( OpenMode.ForWrite) as BlockTableRecord;
             // Объекты в области действия точки
-            var scope = map.GetScope(pt);
+            var scope = map.GetScopeInPoint(pt);
             // радар
             var res = radar.Scan(pt, scope, ms);
             // Построение зон освещенности
