@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Insolation.SunlightRule;
+using PIK_GP_Acad.Model.Insolation.Shadow.Visualization;
 
 namespace PIK_GP_Acad.Insolation
 {
@@ -33,14 +34,25 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         public void CalcPoint (Point3d pt)
         {
-            var ms = db.CurrentSpaceId.GetObject( OpenMode.ForWrite) as BlockTableRecord;
-            // Объекты в области действия точки
-            var scope = map.GetScopeInPoint(pt);
-            // радар
-            var res = radar.Scan(pt, scope, ms);
-            // Построение зон освещенности
-            cretateIllumAreas(res);
+            using (var t = db.TransactionManager.StartTransaction())
+            {
+                var ms = db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+                // Объекты в области действия точки
+                var scope = map.GetScopeInPoint(pt);
+                // радар
+                var res = radar.Scan(pt, scope, ms);
+                // Построение зон освещенности
+                cretateIllumAreas(res);
+
+                t.Commit();
+            }
         }
+
+        public void CreateShadowMap()
+        {
+            Visual visual = new Visual();
+            visual.Show(map);
+        }             
 
         private void cretateIllumAreas (List<IlluminationArea> res)
         {

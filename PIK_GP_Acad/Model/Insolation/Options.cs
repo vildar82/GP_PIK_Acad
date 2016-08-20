@@ -21,8 +21,18 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         public int MaxHeight { get; set; } = 75;
         public ISunlightRule SunlightRule { get; set; }
+        /// <summary>
+        /// Шаг угла сканирования
+        /// </summary>
         public double ScaningStepLarge { get; set; } = 1;
+        /// <summary>
+        /// Шаг угла сканирования - уточняющий
+        /// </summary>
         public double ScaningStepSmall { get; set; } = 0.1;
+        /// <summary>
+        /// Размер ячейки карты - квадрата, на который разбивается вся карта
+        /// </summary>
+        public int TileSize { get; set; } = 1;
 
         public Options (ISunlightRule rule)
         {
