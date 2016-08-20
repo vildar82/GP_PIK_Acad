@@ -137,6 +137,8 @@
     <Compile Include="Model\Insolation\Options.cs" />
     <Compile Include="Model\Insolation\Radar.cs" />
     <Compile Include="Model\Insolation\Scope.cs" />
+    <Compile Include="Model\Insolation\Shadow\Tile.cs" />
+    <Compile Include="Model\Insolation\Shadow\Visualization\Visual.cs" />
     <Compile Include="Model\Insolation\SunlightRule\ISunlightRule.cs" />
     <Compile Include="Model\Insolation\SunlightRule\SimpleRule.cs" />
     <Compile Include="Model\Isolines\ContextMenuIsoline.cs" />
@@ -304,9 +306,7 @@
   <ItemGroup>
     <None Include="Resources\enla.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\Insolation\Shadow\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

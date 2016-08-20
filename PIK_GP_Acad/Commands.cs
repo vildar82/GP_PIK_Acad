@@ -18,6 +18,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
+using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Model.HorizontalElevation;
 using PIK_GP_Acad.Properties;
 
@@ -44,6 +45,8 @@ namespace PIK_GP_Acad
         //public const string BlockNameDOO = "КП_ДОО";
         //public const string BlockNameSchool = "КП_СОШ";
         public const string BlockNameKpParking = "КП_Паркинг";
+
+        InsolationService insService;
 
         public void InitCommands()
         {            
@@ -465,11 +468,21 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
+                insService = new InsolationService(doc.Database, new Insolation.MoscowOptions());
+                var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
+                insService.CalcPoint(pt);
+            });
+        }
+
+        [CommandMethod(Group, nameof(KP_InsolationShadowMap), CommandFlags.Modal)]
+        public void KP_InsolationShadowMap ()
+        {
+            CommandStart.Start(doc =>
+            {
                 using (var t = doc.TransactionManager.StartTransaction())
                 {
-                    var inso = new Insolation.InsolationService(doc.Database, new Insolation.MoscowOptions());
-                    var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
-                    inso.CalcPoint(pt);
+                    insService = new InsolationService(doc.Database, new Insolation.MoscowOptions());
+                    insService.CreateShadowMap();
                     t.Commit();
                 }
             });
