@@ -7,10 +7,12 @@ using PIK_GP_Acad.Insolation.SunlightRule;
 
 namespace PIK_GP_Acad.Insolation
 {
-    public class MoscowOptions : Options
+    public class MoscowOptions : InsOptions
     {
         public MoscowOptions () : base(new SimpleRule())
         {
+            Region = Model.Insolation.Region.Central;
+            Latitude = 55;
         }
     }
 }

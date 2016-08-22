@@ -31,14 +31,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         public double AreaLive { get; set; }        
         public ObjectId IdPlContour { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel {
-            get {
-                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
-                return plCopy;
-            }
-        }
+        
         public Rectangle Rectangle {
             get {
                 if (r == null)
@@ -62,6 +55,14 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
                 IdPlContour = plContour.Id;
                 AreaGNS = plContour.Area;
             }
+        }
+
+        public Polyline GetContourInModel ()
+        {
+            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+            var plCopy = (Polyline)pl.Clone();
+            plCopy.TransformBy(Transform);
+            return plCopy;
         }
 
         protected virtual void Define (BlockReference blRef)

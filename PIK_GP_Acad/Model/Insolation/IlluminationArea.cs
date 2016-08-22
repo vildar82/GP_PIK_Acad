@@ -16,14 +16,14 @@ namespace PIK_GP_Acad.Insolation
     public class IlluminationArea
     {
         private Database db;
-        private Options options;
+        private InsOptions options;
         private ISunlightRule rule;
 
         public Point3d Origin { get; set; }
         public Point3d EndPoint { get; set; }
         public Point3d StartPoint { get; set; }
 
-        public IlluminationArea (Options options, ISunlightRule rule, Database db, Point3d origin)
+        public IlluminationArea (InsOptions options, ISunlightRule rule, Database db, Point3d origin)
         {
             Origin = origin;
             this.options = options;

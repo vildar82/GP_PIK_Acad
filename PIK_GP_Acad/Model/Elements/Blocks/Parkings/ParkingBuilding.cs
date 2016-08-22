@@ -31,14 +31,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
         public int Places { get; set; }
         public int InvalidPlaces { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel {
-            get {
-                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
-                return plCopy;
-            }
-        }
+        
         public ObjectId IdPlContour { get; set; }        
         public int Height { get; set; }
 
@@ -74,6 +67,14 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public void Calc ()
         {            
+        }
+
+        public Polyline GetContourInModel ()
+        {
+            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+            var plCopy = (Polyline)pl.Clone();
+            plCopy.TransformBy(Transform);
+            return plCopy;
         }
 
         public List<IODRecord> GetODRecords ()

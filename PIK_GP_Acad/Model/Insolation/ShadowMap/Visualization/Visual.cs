@@ -7,7 +7,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation;
 
-namespace PIK_GP_Acad.Model.Insolation.Shadow.Visualization
+namespace PIK_GP_Acad.Model.Insolation.ShadowMap.Visualization
 {
     class Visual
     {

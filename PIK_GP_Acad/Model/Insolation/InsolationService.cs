@@ -8,7 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Insolation.SunlightRule;
-using PIK_GP_Acad.Model.Insolation.Shadow.Visualization;
+using PIK_GP_Acad.Model.Insolation.ShadowMap.Visualization;
 
 namespace PIK_GP_Acad.Insolation
 {
@@ -20,8 +20,8 @@ namespace PIK_GP_Acad.Insolation
         Database db;
         Map map;
         Radar radar;
-        Options options;
-        public InsolationService(Database db, Options options)
+        InsOptions options;
+        public InsolationService(Database db, InsOptions options)
         {
             this.db = db;
             this.options = options;
