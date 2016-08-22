@@ -34,14 +34,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         /// </summary>
         public string Type { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel {
-            get {
-                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
-                return plCopy;
-            }
-        }
+        
 
         public int Height { get; set; }
         public abstract ObjectId IdPlContour { get; set;}        
@@ -65,6 +58,14 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
                 IdPlContour = plContour.Id;
             }
             
+        }
+
+        public Polyline GetContourInModel ()
+        {
+            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+            var plCopy = (Polyline)pl.Clone();
+            plCopy.TransformBy(Transform);
+            return plCopy;
         }
 
         private int GetPlaces (string paramName)

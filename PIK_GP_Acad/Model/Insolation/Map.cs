@@ -8,7 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Buildings;
-using PIK_GP_Acad.Model.Insolation.Shadow;
+using PIK_GP_Acad.Model.Insolation.ShadowMap;
 
 namespace PIK_GP_Acad.Insolation
 {    
@@ -18,8 +18,8 @@ namespace PIK_GP_Acad.Insolation
     public class Map
     {
         private List<IBuilding> buildings;
-        Database db;
-        Options options;
+        public readonly Database Db;
+        public readonly InsOptions Options;
         RTree<IBuilding> treeBuildings;
         /// <summary>
         /// Ячейки карты
@@ -27,10 +27,10 @@ namespace PIK_GP_Acad.Insolation
         public List<Tile> Tiles { get; set; }
         RTree<Tile> treeTiles;
 
-        public Map(Database db, Options options)
+        public Map(Database db, InsOptions options)
         {
-            this.db = db;
-            this.options = options;
+            this.Db = db;
+            this.Options = options;
             LoadMap();
             CreateTiles();
         }
@@ -40,12 +40,12 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         private void LoadMap ()
         {
-            FCS.FCService.Init(db);
+            FCS.FCService.Init(Db);
             buildings = new List<IBuilding>();
             treeBuildings = new RTree<IBuilding>();
-            using (var t = db.TransactionManager.StartTransaction())
+            using (var t = Db.TransactionManager.StartTransaction())
             {
-                var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
+                var ms = Db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
                 foreach (var idEnt in ms)
                 {
                     var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
@@ -65,26 +65,26 @@ namespace PIK_GP_Acad.Insolation
         {
             Tiles = new List<Tile>();
             treeTiles = new RTree<Tile>();
-            Tile.Size = options.TileSize;
+            Tile.Size = Options.TileSize;
             Rectangle boundsBuildings = treeBuildings.getBounds();
 
             double len = boundsBuildings.max[0] - boundsBuildings.min[0];
             double width = boundsBuildings.max[1] - boundsBuildings.min[1];
 
-            int countTilesInLen = Convert.ToInt32(len / options.TileSize) + options.TileSize;
-            int countTilesInWidth = Convert.ToInt32(width / options.TileSize) + options.TileSize;
+            int countTilesInLen = Convert.ToInt32(len / Options.TileSize) + Options.TileSize;
+            int countTilesInWidth = Convert.ToInt32(width / Options.TileSize) + Options.TileSize;
 
-            double tileHalfSize = options.TileSize * 0.5;
+            double tileHalfSize = Options.TileSize * 0.5;
 
             double x;
             double y = boundsBuildings.min[1];
             for (int w = 0; w < countTilesInWidth; w++)
             {
-                y += options.TileSize;
+                y += Options.TileSize;
                 x = boundsBuildings.min[0];
                 for (int l = 0; l < countTilesInLen; l++)
                 {
-                    x += options.TileSize;
+                    x += Options.TileSize;
                     Point3d center = new Point3d(x, y, 0);
                     Tile tile = new Tile(center);
                     Tiles.Add(tile);
@@ -103,8 +103,8 @@ namespace PIK_GP_Acad.Insolation
         /// <returns></returns>
         public Scope GetScopeInPoint (Point3d pt)
         {
-            int maxHeight = options.MaxHeight;
-            Extents3d ext = options.SunlightRule.GetScanExtents(pt, maxHeight);
+            int maxHeight = Options.MaxHeight;
+            Extents3d ext = Options.SunlightRule.GetScanExtents(pt, maxHeight);
             Rectangle rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             Scope scope = new Scope(ext, items);

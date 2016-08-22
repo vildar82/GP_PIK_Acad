@@ -20,11 +20,11 @@ namespace PIK_GP_Acad.Insolation
     /// </summary>
     public class Radar
     {
-        Options options;
+        InsOptions options;
         ISunlightRule rule;
         Database db;
 
-        public Radar (Database db, Options options)
+        public Radar (Database db, InsOptions options)
         {
             this.db = db;
             this.options = options;
@@ -136,7 +136,7 @@ namespace PIK_GP_Acad.Insolation
             foreach (var build in buildings)
             {
                 var ptIntersects = new Point3dCollection();
-                ray.IntersectWith(build.ContourInModel, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
+                ray.IntersectWith(build.GetContourInModel(), Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
                 if (ptIntersects.Count > 0)
                 {
                     Point3d ptNearest;
