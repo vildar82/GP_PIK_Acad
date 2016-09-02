@@ -96,6 +96,7 @@ namespace PIK_GP_Acad.Parkings
                     {
                         PromptPointResult ppr = Ed.Drag(prs.Value, "\nТочка вставки текста:", (Point3d pt, ref Matrix3d mat) =>
                         {
+                            pt = pt.TransformBy(Ed.CurrentUserCoordinateSystem);
                             if (ptText == pt) return SamplerStatus.NoChange;
                             mat = Matrix3d.Displacement(ptText.GetVectorTo(pt));
                             text.TransformBy(mat);
