@@ -17,10 +17,10 @@ namespace PIK_GP_Acad.Insolation
     /// </summary>
     public class Map
     {
-        private List<IBuilding> buildings;
+        private List<InsBuilding> buildings;
         public readonly Database Db;
         public readonly InsOptions Options;
-        RTree<IBuilding> treeBuildings;
+        RTree<InsBuilding> treeBuildings;
         /// <summary>
         /// Ячейки карты
         /// </summary>
@@ -32,7 +32,7 @@ namespace PIK_GP_Acad.Insolation
             this.Db = db;
             this.Options = options;
             LoadMap();
-            CreateTiles();
+            //CreateTiles();
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace PIK_GP_Acad.Insolation
         private void LoadMap ()
         {
             FCS.FCService.Init(Db);
-            buildings = new List<IBuilding>();
-            treeBuildings = new RTree<IBuilding>();
+            buildings = new List<InsBuilding>();
+            treeBuildings = new RTree<InsBuilding>();
             using (var t = Db.TransactionManager.StartTransaction())
             {
                 var ms = Db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
@@ -52,14 +52,38 @@ namespace PIK_GP_Acad.Insolation
                     var building = ElementFactory.Create<IBuilding>(ent);
                     if (building != null)
                     {
-                        buildings.Add(building);
-                        Extents3d ext = building.ExtentsInModel;
-                        treeBuildings.Add(new Rectangle(ext), building);
+                        var insBuild = new InsBuilding(building);
+                        buildings.Add(insBuild);                        
+                        treeBuildings.Add(new Rectangle(building.ExtentsInModel), insBuild);
                     }
                 }
                 t.Commit();
             }           
-        }        
+        }
+
+        /// <summary>
+        /// Определение расчетной области и объектов в ней
+        /// </summary>        
+        public Scope GetScope (Extents3d ext)
+        {
+            int maxHeight = Options.MaxHeight;
+            Rectangle rectScope = new Rectangle(ext);
+            var items = treeBuildings.Intersects(rectScope);
+            Scope scope = new Scope(ext, items);
+            return scope;
+        }
+
+        public InsBuilding GetBuildingInPoint (Point3d pt)
+        {
+            InsBuilding building = null;
+            Point p = new Point(pt.X, pt.Y, 0);
+            var nearest = treeBuildings.Nearest(p, 5);            
+            if (nearest.Count ==1)
+            {
+                building = nearest[0];
+            }
+            return building;
+        }
 
         private void CreateTiles ()
         {
@@ -94,21 +118,6 @@ namespace PIK_GP_Acad.Insolation
                     treeTiles.Add(r, tile);
                 }
             }            
-        }
-
-        /// <summary>
-        /// Определение расчетной области и объектов в ней
-        /// </summary>
-        /// <param name="pt"></param>
-        /// <returns></returns>
-        public Scope GetScopeInPoint (Point3d pt)
-        {
-            int maxHeight = Options.MaxHeight;
-            Extents3d ext = Options.SunlightRule.GetScanExtents(pt, maxHeight);
-            Rectangle rectScope = new Rectangle(ext);
-            var items = treeBuildings.Intersects(rectScope);
-            Scope scope = new Scope(ext, items);
-            return scope;
-        }
+        }        
     }
 }

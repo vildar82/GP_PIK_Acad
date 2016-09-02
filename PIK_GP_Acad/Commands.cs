@@ -46,7 +46,7 @@ namespace PIK_GP_Acad
         //public const string BlockNameSchool = "КП_СОШ";
         public const string BlockNameKpParking = "КП_Паркинг";
 
-        InsolationService insService;
+        CentralInsService insService;
 
         public void InitCommands()
         {            
@@ -468,7 +468,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                insService = new InsolationService(doc.Database, new Insolation.MoscowOptions());
+                insService = new CentralInsService(doc.Database, new MoscowOptions());
                 var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
                 insService.CalcPoint(pt);
             });
@@ -481,7 +481,7 @@ namespace PIK_GP_Acad
             {
                 using (var t = doc.TransactionManager.StartTransaction())
                 {
-                    insService = new InsolationService(doc.Database, new Insolation.MoscowOptions());
+                    insService = new CentralInsService(doc.Database, new MoscowOptions());
                     insService.CreateShadowMap();
                     t.Commit();
                 }
