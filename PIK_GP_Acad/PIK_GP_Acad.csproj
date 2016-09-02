@@ -130,13 +130,15 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\Central\CalcValuesCentral.cs" />
+    <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
+    <Compile Include="Model\Insolation\IInsolationService.cs" />
     <Compile Include="Model\Insolation\IlluminationArea.cs" />
-    <Compile Include="Model\Insolation\InsolationService.cs" />
+    <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
+    <Compile Include="Model\Insolation\InsBuilding.cs" />
     <Compile Include="Model\Insolation\InsRate.cs" />
     <Compile Include="Model\Insolation\Map.cs" />
-    <Compile Include="Model\Insolation\MoscowOptions.cs" />
     <Compile Include="Model\Insolation\InsOptions.cs" />
-    <Compile Include="Model\Insolation\Radar.cs" />
     <Compile Include="Model\Insolation\Region.cs" />
     <Compile Include="Model\Insolation\Scope.cs" />
     <Compile Include="Model\Insolation\ShadowMap\IShadowService.cs" />
@@ -145,8 +147,7 @@
     <Compile Include="Model\Insolation\ShadowMap\ShadowServiceFactory.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Tile.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Visualization\Visual.cs" />
-    <Compile Include="Model\Insolation\SunlightRule\ISunlightRule.cs" />
-    <Compile Include="Model\Insolation\SunlightRule\SimpleRule.cs" />
+    <Compile Include="Model\Insolation\Visual\VisualizationPoint.cs" />
     <Compile Include="Model\Isolines\ContextMenuIsoline.cs" />
     <Compile Include="Model\Isolines\FormIsolineOptions.cs">
       <SubType>Form</SubType>

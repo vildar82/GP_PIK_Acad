@@ -4,32 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Colors;
-using PIK_GP_Acad.Insolation.SunlightRule;
 using PIK_GP_Acad.Model.Insolation;
 
 namespace PIK_GP_Acad.Insolation
 {
-    public abstract class InsOptions
+    public class InsOptions
     {
         public byte Transparence { get; set; } = 120;
-        public Color LowHeightColor { get; set; } = Color.FromRgb(205,32,39);
-        public Color MediumHeightColor { get; set; } = Color.FromRgb(241,235, 31);
-        public Color MaxHeightColor { get; set; } = Color.FromRgb(19, 155, 72);
+        public Color ColorLow { get; set; } = Color.FromRgb(205,32,39);
+        public Color ColorMedium { get; set; } = Color.FromRgb(241,235, 31);
+        public Color ColorHight { get; set; } = Color.FromRgb(19, 155, 72);
         public int LowHeight { get; set; } = 35;
         public int MediumHeight { get; set; } = 55;
-        /// <summary>
-        /// Максимальная высота расчетная
-        /// </summary>
-        public int MaxHeight { get; set; } = 75;
-        public ISunlightRule SunlightRule { get; set; }
-        /// <summary>
-        /// Шаг угла сканирования
-        /// </summary>
-        public double ScaningStepLarge { get; set; } = 1;
-        /// <summary>
-        /// Шаг угла сканирования - уточняющий
-        /// </summary>
-        public double ScaningStepSmall { get; set; } = 0.1;
+        public int MaxHeight { get; set; } = 75;                
         /// <summary>
         /// Размер ячейки карты - квадрата, на который разбивается вся карта
         /// </summary>
@@ -38,15 +25,22 @@ namespace PIK_GP_Acad.Insolation
         /// <summary>
         /// Широта
         /// </summary>
-        public int Latitude { get; set; }
+        public double Latitude { get; set; }
         /// <summary>
         /// Шаг угла луча (в градусах) при определении теней
         /// </summary>
         public int ShadowDegreeStep { get; set; } = 1;
+        /// <summary>
+        /// Начальный расчетный угол (пропуская первый час). Восход = 0град.
+        /// </summary>
+        public double SunCalcAngleStart { get; set; } = 15.0;
+        /// <summary>
+        /// Конечный расчетный угол (минус последний час). Заход = 180град.
+        /// </summary>
+        public double SunCalcAngleEnd { get; set; } = 165.0;
 
-        public InsOptions (ISunlightRule rule)
-        {
-            SunlightRule = rule;            
+        public InsOptions ()
+        {            
         }
     }
 }

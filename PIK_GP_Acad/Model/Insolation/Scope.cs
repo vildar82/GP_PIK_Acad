@@ -15,9 +15,9 @@ namespace PIK_GP_Acad.Insolation
     public class Scope
     {
         Extents3d ext;
-        public List<IBuilding> Buildings { get; set; }        
+        public List<InsBuilding> Buildings { get; set; }        
 
-        public Scope (Extents3d ext, List<IBuilding> items)
+        public Scope (Extents3d ext, List<InsBuilding> items)
         {            
             this.ext = ext;
             Buildings = items;
