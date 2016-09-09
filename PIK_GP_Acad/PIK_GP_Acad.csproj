@@ -132,10 +132,13 @@
     <Compile Include="Model\InsertBlock.cs" />
     <Compile Include="Model\Insolation\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
+    <Compile Include="Model\Insolation\Central\CentralIllumArea.cs" />
+    <Compile Include="Model\Insolation\IIlluminationArea.cs" />
     <Compile Include="Model\Insolation\IInsolationService.cs" />
     <Compile Include="Model\Insolation\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
     <Compile Include="Model\Insolation\InsBuilding.cs" />
+    <Compile Include="Model\Insolation\InsolationServiceFactory.cs" />
     <Compile Include="Model\Insolation\InsRate.cs" />
     <Compile Include="Model\Insolation\Map.cs" />
     <Compile Include="Model\Insolation\InsOptions.cs" />

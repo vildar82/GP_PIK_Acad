@@ -27,6 +27,7 @@ namespace PIK_GP_Acad.Insolation.Central
             Db = db;
             Options = options;
             CalcValues = new CalcValuesCentral(options);
+            // загрузка карты (зданий с чертежа)
             Map = new Map(db, options);            
         }       
 
@@ -48,13 +49,16 @@ namespace PIK_GP_Acad.Insolation.Central
             }
         }
 
+        /// <summary>
+        /// Карта теней
+        /// </summary>
         public void CreateShadowMap()
         {
             Visual visual = new Visual();
             visual.Show(Map);
         }             
 
-        private void cretateIllumAreas (List<IlluminationArea> res)
+        private void cretateIllumAreas (List<IIlluminationArea> res)
         {
             var cs = Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
             foreach (var illum in res)

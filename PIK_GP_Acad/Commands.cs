@@ -46,7 +46,7 @@ namespace PIK_GP_Acad
         //public const string BlockNameSchool = "КП_СОШ";
         public const string BlockNameKpParking = "КП_Паркинг";
 
-        CentralInsService insService;
+        IInsolationService insService;
 
         public void InitCommands()
         {            
@@ -434,21 +434,21 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion Штамп
-
-        //
-        // В разработке    
-        //        
-        #region В разработке        
-
         [CommandMethod(Group, nameof(GP_BlockStampBooklet), CommandFlags.Modal)]
-        public void GP_BlockStampBooklet()
+        public void GP_BlockStampBooklet ()
         {
             CommandStart.Start(doc =>
             {
                 InsertBlock.Insert("ГП_Рамка_Буклет", doc.Database);
             });
         }
+
+        #endregion Штамп
+
+        //
+        // В разработке    
+        //        
+        #region В разработке        
 
         [CommandMethod(Group, nameof(GP_FCS_Balance), CommandFlags.Modal)]
         public static void GP_FCS_Balance ()
@@ -462,13 +462,15 @@ namespace PIK_GP_Acad
             });
         }
 
-
         [CommandMethod(Group, nameof(KP_InsolationPoint), CommandFlags.Modal)]
         public void KP_InsolationPoint ()
         {
             CommandStart.Start(doc =>
             {
-                insService = new CentralInsService(doc.Database, new MoscowOptions());
+                if (insService == null)
+                {
+                    insService = InsolationServiceFactory.Create(doc);
+                }
                 var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
                 insService.CalcPoint(pt);
             });
@@ -481,7 +483,10 @@ namespace PIK_GP_Acad
             {
                 using (var t = doc.TransactionManager.StartTransaction())
                 {
-                    insService = new CentralInsService(doc.Database, new MoscowOptions());
+                    if (insService == null)
+                    {
+                        insService = InsolationServiceFactory.Create(doc);
+                    }
                     insService.CreateShadowMap();
                     t.Commit();
                 }
@@ -490,10 +495,10 @@ namespace PIK_GP_Acad
         #endregion В разработке
 
 
-        public void Initialize()
+        public void Initialize ()
         {
-            // Передача списка команд для палитры ПИК в AcadLib.  
-            InitCommands();          
+            // Передача списка команд для палитры ПИК в AcadLib.             
+            InitCommands();
             PaletteSetCommands.InitPalette(CommandsPalette);
 
             // Загрузка сборки Civil

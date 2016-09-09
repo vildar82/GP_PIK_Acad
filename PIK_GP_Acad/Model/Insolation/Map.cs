@@ -66,7 +66,7 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>        
         public Scope GetScope (Extents3d ext)
         {
-            int maxHeight = Options.MaxHeight;
+            int maxHeight = Options.HeightMax;
             Rectangle rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             Scope scope = new Scope(ext, items);
