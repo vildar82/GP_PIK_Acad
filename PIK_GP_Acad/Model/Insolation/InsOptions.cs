@@ -14,18 +14,18 @@ namespace PIK_GP_Acad.Insolation
         public Color ColorLow { get; set; } = Color.FromRgb(205,32,39);
         public Color ColorMedium { get; set; } = Color.FromRgb(241,235, 31);
         public Color ColorHight { get; set; } = Color.FromRgb(19, 155, 72);
-        public int LowHeight { get; set; } = 35;
-        public int MediumHeight { get; set; } = 55;
-        public int MaxHeight { get; set; } = 75;                
+        public int HeightLow { get; set; } = 35;
+        public int HeightMedium { get; set; } = 55;
+        public int HeightMax { get; set; } = 75;                
         /// <summary>
         /// Размер ячейки карты - квадрата, на который разбивается вся карта
         /// </summary>
         public int TileSize { get; set; } = 1;
-        public Region Region { get; set; }
+        public Region Region { get; set; } = Region.Central;
         /// <summary>
         /// Широта
         /// </summary>
-        public double Latitude { get; set; }
+        public double Latitude { get; set; } = 55;
         /// <summary>
         /// Шаг угла луча (в градусах) при определении теней
         /// </summary>
