@@ -76,10 +76,10 @@ namespace PIK_GP_Acad.Insolation
                 pl.AddVertexAt(1, pt2, 0, 0, 0);
                 index = 2;
             }
-            pt1 = new Point2d(pt.X + xRayToStart, yShadow);
-            pl.AddVertexAt(index++, pt1, 0, 0, 0);
-            pt2 = new Point2d(pt.X + xRayToEnd, yShadow);
+            pt2 = new Point2d(pt.X + xRayToStart, yShadow);
             pl.AddVertexAt(index++, pt2, 0, 0, 0);
+            pt1 = new Point2d(pt.X + xRayToEnd, yShadow);
+            pl.AddVertexAt(index++, pt1, 0, 0, 0);
             pl.Closed = true;
             pl.Color = color;
             return pl;
