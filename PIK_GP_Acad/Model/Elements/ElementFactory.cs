@@ -49,7 +49,7 @@ namespace PIK_GP_Acad.Elements
                 var blRef = (BlockReference)ent;
                 string blName = blRef.GetEffectiveName();
                 var blockType = GetBlockType(blName);
-                if (blockType != null)
+                if (blockType is T)
                 {
                     elem = (IElement)Activator.CreateInstance(blockType, blRef, blName);                    
                 }
