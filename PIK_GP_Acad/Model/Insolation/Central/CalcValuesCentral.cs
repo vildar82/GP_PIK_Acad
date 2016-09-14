@@ -80,7 +80,7 @@ namespace PIK_GP_Acad.Insolation.Central
             var y = c * ratioYtoC;
             var resAngleOnPlane = Math.Atan(y);
             if (resAngleOnPlane < 0)
-                resAngleOnPlane = Math.PI - resAngleOnPlane;
+                resAngleOnPlane = Math.PI + resAngleOnPlane;
             return resAngleOnPlane;
         }
 
