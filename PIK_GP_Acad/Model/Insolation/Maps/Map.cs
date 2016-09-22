@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib.RTree.SpatialIndex;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Buildings;
+using PIK_GP_Acad.Insolation.Options;
 using PIK_GP_Acad.Model.Insolation.ShadowMap;
 
 namespace PIK_GP_Acad.Insolation
@@ -17,22 +19,22 @@ namespace PIK_GP_Acad.Insolation
     /// </summary>
     public class Map
     {
-        private List<InsBuilding> buildings;
-        public readonly Database Db;
-        public readonly InsOptions Options;
+        Document doc;
+        List<InsBuilding> buildings;
+        Database db;        
         RTree<InsBuilding> treeBuildings;
+        RTree<Tile> treeTiles;
         /// <summary>
         /// Ячейки карты
         /// </summary>
-        public List<Tile> Tiles { get; set; }
-        RTree<Tile> treeTiles;
+        public List<Tile> Tiles { get; set; }        
 
-        public Map(Database db, InsOptions options)
+        public Map(Document doc)
         {
-            this.Db = db;
-            this.Options = options;
-            LoadMap();
-            //CreateTiles();
+            this.doc = doc;
+            this.db = doc.Database;            
+            LoadMap();            
+            // TODO: подписаться на события изменения объектов чертежа - чтобы отслеживать изменения карты
         }
 
         /// <summary>
@@ -40,12 +42,12 @@ namespace PIK_GP_Acad.Insolation
         /// </summary>
         private void LoadMap ()
         {
-            FCS.FCService.Init(Db);
+            FCS.FCService.Init(db);
             buildings = new List<InsBuilding>();
             treeBuildings = new RTree<InsBuilding>();
-            using (var t = Db.TransactionManager.StartTransaction())
+            using (var t = db.TransactionManager.StartTransaction())
             {
-                var ms = Db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
+                var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
                 foreach (var idEnt in ms)
                 {
                     var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
@@ -65,8 +67,7 @@ namespace PIK_GP_Acad.Insolation
         /// Определение расчетной области и объектов в ней
         /// </summary>        
         public Scope GetScope (Extents3d ext)
-        {
-            int maxHeight = Options.HeightMax;
+        {            
             Rectangle rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             Scope scope = new Scope(ext, items);
@@ -85,30 +86,30 @@ namespace PIK_GP_Acad.Insolation
             return building;
         }
 
-        private void CreateTiles ()
+        private void CreateTiles (int tileSize)
         {
             Tiles = new List<Tile>();
             treeTiles = new RTree<Tile>();
-            Tile.Size = Options.TileSize;
+            Tile.Size = tileSize;
             Rectangle boundsBuildings = treeBuildings.getBounds();
 
             double len = boundsBuildings.max[0] - boundsBuildings.min[0];
             double width = boundsBuildings.max[1] - boundsBuildings.min[1];
 
-            int countTilesInLen = Convert.ToInt32(len / Options.TileSize) + Options.TileSize;
-            int countTilesInWidth = Convert.ToInt32(width / Options.TileSize) + Options.TileSize;
+            int countTilesInLen = Convert.ToInt32(len / tileSize) + tileSize;
+            int countTilesInWidth = Convert.ToInt32(width / tileSize) + tileSize;
 
-            double tileHalfSize = Options.TileSize * 0.5;
+            double tileHalfSize = tileSize * 0.5;
 
             double x;
             double y = boundsBuildings.min[1];
             for (int w = 0; w < countTilesInWidth; w++)
             {
-                y += Options.TileSize;
+                y += tileSize;
                 x = boundsBuildings.min[0];
                 for (int l = 0; l < countTilesInLen; l++)
                 {
-                    x += Options.TileSize;
+                    x += tileSize;
                     Point3d center = new Point3d(x, y, 0);
                     Tile tile = new Tile(center);
                     Tiles.Add(tile);

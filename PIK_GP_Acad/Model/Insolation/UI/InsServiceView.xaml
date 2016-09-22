@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="PIK_GP_Acad.Insolation.UI.InsServiceView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+        xmlns:tr="clr-namespace:PIK_GP_Acad.Insolation.UI.Trees"
+        xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
+        mc:Ignorable="d"               
+        FontSize="14" Background="{DynamicResource DarkThemeBackgroundBrush}">    
+    <UserControl.Resources>        
+        <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="LightGray" />
+        <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#5C5C5C" />
+        <Style x:Key="ControlBase" TargetType="FrameworkElement">
+            <Setter Property="Margin" Value="5"/>            
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource ControlBase}">            
+        </Style>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource ControlBase}">            
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource ControlBase}">
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="ReadOnly" BasedOn="{StaticResource ControlBase}">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="{StaticResource ReadOnlyBackgroundBrush}"/>
+        </Style>
+        <Style TargetType="ListBox" BasedOn="{StaticResource ControlBase}"></Style>
+        <Style TargetType="TabControl" BasedOn="{StaticResource ControlBase}"></Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>            
+        </Grid.RowDefinitions>
+        <!--Выбор региона-->
+        <DockPanel Grid.Row="0">
+            <Border BorderBrush="Gray" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Область" HorizontalAlignment="Center"/>
+                    <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding RegionNames}" 
+                              SelectedItem="{Binding SelectedRegionName}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Город" HorizontalAlignment="Center"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Cities}" 
+                              SelectedItem="{Binding SelectedRegion}" DisplayMemberPath="City"/>
+                    <TextBlock  Grid.Row="0" Grid.Column="2" Text="Широта" HorizontalAlignment="Center"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding SelectedRegion.Latitude}" Style="{StaticResource ReadOnly}"/>
+                </Grid>
+            </Border>
+        </DockPanel>
+        <!--Выбор расчета-->
+        <DockPanel Grid.Row="1" IsEnabled="{Binding IsSelectedRegion, UpdateSourceTrigger=PropertyChanged}">
+            <TabControl Grid.Column="0" SelectedItem="{Binding SelectedTab}"
+                        Background="Transparent">
+                <!--Вкладка - Елочки-->
+                <TabItem>                    
+                    <TabItem.Header>
+                        <Image Source="/PIK_GP_Acad;component/Resources/trees.png" Height="16"/>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <tr:TreesView/>
+                    </TabItem.Content>                    
+                </TabItem>
+                <!--Тестовая вкладка-->
+                <TabItem Header="Test">
+                    <ListBox>
+                        <ListBoxItem>dfgh</ListBoxItem>
+                    </ListBox>
+                </TabItem>
+            </TabControl>
+        </DockPanel>        
+    </Grid>
+</UserControl>

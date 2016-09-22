@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements.Buildings;
 using AcadLib.Geometry;
+using AcadLib.Exceptions;
 
 namespace PIK_GP_Acad.Insolation.Central
 {
@@ -34,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Central
             this.ptCalc = pt;
             ptCalc2d = pt.Convert2d();
             this.insService = insService;
-            maxHeight = insService.Options.HeightMax;
+            maxHeight = insService.Options.VisualOptions.Last().Height;
             values = insService.CalcValues;
 
             angleStartOnPlane = values.SunCalcAngleStartOnPlane;
@@ -88,7 +89,13 @@ namespace PIK_GP_Acad.Insolation.Central
             var xRayToStart = values.GetXRay(yShadowLen, angleStartOnPlane);
             var xRayToEnd = values.GetXRay(yShadowLen, angleEndOnPlane);
             Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
-                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));            
+                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
+#if DEBUG
+            var cs = insService.Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+            var t = cs.Database.TransactionManager.TopTransaction;
+            cs.AppendEntity(lineShadow);
+            t.AddNewlyCreatedDBObject(lineShadow, true);
+#endif
             // перебор домов одной высоты
             foreach (var build in buildings)
             {
@@ -104,7 +111,7 @@ namespace PIK_GP_Acad.Insolation.Central
                 }
                 else if(build.YMax > yShadow)
                 {
-                    var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, true);
+                    var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, true, Intersect.ExtendThis);
                     illumShadows.AddRange(ilumsBoundary);
                 }
             }
@@ -113,12 +120,13 @@ namespace PIK_GP_Acad.Insolation.Central
             return illumShadows;
         }
 
-        private List<IIlluminationArea> GetBuildingLineShadowBoundary (InsBuilding build,Line lineShadow, bool above)
+        private List<IIlluminationArea> GetBuildingLineShadowBoundary (InsBuilding build,Line lineShadow, bool above, Intersect intersectMode)
         {
             List<IIlluminationArea> resIlumsShadows = new List<IIlluminationArea>();
+            if (lineShadow.Length < 1) return resIlumsShadows;
             // Дом на границе тени, нужно строить линию пересечения с домом
             Point3dCollection ptsIntersects = new Point3dCollection();
-            lineShadow.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+            lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
             // Точки выше найденного пересецения
             bool isOdd = true;
             Point2d pt1 = Point2d.Origin;
@@ -228,47 +236,58 @@ namespace PIK_GP_Acad.Insolation.Central
         }
 
         private void DefineAnglesStartEndByOwnerBuilding (InsBuilding buildingOwner)
-        {            
+        {
             // Линия сечения здания проходящая через расчетную точку (горизонтально)
-            Line lineShadowZero = new Line(new Point3d (buildingOwner.ExtentsInModel.MinPoint.X, ptCalc.Y, 0),
-                                    new Point3d (buildingOwner.ExtentsInModel.MaxPoint.X, ptCalc.Y, 0));
-            var ilumsBoundary = GetBuildingLineShadowBoundary(buildingOwner, lineShadowZero, false);
-            if (ilumsBoundary.Count != 0)
+            Line lineEast = new Line(new Point3d(ptCalc.X, ptCalc.Y, 0),
+                                    new Point3d(buildingOwner.ExtentsInModel.MaxPoint.X, ptCalc.Y, 0));
+            Line lineWest = new Line(new Point3d(buildingOwner.ExtentsInModel.MinPoint.X, ptCalc.Y, 0),
+                                    new Point3d(ptCalc.X, ptCalc.Y, 0));
+            var ilumsEastBoundary = GetBuildingLineShadowBoundary(buildingOwner, lineEast, false, Intersect.OnBothOperands);
+            if (ilumsEastBoundary.Count>0)
             {
-                if (ilumsBoundary[0].AngleEndOnPlane> angleEndOnPlane)
+                var ilum = ilumsEastBoundary[0];
+                if (ilum.AngleEndOnPlane > angleStartOnPlane)
                 {
-                    angleEndOnPlane = ilumsBoundary[0].AngleStartOnPlane;
-                }
-                else
-                {                    
-                    if (ilumsBoundary.Count>1)
-                    {
-                        var lastIlum = ilumsBoundary.Last();
-                        if (lastIlum.AngleStartOnPlane< angleEndOnPlane)
-                        {
-                            angleEndOnPlane = lastIlum.AngleStartOnPlane;
-                        }
-                    }
-                    else
-                    {
-                        if (ilumsBoundary[0].AngleStartOnPlane <= angleStartOnPlane)
-                        {
-                            angleStartOnPlane = ilumsBoundary[0].AngleEndOnPlane;
-                        }
-                        else if (ilumsBoundary[0].AngleEndOnPlane>= angleEndOnPlane)
-                        {
-                            angleEndOnPlane = ilumsBoundary[0].AngleStartOnPlane;
-                        }
-                    }
+                    angleStartOnPlane = ilum.AngleEndOnPlane;
                 }
             }
-        }
+            var ilumsWestBoundary = GetBuildingLineShadowBoundary(buildingOwner, lineWest, false, Intersect.OnBothOperands);            
+            if (ilumsWestBoundary.Count>0)
+            {
+                var ilum = ilumsWestBoundary[0];
+                if (ilum.AngleStartOnPlane< angleEndOnPlane)
+                {
+                    angleEndOnPlane = ilum.AngleStartOnPlane;
+                }
+            }            
+        }        
 
         private void CorrectCalcPoint (InsBuilding buildingOwner)
-        {   
+        {
+#if DEBUG
+            // Test!!!
+            var cs = insService.Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+            var t = cs.Database.TransactionManager.TopTransaction;
+            cs.AppendEntity(buildingOwner.Contour);
+            t.AddNewlyCreatedDBObject(buildingOwner.Contour, true);
+            DBPoint dPtOrig = new DBPoint(ptCalc);
+            cs.AppendEntity(dPtOrig);
+            t.AddNewlyCreatedDBObject(dPtOrig, true);
+#endif
+            // Корректировка точки
             var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, true);
+            if ((ptCalc-correctPt).Length>5)
+            {
+                throw new ErrorException($"Некорректно задана расчетная точка.", System.Drawing.SystemIcons.Error);
+            }
             ptCalc = correctPt;
-            ptCalc2d = correctPt.Convert2d();            
+            ptCalc2d = correctPt.Convert2d();
+#if DEBUG
+            // Test!!!
+            DBPoint dPtCorrect = new DBPoint(correctPt);
+            cs.AppendEntity(dPtCorrect);
+            t.AddNewlyCreatedDBObject(dPtCorrect, true);
+#endif
         }
 
         /// <summary>

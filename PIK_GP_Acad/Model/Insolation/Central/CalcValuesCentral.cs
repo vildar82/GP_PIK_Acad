@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib;
+using PIK_GP_Acad.Insolation.Options;
 
 namespace PIK_GP_Acad.Insolation.Central
 {
@@ -31,7 +32,7 @@ namespace PIK_GP_Acad.Insolation.Central
 
         public CalcValuesCentral(InsOptions options)
         {
-            Fi = options.Latitude.ToRadians();
+            Fi = options.Region.Latitude.ToRadians();
             FiTan = Math.Tan(Fi);
             FiCos = Math.Cos(Fi);
             double cShadowNormal;

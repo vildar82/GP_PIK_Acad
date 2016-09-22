@@ -462,38 +462,18 @@ namespace PIK_GP_Acad
             });
         }
 
-        [CommandMethod(Group, nameof(KP_InsolationPoint), CommandFlags.Modal)]
-        public void KP_InsolationPoint ()
+        [CommandMethod(Group, nameof(GP_InsolationService), CommandFlags.Modal)]
+        public void GP_InsolationService ()
         {
             CommandStart.Start(doc =>
             {
-                if (insService == null)
-                {
-                    insService = InsolationServiceFactory.Create(doc);
-                }
-                var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
-                insService.CalcPoint(pt);
+                string fileGongSolutionsWpfDragDrop = Path.Combine(CurDllDir, "GongSolutions.Wpf.DragDrop45.dll");
+                LoadDll(fileGongSolutionsWpfDragDrop);
+                Insolation.UI.InsServicePallete.Start(doc);
             });
         }
-
-        [CommandMethod(Group, nameof(KP_InsolationShadowMap), CommandFlags.Modal)]
-        public void KP_InsolationShadowMap ()
-        {
-            CommandStart.Start(doc =>
-            {
-                using (var t = doc.TransactionManager.StartTransaction())
-                {
-                    if (insService == null)
-                    {
-                        insService = InsolationServiceFactory.Create(doc);
-                    }
-                    insService.CreateShadowMap();
-                    t.Commit();
-                }
-            });
-        }
+        
         #endregion В разработке
-
 
         public void Initialize ()
         {
@@ -503,16 +483,21 @@ namespace PIK_GP_Acad
 
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
-            if (File.Exists(fileCivilDll))
+            LoadDll(fileCivilDll);
+        }
+
+        private static void LoadDll (string  file)
+        {            
+            if (File.Exists(file))
             {
                 try
                 {
-                    Assembly.LoadFrom(fileCivilDll);
+                    Assembly.LoadFrom(file);
                 }
                 catch { }
             }
         }
-        
+
         public void Terminate()
         {
             

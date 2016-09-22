@@ -44,21 +44,24 @@
       <HintPath>..\..\..\AcadLib\AcadLib\bin\Release\AcadLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.Core.20.0.1\lib\45\AcCoreMgd.dll</HintPath>
+    <Reference Include="AcCoreMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcCoreMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcDbMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.Model.20.0.1\lib\45\AcDbMgd.dll</HintPath>
+    <Reference Include="AcDbMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.20.0.1\lib\45\AcMgd.dll</HintPath>
+    <Reference Include="AcMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AutoCAD_PIK_Manager">
       <HintPath>..\..\..\AutoCAD_PIK_Manager\AutoCAD_PIK_Manager\bin\Release\AutoCAD_PIK_Manager.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="MicroMvvm">
+      <HintPath>..\..\..\Package\MVVM\MicroMvvm.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -133,23 +136,41 @@
     <Compile Include="Model\Insolation\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Central\CentralIllumArea.cs" />
-    <Compile Include="Model\Insolation\IIlluminationArea.cs" />
+    <Compile Include="Model\Insolation\Trees\InsPoint.cs" />
+    <Compile Include="Model\Insolation\Central\TreesCentral.cs" />
+    <Compile Include="Model\Insolation\Trees\IIlluminationArea.cs" />
     <Compile Include="Model\Insolation\IInsolationService.cs" />
-    <Compile Include="Model\Insolation\IlluminationArea.cs" />
+    <Compile Include="Model\Insolation\Trees\IInsPoint.cs" />
+    <Compile Include="Model\Insolation\Trees\IInsTreeService.cs" />
+    <Compile Include="Model\Insolation\Trees\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
-    <Compile Include="Model\Insolation\InsBuilding.cs" />
-    <Compile Include="Model\Insolation\InsolationServiceFactory.cs" />
+    <Compile Include="Model\Insolation\Maps\InsBuilding.cs" />
+    <Compile Include="Model\Insolation\InsServiceFactory.cs" />
     <Compile Include="Model\Insolation\InsRate.cs" />
-    <Compile Include="Model\Insolation\Map.cs" />
-    <Compile Include="Model\Insolation\InsOptions.cs" />
-    <Compile Include="Model\Insolation\Region.cs" />
-    <Compile Include="Model\Insolation\Scope.cs" />
+    <Compile Include="Model\Insolation\Maps\Map.cs" />
+    <Compile Include="Model\Insolation\Options\InsOptions.cs" />
+    <Compile Include="Model\Insolation\Options\RegionEnum.cs" />
+    <Compile Include="Model\Insolation\Options\RegionOptions.cs" />
+    <Compile Include="Model\Insolation\Options\UserInsOptions.cs" />
+    <Compile Include="Model\Insolation\Options\VisualOptions.cs" />
+    <Compile Include="Model\Insolation\Maps\Scope.cs" />
     <Compile Include="Model\Insolation\ShadowMap\IShadowService.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Shadow.cs" />
     <Compile Include="Model\Insolation\ShadowMap\ShadowCentral.cs" />
     <Compile Include="Model\Insolation\ShadowMap\ShadowServiceFactory.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Tile.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Visualization\Visual.cs" />
+    <Compile Include="Model\Insolation\UI\IInsCalcViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
+    <Compile Include="Model\Insolation\UI\InsServiceViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\InsServiceView.xaml.cs">
+      <DependentUpon>InsServiceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Trees\InsPointViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Trees\TreesView.xaml.cs">
+      <DependentUpon>TreesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Trees\TreesViewModel.cs" />
     <Compile Include="Model\Insolation\Visual\VisualizationPoint.cs" />
     <Compile Include="Model\Isolines\ContextMenuIsoline.cs" />
     <Compile Include="Model\Isolines\FormIsolineOptions.cs">
@@ -316,7 +337,24 @@
   <ItemGroup>
     <None Include="Resources\enla.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Sun.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Model\Insolation\UI\InsServiceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Model\Insolation\UI\Trees\TreesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trees.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

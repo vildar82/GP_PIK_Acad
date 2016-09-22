@@ -45,14 +45,17 @@ namespace PIK_GP_Acad.Insolation
         {
             Point2d pt1 = Point2d.Origin;
             Point2d pt2 = Point2d.Origin;
-            Low = CreatePl(insService.Options.HeightLow, insService.Options.ColorLow, true, ref pt1, ref pt2);
-            Medium = CreatePl(insService.Options.HeightMedium, insService.Options.ColorMedium, false, ref pt1, ref pt2);
-            Hight = CreatePl(insService.Options.HeightMax, insService.Options.ColorHight, false, ref pt1, ref pt2);
+            Low = CreatePl(insService.Options.VisualOptions[0].Height,
+                        Color.FromColor(insService.Options.VisualOptions[0].Color), true, ref pt1, ref pt2);
+            Medium = CreatePl(insService.Options.VisualOptions[1].Height,
+                Color.FromColor(insService.Options.VisualOptions[1].Color), false, ref pt1, ref pt2);
+            Hight = CreatePl(insService.Options.VisualOptions[2].Height,
+                Color.FromColor(insService.Options.VisualOptions[2].Color), false, ref pt1, ref pt2);
 
             Transaction t = space.Database.TransactionManager.TopTransaction;
-            visualPl(Low, insService.Options.ColorLow, space, t);
-            visualPl(Medium, insService.Options.ColorMedium, space, t);
-            visualPl(Hight, insService.Options.ColorHight, space, t);
+            visualPl(Low, space, t);
+            visualPl(Medium, space, t);
+            visualPl(Hight, space, t);
         }
 
         private Polyline CreatePl (int height, Color color, bool fromStartPt,ref Point2d pt1,ref Point2d pt2)
@@ -85,16 +88,15 @@ namespace PIK_GP_Acad.Insolation
             return pl;
         }
 
-        private void visualPl(Polyline pl, Color color, BlockTableRecord cs, Transaction t)
-        {            
-            pl.Color = color;
+        private void visualPl(Polyline pl, BlockTableRecord cs, Transaction t)
+        {   
             pl.Transparency = new Transparency(insService.Options.Transparence);
             cs.AppendEntity(pl);
             t.AddNewlyCreatedDBObject(pl, true);
             var h = AcadLib.Hatches.HatchExt.CreateAssociativeHatch(pl, cs, t);
             if (h != null)
             {
-                h.Color = color;
+                h.Color = pl.Color;
                 h.Transparency = new Transparency(insService.Options.Transparence);
             }
         }

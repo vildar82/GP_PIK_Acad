@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation;
+using PIK_GP_Acad.Insolation.Options;
 
 namespace PIK_GP_Acad.Model.Insolation.ShadowMap
 {
@@ -18,7 +19,7 @@ namespace PIK_GP_Acad.Model.Insolation.ShadowMap
         private Map map;
         private InsOptions options;
         /// <summary>
-        /// Кол шагов от начального углв до конечного
+        /// Кол шагов от начального угла до конечного
         /// </summary>
         private int CountSteps;
         private int OneStepTime;        
@@ -29,12 +30,12 @@ namespace PIK_GP_Acad.Model.Insolation.ShadowMap
 
         public ShadowCentral (Map map)
         {
-            this.options = map.Options;
+            //this.options = map.Options;
             this.map = map;
             CountSteps = 150; // если 0 это восход, а 180 - закат. То расчетные углы от 15 до 165 = 150
             OneStepTime = options.ShadowDegreeStep * 4; // 4 минуты в 1 градусе
             // Широта в радианах
-            fi = ((double)options.Latitude).ToRadians();
+            fi = ((double)options.Region.Latitude).ToRadians();
         }
 
         /// <summary>
@@ -42,24 +43,25 @@ namespace PIK_GP_Acad.Model.Insolation.ShadowMap
         /// </summary>        
         public Shadow Calc (IBuilding building)
         {
-            Shadow shadow = new Shadow(building);
-            using (var t = map.Db.TransactionManager.StartOpenCloseTransaction())
-            {
-                var buildingContour = building.GetContourInModel();
-                // От начального расчетного угла (часа) - до последнего
-                for (int i = 15; i < 165; i++)
-                {
-                    // Вектор тени от точки на заданной высоте и угла луча
-                    var vecShadow = GetShadowVector(building.Height, i);
-                    // Вершины контура здания
-                    List<Point2d> buildingVertex = GetContourVertexes(buildingContour);
-                    // Определение граничных вершин здания (определяющих тень)
-                    List<ShadowBoundaryPoint> shadowBoundaryPts = GetBoundaryPoints(buildingVertex, vecShadow);
+            //Shadow shadow = new Shadow(building);
+            //using (var t = map.db.TransactionManager.StartOpenCloseTransaction())
+            //{
+            //    var buildingContour = building.GetContourInModel();
+            //    // От начального расчетного угла (часа) - до последнего
+            //    for (int i = 15; i < 165; i++)
+            //    {
+            //        // Вектор тени от точки на заданной высоте и угла луча
+            //        var vecShadow = GetShadowVector(building.Height, i);
+            //        // Вершины контура здания
+            //        List<Point2d> buildingVertex = GetContourVertexes(buildingContour);
+            //        // Определение граничных вершин здания (определяющих тень)
+            //        List<ShadowBoundaryPoint> shadowBoundaryPts = GetBoundaryPoints(buildingVertex, vecShadow);
 
-                }                
-                t.Commit();
-            }
-            return shadow;
+            //    }                
+            //    t.Commit();
+            //}
+            //return shadow;
+            return null;
         }
 
         private List<Point2d> GetContourVertexes (Polyline contour)

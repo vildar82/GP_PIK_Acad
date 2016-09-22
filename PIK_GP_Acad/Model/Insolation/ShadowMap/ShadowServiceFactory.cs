@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.Insolation;
+using PIK_GP_Acad.Insolation.Options;
 
 namespace PIK_GP_Acad.Model.Insolation.ShadowMap
 {
@@ -14,10 +15,10 @@ namespace PIK_GP_Acad.Model.Insolation.ShadowMap
         {
             IShadowService shadowService = null;
 
-            if (map.Options.Region == Region.Central)
-            {
-                shadowService = new ShadowCentral(map);
-            }
+            //if (map.Options.Region.RegionPart == RegionEnum.Central)
+            //{
+            //    shadowService = new ShadowCentral(map);
+            //}
 
             return shadowService;
         }
