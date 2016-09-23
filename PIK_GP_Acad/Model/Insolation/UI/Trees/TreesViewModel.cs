@@ -10,11 +10,16 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using PIK_GP_Acad.Insolation.Trees;
 
 namespace PIK_GP_Acad.Insolation.UI.Trees
 {
     public class TreesViewModel : ObservableObject, IInsCalcViewModel
     {
+        static ImageSource image = BitmapFrame.Create(new Uri("pack://application:,,,/PIK_GP_Acad;component/Resources/trees.png"));            
+
         public TreesViewModel ()
         {            
             VisualOptions = InsOptions.DefaultVisualOptions();
@@ -37,7 +42,11 @@ namespace PIK_GP_Acad.Insolation.UI.Trees
                 InsPointViewModel p = new InsPointViewModel(insPoint);
                 Points.Add(p);
             }
-        }, () => true); } }        
+        }, () => true); } }
+
+        public System.Windows.UIElement Header { get { return new Image { Source = image }; } }
+
+        public System.Windows.UIElement Content { get { return new TreesView(this); } }
 
         public void Update (RegionOptions selectedCity)
         {

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIK_GP_Acad.Insolation.Trees
+namespace PIK_GP_Acad.Insolation.Services
 {
     /// <summary>
-    /// Расчет инсоляции в точке
+    /// Сервис инсоляционных расчетов
     /// </summary>
-    public interface IInsPoint
+    public class InsCalcService : IInsCalcService
     {
-        int Number { get; set; }
+
     }
 }

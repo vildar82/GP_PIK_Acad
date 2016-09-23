@@ -25,7 +25,10 @@ namespace PIK_GP_Acad.Insolation.UI
         {            
             RegionNames = dictRegions.Keys.ToList();
             Doc = doc;
-        }        
+        }
+
+        public ObservableCollection<IInsCalcViewModel> Tabs { get; set; } = 
+            new ObservableCollection<IInsCalcViewModel> { new TreesViewModel() };
 
         public IInsCalcViewModel SelectedTab {
             set { value.Update(SelectedRegion); }

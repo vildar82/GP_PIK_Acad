@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PIK_GP_Acad.Insolation.Trees;
 
 namespace PIK_GP_Acad.Insolation.Central
 {

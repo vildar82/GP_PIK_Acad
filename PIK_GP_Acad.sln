@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PIK_GP_Acad", "PIK_GP_Acad\PIK_GP_Acad.csproj", "{B65CA79F-8F76-441E-A587-0BDFE43614B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_GP_Acad", "Test_GP_Acad\Test_GP_Acad.csproj", "{DD80545D-A5D2-432C-8B30-95EE4E4167E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B65CA79F-8F76-441E-A587-0BDFE43614B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B65CA79F-8F76-441E-A587-0BDFE43614B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B65CA79F-8F76-441E-A587-0BDFE43614B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD80545D-A5D2-432C-8B30-95EE4E4167E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD80545D-A5D2-432C-8B30-95EE4E4167E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD80545D-A5D2-432C-8B30-95EE4E4167E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD80545D-A5D2-432C-8B30-95EE4E4167E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

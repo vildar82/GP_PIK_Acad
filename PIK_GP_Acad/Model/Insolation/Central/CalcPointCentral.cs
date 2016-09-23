@@ -49,8 +49,8 @@ namespace PIK_GP_Acad.Insolation.Central
             // расчетный дом
             var buildingOwner = GetOwnerBuilding();
 
-            // Корректировка расчетной точки
-            CorrectCalcPoint(buildingOwner);
+            //// Корректировка расчетной точки
+            //CorrectCalcPoint(buildingOwner);
 
             // Определение ограничений углов (начального и конечного) с учетом плоскости стены расчетного дома
             DefineAnglesStartEndByOwnerBuilding(buildingOwner);
@@ -262,33 +262,7 @@ namespace PIK_GP_Acad.Insolation.Central
             }            
         }        
 
-        private void CorrectCalcPoint (InsBuilding buildingOwner)
-        {
-#if DEBUG
-            // Test!!!
-            var cs = insService.Db.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-            var t = cs.Database.TransactionManager.TopTransaction;
-            cs.AppendEntity(buildingOwner.Contour);
-            t.AddNewlyCreatedDBObject(buildingOwner.Contour, true);
-            DBPoint dPtOrig = new DBPoint(ptCalc);
-            cs.AppendEntity(dPtOrig);
-            t.AddNewlyCreatedDBObject(dPtOrig, true);
-#endif
-            // Корректировка точки
-            var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, true);
-            if ((ptCalc-correctPt).Length>5)
-            {
-                throw new ErrorException($"Некорректно задана расчетная точка.", System.Drawing.SystemIcons.Error);
-            }
-            ptCalc = correctPt;
-            ptCalc2d = correctPt.Convert2d();
-#if DEBUG
-            // Test!!!
-            DBPoint dPtCorrect = new DBPoint(correctPt);
-            cs.AppendEntity(dPtCorrect);
-            t.AddNewlyCreatedDBObject(dPtCorrect, true);
-#endif
-        }
+        
 
         /// <summary>
         /// Определение граничных точек задающих тень по отношению к расчетной точке, среди всех точек объекта

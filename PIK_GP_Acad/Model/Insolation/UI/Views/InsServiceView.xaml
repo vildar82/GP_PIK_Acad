@@ -60,10 +60,16 @@
         </DockPanel>
         <!--Выбор расчета-->
         <DockPanel Grid.Row="1" IsEnabled="{Binding IsSelectedRegion, UpdateSourceTrigger=PropertyChanged}">
-            <TabControl Grid.Column="0" SelectedItem="{Binding SelectedTab}"
+            <TabControl Grid.Column="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}"
                         Background="Transparent">
                 <!--Вкладка - Елочки-->
-                <TabItem>                    
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Header" Value="{Binding HeaderContent}"/>
+                        <Setter Property="Content" Value="{Binding TabContent}"/>
+                    </Style>
+                </TabControl.ItemContainerStyle>
+                <!--<TabItem>                    
                     <TabItem.Header>
                         <Image Source="/PIK_GP_Acad;component/Resources/trees.png" Height="16"/>
                     </TabItem.Header>
@@ -71,12 +77,12 @@
                         <tr:TreesView/>
                     </TabItem.Content>                    
                 </TabItem>
-                <!--Тестовая вкладка-->
+                --><!--Тестовая вкладка--><!--
                 <TabItem Header="Test">
                     <ListBox>
                         <ListBoxItem>dfgh</ListBoxItem>
                     </ListBox>
-                </TabItem>
+                </TabItem>-->
             </TabControl>
         </DockPanel>        
     </Grid>

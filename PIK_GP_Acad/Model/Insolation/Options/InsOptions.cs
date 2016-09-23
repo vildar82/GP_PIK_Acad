@@ -33,10 +33,12 @@ namespace PIK_GP_Acad.Insolation.Options
         /// <summary>
         /// Конечный расчетный угол (минус последний час). Заход = 180град.
         /// </summary>
-        public double SunCalcAngleEnd { get; set; } = 165.0;
+        public double SunCalcAngleEnd { get; set; } = 165.0;        
 
         public InsOptions ()
-        {            
+        {
+            Region = Regions[0];
+            VisualOptions = DefaultVisualOptions();
         }        
 
         private static List<RegionOptions> LoadRegions ()

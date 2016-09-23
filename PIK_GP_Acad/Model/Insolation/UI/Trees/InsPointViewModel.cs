@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using MicroMvvm;
+using PIK_GP_Acad.Insolation.Trees;
 
 namespace PIK_GP_Acad.Insolation.UI.Trees
 {

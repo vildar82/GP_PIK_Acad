@@ -136,12 +136,18 @@
     <Compile Include="Model\Insolation\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Central\CentralIllumArea.cs" />
+    <Compile Include="Model\Insolation\Maps\IMap.cs" />
+    <Compile Include="Model\Insolation\Models\InsModel.cs" />
+    <Compile Include="Model\Insolation\Models\TreeModel.cs" />
+    <Compile Include="Model\Insolation\Services\IInsCalcService.cs" />
+    <Compile Include="Model\Insolation\Services\InsCalcService.cs" />
+    <Compile Include="Model\Insolation\Services\InsService.cs" />
     <Compile Include="Model\Insolation\Trees\InsPoint.cs" />
     <Compile Include="Model\Insolation\Central\TreesCentral.cs" />
     <Compile Include="Model\Insolation\Trees\IIlluminationArea.cs" />
     <Compile Include="Model\Insolation\IInsolationService.cs" />
     <Compile Include="Model\Insolation\Trees\IInsPoint.cs" />
-    <Compile Include="Model\Insolation\Trees\IInsTreeService.cs" />
+    <Compile Include="Model\Insolation\Services\IInsTreeService.cs" />
     <Compile Include="Model\Insolation\Trees\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
     <Compile Include="Model\Insolation\Maps\InsBuilding.cs" />
@@ -160,10 +166,11 @@
     <Compile Include="Model\Insolation\ShadowMap\ShadowServiceFactory.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Tile.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Visualization\Visual.cs" />
+    <Compile Include="Model\Insolation\Trees\SelectPoint.cs" />
     <Compile Include="Model\Insolation\UI\IInsCalcViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
-    <Compile Include="Model\Insolation\UI\InsServiceViewModel.cs" />
-    <Compile Include="Model\Insolation\UI\InsServiceView.xaml.cs">
+    <Compile Include="Model\Insolation\UI\ViewModels\InsServiceViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Views\InsServiceView.xaml.cs">
       <DependentUpon>InsServiceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Trees\InsPointViewModel.cs" />
@@ -341,7 +348,7 @@
     <None Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Model\Insolation\UI\InsServiceView.xaml">
+    <Page Include="Model\Insolation\UI\Views\InsServiceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

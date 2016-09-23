@@ -17,9 +17,9 @@ namespace PIK_GP_Acad.Insolation
     /// <summary>
     /// карта - чертеж с объектами расчета инсоляции
     /// </summary>
-    public class Map
+    public class Map : IMap
     {
-        Document doc;
+        public Document Doc { get; set; }
         List<InsBuilding> buildings;
         Database db;        
         RTree<InsBuilding> treeBuildings;
@@ -31,7 +31,7 @@ namespace PIK_GP_Acad.Insolation
 
         public Map(Document doc)
         {
-            this.doc = doc;
+            this.Doc = doc;
             this.db = doc.Database;            
             LoadMap();            
             // TODO: подписаться на события изменения объектов чертежа - чтобы отслеживать изменения карты

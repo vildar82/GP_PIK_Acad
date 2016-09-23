@@ -43,7 +43,7 @@ namespace PIK_GP_Acad.Insolation.UI
             if (palette.Count == 0)
             {
                 control = new InsServiceView(view);
-                palette.AddVisual("", control);
+                palette.AddVisual("", control);                
             }
             else
             {

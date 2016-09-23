@@ -20,10 +20,10 @@ namespace PIK_GP_Acad.Insolation.UI.Trees
     /// </summary>
     public partial class TreesView : UserControl
     {
-        public TreesView ()
+        public TreesView (TreesViewModel model)
         {
             InitializeComponent();
-            DataContext = new TreesViewModel();
+            DataContext = model;            
         }
     }
 }
