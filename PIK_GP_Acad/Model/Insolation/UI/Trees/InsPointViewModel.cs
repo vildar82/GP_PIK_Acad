@@ -4,36 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using MicroMvvm;
+using Catel.Fody;
+using Catel.MVVM;
 using PIK_GP_Acad.Insolation.Trees;
 
 namespace PIK_GP_Acad.Insolation.UI.Trees
 {
-    public class InsPointViewModel : ObservableObject
+    public class InsPointViewModel : ViewModelBase
     {
         Random rnd = new Random();
-        IInsPoint insPoint;
-        Brush color;        
 
-        public InsPointViewModel (IInsPoint insPoint)
-        {
-            this.insPoint = insPoint;
-            color = new SolidColorBrush(System.Windows.Media.Color.FromRgb((byte)rnd.Next(255), (byte)rnd.Next(255), (byte)rnd.Next(255)));
+        public InsPointViewModel (IInsPoint insPoint): base()
+        {            
+            InsPoint = insPoint;
+            Color = Color.FromRgb((byte)rnd.Next(255), (byte)rnd.Next(255), (byte)rnd.Next(255));
         }
 
-        public int Number {
-            get { return insPoint.Number; }
-            set { insPoint.Number = value;
-                RaisePropertyChanged();
-            }
-        }
+        [Model]
+        [Expose("Number")]
+        public IInsPoint InsPoint { get; set; }        
 
-        public Brush Color {
-            get { return color; }
-            set { color = value;
-                RaisePropertyChanged();
-            }
-        }
+        public Color Color { get; set; }
 
     }
 }

@@ -21,7 +21,7 @@ namespace Test_GP_Acad.Tests.Insolation
             InsModel insModel = InsService.GetIns(doc);
             // Расчет елочек
             // Добавление расчетной точки
-            insModel.Tree.AddPoint();      
+            insModel.Tree.NewPoint();      
         }
     }
 }

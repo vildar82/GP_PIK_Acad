@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.UI
             InsServiceViewModel view;              
             if (!dictDocIns.TryGetValue(doc, out view))
             {
-                view = new InsServiceViewModel(doc);     
+                view = new InsServiceViewModel();     
                 dictDocIns.Add(doc, view);
             }
             CurrentInsServiceViewModel = view;

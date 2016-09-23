@@ -12,6 +12,8 @@
     <AssemblyName>PIK_GP_Acad</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,8 +62,29 @@
       <HintPath>..\..\..\AutoCAD_PIK_Manager\AutoCAD_PIK_Manager\bin\Release\AutoCAD_PIK_Manager.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MicroMvvm">
-      <HintPath>..\..\..\Package\MVVM\MicroMvvm.dll</HintPath>
+    <Reference Include="Catel.Core, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.4.5.3\lib\net45\Catel.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.Extensions.Controls, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Extensions.Controls.4.5.3\lib\net45\Catel.Extensions.Controls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.Extensions.FluentValidation, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Extensions.FluentValidation.4.5.3\lib\net45\Catel.Extensions.FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.Fody.Attributes, Version=2.14.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Fody.2.14.0\lib\portable-net4+sl4+wp7+win8+wpa81+MonoAndroid14+MonoTouch40\Catel.Fody.Attributes.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.MVVM, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.4.5.3\lib\net45\Catel.MVVM.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -70,6 +93,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.4.5.3\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -137,16 +164,17 @@
     <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Central\CentralIllumArea.cs" />
     <Compile Include="Model\Insolation\Maps\IMap.cs" />
-    <Compile Include="Model\Insolation\Models\InsModel.cs" />
-    <Compile Include="Model\Insolation\Models\TreeModel.cs" />
+    <Compile Include="Model\Insolation\InsModel.cs" />
+    <Compile Include="Model\Insolation\Trees\Point\WindowConstruction.cs" />
+    <Compile Include="Model\Insolation\Trees\TreeModel.cs" />
     <Compile Include="Model\Insolation\Services\IInsCalcService.cs" />
     <Compile Include="Model\Insolation\Services\InsCalcService.cs" />
     <Compile Include="Model\Insolation\Services\InsService.cs" />
-    <Compile Include="Model\Insolation\Trees\InsPoint.cs" />
+    <Compile Include="Model\Insolation\Trees\Point\InsPoint.cs" />
     <Compile Include="Model\Insolation\Central\TreesCentral.cs" />
     <Compile Include="Model\Insolation\Trees\IIlluminationArea.cs" />
     <Compile Include="Model\Insolation\IInsolationService.cs" />
-    <Compile Include="Model\Insolation\Trees\IInsPoint.cs" />
+    <Compile Include="Model\Insolation\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Services\IInsTreeService.cs" />
     <Compile Include="Model\Insolation\Trees\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
@@ -166,11 +194,19 @@
     <Compile Include="Model\Insolation\ShadowMap\ShadowServiceFactory.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Tile.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Visualization\Visual.cs" />
-    <Compile Include="Model\Insolation\Trees\SelectPoint.cs" />
+    <Compile Include="Model\Insolation\Trees\Point\WindowOptions.cs" />
+    <Compile Include="Model\Insolation\Trees\Point\SelectPoint.cs" />
     <Compile Include="Model\Insolation\UI\IInsCalcViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
-    <Compile Include="Model\Insolation\UI\ViewModels\InsServiceViewModel.cs" />
-    <Compile Include="Model\Insolation\UI\Views\InsServiceView.xaml.cs">
+    <Compile Include="Model\Insolation\UI\InsServiceViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml.cs">
+      <DependentUpon>WindowOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Trees\WindowOptionsViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Trees\InsPointView.xaml.cs">
+      <DependentUpon>InsPointView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\InsServiceView.xaml.cs">
       <DependentUpon>InsServiceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Trees\InsPointViewModel.cs" />
@@ -348,7 +384,15 @@
     <None Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Model\Insolation\UI\Views\InsServiceView.xaml">
+    <Page Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Model\Insolation\UI\Trees\InsPointView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Model\Insolation\UI\InsServiceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -362,7 +406,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\dotnet\Fody.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
