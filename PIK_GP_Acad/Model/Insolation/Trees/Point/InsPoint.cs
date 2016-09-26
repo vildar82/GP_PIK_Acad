@@ -13,16 +13,15 @@ namespace PIK_GP_Acad.Insolation.Trees
     /// </summary>
     public class InsPoint : ModelBase, IInsPoint
     {
+        public InsPoint ()
+        {
+        }
+
         /// <summary>
         /// Номер точки
         /// </summary>
         public int Number { get; set; }
         public Point3d Point { get; set;}
-        public InsBuilding Building { get; set; }        
-
-        public InsPoint()
-        {
-
-        }
+        public InsBuilding Building { get; set; }                
     }
 }

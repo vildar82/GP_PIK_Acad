@@ -10,8 +10,9 @@ using Autodesk.AutoCAD.EditorInput;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Catel.Data;
+using PIK_GP_Acad.Insolation.Options;
 
-namespace PIK_GP_Acad.Insolation.Models
+namespace PIK_GP_Acad.Insolation
 {
     /// <summary>
     /// Расчет елочек
@@ -23,8 +24,11 @@ namespace PIK_GP_Acad.Insolation.Models
         public TreeModel(InsModel insModel)
         {
             this.insModel = insModel;
-            Points.CollectionChanged += Points_CollectionChanged;
+            Points = new ObservableCollection<IInsPoint>();
+            Points.CollectionChanged += Points_CollectionChanged;            
         }
+
+        public List<TreeVisualOption> VisualOptions { get; set; }
 
         /// <summary>
         /// Расчетные точки

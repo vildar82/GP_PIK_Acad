@@ -1,4 +1,4 @@
-﻿namespace PIK_GP_Acad.Insolation.UI.Trees
+﻿namespace PIK_GP_Acad.Insolation.UI
 {
     using Catel.MVVM;
     using System.Threading.Tasks;

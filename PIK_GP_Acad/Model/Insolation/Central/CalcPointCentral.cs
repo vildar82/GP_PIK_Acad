@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Central
             this.ptCalc = pt;
             ptCalc2d = pt.Convert2d();
             this.insService = insService;
-            maxHeight = insService.Options.VisualOptions.Last().Height;
+            //maxHeight = insService.Options.VisualOptions.Last().Height;
             values = insService.CalcValues;
 
             angleStartOnPlane = values.SunCalcAngleStartOnPlane;

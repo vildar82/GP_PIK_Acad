@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using PIK_GP_Acad.Insolation;
-using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Options;
 using PIK_GP_Acad.Insolation.Services;
 

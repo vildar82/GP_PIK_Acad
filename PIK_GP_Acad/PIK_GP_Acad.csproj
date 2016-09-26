@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -92,6 +92,14 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Catel.MVVM.4.5.3\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -105,6 +113,34 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
@@ -163,11 +199,13 @@
     <Compile Include="Model\Insolation\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Central\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Central\CentralIllumArea.cs" />
-    <Compile Include="Model\Insolation\Maps\IMap.cs" />
+    <Compile Include="Model\Insolation\Maps\Interfaces\IMap.cs" />
     <Compile Include="Model\Insolation\InsModel.cs" />
+    <Compile Include="Model\Insolation\Services\Settings.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\ISettings.cs" />
     <Compile Include="Model\Insolation\Trees\Point\WindowConstruction.cs" />
     <Compile Include="Model\Insolation\Trees\TreeModel.cs" />
-    <Compile Include="Model\Insolation\Services\IInsCalcService.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\IInsCalcService.cs" />
     <Compile Include="Model\Insolation\Services\InsCalcService.cs" />
     <Compile Include="Model\Insolation\Services\InsService.cs" />
     <Compile Include="Model\Insolation\Trees\Point\InsPoint.cs" />
@@ -175,18 +213,17 @@
     <Compile Include="Model\Insolation\Trees\IIlluminationArea.cs" />
     <Compile Include="Model\Insolation\IInsolationService.cs" />
     <Compile Include="Model\Insolation\Trees\Point\IInsPoint.cs" />
-    <Compile Include="Model\Insolation\Services\IInsTreeService.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\IInsTreeService.cs" />
     <Compile Include="Model\Insolation\Trees\IlluminationArea.cs" />
     <Compile Include="Model\Insolation\Central\CentralInsService.cs" />
     <Compile Include="Model\Insolation\Maps\InsBuilding.cs" />
-    <Compile Include="Model\Insolation\InsServiceFactory.cs" />
+    <Compile Include="Model\Insolation\Services\InsServiceFactory.cs" />
     <Compile Include="Model\Insolation\InsRate.cs" />
     <Compile Include="Model\Insolation\Maps\Map.cs" />
     <Compile Include="Model\Insolation\Options\InsOptions.cs" />
     <Compile Include="Model\Insolation\Options\RegionEnum.cs" />
-    <Compile Include="Model\Insolation\Options\RegionOptions.cs" />
-    <Compile Include="Model\Insolation\Options\UserInsOptions.cs" />
-    <Compile Include="Model\Insolation\Options\VisualOptions.cs" />
+    <Compile Include="Model\Insolation\Options\InsRegion.cs" />
+    <Compile Include="Model\Insolation\Trees\TreeVisualOption.cs" />
     <Compile Include="Model\Insolation\Maps\Scope.cs" />
     <Compile Include="Model\Insolation\ShadowMap\IShadowService.cs" />
     <Compile Include="Model\Insolation\ShadowMap\Shadow.cs" />
@@ -196,9 +233,12 @@
     <Compile Include="Model\Insolation\ShadowMap\Visualization\Visual.cs" />
     <Compile Include="Model\Insolation\Trees\Point\WindowOptions.cs" />
     <Compile Include="Model\Insolation\Trees\Point\SelectPoint.cs" />
-    <Compile Include="Model\Insolation\UI\IInsCalcViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\InsRegionView.xaml.cs">
+      <DependentUpon>InsRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\InsRegionViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
-    <Compile Include="Model\Insolation\UI\InsServiceViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml.cs">
       <DependentUpon>WindowOptionsView.xaml</DependentUpon>
     </Compile>
@@ -206,8 +246,8 @@
     <Compile Include="Model\Insolation\UI\Trees\InsPointView.xaml.cs">
       <DependentUpon>InsPointView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Insolation\UI\InsServiceView.xaml.cs">
-      <DependentUpon>InsServiceView.xaml</DependentUpon>
+    <Compile Include="Model\Insolation\UI\InsView.xaml.cs">
+      <DependentUpon>InsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Trees\InsPointViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Trees\TreesView.xaml.cs">
@@ -384,6 +424,42 @@
     <None Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Model\Insolation\UI\InsRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="Model\Insolation\UI\Resources\ControlStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\BureauBlack.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\BureauBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\ExpressionDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\ExpressionLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\ShinyBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\ShinyRed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="Model\Insolation\UI\Resources\Themes\WhistlerBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
     <Page Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -392,7 +468,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Model\Insolation\UI\InsServiceView.xaml">
+    <Page Include="Model\Insolation\UI\InsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

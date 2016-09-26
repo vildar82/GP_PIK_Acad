@@ -45,12 +45,12 @@ namespace PIK_GP_Acad.Insolation
         {
             Point2d pt1 = Point2d.Origin;
             Point2d pt2 = Point2d.Origin;
-            Low = CreatePl(insService.Options.VisualOptions[0].Height,
-                        Color.FromColor(insService.Options.VisualOptions[0].Color), true, ref pt1, ref pt2);
-            Medium = CreatePl(insService.Options.VisualOptions[1].Height,
-                Color.FromColor(insService.Options.VisualOptions[1].Color), false, ref pt1, ref pt2);
-            Hight = CreatePl(insService.Options.VisualOptions[2].Height,
-                Color.FromColor(insService.Options.VisualOptions[2].Color), false, ref pt1, ref pt2);
+            //Low = CreatePl(insService.Options.VisualOptions[0].Height,
+            //            Color.FromColor(insService.Options.VisualOptions[0].Color), true, ref pt1, ref pt2);
+            //Medium = CreatePl(insService.Options.VisualOptions[1].Height,
+            //    Color.FromColor(insService.Options.VisualOptions[1].Color), false, ref pt1, ref pt2);
+            //Hight = CreatePl(insService.Options.VisualOptions[2].Height,
+            //    Color.FromColor(insService.Options.VisualOptions[2].Color), false, ref pt1, ref pt2);
 
             Transaction t = space.Database.TransactionManager.TopTransaction;
             visualPl(Low, space, t);

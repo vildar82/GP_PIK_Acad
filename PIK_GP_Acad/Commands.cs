@@ -53,7 +53,9 @@ namespace PIK_GP_Acad
             CommandsPalette = new List<IPaletteCommand>()
             {
                 // Главная
+#if !NR
                 new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
+#endif
                 new PaletteCommand("Блок парковки",Resources.GP_Parking,nameof(GP_InsertBlockParking),"Вставка блока парковки"),
                 new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
@@ -103,7 +105,7 @@ namespace PIK_GP_Acad
         //
         // Главная
         //
-        #region Главная        
+#region Главная        
 
         [CommandMethod(Group, nameof(GP_InsertBlockLineParking), CommandFlags.Modal)]
         public void GP_InsertBlockLineParking()
@@ -277,12 +279,12 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion Главная
+#endregion Главная
 
         //
         // БС
         //
-        #region ГП        
+#region ГП        
 
         [CommandMethod(Group, nameof(GP_BlockSectionInsert), CommandFlags.Modal)]        
         public void GP_BlockSectionInsert()
@@ -317,12 +319,12 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion ГП
+#endregion ГП
 
         //
         // Концепция
         //
-        #region Концепция       
+#region Концепция       
 
         [CommandMethod(Group, nameof(KP_BlockSectionInsert), CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
@@ -409,12 +411,12 @@ namespace PIK_GP_Acad
                 aps.Calc();
             });
         }
-        #endregion Концепция
+#endregion Концепция
 
         //
         // Штамп
         //
-        #region Штамп        
+#region Штамп        
 
         [CommandMethod(Group, nameof(GP_BlockFrame), CommandFlags.Modal)]
         public void GP_BlockFrame()
@@ -443,12 +445,12 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion Штамп
+#endregion Штамп
 
         //
         // В разработке    
         //        
-        #region В разработке        
+#region В разработке        
 
         [CommandMethod(Group, nameof(GP_FCS_Balance), CommandFlags.Modal)]
         public static void GP_FCS_Balance ()
@@ -466,14 +468,12 @@ namespace PIK_GP_Acad
         public void GP_InsolationService ()
         {
             CommandStart.Start(doc =>
-            {
-                string fileGongSolutionsWpfDragDrop = Path.Combine(CurDllDir, "GongSolutions.Wpf.DragDrop45.dll");
-                LoadDll(fileGongSolutionsWpfDragDrop);
-                Insolation.UI.InsServicePallete.Start(doc);
+            {                
+                Insolation.Services.InsService.Start(doc);
             });
         }
         
-        #endregion В разработке
+#endregion В разработке
 
         public void Initialize ()
         {

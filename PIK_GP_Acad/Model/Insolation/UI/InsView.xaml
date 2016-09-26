@@ -1,0 +1,61 @@
+﻿<catel:UserControl
+    x:Class="PIK_GP_Acad.Insolation.UI.InsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:catel="http://catel.codeplex.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    FontSize="14"
+    d:DataContext="{d:DesignInstance local:InsViewModel,
+                                     IsDesignTimeCreatable=False}"
+    mc:Ignorable="d">
+    <catel:UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
+                <!--<ResourceDictionary Source="/Catel.Extensions.Controls;component/themes/generic.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </catel:UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!--  Регион  -->
+        <DockPanel Grid.Row="0">
+            <TextBlock Text="{Binding Options.Region.City, StringFormat=город: \{0\}}" />
+            <Button Command="{Binding ShowRegion}" Content="..." />
+        </DockPanel>
+        <!--  Выбор расчета  -->
+        <DockPanel Grid.Row="1">
+            <TabControl Grid.Column="0" Background="Transparent">
+                <!--  Вкладка - Елочки  -->
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Header" Value="{Binding HeaderContent}" />
+                        <Setter Property="Content" Value="{Binding TabContent}" />
+                    </Style>
+                </TabControl.ItemContainerStyle>
+                <TabItem>
+                    <TabItem.Header>
+                        <Image Source="/PIK_GP_Acad;component/Resources/trees.png" Height="16"/>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <local:TreesView DataContext="{Binding Tree}"/>
+                    </TabItem.Content>
+                </TabItem>
+                
+                <!--  Тестовая вкладка  -->
+                <!--
+                <TabItem Header="Test">
+                    <ListBox>
+                        <ListBoxItem>dfgh</ListBoxItem>
+                    </ListBox>
+                </TabItem>-->
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</catel:UserControl>

@@ -12,7 +12,7 @@ namespace PIK_GP_Acad.Insolation
 {
     public static class InsServiceFactory
     {
-        public static IInsolationService Create (Document doc, RegionOptions region)
+        public static IInsolationService Create (Document doc, Options.InsRegion region)
         {
             IInsolationService insService = null;
             if (region.RegionPart == RegionEnum.Central)

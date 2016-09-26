@@ -1,39 +1,46 @@
-﻿<UserControl x:Class="PIK_GP_Acad.Insolation.UI.Trees.TreesView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI.Trees"                          
-             mc:Ignorable="d">    
+﻿<catel:UserControl
+    x:Class="PIK_GP_Acad.Insolation.UI.TreesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:catel="http://catel.codeplex.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    d:DataContext="{d:DesignInstance local:TreesViewModel,
+                                     IsDesignTimeCreatable=False}"
+    mc:Ignorable="d">
+    <catel:UserControl.Resources>
+        <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
+    </catel:UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <!--Список расчетных точекк-->
+        <!--  Список расчетных точекк  -->
         <DockPanel Grid.Column="0">
             <StackPanel>
-                <ListBox ItemsSource="{Binding Points}" Background="Transparent">
+                <ListBox Background="Transparent" ItemsSource="{Binding Points}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="{Binding Number}" Background="{Binding Color}"/>
+                                <TextBlock Background="{Binding Color}" Text="{Binding Number}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Button Content="Добавить точку" Command="{Binding AddPoint}"/>
+                <Button Command="{Binding AddPoint}" Content="Добавить точку" />
             </StackPanel>
         </DockPanel>
-        <!--Настройки высот для визуализации-->
+        <!--  Настройки высот для визуализации  -->
         <StackPanel Grid.Column="1">
-            <ListBox ItemsSource="{Binding VisualOptions}" HorizontalContentAlignment="Stretch" Background="Transparent">
+            <ListBox HorizontalContentAlignment="Stretch" Background="Transparent" ItemsSource="{Binding VisualOptions}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <TextBox Text="{Binding Height, StringFormat=\{0\} м}" HorizontalAlignment="Stretch" BorderThickness="0">
+                            <TextBox HorizontalAlignment="Stretch" BorderThickness="0" Text="{Binding Height, StringFormat={}{0} м}">
                                 <TextBox.Background>
-                                    <SolidColorBrush Color="{Binding Color}"/>
+                                    <SolidColorBrush Color="{Binding Color}" />
                                 </TextBox.Background>
                             </TextBox>
                         </DockPanel>
@@ -42,4 +49,4 @@
             </ListBox>
         </StackPanel>
     </Grid>
-</UserControl>
+</catel:UserControl>

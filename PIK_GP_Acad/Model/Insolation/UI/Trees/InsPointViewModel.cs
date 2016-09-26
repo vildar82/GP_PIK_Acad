@@ -8,7 +8,7 @@ using Catel.Fody;
 using Catel.MVVM;
 using PIK_GP_Acad.Insolation.Trees;
 
-namespace PIK_GP_Acad.Insolation.UI.Trees
+namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsPointViewModel : ViewModelBase
     {

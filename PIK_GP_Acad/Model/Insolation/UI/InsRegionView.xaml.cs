@@ -1,8 +1,8 @@
 ﻿namespace PIK_GP_Acad.Insolation.UI
 {
-    public partial class WindowOptionsView
+    public partial class InsRegionView
     {
-        public WindowOptionsView ()
+        public InsRegionView ()
         {
             InitializeComponent();
         }

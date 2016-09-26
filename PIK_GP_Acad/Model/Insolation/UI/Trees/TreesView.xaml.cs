@@ -13,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PIK_GP_Acad.Insolation.UI.Trees
+namespace PIK_GP_Acad.Insolation.UI
 {
     /// <summary>
     /// Логика взаимодействия для TreesControl.xaml
     /// </summary>
-    public partial class TreesView : UserControl
+    public partial class TreesView
     {
-        public TreesView (TreesViewModel model)
+        public TreesView ()
         {
-            InitializeComponent();
-            DataContext = model;            
+            InitializeComponent();            
         }
     }
 }

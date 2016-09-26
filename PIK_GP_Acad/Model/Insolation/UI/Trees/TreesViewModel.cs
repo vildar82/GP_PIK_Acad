@@ -13,39 +13,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PIK_GP_Acad.Insolation.Trees;
 using Catel.MVVM;
-using PIK_GP_Acad.Insolation.Models;
+using Catel.Fody;
 
-namespace PIK_GP_Acad.Insolation.UI.Trees
+namespace PIK_GP_Acad.Insolation.UI
 {
-    public class TreesViewModel : ViewModelBase, IInsCalcViewModel
+    public class TreesViewModel : ViewModelBase
     {
         static ImageSource imageTree = BitmapFrame.Create(new Uri("pack://application:,,,/PIK_GP_Acad;component/Resources/trees.png"));            
 
-        public TreesViewModel ()
-        {            
-            VisualOptions = InsOptions.DefaultVisualOptions();           
+        public TreesViewModel (TreeModel treeModel)
+        {
+            TreeModel = treeModel;
         }        
 
         [Model]
-        public TreeModel TreeModel { get; set; }
-
-        public string Name { get; } = "Trees";
-
-        public List<VisualOption> VisualOptions { get; set; }        
+        [Expose("VisualOptions")]
+        [Expose("Points")]
+        public TreeModel TreeModel { get; set; }                
 
         private Command addPoint;
         public Command AddPoint {
             get {
                 return addPoint ?? (addPoint = new Command(() =>
                 {
-                    // Запрос точки у пользователя.                    
+                    TreeModel.NewPoint();
                 }, () => true));
             }
-        }       
-
-        public void Update (RegionOptions selectedCity)
-        {
-            throw new NotImplementedException();
-        }
+        }               
     }    
 }

@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.Central
         /// </summary>
         public IInsTreeService Trees { get; set; }
 
-        public CentralInsService(Document doc, RegionOptions region)
+        public CentralInsService(Document doc, Options.InsRegion region)
         {
             this.doc = doc;
             Options = new InsOptions();

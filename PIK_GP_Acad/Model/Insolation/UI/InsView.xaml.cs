@@ -17,17 +17,11 @@ namespace PIK_GP_Acad.Insolation.UI
     /// <summary>
     /// Логика взаимодействия для InsServiceView.xaml
     /// </summary>
-    public partial class InsServiceView : UserControl
+    public partial class InsView
     {
-        public InsServiceView (InsServiceViewModel model)
+        public InsView ()
         {
-            InitializeComponent();
-            DataUpdate(model);
-        }
-
-        public void DataUpdate (InsServiceViewModel model)
-        {
-            DataContext = model;
-        }
+            InitializeComponent();            
+        }        
     }
 }
