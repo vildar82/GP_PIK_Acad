@@ -45,9 +45,9 @@ namespace PIK_GP_Acad.Insolation.UI
         private bool OnAddPointCanExecute ()
         {
             bool res;
-            if (TreeModel.InsModel.Map.Buildings.Count > 0)
+            if (TreeModel?.InsModel?.Map?.Buildings.Count > 0)
             {
-                AddpointInfo = "Выбор расчетной точки на здании";
+                AddpointInfo = "Выбор расчетной точки на контуре здания";
                 res = true;
             }
             else

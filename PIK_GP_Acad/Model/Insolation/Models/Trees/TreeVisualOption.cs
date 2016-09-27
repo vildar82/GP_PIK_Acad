@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using Catel.Data;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -20,7 +20,5 @@ namespace PIK_GP_Acad.Insolation.Models
             Color = color;
             Height = height;
         }
-
-        
     }
 }

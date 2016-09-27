@@ -3,11 +3,11 @@
 namespace PIK_GP_Acad.Insolation.UI
 {
     public partial class InsPointView
-    {
-        public InsPointView ()
-            : base(DataWindowMode.OkCancel)
+    {        
+        public InsPointView (InsPointViewModel viewModel)
+            : base(viewModel, DataWindowMode.OkCancel, null, DataWindowDefaultButton.OK, true, InfoBarMessageControlGenerationMode.Inline)
         {            
-            InitializeComponent();
+            InitializeComponent ();
         }
     }
 }

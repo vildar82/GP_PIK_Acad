@@ -4,37 +4,29 @@
     xmlns:catel="http://catel.codeplex.com"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    MinWidth="150" MinHeight="130" MaxWidth="500"
-    MaxHeight="150"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
     d:DesignHeight="140" d:DesignWidth="260"
-    mc:Ignorable="d">
+    mc:Ignorable="d" ShowInTaskbar="False" Topmost="True" WindowStartupLocation="CenterOwner">
     <!--<catel:Window.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
     </catel:Window.Resources>-->
-    <DockPanel>
-        <Grid DockPanel.Dock="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBlock HorizontalAlignment="Center" Text="Область" />
-                <ComboBox ItemsSource="{Binding RegionNames}" SelectedItem="{Binding SelectedRegionName}" />
-            </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="1">
-                <TextBlock HorizontalAlignment="Center" Text="Город" />
-                <ComboBox DisplayMemberPath="City" ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedRegion}" />
-            </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="2">
-                <TextBlock HorizontalAlignment="Center" Text="Широта" />
-                <TextBox Style="{DynamicResource ReadOnly}" Text="{Binding SelectedRegion.Latitude}" />
-            </StackPanel>
-        </Grid>       
-    </DockPanel>
+    <Grid>        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <TextBlock HorizontalAlignment="Center" Text="Область" />
+            <ComboBox ItemsSource="{Binding RegionNames}" SelectedItem="{Binding SelectedRegionName}" />
+        </StackPanel>
+        <StackPanel  Grid.Column="1">
+            <TextBlock HorizontalAlignment="Center" Text="Город" />
+            <ComboBox DisplayMemberPath="City" ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedRegion}" />
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+            <TextBlock HorizontalAlignment="Center" Text="Широта" />
+            <TextBox Style="{DynamicResource ReadOnly}" Text="{Binding SelectedRegion.Latitude}" VerticalAlignment="Center" />
+        </StackPanel>
+    </Grid>
 </catel:DataWindow>

@@ -20,14 +20,14 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsViewModel (InsModel insModel) : base()
         {
             InsModel = insModel;
-            ChangeRegion = new TaskCommand(OnChangeRegionExecute);
+            SelectRegion = new TaskCommand(OnSelectRegionExecute);
         }
 
         [Model]
         [Expose("Options")]
         [Expose("Tree")]
         public InsModel InsModel { get; set; }
-        public TaskCommand ChangeRegion { get; private set; }
+        public TaskCommand SelectRegion { get; private set; }
 
         protected override async Task InitializeAsync ()
         {
@@ -43,10 +43,14 @@ namespace PIK_GP_Acad.Insolation.UI
             await base.CloseAsync();
         }        
 
-        private async Task OnChangeRegionExecute ()
+        private async Task OnSelectRegionExecute ()
         {
             var regionViewModel = new InsRegionViewModel(InsModel.Options.Region);
-            var res = await InsService.UIVisualizerService.ShowDialogAsync(regionViewModel);            
-        }
+            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            if (await uiVisualizerService.ShowDialogAsync(regionViewModel) == true)
+            {
+                InsModel.Options.Region = regionViewModel.InsRegion;
+            }
+        }  
     }
 }

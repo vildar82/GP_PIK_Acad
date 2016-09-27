@@ -22,30 +22,28 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsPointViewModel (InsPoint insPoint): base()
         {            
             InsPoint = insPoint;            
-            SelectedBuildingType = GetBuildingTypeNameByType(InsPoint.BuildingType);
+            SelectedBuildingType = GetBuildingTypeNameByType(InsPoint.BuildingType);            
         }        
 
         [Model]
         [Expose("Number")]
         [Expose("Building")]
-        [Expose("Height")]        
+        [Expose("Height")]  
+        [Expose("Window")]       
         public InsPoint InsPoint { get; set; }
         public List<BuildingTypeName> BuildingTypes { get; set; } = buildingTypes;
-        public BuildingTypeName SelectedBuildingType { get; set; }
-        public Color Color { get; set; }
+        public BuildingTypeName SelectedBuildingType { get; set; }        
 
         protected override async Task InitializeAsync ()
         {
             await base.InitializeAsync();
 
-            // TODO: subscribe to events here      
-            SelectedBuildingType.PropertyChanged += SelectedBuildingTypeChanged;
+            // TODO: subscribe to events here                  
         }        
 
         protected override async Task CloseAsync ()
         {
-            // TODO: unsubscribe from events here
-            SelectedBuildingType.PropertyChanged -= SelectedBuildingTypeChanged;
+            // TODO: unsubscribe from events here            
 
             await base.CloseAsync();
         }
@@ -56,7 +54,7 @@ namespace PIK_GP_Acad.Insolation.UI
             return res;
         }
 
-        private void SelectedBuildingTypeChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnSelectedBuildingTypeChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             InsPoint.BuildingType = SelectedBuildingType.Type;
         }

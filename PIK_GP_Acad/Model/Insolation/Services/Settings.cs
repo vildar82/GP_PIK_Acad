@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using Catel.Data;
 using PIK_GP_Acad.Insolation.Models;
 
@@ -56,8 +56,7 @@ namespace PIK_GP_Acad.Insolation.Services
         }        
 
         private ObservableCollection<InsRegion> DefaultRegions ()
-        {
-            //List<InsRegion> regions = AcadLib.Files.SerializerXml.Load<List<InsRegion>>(FileRegions);
+        {            
             ObservableCollection<InsRegion> regions = null;
             if (regions == null || regions.Count == 0)
             {
@@ -69,17 +68,16 @@ namespace PIK_GP_Acad.Insolation.Services
                     new InsRegion (RegionEnum.Central,"Новосибирская область","Новосибирск",55 ),
                     new InsRegion (RegionEnum.Central,"Ярославская область","Ярославль",57 ),
                 };
-            }
-            //AcadLib.Files.SerializerXml.Save(FileRegions, regions);
+            }            
             return regions;
         }
 
         private ObservableCollection<TreeVisualOption> DefaultTreeVisualOptions ()
         {
             ObservableCollection<TreeVisualOption> visuals = new ObservableCollection<TreeVisualOption> {
-                new TreeVisualOption (Color.FromRgb(205, 32, 39), 35),
-                new TreeVisualOption (Color.FromRgb(241, 235, 31), 55),
-                new TreeVisualOption (Color.FromRgb(19, 155, 72), 75),
+                new TreeVisualOption (Color.FromArgb(205, 32, 39), 35),
+                new TreeVisualOption (Color.FromArgb(241, 235, 31), 55),
+                new TreeVisualOption (Color.FromArgb(19, 155, 72), 75),
             };
             return visuals;
         }
@@ -87,10 +85,10 @@ namespace PIK_GP_Acad.Insolation.Services
         private ObservableCollection<InsRequirement> DefaulrInsRequirements ()
         {
             var reqs = new ObservableCollection<InsRequirement> {
-                new InsRequirement() { Type = InsRequirementEnum.D, Color = System.Drawing.Color.Blue },
-                new InsRequirement() { Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green },
-                new InsRequirement() { Type = InsRequirementEnum.B, Color = System.Drawing.Color.Yellow },
-                new InsRequirement() { Type = InsRequirementEnum.A, Color = System.Drawing.Color.Red }
+                new InsRequirement() { Type = InsRequirementEnum.D, Color = Color.Blue },
+                new InsRequirement() { Type = InsRequirementEnum.C, Color = Color.Green },
+                new InsRequirement() { Type = InsRequirementEnum.B, Color = Color.Yellow },
+                new InsRequirement() { Type = InsRequirementEnum.A, Color = Color.Red }
             };
             return reqs;
         }

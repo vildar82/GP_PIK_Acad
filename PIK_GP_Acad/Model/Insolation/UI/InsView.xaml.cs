@@ -19,7 +19,7 @@ namespace PIK_GP_Acad.Insolation.UI
     /// </summary>
     public partial class InsView
     {
-        public InsView ()
+        public InsView (InsViewModel viewModel) : base(viewModel)
         {
             InitializeComponent();            
         }        

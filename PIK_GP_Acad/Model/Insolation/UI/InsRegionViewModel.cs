@@ -10,34 +10,67 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsRegionViewModel : ViewModelBase
     {
-        Dictionary<string, List<InsRegion>> dictRegions = Services.InsService.Settings.Regions.ToList().
-                     GroupBy(g => g.RegionName).OrderBy(o => o.Key).ToDictionary(k => k.Key, v => v.ToList());
-
-        public InsRegionViewModel () { }
-        public InsRegionViewModel (InsRegion region) : base()
+        Dictionary<string, ObservableCollection<InsRegion>> dictRegions = Services.InsService.Settings.Regions.
+                     GroupBy(g => g.RegionName).OrderBy(o => o.Key).ToDictionary(k => k.Key, v =>
+                     {
+                         var regs = new ObservableCollection<InsRegion>();
+                         foreach (var item in v)
+                         {
+                             regs.Add(item);
+                         }
+                         return regs;
+                     });        
+        public InsRegionViewModel (InsRegion region)
         {
             InsRegion = region;
-            RegionNames = dictRegions.Keys.ToList();
+            RegionNames = new ObservableCollection<string>();            
+            foreach (var item in dictRegions.Keys)
+            {
+                RegionNames.Add(item);
+            }
             SelectedRegionName = InsRegion.RegionName;
+            SelectedRegion = region;
         }
 
         [Model]
         public InsRegion InsRegion { get; set; }
 
-        public List<string> RegionNames { get; set; }
+        public override string Title { get { return "Регион"; } }
+
+        public ObservableCollection<string> RegionNames { get; set; }
 
         public string SelectedRegionName { get; set; }
 
-        public List<InsRegion> Cities { get; set; }                
+        public ObservableCollection<InsRegion> Cities { get; set; }
+        public InsRegion SelectedRegion { get; set; }
 
-        private void OnRegionNamesChanged()
+        private void OnSelectedRegionChanged ()
+        {
+            if (SelectedRegion != null)
+            {
+                InsRegion = SelectedRegion;
+                //InsRegion.RegionPart = SelectedRegion.RegionPart;
+                //InsRegion.RegionName = SelectedRegion.RegionName;
+                //InsRegion.City = SelectedRegion.City;
+                //InsRegion.Latitude = SelectedRegion.Latitude;
+            }
+        }
+
+        private void OnSelectedRegionNameChanged ()
         {
             FillCityes();
         }
         private void FillCityes ()
         {
-            if (!string.IsNullOrEmpty(SelectedRegionName))
+            if (string.IsNullOrEmpty(SelectedRegionName))
+            {
+                Cities = null;
+            }
+            else
+            {
                 Cities = dictRegions[SelectedRegionName];
+                SelectedRegion = Cities[0];
+            }                
         }
 
         protected override async Task InitializeAsync ()

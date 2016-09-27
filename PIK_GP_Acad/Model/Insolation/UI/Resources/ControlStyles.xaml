@@ -22,15 +22,15 @@
     <Style TargetType="ListBox" BasedOn="{StaticResource ControlBase}"></Style>
     <Style TargetType="TabControl" BasedOn="{StaticResource ControlBase}"></Style>
     <Style TargetType="Button" BasedOn="{StaticResource ControlBase}"></Style>
-    <Style TargetType="{x:Type Window}">
+    <!--<Style TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
-    </Style>
+    </Style>-->
     <Style TargetType="{x:Type UserControl}">
         <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
     </Style>
-    <Style TargetType="{x:Type catel:DataWindow}">
+    <!--<Style TargetType="{x:Type catel:DataWindow}">
         <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
-    </Style>
+    </Style>-->
     <Style TargetType="{x:Type catel:UserControl}">
         <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
     </Style>

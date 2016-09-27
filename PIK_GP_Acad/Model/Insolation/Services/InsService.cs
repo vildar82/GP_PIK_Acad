@@ -29,8 +29,8 @@ namespace PIK_GP_Acad.Insolation.Services
         static Dictionary<Document, InsModel> insModels = new Dictionary<Document, InsModel>();
         static InsServicePallete palette;
         static InsViewModel insViewModel;
-        public static IMessageService MessageService { get; private set; }
-        public static IUIVisualizerService UIVisualizerService { get; private set; }
+        static InsView insView;
+
         public static ISettings Settings { get; private set; }
 
         static InsService()
@@ -39,9 +39,8 @@ namespace PIK_GP_Acad.Insolation.Services
             Catel.Logging.LogManager.AddDebugListener();
 #endif
             // Регистрация валидатора Catel.Extensions.FluentValidation
-            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
-            MessageService = ServiceLocator.Default.ResolveType<IMessageService>();
-            UIVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();            
+            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();            
+            
 
             Settings = new Settings();
             Settings.Load();
@@ -51,18 +50,22 @@ namespace PIK_GP_Acad.Insolation.Services
         public static void Start (Document doc)
         {            
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
+            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => RemoveDocument(e.Document);
             ChangeDocument(doc);
             palette.Visible = true;           
-        }        
+        }
+
+        
 
         public static void Stop ()
         {
             Application.DocumentManager.DocumentActivated -= (o,e) => ChangeDocument(e.Document);
+            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => RemoveDocument(e.Document);
             Settings.Save();
             //palette.Visible = false;
             palette = null;
             insModels = null;
-            insViewModel = null;
+            //insViewModel = null;
 
 #if DEBUG
             var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
@@ -84,28 +87,35 @@ namespace PIK_GP_Acad.Insolation.Services
             return req;
         }
 
-        private static void ChangeDocument (Document doc)
+        private static void RemoveDocument (Document doc)
         {
-            InsModel model;
-            if (!insModels.TryGetValue(doc, out model))
+            insModels.Remove(doc);
+        }
+
+        private async static void ChangeDocument (Document doc)
+        {
+            InsModel insModel;
+            if (!insModels.TryGetValue(doc, out insModel))
             {
-                model = new InsModel(doc);                
-                insModels.Add(doc, model);
+                insModel = new InsModel(doc);
+                insModels.Add(doc, insModel);
             }
 
             if (palette == null)
             {
-                var insControl = new InsView();
-                insControl.Dispatcher.UnhandledException += Dispatcher_UnhandledException;
-                insViewModel = new InsViewModel(model);
-                insControl.DataContext = insViewModel;
-                palette = new InsServicePallete(insControl);
-                palette.StateChanged += Palette_StateChanged;           
+                insViewModel = new InsViewModel(insModel);
+                insView = new InsView(insViewModel);
+                insView.Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+                palette = new InsServicePallete(insView);
+                palette.StateChanged += Palette_StateChanged;
             }
             else
             {
-                insViewModel.InsModel = model;
-            }            
+                if (await insViewModel.SaveViewModelAsync() == true)
+                {
+                    insViewModel.InsModel = insModel;
+                }
+            }
         }
 
         private static void Palette_StateChanged (object sender, Autodesk.AutoCAD.Windows.PaletteSetStateEventArgs e)
@@ -118,7 +128,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void Dispatcher_UnhandledException (object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
+            var messageService = ServiceLocator.Default.ResolveType<IMessageService>();
+            messageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
         }        
     }
 }

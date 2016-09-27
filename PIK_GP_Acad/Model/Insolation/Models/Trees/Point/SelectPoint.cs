@@ -7,6 +7,8 @@ using AcadLib.Exceptions;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
+using Catel.IoC;
+using Catel.Services;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 
@@ -35,7 +37,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Запрос настроек расчетной точки
             var pViewModel = new InsPointViewModel(p);
-            if (InsService.UIVisualizerService.ShowDialog(pViewModel) == true)
+            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            if (uiVisualizerService.ShowDialog(pViewModel) == true)
             {
                 return p;
             }

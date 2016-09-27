@@ -15,11 +15,11 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class InsPoint : ModelBase
     {
-        
-
         InsModel model;
         public InsPoint (InsModel model)
-        {            
+        {
+            this.model = model;
+            Window = new WindowOptions();  
         }
 
         /// <summary>
@@ -32,6 +32,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsRequirement InsReq { get; set; }
         public BuildingTypeEnum BuildingType { get; set; }       
         public int Height { get; set; }
+        public WindowOptions Window { get; set; }
 
         /// <summary>
         /// Расчет точки - зон освещенности и времени

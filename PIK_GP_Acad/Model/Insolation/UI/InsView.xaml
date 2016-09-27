@@ -9,7 +9,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{DynamicResource DarkThemeBackgroundBrush}"
     d:DataContext="{d:DesignInstance local:InsViewModel,
-                                     IsDesignTimeCreatable=False}"
+                                     IsDesignTimeCreatable=False}"    
     mc:Ignorable="d">
     <!--<catel:UserControl.Resources>
         <ResourceDictionary>
@@ -36,7 +36,7 @@
                 MinHeight="20"
                 Margin="5,0,5,0" VerticalContentAlignment="Center"
                 FontSize="9"
-                Command="{Binding ChangeRegion}"
+                Command="{Binding SelectRegion}"
                 Content="..." ToolTip="Выбор региорна" />
         </StackPanel>
         <!--  Выбор расчета  -->

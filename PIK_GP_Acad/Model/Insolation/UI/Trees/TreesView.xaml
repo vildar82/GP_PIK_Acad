@@ -4,6 +4,7 @@
     xmlns:catel="http://catel.codeplex.com"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:TreesViewModel,
@@ -24,7 +25,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Background="{Binding Color}" Text="{Binding Number}" />
+                                <TextBlock Background="{Binding InsReq.Color}" Text="{Binding Number}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -38,10 +39,8 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <TextBox HorizontalAlignment="Stretch" BorderThickness="0" Text="{Binding Height, StringFormat={}{0} м}">
-                                <TextBox.Background>
-                                    <SolidColorBrush Color="{Binding Color}" />
-                                </TextBox.Background>
+                            <TextBox HorizontalAlignment="Stretch" BorderThickness="0" Text="{Binding Height, StringFormat={}{0} м}"
+                                     Background="{Binding Color, Converter={converters:ColorToBrushConverter}}">                                                                
                             </TextBox>
                         </DockPanel>
                     </DataTemplate>

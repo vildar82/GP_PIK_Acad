@@ -34,6 +34,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (other == null) return false;
             var res = RegionPart == other.RegionPart &&
+                RegionName == other.RegionName &&
+                City == other.City &&
                 Latitude == other.Latitude;
             return res;
         }
