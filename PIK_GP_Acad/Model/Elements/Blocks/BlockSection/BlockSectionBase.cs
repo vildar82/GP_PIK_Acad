@@ -40,6 +40,8 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             }
         }
 
+        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Living;
+
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {
             ExtentsInModel = this.Bounds.Value;
@@ -72,7 +74,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public List<IODRecord> GetODRecords ()
         {
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Live, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour, OD.Records.BuildingType.Live, Height);
             return new List<IODRecord> { odBuild };
         }
 

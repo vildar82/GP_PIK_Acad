@@ -37,7 +37,9 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         
 
         public int Height { get; set; }
-        public abstract ObjectId IdPlContour { get; set;}        
+        public abstract ObjectId IdPlContour { get; set;}
+
+        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Social;
 
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {
@@ -89,7 +91,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
             List<IODRecord> recs = new List<IODRecord>();
 
             // Запись ODBuilding
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Social, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour,OD.Records.BuildingType.Social, Height);
             recs.Add(odBuild);
 
             // Запись ODCoverage

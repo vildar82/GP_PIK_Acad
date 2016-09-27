@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.Insolation;
-using PIK_GP_Acad.Insolation.Options;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Model.Insolation.ShadowMap
 {

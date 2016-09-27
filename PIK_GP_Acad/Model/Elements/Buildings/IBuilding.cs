@@ -17,5 +17,6 @@ namespace PIK_GP_Acad.Elements.Buildings
         Extents3d ExtentsInModel { get; }        
         int Height { get; }        
         Polyline GetContourInModel ();
+        BuildingTypeEnum BuildingType { get; set; }
     }
 }

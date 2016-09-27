@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation;
+using PIK_GP_Acad.Insolation.Models;
 
-namespace PIK_GP_Acad.Model.Insolation.ShadowMap.Visualization
+namespace PIK_GP_Acad.Insolation.ShadowMap.Visualization
 {
     class Visual
     {
@@ -23,6 +24,6 @@ namespace PIK_GP_Acad.Model.Insolation.ShadowMap.Visualization
                 draws.Add(d);
                 tm.AddTransient(d, TransientDrawingMode.Main, 0, ic);
             }
-        }
+        }        
     }
 }

@@ -8,51 +8,45 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Catel.Fody;
 using Catel.MVVM;
 using Catel.IoC;
-using PIK_GP_Acad.Insolation.Options;
+using PIK_GP_Acad.Insolation;
 using Catel.Services;
 using PIK_GP_Acad.Insolation.Services;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsViewModel : ViewModelBase
-    {        
-        public InsViewModel(InsModel insModel) : base()
+    {
+        public InsViewModel (InsModel insModel) : base()
         {
-            InsModel = insModel;            
-        }        
+            InsModel = insModel;
+            ChangeRegion = new TaskCommand(OnChangeRegionExecute);
+        }
 
         [Model]
         [Expose("Options")]
-        [Expose("Tree")]        
-        public InsModel InsModel { get; set; }                
-
+        [Expose("Tree")]
+        public InsModel InsModel { get; set; }
+        public TaskCommand ChangeRegion { get; private set; }
 
         protected override async Task InitializeAsync ()
         {
             await base.InitializeAsync();
 
             // TODO: subscribe to events here            
-        }        
+        }
 
         protected override async Task CloseAsync ()
         {
             // TODO: unsubscribe from events here
 
             await base.CloseAsync();
-        }
+        }        
 
-        Command showRegion;
-        public Command ShowRegion {
-            get {
-                return showRegion ?? (showRegion = new Command(() =>
-                {
-                    var regionViewModel = new InsRegionViewModel(InsModel.Options.Region);
-                    if (InsService.UIVisualizerService.ShowDialog(regionViewModel) == true)
-                    {
-                        // TODO: Изменение региона
-                    }
-                }));
-            }
+        private async Task OnChangeRegionExecute ()
+        {
+            var regionViewModel = new InsRegionViewModel(InsModel.Options.Region);
+            var res = await InsService.UIVisualizerService.ShowDialogAsync(regionViewModel);            
         }
     }
 }

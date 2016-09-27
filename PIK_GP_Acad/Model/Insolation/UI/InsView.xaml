@@ -6,55 +6,51 @@
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
-    FontSize="14"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{DynamicResource DarkThemeBackgroundBrush}"
     d:DataContext="{d:DesignInstance local:InsViewModel,
                                      IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
-    <catel:UserControl.Resources>
+    <!--<catel:UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
-                <!--<ResourceDictionary Source="/Catel.Extensions.Controls;component/themes/generic.xaml" />-->
+                <ResourceDictionary Source="/Catel.Extensions.Controls;component/themes/generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </catel:UserControl.Resources>
+    </catel:UserControl.Resources>-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <!--  Регион  -->
-        <DockPanel Grid.Row="0">
-            <TextBlock Text="{Binding Options.Region.City, StringFormat=город: \{0\}}" />
-            <Button Command="{Binding ShowRegion}" Content="..." />
-        </DockPanel>
+        <StackPanel
+            Grid.Row="0"
+            Margin="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock Margin="5,3,5,0" Text="Регион: " />
+            <TextBlock Margin="5,3,5,0" Text="{Binding Options.Region.City}" ToolTip="Город" />
+            <TextBlock Margin="5,3,5,0" Text="{Binding Options.Region.Latitude}" ToolTip="Широта °" />
+            <Button                
+                MinHeight="20"
+                Margin="5,0,5,0" VerticalContentAlignment="Center"
+                FontSize="9"
+                Command="{Binding ChangeRegion}"
+                Content="..." ToolTip="Выбор региорна" />
+        </StackPanel>
         <!--  Выбор расчета  -->
         <DockPanel Grid.Row="1">
-            <TabControl Grid.Column="0" Background="Transparent">
+            <TabControl Grid.Column="0" Margin="0" Background="Transparent">
                 <!--  Вкладка - Елочки  -->
-                <TabControl.ItemContainerStyle>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Header" Value="{Binding HeaderContent}" />
-                        <Setter Property="Content" Value="{Binding TabContent}" />
-                    </Style>
-                </TabControl.ItemContainerStyle>
                 <TabItem>
                     <TabItem.Header>
-                        <Image Source="/PIK_GP_Acad;component/Resources/trees.png" Height="16"/>
+                        <Image Height="16" Source="/PIK_GP_Acad;component/Resources/trees.png" />
                     </TabItem.Header>
                     <TabItem.Content>
-                        <local:TreesView DataContext="{Binding Tree}"/>
+                        <local:TreesView DataContext="{Binding Tree}" />
                     </TabItem.Content>
                 </TabItem>
-                
-                <!--  Тестовая вкладка  -->
-                <!--
-                <TabItem Header="Test">
-                    <ListBox>
-                        <ListBoxItem>dfgh</ListBoxItem>
-                    </ListBox>
-                </TabItem>-->
             </TabControl>
         </DockPanel>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:catel="http://catel.codeplex.com"
                     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI">
     <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="LightGray" />
     <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#5C5C5C" />
@@ -21,4 +22,16 @@
     <Style TargetType="ListBox" BasedOn="{StaticResource ControlBase}"></Style>
     <Style TargetType="TabControl" BasedOn="{StaticResource ControlBase}"></Style>
     <Style TargetType="Button" BasedOn="{StaticResource ControlBase}"></Style>
+    <Style TargetType="{x:Type Window}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
+    <Style TargetType="{x:Type UserControl}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
+    <Style TargetType="{x:Type catel:DataWindow}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
+    <Style TargetType="{x:Type catel:UserControl}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
 </ResourceDictionary>

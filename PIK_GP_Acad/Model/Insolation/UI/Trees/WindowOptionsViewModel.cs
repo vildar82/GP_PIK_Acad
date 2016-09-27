@@ -1,11 +1,11 @@
-﻿namespace PIK_GP_Acad.Insolation.UI
-{
-    using Catel.MVVM;
-    using System.Threading.Tasks;
-    using Insolation.Trees;
-    using System.Collections.Generic;
-    using Catel.Fody;
+﻿using Catel.MVVM;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Catel.Fody;
+using PIK_GP_Acad.Insolation.Models;
 
+namespace PIK_GP_Acad.Insolation.UI
+{
     public class WindowOptionsViewModel : ViewModelBase
     {
         public WindowOptionsViewModel (WindowOptions windowOption) : base()

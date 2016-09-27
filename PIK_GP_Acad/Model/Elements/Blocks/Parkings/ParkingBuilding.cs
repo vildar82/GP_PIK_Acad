@@ -35,6 +35,8 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
         public ObjectId IdPlContour { get; set; }        
         public int Height { get; set; }
 
+        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Garage;
+
         public ParkingBuilding (BlockReference blRef, string blName) : base(blRef, blName)
         {
             ExtentsInModel = Bounds.Value;
@@ -82,7 +84,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
             List<IODRecord> recs = new List<IODRecord>();
 
             // Запись ODBuilding
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Garage, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour, OD.Records.BuildingType.Garage, Height);
             recs.Add(odBuild);
 
             // Запись ODCoverage

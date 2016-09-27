@@ -8,7 +8,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation;
-using PIK_GP_Acad.Insolation.Options;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Model.Insolation.ShadowMap
 {

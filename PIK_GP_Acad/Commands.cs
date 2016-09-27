@@ -44,18 +44,14 @@ namespace PIK_GP_Acad
         //Имена блоков
         //public const string BlockNameDOO = "КП_ДОО";
         //public const string BlockNameSchool = "КП_СОШ";
-        public const string BlockNameKpParking = "КП_Паркинг";
-
-        IInsolationService insService;
+        public const string BlockNameKpParking = "КП_Паркинг";       
 
         public void InitCommands()
         {            
             CommandsPalette = new List<IPaletteCommand>()
             {
                 // Главная
-#if !NR
                 new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
-#endif
                 new PaletteCommand("Блок парковки",Resources.GP_Parking,nameof(GP_InsertBlockParking),"Вставка блока парковки"),
                 new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
@@ -484,6 +480,27 @@ namespace PIK_GP_Acad
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
             LoadDll(fileCivilDll);
+
+            // Загрузка ресурсов WPF
+            try
+            {
+                // Принудительная загрузка Catel.Extensions.Controls.dll (потом перенести загрузку из папки Packages)
+                LoadService.LoadCatel();
+
+                if (System.Windows.Application.Current == null)
+                {
+                    new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                }
+                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                new Uri("PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml", UriKind.Relative)) as ResourceDictionary);
+                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                new Uri("/Catel.Extensions.Controls;component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);
+                //    //catelControlsDll +";component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Log.Error(ex, "Загрузка ресурсов WPF");
+            }
         }
 
         private static void LoadDll (string  file)
@@ -500,7 +517,7 @@ namespace PIK_GP_Acad
 
         public void Terminate()
         {
-            
+            System.Windows.Application.Current.Shutdown();
         }
     }        
 }

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Catel.Data;
-using PIK_GP_Acad.Insolation.Options;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -16,7 +16,8 @@ namespace PIK_GP_Acad.Insolation.Services
         private static string fileSettings = AcadLib.IO.Path.GetSharedFile("Insolation", "Settings.xml");
         private static Settings settings;
         public ObservableCollection<InsRegion> Regions { get; set; }
-        public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }       
+        public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
+        public ObservableCollection<InsRequirement> InsRequirements { get; set; }
 
         public Settings ()
         {            
@@ -37,6 +38,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             Regions = settings.Regions;
             TreeVisualOptions = settings.TreeVisualOptions;
+            InsRequirements = settings.InsRequirements;
         }
 
         public void Save ()
@@ -49,8 +51,9 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings settings = new Settings();
             settings.Regions = DefaultRegions();
             settings.TreeVisualOptions = DefaultTreeVisualOptions();
+            settings.InsRequirements = DefaulrInsRequirements();
             return settings;
-        }
+        }        
 
         private ObservableCollection<InsRegion> DefaultRegions ()
         {
@@ -79,6 +82,17 @@ namespace PIK_GP_Acad.Insolation.Services
                 new TreeVisualOption (Color.FromRgb(19, 155, 72), 75),
             };
             return visuals;
+        }
+
+        private ObservableCollection<InsRequirement> DefaulrInsRequirements ()
+        {
+            var reqs = new ObservableCollection<InsRequirement> {
+                new InsRequirement() { Type = InsRequirementEnum.D, Color = System.Drawing.Color.Blue },
+                new InsRequirement() { Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green },
+                new InsRequirement() { Type = InsRequirementEnum.B, Color = System.Drawing.Color.Yellow },
+                new InsRequirement() { Type = InsRequirementEnum.A, Color = System.Drawing.Color.Red }
+            };
+            return reqs;
         }
     }
 }

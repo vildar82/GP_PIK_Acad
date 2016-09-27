@@ -9,13 +9,13 @@
     d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
-    <catel:UserControl.Resources>
+    <!--<catel:UserControl.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
-    </catel:UserControl.Resources>
+    </catel:UserControl.Resources>-->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
             <ColumnDefinition />
+            <ColumnDefinition Width="0.25*"/>
         </Grid.ColumnDefinitions>
         <!--  Список расчетных точекк  -->
         <DockPanel Grid.Column="0">
@@ -29,7 +29,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Button Command="{Binding AddPoint}" Content="Добавить точку" />
+                <Button Command="{Binding AddPoint}" Content="Добавить точку" ToolTip="{Binding AddpointInfo}"/>
             </StackPanel>
         </DockPanel>
         <!--  Настройки высот для визуализации  -->

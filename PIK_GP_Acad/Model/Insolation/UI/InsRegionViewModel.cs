@@ -1,13 +1,13 @@
-﻿namespace PIK_GP_Acad.Insolation.UI
-{
-    using Catel.MVVM;
-    using System.Threading.Tasks;
-    using Options;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System;
-    using System.Collections.ObjectModel;
+﻿using Catel.MVVM;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.Collections.ObjectModel;
+using PIK_GP_Acad.Insolation.Models;
 
+namespace PIK_GP_Acad.Insolation.UI
+{
     public class InsRegionViewModel : ViewModelBase
     {
         Dictionary<string, List<InsRegion>> dictRegions = Services.InsService.Settings.Regions.ToList().
@@ -18,7 +18,7 @@
         {
             InsRegion = region;
             RegionNames = dictRegions.Keys.ToList();
-            SelectedRegionName = region.RegionName;
+            SelectedRegionName = InsRegion.RegionName;
         }
 
         [Model]
@@ -28,16 +28,31 @@
 
         public string SelectedRegionName { get; set; }
 
-        public List<InsRegion> Cities { get; set; }        
-
-        private void FillCityes ()
-        {
-            Cities = dictRegions[SelectedRegionName];
-        }
+        public List<InsRegion> Cities { get; set; }                
 
         private void OnRegionNamesChanged()
         {
             FillCityes();
+        }
+        private void FillCityes ()
+        {
+            if (!string.IsNullOrEmpty(SelectedRegionName))
+                Cities = dictRegions[SelectedRegionName];
+        }
+
+        protected override async Task InitializeAsync ()
+        {
+            await base.InitializeAsync();
+
+            // TODO: subscribe to events here  
+            
+        }
+
+        protected override async Task CloseAsync ()
+        {
+            // TODO: unsubscribe from events here
+
+            await base.CloseAsync();
         }
     }
 }
