@@ -55,8 +55,6 @@ namespace PIK_GP_Acad.Insolation.Services
             palette.Visible = true;           
         }
 
-        
-
         public static void Stop ()
         {
             Application.DocumentManager.DocumentActivated -= (o,e) => ChangeDocument(e.Document);

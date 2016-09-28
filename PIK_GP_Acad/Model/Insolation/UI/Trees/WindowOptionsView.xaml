@@ -6,28 +6,52 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    d:DesignHeight="226.667" d:DesignWidth="141"
     mc:Ignorable="d">
     <!--<catel:UserControl.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
     </catel:UserControl.Resources>-->
     <GroupBox BorderBrush="Gray" Header="Параметры окна">
-        <WrapPanel>
+        <StackPanel>
+            <WrapPanel HorizontalAlignment="Center" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={catel:BooleanToOppositeBooleanConverter}}">
+                <StackPanel Margin="5">
+                    <TextBlock Text="Ширина окна, м" />
+                    <TextBox Text="{Binding Width}">
+                        <i:Interaction.Behaviors>
+                            <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>                    
+                </StackPanel>
+                <StackPanel Margin="5">
+                    <TextBlock Text="Тип конструкции" />
+                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Depth}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Margin="5">
+                    <TextBlock Text="Глубина четверти" />
+                    <ComboBox ItemsSource="{Binding Quarters}" SelectedItem="{Binding Quarter}" />
+                </StackPanel>
+            </WrapPanel>
             <StackPanel Margin="5">
-                <TextBlock Text="Ширина окна, м" />
-                <TextBox Text="{Binding Width}" />
+                <TextBlock HorizontalAlignment="Center" Text="Угол тени окна, °" />
+                <TextBox
+                    MaxWidth="100"
+                    IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked}"
+                    Text="{Binding ShadowAngle, Converter={converters:RadiansToDegreeConverter}}" />
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <CheckBox x:Name="chkBoxCustom" IsChecked="{Binding IsCustomAngle}" />
+                    <TextBlock Text="Пользовательский" />
+                </StackPanel>
             </StackPanel>
-            <StackPanel Margin="5">
-                <TextBlock Text="Тип конструкции" />
-                <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}" />
-            </StackPanel>
-            <StackPanel Margin="5">
-                <TextBlock Text="Глубина четверти" />
-                <ComboBox SelectedItem="{Binding Quarter}" Text="{Binding Quarters}" />
-            </StackPanel>
-            <StackPanel Margin="5">
-                <TextBlock Text="Угол тени окна" />
-                <TextBox Background="Gray" IsReadOnly="True" Text="{Binding ShadowAngle, Converter={converters:RadiansToDegreeConverter}}" />
-            </StackPanel>
-        </WrapPanel>
+        </StackPanel>
     </GroupBox>
 </catel:UserControl>

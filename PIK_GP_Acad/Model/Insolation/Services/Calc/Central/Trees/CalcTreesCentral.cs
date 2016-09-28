@@ -25,6 +25,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public List<IIlluminationArea> CalcPoint (InsPoint insPoint, Map map)
         {
             List<IIlluminationArea> illumAreas;
+            using (map.Doc.LockDocument())
             using (var t = map.Doc.Database.TransactionManager.StartTransaction())
             {
                 var calcPt = new CalcPointCentral(insPoint, map, insService);

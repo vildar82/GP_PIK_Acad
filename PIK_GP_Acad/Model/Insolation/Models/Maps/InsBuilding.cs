@@ -4,18 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
+using Catel.Data;
 using PIK_GP_Acad.Elements.Buildings;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class InsBuilding
+    public class InsBuilding: ModelBase
     {
         public IBuilding Building { get; private  set; }
         public Polyline Contour { get; private set; }
         public int Height { get; private set; }
         public double YMax { get; private set; }
         public double YMin { get; private set; }
-        public Extents3d ExtentsInModel { get; private set; }        
+        public Extents3d ExtentsInModel { get; private set; }
+        public BuildingTypeEnum BuildingType { get; set; }
 
         public InsBuilding(IBuilding building)
         {

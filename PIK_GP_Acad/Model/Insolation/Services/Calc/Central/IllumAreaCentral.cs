@@ -52,7 +52,7 @@ namespace PIK_GP_Acad.Insolation.Services
             double curStart = angleStart;
             foreach (var item in illums)
             {
-                if (curStart - item.AngleStartOnPlane > 0.1)
+                if (item.AngleStartOnPlane- curStart > 0.1)
                 {
                     var illum = new IllumAreaCentral(curStart, item.AngleStartOnPlane);
                     inverts.Add(illum);

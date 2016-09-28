@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public double Depth { get; set; }
 
-        public static List<WindowConstruction> WindowConstructions { get; set; } = new List<WindowConstruction>() {
+        public static ObservableCollection<WindowConstruction> WindowConstructions { get; set; } = new ObservableCollection<WindowConstruction>() {
             new WindowConstruction() { Name ="Одинарный оконный блок с одним стеклом", Depth = 0.06 },
             new WindowConstruction() { Name ="Одинарный оконный блок с однокамерным стеклопакетом", Depth = 0.09 },
             new WindowConstruction() { Name ="Одинарный оконный блок с двухкамерным стеклопакетом", Depth = 0.095 },

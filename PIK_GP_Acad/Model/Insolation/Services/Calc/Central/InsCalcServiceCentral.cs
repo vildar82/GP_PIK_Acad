@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -32,31 +33,61 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Определение требования освещенности
         /// </summary>
-        public InsRequirement CalcTimeAndGetRate (List<IIlluminationArea> illums)
+        public InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums)
         {
-            InsRequirementEnum rate = InsRequirementEnum.A;
-            int maxTimeOneIlum = 0;
-            int sumTimeIlum = 0;
+            var insValue = new InsValue();
+            var rate = InsRequirementEnum.A;
+            int maxTimeContinuosIlum = 0;
+            int curContinuosTime = 0;
+            int totalTime = 0;            
+            IIlluminationArea prev = null;
             foreach (var item in illums)
             {
-                item.Time = CalcTime(item);
-                sumTimeIlum += item.Time;
-                if (item.Time > maxTimeOneIlum)
-                    maxTimeOneIlum = item.Time;
+                item.Time = CalcTime(item.AngleStartOnPlane, item.AngleEndOnPlane);
+                curContinuosTime += item.Time;
+                totalTime += item.Time;
+
+                if (prev != null)
+                {
+                    var interval = CalcTime(prev.AngleEndOnPlane, item.AngleStartOnPlane);
+                    if (interval >=10)
+                    {
+                        curContinuosTime = item.Time;
+                    }                    
+                }               
+
+                if (curContinuosTime > maxTimeContinuosIlum)
+                    maxTimeContinuosIlum = curContinuosTime;
+
+                prev = item;
             }
-            if (maxTimeOneIlum >= 120)
+            // Непрерывная (более 2часов)
+            if (maxTimeContinuosIlum >= 120)
+            {
+                rate = InsRequirementEnum.C;
+            }
+            else if (totalTime >= 150 && maxTimeContinuosIlum>=60)
             {
                 rate = InsRequirementEnum.D;
             }
+            else if (maxTimeContinuosIlum>=90)
+            {
+                rate = InsRequirementEnum.B;
+            }
             var req = InsService.GetInsReqByEnum(rate);
-            return req;
+            insValue.Requirement = req;
+            insValue.MaxContinuosTime = maxTimeContinuosIlum;
+            insValue.TotalTime = totalTime;
+
+            return insValue;
         }
 
-        private int CalcTime (IIlluminationArea item)
+        private int CalcTime (double angleStart, double angleEnd)
         {
-            var angleStartOnSun = CalcValues.AngleSun(item.AngleStartOnPlane);
-            var angleEndOnSun = CalcValues.AngleSun(item.AngleEndOnPlane);
-            var time = Convert.ToInt32((angleEndOnSun - angleStartOnSun) * 4);// в 1 градусе 4 минуты времени хода солнца (по своей плоскости)
+            var angleStartOnSun = CalcValues.AngleSun(angleStart);
+            var angleEndOnSun = CalcValues.AngleSun(angleEnd);
+            var angleDegree = (angleEndOnSun - angleStartOnSun).ToDegrees();
+            var time = Convert.ToInt32(angleDegree * 4);// в 1 градусе 4 минуты времени хода солнца (по своей плоскости)
             return time;
         }
 

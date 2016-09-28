@@ -14,6 +14,6 @@ namespace PIK_GP_Acad.Insolation.Services
 
         ICalcTrees TreesCalc { get; set; }        
         void CreateShadowMap ();
-        InsRequirement CalcTimeAndGetRate (List<IIlluminationArea> illums);
+        InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums);
     }
 }

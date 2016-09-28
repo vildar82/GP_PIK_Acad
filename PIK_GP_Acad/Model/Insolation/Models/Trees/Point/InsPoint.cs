@@ -29,8 +29,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public Point3d Point { get; set;}
         public InsBuilding Building { get; set; }
         public List<IIlluminationArea> Illums { get; set; }
-        public InsRequirement InsReq { get; set; }
-        public BuildingTypeEnum BuildingType { get; set; }       
+        public InsValue InsValue { get; set; }        
         public int Height { get; set; }
         public WindowOptions Window { get; set; }
 
@@ -40,7 +39,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Calc ()
         {
             Illums = model.CalcService.TreesCalc.CalcPoint(this, model.Map);
-            InsReq = model.CalcService.CalcTimeAndGetRate(Illums);
+            InsValue = model.CalcService.CalcTimeAndGetRate(Illums);
         }
     }
 }

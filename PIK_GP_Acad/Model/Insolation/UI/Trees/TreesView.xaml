@@ -24,8 +24,10 @@
                 <ListBox Background="Transparent" ItemsSource="{Binding Points}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Background="{Binding InsReq.Color}" Text="{Binding Number}" />
+                            <StackPanel Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
+                                <TextBlock Text="{Binding Number}" />
+                                <TextBlock Text="{Binding InsValue.TotalTime, StringFormat={}{0}ч., Converter={converters:MinToHoursConverter}}"/>
+                                <TextBlock Text="{Binding InsValue.Requirement.Type}"
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

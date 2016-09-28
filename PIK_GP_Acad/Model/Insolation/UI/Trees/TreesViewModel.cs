@@ -19,8 +19,6 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class TreesViewModel : ViewModelBase
     {
-        static ImageSource imageTree = BitmapFrame.Create(new Uri("pack://application:,,,/PIK_GP_Acad;component/Resources/trees.png"));
-
         public TreesViewModel () { }
         public TreesViewModel (TreeModel treeModel)
         {
@@ -35,9 +33,9 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public string AddpointInfo { get; set; }
 
-        public TaskCommand AddPoint { get; private set; }            
-                   
-        private async Task OnAddPointExecute()
+        public TaskCommand AddPoint { get; private set; }
+
+        private async Task OnAddPointExecute ()
         {
             TreeModel.NewPoint();
         }
@@ -53,8 +51,7 @@ namespace PIK_GP_Acad.Insolation.UI
             else
             {
                 res = false;
-                AddpointInfo = "В чертеже нет зданий";
-                
+                AddpointInfo = "В чертеже нет зданий";                
             }            
             return res;
         }

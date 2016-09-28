@@ -22,14 +22,15 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsPointViewModel (InsPoint insPoint): base()
         {            
             InsPoint = insPoint;            
-            SelectedBuildingType = GetBuildingTypeNameByType(InsPoint.BuildingType);            
+            SelectedBuildingType = GetBuildingTypeNameByType(InsPoint.Building.BuildingType);            
         }        
 
         [Model]
         [Expose("Number")]
         [Expose("Building")]
         [Expose("Height")]  
-        [Expose("Window")]       
+        [Expose("Window")]   
+        [Expose("InsValue")]    
         public InsPoint InsPoint { get; set; }
         public List<BuildingTypeName> BuildingTypes { get; set; } = buildingTypes;
         public BuildingTypeName SelectedBuildingType { get; set; }        
@@ -48,16 +49,16 @@ namespace PIK_GP_Acad.Insolation.UI
             await base.CloseAsync();
         }
 
+        private void OnSelectedBuildingTypeChanged()
+        {
+            InsPoint.Building.BuildingType = SelectedBuildingType.Type;
+        }
+
         private BuildingTypeName GetBuildingTypeNameByType (BuildingTypeEnum buildingType)
         {
             var res = buildingTypes.Find(f => f.Type == buildingType);
             return res;
-        }
-
-        private void OnSelectedBuildingTypeChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            InsPoint.BuildingType = SelectedBuildingType.Type;
-        }
+        }        
     }
 
     public class BuildingTypeName : ModelBase

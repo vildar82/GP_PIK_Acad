@@ -14,6 +14,7 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         public WindowOptions ()
         {
+                        
         }
 
         /// <summary>
@@ -27,16 +28,33 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Глубина четверти
         /// </summary>
-        public double Quarter { get; set; } = 0.07;        
+        public double Quarter { get; set; } = 0.07;   
+        /// <summary>
+        /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор)
+        /// </summary>
+        public double ShadowAngle { get; set; }    
+        /// <summary>
+        /// Если значение угла введено пользователем
+        /// </summary>
+        public bool IsCustomAngle { get; set; }              
 
         /// <summary>
-        /// Теневой угол, рад
-        /// </summary>
-        /// <returns></returns>
-        public double GetShadowAngle()
+        /// Определение теневого угла - по введенным значениям
+        /// </summary>        
+        public double CalcShadowAngle()
         {
+            if (Construction == null) return 0;                    
             double b = Math.Atan2(Construction.Depth + Quarter, Width + 0.065);
             return b;
+        }
+
+        protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)
+        {            
+            if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
+            {
+                ShadowAngle = CalcShadowAngle();
+            }
+            base.OnPropertyChanged(e);
         }
     }
 }

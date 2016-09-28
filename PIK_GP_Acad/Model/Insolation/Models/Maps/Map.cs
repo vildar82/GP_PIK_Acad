@@ -72,7 +72,16 @@ namespace PIK_GP_Acad.Insolation.Models
             Rectangle rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             Scope scope = new Scope(ext, items);
+            InitContour(scope.Buildings);
             return scope;
+        }
+
+        public void InitContour (List<InsBuilding> buildings)
+        {
+            foreach (var item in buildings)
+            {
+                item.InitContour();
+            }
         }
 
         public InsBuilding GetBuildingInPoint (Point3d pt)
