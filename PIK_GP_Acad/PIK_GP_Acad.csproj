@@ -44,16 +44,16 @@
       <HintPath>..\..\..\AcadLib\AcadLib\bin\Release\AcadLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcCoreMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.Core.20.0.1\lib\45\AcCoreMgd.dll</HintPath>
+    <Reference Include="AcCoreMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcCoreMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcDbMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.Model.20.0.1\lib\45\AcDbMgd.dll</HintPath>
+    <Reference Include="AcDbMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AcMgd, Version=20.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoCAD.NET.20.0.1\lib\45\AcMgd.dll</HintPath>
+    <Reference Include="AcMgd">
+      <HintPath>..\..\..\ObjectARX\ObjectARX2015\AcMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AutoCAD_PIK_Manager">
@@ -191,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AutoCADNetLoad.scr" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Model\HorizontalElevation\FormHorizontalElevation.resx">
