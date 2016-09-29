@@ -484,8 +484,8 @@ namespace PIK_GP_Acad
             // Загрузка ресурсов WPF
             try
             {
-                // Принудительная загрузка Catel.Extensions.Controls.dll (потом перенести загрузку из папки Packages)
-                LoadService.LoadCatel();
+                // загрузка Orchestra
+                LoadService.LoadCatel();                
 
                 if (System.Windows.Application.Current == null)
                 {
@@ -494,8 +494,17 @@ namespace PIK_GP_Acad
                 System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
                 new Uri("PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml", UriKind.Relative)) as ResourceDictionary);
                 System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                new Uri("/Catel.Extensions.Controls;component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);
-                //    //catelControlsDll +";component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);
+                new Uri("Catel.Extensions.Controls;component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);                
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Controls.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Fonts.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Colors.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Accents/Blue.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Accents/BaseLight.xaml", UriKind.Relative)) as ResourceDictionary);
             }
             catch (System.Exception ex)
             {

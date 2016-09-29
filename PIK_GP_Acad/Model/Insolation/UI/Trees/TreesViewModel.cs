@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using Catel.MVVM;
 using Catel.Fody;
 using PIK_GP_Acad.Insolation.Models;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -56,4 +57,20 @@ namespace PIK_GP_Acad.Insolation.UI
             return res;
         }
     }    
+
+    public class DesignTreesViewModel : TreesViewModel
+    {
+        public DesignTreesViewModel()
+        {
+            TreeModel = new TreeModel();
+            TreeModel.Points = new ObservableCollection<InsPoint>() {
+                new InsPoint(null) {
+                    InsValue = new InsValue () {
+                        MaxContinuosTime =120, TotalTime= 240, Requirement = new InsRequirement () {
+                            Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green } },
+                    Building = new InsBuilding () { BuildingType = Elements.Buildings.BuildingTypeEnum.Living } }                    
+            };            
+            TreeModel.VisualOptions = Settings.DefaultTreeVisualOptions();            
+        }
+    }
 }

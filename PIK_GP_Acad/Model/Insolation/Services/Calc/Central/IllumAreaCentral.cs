@@ -15,15 +15,15 @@ namespace PIK_GP_Acad.Insolation.Services
     /// 
     /// </summary>
     public class IllumAreaCentral : IllumAreaBase
-    {        
+    {
         //public Polyline Low { get; set; }
         //public Polyline Medium { get; set; }
         //public Polyline Hight { get; set; }       
 
-        public IllumAreaCentral (double angleStart, double angleEnd)
-            : base(angleStart, angleEnd)
-        {            
-                            
+        public IllumAreaCentral (Point2d ptOrig, double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
+            : base(ptOrig, angleStart, angleEnd, ptStart, ptEnd)
+        {
+
         }
 
         ///// <summary>
@@ -49,19 +49,23 @@ namespace PIK_GP_Acad.Insolation.Services
         public static List<IIlluminationArea> Invert (List<IIlluminationArea> illums, double angleStart, double angleEnd)
         {
             List<IIlluminationArea> inverts = new List<IIlluminationArea>();
-            double curStart = angleStart;
+            double curStart = angleStart;            
+            Point2d cusStartPt = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, illums[0].PtStart, curStart);
+                        
             foreach (var item in illums)
             {
                 if (item.AngleStartOnPlane- curStart > 0.1)
-                {
-                    var illum = new IllumAreaCentral(curStart, item.AngleStartOnPlane);
+                {                    
+                    var illum = new IllumAreaCentral(item.PtOrig, curStart, item.AngleStartOnPlane, cusStartPt, item.PtStart);
                     inverts.Add(illum);
                 }
                 curStart = item.AngleEndOnPlane;
+                cusStartPt = item.PtEnd;
             }
             if (angleEnd - curStart >0.1)
             {
-                var illum = new IllumAreaCentral(curStart, angleEnd);
+                Point2d ptEnd = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
+                var illum = new IllumAreaCentral(illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
                 inverts.Add(illum);
             }
             return inverts;

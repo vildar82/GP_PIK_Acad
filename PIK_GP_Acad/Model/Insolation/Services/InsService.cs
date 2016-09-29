@@ -25,8 +25,8 @@ namespace PIK_GP_Acad.Insolation.Services
     public static class InsService
     {
         static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;
-
-        static Dictionary<Document, InsModel> insModels = new Dictionary<Document, InsModel>();
+        static Dictionary<Type, object> dictServices;
+        static Dictionary<Document, InsModel> insModels;
         static InsServicePallete palette;
         static InsViewModel insViewModel;
         static InsView insView;
@@ -38,9 +38,14 @@ namespace PIK_GP_Acad.Insolation.Services
 #if DEBUG
             Catel.Logging.LogManager.AddDebugListener();
 #endif
+            //DesignTreesViewModel desigVM = new UI.DesignTreesViewModel();
+
             // Регистрация валидатора Catel.Extensions.FluentValidation
-            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();            
-            
+            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
+
+            dictServices = new Dictionary<Type, object> {
+                { typeof(IVisualInsPointSimple) , new VisualInsPointSimple() }
+            };
 
             Settings = new Settings();
             Settings.Load();
@@ -48,10 +53,13 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         public static void Start (Document doc)
-        {            
+        {
+            if (insModels == null)
+                insModels = new Dictionary<Document, InsModel>();
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
             Application.DocumentManager.DocumentToBeDestroyed += (o, e) => RemoveDocument(e.Document);
-            ChangeDocument(doc);
+            if(palette == null)
+                ChangeDocument(doc);
             palette.Visible = true;           
         }
 
@@ -128,6 +136,11 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var messageService = ServiceLocator.Default.ResolveType<IMessageService>();
             messageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
-        }        
+        }
+
+        public static T GetService<T> ()
+        {
+            return (T)dictServices[typeof(T)];
+        }
     }
 }

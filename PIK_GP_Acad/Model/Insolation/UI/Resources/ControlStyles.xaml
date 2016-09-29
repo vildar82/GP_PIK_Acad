@@ -4,7 +4,7 @@
                     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI">
     <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="LightGray" />
     <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#5C5C5C" />
-    <Style x:Key="ControlBase" TargetType="FrameworkElement">
+    <!--<Style x:Key="ControlBase" TargetType="FrameworkElement">
         <Setter Property="Margin" Value="5"/>
     </Style>
     <Style TargetType="ComboBox" BasedOn="{StaticResource ControlBase}">
@@ -21,7 +21,7 @@
     </Style>
     <Style TargetType="ListBox" BasedOn="{StaticResource ControlBase}"></Style>
     <Style TargetType="TabControl" BasedOn="{StaticResource ControlBase}"></Style>
-    <Style TargetType="Button" BasedOn="{StaticResource ControlBase}"></Style>
+    <Style TargetType="Button" BasedOn="{StaticResource ControlBase}"></Style>-->
     <!--<Style TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
     </Style>-->

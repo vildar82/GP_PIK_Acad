@@ -5,19 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Elements.Buildings;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     public class InsBuilding: ModelBase
     {
+        [ExcludeFromSerialization]
         public IBuilding Building { get; private  set; }
+        [ExcludeFromSerialization]
         public Polyline Contour { get; private set; }
         public int Height { get; private set; }
         public double YMax { get; private set; }
         public double YMin { get; private set; }
+        [ExcludeFromSerialization]
         public Extents3d ExtentsInModel { get; private set; }
         public BuildingTypeEnum BuildingType { get; set; }
+
+        public InsBuilding () { }
 
         public InsBuilding(IBuilding building)
         {
@@ -25,7 +31,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Height = building.Height;
             ExtentsInModel = building.ExtentsInModel;
             YMax = ExtentsInModel.MaxPoint.Y;
-            YMin = ExtentsInModel.MinPoint.Y;
+            YMin = ExtentsInModel.MinPoint.Y;            
         }
 
         /// <summary>

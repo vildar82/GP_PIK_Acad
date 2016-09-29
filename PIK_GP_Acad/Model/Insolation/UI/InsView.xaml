@@ -21,29 +21,35 @@
     </catel:UserControl.Resources>-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <!--  Регион  -->
-        <StackPanel
-            Grid.Row="0"
-            Margin="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-            Orientation="Horizontal">
-            <TextBlock Margin="5,3,5,0" Text="Регион: " />
-            <TextBlock Margin="5,3,5,0" Text="{Binding Options.Region.City}" ToolTip="Город" />
-            <TextBlock Margin="5,3,5,0" Text="{Binding Options.Region.Latitude}" ToolTip="Широта °" />
-            <Button
-                Margin="5,0,5,0" VerticalContentAlignment="Center"                
-                Command="{Binding SelectRegion}"
-                ToolTip="Выбор региорна" />
+        <StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal">
+            <CheckBox x:Name="chkBoxInsActivated" VerticalAlignment="Center" Content="Включить" IsChecked="{Binding IsInsActivated}"/>
+            <!--  Регион  -->
+            <StackPanel Margin="1" HorizontalAlignment="Right" Orientation="Horizontal" IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}">
+                <TextBlock Margin="2" VerticalAlignment="Center" Text="Регион:" />
+                <TextBlock
+                    Margin="2" VerticalAlignment="Center"
+                    Text="{Binding Options.Region.City}"
+                    ToolTip="Город" />
+                <TextBlock
+                    Margin="2" VerticalAlignment="Center"
+                    Text="{Binding Options.Region.Latitude}"
+                    ToolTip="Широта °" />
+                <Button
+                    Margin="2"
+                    Command="{Binding SelectRegion}"
+                    Content="..." ToolTip="Выбор региорна" />
+            </StackPanel>
         </StackPanel>
         <!--  Выбор расчета  -->
-        <DockPanel Grid.Row="1">
-            <TabControl Grid.Column="0" Margin="0" Background="Transparent">
+        <DockPanel Grid.Row="1" IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}">
+            <TabControl Grid.Column="0" Background="Transparent">
                 <!--  Вкладка - Елочки  -->
                 <TabItem>
                     <TabItem.Header>
-                        <Image Height="16" Source="/PIK_GP_Acad;component/Resources/trees.png" />
+                        <Image Height="16" Source="/PIK_GP_Acad;component/Resources/trees.png" ToolTip="Елочки"/>
                     </TabItem.Header>
                     <TabItem.Content>
                         <local:TreesView DataContext="{Binding Tree}" />

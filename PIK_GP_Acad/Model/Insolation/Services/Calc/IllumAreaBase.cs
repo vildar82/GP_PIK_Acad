@@ -3,21 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.GraphicsInterface;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
     public abstract class IllumAreaBase : IIlluminationArea
     {
+        public Point2d PtOrig { get; set; }
+        public Point2d PtStart { get; set; }
+        public Point2d PtEnd{ get; set; }
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }
         public int Time { get; set; }        
+        public InsPoint InsPoint { get; set; }      
 
-        public IllumAreaBase(double angleStart, double angleEnd)
+        public IllumAreaBase(Point2d ptOrig,double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
         {
             AngleStartOnPlane = angleStart;
-            AngleEndOnPlane = angleEnd;            
+            AngleEndOnPlane = angleEnd;
+            PtOrig = ptOrig;
+            PtStart = ptStart;
+            PtEnd = ptEnd;
         }
 
         /// <summary>
@@ -38,6 +48,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (ilum.AngleStartOnPlane <= cur.AngleEndOnPlane)
                 {
                     cur.AngleEndOnPlane = ilum.AngleEndOnPlane;
+                    cur.PtEnd = ilum.PtEnd;
                 }
                 else
                 {
@@ -46,6 +57,45 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
             }
             return merged;
+        }
+
+        public List<Drawable> CreateVisual (IVisualOptions visualOptions)
+        {
+            List<Drawable> draws = new List<Drawable>();
+            var ptCol = new Point2dCollection();
+            ptCol.Add(PtOrig);
+            ptCol.Add(PtStart);
+            ptCol.Add(PtEnd);
+            var dCol = new DoubleCollection(3);
+            dCol.Add(0);
+            dCol.Add(0);
+            dCol.Add(0);
+
+            var h = new Hatch();            
+            h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
+            h.Color = Color.FromColor(visualOptions.Color);
+            h.Transparency = new Transparency(visualOptions.Transparency);
+            h.AppendLoop(HatchLoopTypes.Default, ptCol, dCol);
+            
+            h.EvaluateHatch(true);
+            draws.Add(h);
+            return draws;
+        }
+
+        /// <summary>
+        /// Найти точку на луче (заданном углом) как перпендикуляр от заданной точки
+        /// </summary>
+        /// <param name="ptOtherRay">Точка на другом луче</param>
+        /// <param name="angleRay">Угол луча на котором нужно найти точку. Угол от 0 (восхода) по часовой стрелке</param>
+        /// <returns>Определенная точка</returns>
+        protected static Point2d GetPointInRayPerpendicularFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
+        {
+            Vector2d vecRay = new Vector2d();            
+            vecRay.RotateBy(-angleRay);
+            Line2d lineRay = new Line2d(ptOrig, vecRay);
+            var closestPt = lineRay.GetClosestPointTo(ptOtherRay);
+            var resPt = closestPt.Point;
+            return resPt;            
         }
     }
 }

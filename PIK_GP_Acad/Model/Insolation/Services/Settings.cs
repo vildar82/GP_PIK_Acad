@@ -33,12 +33,12 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 using (var fileStream = File.Open(fileSettings, FileMode.Open))
                 {
-                    settings = Load(fileStream, SerializationMode.Xml,new Catel.Runtime.Serialization.SerializationConfiguration());                    
+                    settings = Load(fileStream, SerializationMode.Xml,new Catel.Runtime.Serialization.SerializationConfiguration());                                        
                 }
-            }
-            Regions = settings.Regions;
-            TreeVisualOptions = settings.TreeVisualOptions;
-            InsRequirements = settings.InsRequirements;
+            }            
+            Regions = settings.Regions==null? DefaultRegions(): settings.Regions;
+            TreeVisualOptions = settings.TreeVisualOptions == null ? DefaultTreeVisualOptions() : settings.TreeVisualOptions;
+            InsRequirements = settings.InsRequirements == null ? DefaultInsRequirements() : settings.InsRequirements;            
         }
 
         public void Save ()
@@ -51,11 +51,11 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings settings = new Settings();
             settings.Regions = DefaultRegions();
             settings.TreeVisualOptions = DefaultTreeVisualOptions();
-            settings.InsRequirements = DefaulrInsRequirements();
+            settings.InsRequirements = DefaultInsRequirements();
             return settings;
-        }        
+        }
 
-        private ObservableCollection<InsRegion> DefaultRegions ()
+        public static ObservableCollection<InsRegion> DefaultRegions ()
         {            
             ObservableCollection<InsRegion> regions = null;
             if (regions == null || regions.Count == 0)
@@ -72,7 +72,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return regions;
         }
 
-        private ObservableCollection<TreeVisualOption> DefaultTreeVisualOptions ()
+        public static ObservableCollection<TreeVisualOption> DefaultTreeVisualOptions ()
         {
             ObservableCollection<TreeVisualOption> visuals = new ObservableCollection<TreeVisualOption> {
                 new TreeVisualOption (Color.FromArgb(205, 32, 39), 35),
@@ -82,7 +82,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return visuals;
         }
 
-        private ObservableCollection<InsRequirement> DefaulrInsRequirements ()
+        public static ObservableCollection<InsRequirement> DefaultInsRequirements ()
         {
             var reqs = new ObservableCollection<InsRequirement> {
                 new InsRequirement() { Type = InsRequirementEnum.D, Color = Color.Blue },

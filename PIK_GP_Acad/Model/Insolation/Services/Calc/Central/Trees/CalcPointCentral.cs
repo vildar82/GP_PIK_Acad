@@ -263,34 +263,34 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             IIlluminationArea ilum = null;
             // список точек и их углов к расчетной точке
-            List<double> angles = new List<double>();
+            List<Tuple<Point2d, double>> angles = new List<Tuple<Point2d, double>>();
             foreach (var iPt in points)
             {
                 // угол к расчетной точке (от 0 по часовой стрелке)
                 if ((!above || ptCalc.Y - iPt.Y > 1) && !ptCalc2d.IsEqualTo(iPt))
                 {
                     var angle = Math.PI - (ptCalc2d - iPt).Angle;
-                    angles.Add(angle);
+                    angles.Add(new Tuple<Point2d, double>(iPt, angle));
                 }
             }
             if (angles.Count > 1)
             {
-                angles.Sort();
+                angles.Sort((p1, p2) => p1.Item2.CompareTo(p2.Item2));
                 ilum = CreateIllumShadow(angles[0], angles[angles.Count - 1]);
             }
             return ilum;
         }
 
-        private IIlluminationArea CreateIllumShadow (double angleStart, double angleEnd)
+        private IIlluminationArea CreateIllumShadow (Tuple<Point2d, double> angleStart, Tuple<Point2d, double> angleEnd)
         {
             // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
-            if (angleEnd < angleStartOnPlane || angleStart > angleEndOnPlane ||angleStart.IsEqual(angleEnd, 0.001))
+            if (angleEnd.Item2 < angleStartOnPlane || angleStart.Item2 > angleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
                 return null;
-            if (angleStart < angleStartOnPlane)
-                angleStart = angleStartOnPlane;
-            if (angleEnd > angleEndOnPlane)
-                angleEnd = angleEndOnPlane;
-            var ilum = new IllumAreaCentral(angleStart, angleEnd);
+            if (angleStart.Item2 < angleStartOnPlane)
+                angleStart = new Tuple<Point2d, double>(angleStart.Item1, angleStartOnPlane);
+            if (angleEnd.Item2 > angleEndOnPlane)
+                angleEnd = new Tuple<Point2d, double>(angleEnd.Item1, angleEndOnPlane);
+            var ilum = new IllumAreaCentral(ptCalc2d,angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
             return ilum;
         }
     }

@@ -26,6 +26,7 @@ namespace PIK_GP_Acad.Insolation.UI
         [Model]
         [Expose("Options")]
         [Expose("Tree")]
+        [Expose("IsInsActivated")]
         public InsModel InsModel { get; set; }
         public TaskCommand SelectRegion { get; private set; }
 
