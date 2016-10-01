@@ -12,20 +12,20 @@
     <!--<catel:UserControl.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
     </catel:UserControl.Resources>-->
-    <GroupBox BorderBrush="Gray" Header="Параметры окна">
-        <StackPanel>
+    <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2">
+        <StackPanel HorizontalAlignment="Center" Margin="2">
             <WrapPanel HorizontalAlignment="Center" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={catel:BooleanToOppositeBooleanConverter}}">
-                <StackPanel Margin="2">
+                <StackPanel Margin="3">
                     <TextBlock Text="Ширина окна, м" />
-                    <TextBox Text="{Binding Width}">
+                    <TextBox Text="{Binding Width}" HorizontalContentAlignment="Center">
                         <i:Interaction.Behaviors>
                             <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
                         </i:Interaction.Behaviors>
                     </TextBox>                    
                 </StackPanel>
-                <StackPanel Margin="2">
+                <StackPanel Margin="3">
                     <TextBlock Text="Тип конструкции" />
-                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}">
+                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}" HorizontalContentAlignment="Center">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -36,14 +36,15 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-                <StackPanel Margin="2">
+                <StackPanel Margin="3">
                     <TextBlock Text="Глубина четверти" />
                     <ComboBox ItemsSource="{Binding Quarters}" SelectedItem="{Binding Quarter}" />
                 </StackPanel>
             </WrapPanel>
-            <StackPanel Margin="2">
+            <StackPanel Margin="3">
                 <TextBlock HorizontalAlignment="Center" Text="Угол тени окна, °" />
                 <TextBox
+                    HorizontalContentAlignment="Center"
                     MaxWidth="100"
                     IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked}"
                     Text="{Binding ShadowAngle, Converter={converters:RadiansToDegreeConverter}}" />

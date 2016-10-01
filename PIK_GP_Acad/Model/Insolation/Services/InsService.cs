@@ -25,7 +25,7 @@ namespace PIK_GP_Acad.Insolation.Services
     public static class InsService
     {
         static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;
-        static Dictionary<Type, object> dictServices;
+        static Dictionary<Type, Type> dictVisualTypes;
         static Dictionary<Document, InsModel> insModels;
         static InsServicePallete palette;
         static InsViewModel insViewModel;
@@ -43,8 +43,8 @@ namespace PIK_GP_Acad.Insolation.Services
             // Регистрация валидатора Catel.Extensions.FluentValidation
             ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
 
-            dictServices = new Dictionary<Type, object> {
-                { typeof(IVisualInsPointSimple) , new VisualInsPointSimple() }
+            dictVisualTypes = new Dictionary<Type, Type> {
+                { typeof(IVisualInsPointIllums) , typeof(VisualInsPointIllums) }
             };
 
             Settings = new Settings();
@@ -53,11 +53,11 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         public static void Start (Document doc)
-        {
+        {            
             if (insModels == null)
                 insModels = new Dictionary<Document, InsModel>();
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => RemoveDocument(e.Document);
+            //Application.DocumentManager.DocumentToBeDestroyed += (o, e) => RemoveDocument(e.Document);
             if(palette == null)
                 ChangeDocument(doc);
             palette.Visible = true;           
@@ -66,19 +66,18 @@ namespace PIK_GP_Acad.Insolation.Services
         public static void Stop ()
         {
             Application.DocumentManager.DocumentActivated -= (o,e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => RemoveDocument(e.Document);
-            Settings.Save();
+            //Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => RemoveDocument(e.Document);
+            //Settings.Save();
             //palette.Visible = false;
-            palette = null;
-            insModels = null;
+            //palette = null;
+            //insModels = null;
             //insViewModel = null;
 
-#if DEBUG
-            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
-            //var apiCopListener = new ConsoleApiCopListener();
-            ApiCopManager.AddListener(apiCopFilelistener);
-            ApiCopManager.WriteResults();
-#endif
+//#if DEBUG
+//            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
+//            ApiCopManager.AddListener(apiCopFilelistener);
+//            ApiCopManager.WriteResults();
+//#endif
         }
 
         public static IInsCalcService GetCalcService (InsOptions options)
@@ -95,7 +94,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void RemoveDocument (Document doc)
         {
-            insModels.Remove(doc);
+            //insModels.Remove(doc);
         }
 
         private async static void ChangeDocument (Document doc)
@@ -138,9 +137,10 @@ namespace PIK_GP_Acad.Insolation.Services
             messageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
         }
 
-        public static T GetService<T> ()
+        public static T CreateVisualType<T> ()
         {
-            return (T)dictServices[typeof(T)];
+            var visualType = (Type)dictVisualTypes[typeof(T)];
+            return (T)Activator.CreateInstance(visualType);
         }
     }
 }

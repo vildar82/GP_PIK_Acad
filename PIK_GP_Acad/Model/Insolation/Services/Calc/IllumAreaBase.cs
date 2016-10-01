@@ -8,11 +8,13 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation.Models;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
     public abstract class IllumAreaBase : IIlluminationArea
     {
+        private InsIllumVisualOptions visualOptions = new InsIllumVisualOptions();
         public Point2d PtOrig { get; set; }
         public Point2d PtStart { get; set; }
         public Point2d PtEnd{ get; set; }
@@ -59,14 +61,18 @@ namespace PIK_GP_Acad.Insolation.Services
             return merged;
         }
 
-        public List<Drawable> CreateVisual (IVisualOptions visualOptions)
+        public List<Drawable> CreateVisual ()
         {
-            List<Drawable> draws = new List<Drawable>();
+            List<Drawable> draws = new List<Drawable>();           
+
+            // Штриховка
             var ptCol = new Point2dCollection();
             ptCol.Add(PtOrig);
             ptCol.Add(PtStart);
             ptCol.Add(PtEnd);
+            ptCol.Add(PtOrig);
             var dCol = new DoubleCollection(3);
+            dCol.Add(0);
             dCol.Add(0);
             dCol.Add(0);
             dCol.Add(0);
@@ -75,11 +81,29 @@ namespace PIK_GP_Acad.Insolation.Services
             h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
             h.Color = Color.FromColor(visualOptions.Color);
             h.Transparency = new Transparency(visualOptions.Transparency);
-            h.AppendLoop(HatchLoopTypes.Default, ptCol, dCol);
+            h.AppendLoop(HatchLoopTypes.Default, ptCol, dCol);                                                
             
-            h.EvaluateHatch(true);
             draws.Add(h);
+
+            // Угловой размер
+            var ptCenter = GetCenterTriangle(PtOrig, PtStart, PtEnd);
+            var ptDim1 = PtOrig + (PtStart - PtOrig) / 2;
+            var ptDim2 = PtOrig + (PtEnd - PtOrig) / 2;
+            var dim = new LineAngularDimension2(PtOrig.Convert3d(), ptDim1.Convert3d(), 
+                PtOrig.Convert3d(), ptDim2.Convert3d(), ptCenter.Convert3d(), Time.ToHours() + "ч.", ObjectId.Null);
+            dim.Color = Color.FromColor(System.Drawing.Color.Red);
+            dim.Dimtxt = 1.5;
+
+            draws.Add(dim);
+
             return draws;
+        }
+        private Point2d GetCenterTriangle (Point2d p1, Point2d p2, Point2d p3)
+        {
+            var c12 = p1 + (p2 - p1) / 2;
+            var c13 = p1 + (p3 - p1) / 2;
+            var c = c12 + (c13 - c12) / 2;
+            return c;
         }
 
         /// <summary>
@@ -88,10 +112,9 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="ptOtherRay">Точка на другом луче</param>
         /// <param name="angleRay">Угол луча на котором нужно найти точку. Угол от 0 (восхода) по часовой стрелке</param>
         /// <returns>Определенная точка</returns>
-        protected static Point2d GetPointInRayPerpendicularFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
+        public static Point2d GetPointInRayPerpendicularFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
         {
-            Vector2d vecRay = new Vector2d();            
-            vecRay.RotateBy(-angleRay);
+            Vector2d vecRay = (Vector2d.XAxis * (ptOtherRay - ptOrig).Length).RotateBy(-angleRay);            
             Line2d lineRay = new Line2d(ptOrig, vecRay);
             var closestPt = lineRay.GetClosestPointTo(ptOtherRay);
             var resPt = closestPt.Point;

@@ -9,39 +9,70 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:DesignTreesViewModel,
                                      IsDesignTimeCreatable=False}"
+    d:DesignHeight="166" d:DesignWidth="156"
     mc:Ignorable="d">
     <!--<catel:UserControl.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
     </catel:UserControl.Resources>-->
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="0.3*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!--  Точки  -->
+            <RowDefinition />
+            <!--  Визуализация высот  -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
-        <DockPanel Grid.Column="0">
-            <StackPanel>
-                <ListBox Background="Transparent" ItemsSource="{Binding Points}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
-                                <TextBlock Margin="2" FontWeight="Bold" Text="{Binding Number}">
-                                    <TextBlock.RenderTransform>
-                                        <ScaleTransform ScaleX="2" ScaleY="2" />
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBlock Margin="1" Text="{Binding InsValue.Requirement.Type, Converter={catel:ObjectToDisplayNameConverter}, StringFormat={}}" />
-                                <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, StringFormat=всего {}}" />
-                                <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, StringFormat=макс {}}" />
+        <StackPanel Grid.Row="0">
+            <ListBox
+                Background="Transparent" BorderThickness="0"
+                ItemsSource="{Binding Points}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <!--<Border Margin="1" BorderBrush="Gray" BorderThickness="1">-->
+                        <Grid Margin="2" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="3"
+                                FontSize="20" FontWeight="Bold"
+                                Text="{Binding Number}" />
+                            <WrapPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <!--  Инфо  -->
+                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                    <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Type, Converter={catel:ObjectToDisplayNameConverter}}" />
+                                    <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, Converter={converters:MinToHoursConverter}, StringFormat={} Всего:{0}ч.\,}" />
+                                    <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, Converter={converters:MinToHoursConverter}, StringFormat={} макс:{0}ч.}" />
+                                </StackPanel>
+                                <!--  Управление  -->
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <ToggleButton
+                                        Margin="1"
+                                        Content="Инс."
+                                        IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
+                                        ToolTip="Визуализация зон инсоляции точки." />
+                                    <Button Margin="1" Content="Елочки" />
+                                </StackPanel>
                             </WrapPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Button Command="{Binding AddPoint}" Content="Добавить точку" ToolTip="{Binding AddpointInfo}" />
-            </StackPanel>
-        </DockPanel>
+                        </Grid>
+                        <!--</Border>-->
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Command="{Binding AddPoint}" Content="Добавить точку" ToolTip="{Binding AddpointInfo}" />
+        </StackPanel>
+        <!--  Управление елочками  -->
+        <WrapPanel Grid.Row="1" Margin="2">
+            <ToggleButton Margin="1" Content="Инс." IsChecked="{Binding IsVisualIllumsOn}" />
+            <Button Margin="1" Content="Настройки" />
+        </WrapPanel>
         <!--  Настройки высот для визуализации  -->
-        <StackPanel Grid.Column="1">
+        <!--<StackPanel Grid.Row="1">
             <ListBox
                 HorizontalContentAlignment="Stretch"
                 Background="Transparent"
@@ -58,6 +89,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </catel:UserControl>

@@ -12,6 +12,6 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public interface IVisual
     {
-        List<Drawable> CreateVisual (IVisualOptions options);
+        List<Drawable> CreateVisual ();
     }
 }

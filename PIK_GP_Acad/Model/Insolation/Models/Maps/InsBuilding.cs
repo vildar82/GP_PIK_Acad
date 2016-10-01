@@ -10,16 +10,13 @@ using PIK_GP_Acad.Elements.Buildings;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class InsBuilding: ModelBase
-    {
-        [ExcludeFromSerialization]
-        public IBuilding Building { get; private  set; }
-        [ExcludeFromSerialization]
+    public class InsBuilding
+    {        
+        public IBuilding Building { get; private  set; }        
         public Polyline Contour { get; private set; }
         public int Height { get; private set; }
         public double YMax { get; private set; }
-        public double YMin { get; private set; }
-        [ExcludeFromSerialization]
+        public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get; private set; }
         public BuildingTypeEnum BuildingType { get; set; }
 

@@ -526,7 +526,7 @@ namespace PIK_GP_Acad
 
         public void Terminate()
         {
-            System.Windows.Application.Current.Shutdown();
+            //System.Windows.Application.Current.Shutdown();
         }
     }        
 }

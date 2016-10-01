@@ -8,7 +8,10 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public interface IVisualService
     {
-        void On ();
-        void Off ();
+        /// <summary>
+        /// Включение/выключение визуализации
+        /// </summary>
+        bool IsOn { get; set; }
+        void CreateVisual (object model);
     }
 }

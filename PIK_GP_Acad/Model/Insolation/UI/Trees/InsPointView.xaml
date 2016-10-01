@@ -17,8 +17,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--Здание-->
-        <WrapPanel Grid.Row="0">
-            <StackPanel>
+        <WrapPanel Grid.Row="0" Margin="2">
+            <StackPanel Margin="2">
                 <TextBlock Text="Тип здания:"/>
                 <ComboBox ItemsSource="{Binding BuildingTypes}" SelectedItem="{Binding SelectedBuildingType}">
                     <ComboBox.ItemTemplate>
@@ -29,9 +29,9 @@
                 </ComboBox>
             </StackPanel>
             <!--Расчетный этаж (расчетная высота)-->
-            <StackPanel>
-                <TextBlock Text="Расчетная высота точки, м:"/>
-                <TextBox Text="{Binding Height}" MinWidth="50"/>
+            <StackPanel Margin="2">
+                <TextBlock Text="Высота точки, м:"/>
+                <TextBox Text="{Binding Height}"/>
             </StackPanel>
         </WrapPanel>
         <local:WindowOptionsView Grid.Row="1" DataContext="{Binding Window}"/>

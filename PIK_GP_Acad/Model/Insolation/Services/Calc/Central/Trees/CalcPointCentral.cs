@@ -287,9 +287,15 @@ namespace PIK_GP_Acad.Insolation.Services
             if (angleEnd.Item2 < angleStartOnPlane || angleStart.Item2 > angleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
                 return null;
             if (angleStart.Item2 < angleStartOnPlane)
-                angleStart = new Tuple<Point2d, double>(angleStart.Item1, angleStartOnPlane);
+            {                
+                var ptStart = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleStart.Item1, angleStartOnPlane);
+                angleStart = new Tuple<Point2d, double>(ptStart, angleStartOnPlane);
+            }
             if (angleEnd.Item2 > angleEndOnPlane)
-                angleEnd = new Tuple<Point2d, double>(angleEnd.Item1, angleEndOnPlane);
+            {
+                var ptEnd = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleEnd.Item1, angleEndOnPlane);
+                angleEnd = new Tuple<Point2d, double>(ptEnd, angleEndOnPlane);
+            }
             var ilum = new IllumAreaCentral(ptCalc2d,angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
             return ilum;
         }

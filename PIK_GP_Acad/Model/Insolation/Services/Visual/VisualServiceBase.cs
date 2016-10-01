@@ -3,64 +3,80 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    class VisualServiceBase : IVisualService
+    public abstract class VisualServiceBase : IVisualService
     {
+        private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
         private bool isOn;
         private List<Drawable> draws;
         protected List<IVisual> visuals;
-        protected IVisualOptions visualOPtions;
 
-        public void Off ()
-        {
-            isOn = false;
-            Update();
-        }
+        public abstract void CreateVisual (object model);
 
-        public void On ()
-        {
-            isOn = true;
-            Update();
-        }       
-
-        protected void Update()
-        {
-            draws = null;
-            if (isOn && visuals != null && visuals.Any())
-            {
-                TransientManager tm = TransientManager.CurrentTransientManager;
-                var ic = new Autodesk.AutoCAD.Geometry.IntegerCollection();
-                foreach (var item in visuals)
+        public bool IsOn {
+            get { return isOn; }
+            set {
+                if (value != isOn)
                 {
-                    var ds = item.CreateVisual(visualOPtions);
-                    draws.AddRange(ds);
-                    foreach (var d in ds)
+                    isOn = value;
+                    Switch();                    
+                }
+            }
+        }        
+
+        /// <summary>
+        /// Включение/отключение визуализации (без перестроений)
+        /// </summary>
+        private void Switch ()
+        {            
+            if (visuals != null)
+            {
+                var tm = TransientManager.CurrentTransientManager;
+                
+                // Включение визуализации на чертеже
+                if (isOn)
+                {
+                    UpdateDraws();                    
+                    foreach (var d in draws)
                     {
-                        tm.AddTransient(d, TransientDrawingMode.Main, 0, ic);
-                    }                    
+                        tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
+                    }
+                }
+                // Выключение
+                else
+                {
+                    EraseDraws ();
                 }
             }
         }
 
-        //void ClearTransientGraphics ()
-        //{
-        //    TransientManager tm
-        //            = TransientManager.CurrentTransientManager;
-        //    IntegerCollection intCol = new IntegerCollection();
-        //    if (_markers != null)
-        //    {
-        //        foreach (DBObject marker in _markers)
-        //        {
-        //            tm.EraseTransient(
-        //                                marker,
-        //                                intCol
-        //                             );
-        //            marker.Dispose();
-        //        }
-        //    }
-        //}
+        private void EraseDraws ()
+        {
+            if (draws != null)
+            {
+                var tm = TransientManager.CurrentTransientManager;
+                foreach (var item in draws)
+                {
+                    tm.EraseTransient(item, vps);
+                    item.Dispose();
+                }
+            }
+        }
+
+        private void UpdateDraws ()
+        {
+            EraseDraws();
+            draws = new List<Drawable>();
+            if (visuals == null) return;            
+            foreach (var item in visuals)
+            {
+                var ds = item.CreateVisual();
+                draws.AddRange(ds);                
+            }
+        }        
     }
 }

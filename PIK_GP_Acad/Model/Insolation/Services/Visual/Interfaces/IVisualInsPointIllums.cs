@@ -10,8 +10,8 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Простая визуализация зон освещенности точки (без елочек)
     /// </summary>
-    public interface IVisualInsPointSimple : IVisualService
+    public interface IVisualInsPointIllums : IVisualService
     {
-        void Visual (InsPoint insPoint);
+        
     }
 }

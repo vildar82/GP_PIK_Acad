@@ -9,16 +9,19 @@ using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    class VisualInsPointSimple : VisualServiceBase, IVisualInsPointSimple
+    /// <summary>
+    /// Инсоляционные зоны точки
+    /// </summary>
+    public class VisualInsPointIllums : VisualServiceBase, IVisualInsPointIllums
     {
-        public void Visual (InsPoint insPoint)
+        public override void CreateVisual (object model)
         {
+            var insPoint = model as InsPoint;
             visuals = new List<IVisual>();
             foreach (var item in insPoint.Illums)
             {
                 visuals.Add(item);
-            }
-            Update();
+            }            
         }       
     }
 }
