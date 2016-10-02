@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,23 +20,29 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class SelectPoint
     {
+        InsModel model;
         Document doc;
+        Editor ed;        
+        Map map;
         /// <summary>
         /// Выбор новой точки
         /// </summary>        
         public InsPoint SelectNewPoint (InsModel model)
         {
             doc = model.Doc;
-            InsPoint p = new InsPoint(model);
-            Editor ed = doc.Editor;
+            ed = doc.Editor;
+            this.model = model;
+            map = model.Map;
+
+            InsPoint p = new InsPoint(model);            
             // Запрос точки
             InsBuilding building;
-            var pt = PromptSelectPointOnScreen(ed, model.Map, out building);
+            var pt = PromptSelectPointOnScreen(out building);
 
             p.Point = pt;
             p.Building = building;
 
-            // Запрос настроек расчетной точки
+            // Окно настроек расчетной точки (парметры окна, здания, высота точки)
             var pViewModel = new InsPointViewModel(p);
             var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (uiVisualizerService.ShowDialog(pViewModel) == true)
@@ -48,21 +55,27 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private Point3d PromptSelectPointOnScreen (Editor ed, Map map, out InsBuilding building)
+        private Point3d PromptSelectPointOnScreen ( out InsBuilding building)
         {
             var pt = ed.GetPointWCS("\nВыбор расчетной точки (на внешней стене здания):");
             // Проверка точки
             building = map.GetBuildingInPoint(pt);
             if (building == null)
             {
-                ed.WriteMessage($"\nОшибка. Для указанной точки не определено здание! Необходимо повторить выбор точки.");
-                PromptSelectPointOnScreen(ed, map, out building);
+                ed.WriteMessage($"\nОшибка. Для указанной точки не определено здание! Повторите...");
+                pt = PromptSelectPointOnScreen(out building);
             }
             // Корректировка расчетной точки
             if (!CorrectCalcPoint(ref pt, building))
             {
-                ed.WriteMessage($"\nОшибка. Укажите точку точнее (на грани контура полилинии здания)!");
-                PromptSelectPointOnScreen(ed, map, out building);
+                ed.WriteMessage($"\nОшибка. Укажите точку точнее (на грани контура полилинии здания)! Повторите...");
+                pt = PromptSelectPointOnScreen(out building);
+            }
+            // Нет ли уже точки в этом месте
+            if (model.Tree.HasPoint(pt))
+            {
+                ed.WriteMessage($"\nОшибка. Указанная точка уже включена в расчет! Повторите...");
+                pt = PromptSelectPointOnScreen(out building);
             }
             return pt;
         }

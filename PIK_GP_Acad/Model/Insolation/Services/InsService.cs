@@ -24,8 +24,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public static class InsService
     {
-        static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;
-        static Dictionary<Type, Type> dictVisualTypes;
+        static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;        
         static Dictionary<Document, InsModel> insModels;
         static InsServicePallete palette;
         static InsViewModel insViewModel;
@@ -41,11 +40,7 @@ namespace PIK_GP_Acad.Insolation.Services
             //DesignTreesViewModel desigVM = new UI.DesignTreesViewModel();
 
             // Регистрация валидатора Catel.Extensions.FluentValidation
-            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
-
-            dictVisualTypes = new Dictionary<Type, Type> {
-                { typeof(IVisualInsPointIllums) , typeof(VisualInsPointIllums) }
-            };
+            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();            
 
             Settings = new Settings();
             Settings.Load();
@@ -135,12 +130,6 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var messageService = ServiceLocator.Default.ResolveType<IMessageService>();
             messageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
-        }
-
-        public static T CreateVisualType<T> ()
-        {
-            var visualType = (Type)dictVisualTypes[typeof(T)];
-            return (T)Activator.CreateInstance(visualType);
-        }
+        }        
     }
 }

@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         [ExcludeFromSerialization]
-        public IVisualInsPointIllums VisualIllums { get; private set; }
+        public VisualInsPointIllums VisualIllums { get; private set; }
 
         /// <summary>
         /// Номер точки
@@ -55,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Визуализация зон инсоляции точки
             if (VisualIllums == null)
             {
-                VisualIllums = InsService.CreateVisualType<IVisualInsPointIllums>();
+                VisualIllums = new VisualInsPointIllums();
             }
             // Создание объектов визуализации
             VisualIllums.CreateVisual(this);            

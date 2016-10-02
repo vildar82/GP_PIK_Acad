@@ -118,5 +118,19 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             return res;
         }
+
+        /// <summary>
+        /// Перевод автокадовского угла (отсчет против часовой счтрелки начиная с оси X направленной на Восток)
+        /// в угол для инсоляции (отсчет по часовой стрелке от оси Х направленоц на восток)
+        /// </summary>
+        /// <param name="acadAngle">Угол полученный от автокадовских объектов чертежа (рад)</param>
+        /// <returns>Угол для инсоляции (радианы)</returns>
+        public double GetInsAngleFromAcad (double acadAngle)
+        {
+            var res = acadAngle.FixedAngle();
+            if (res > 0.01)
+                res = MathExt.PI2 - res;
+            return res;
+        }
     }
 }

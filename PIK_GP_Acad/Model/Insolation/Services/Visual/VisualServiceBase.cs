@@ -13,9 +13,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
         private bool isOn;
         private List<Drawable> draws;
-        protected List<IVisual> visuals;
-
-        public abstract void CreateVisual (object model);
+        protected List<IVisual> visuals;        
 
         public bool IsOn {
             get { return isOn; }

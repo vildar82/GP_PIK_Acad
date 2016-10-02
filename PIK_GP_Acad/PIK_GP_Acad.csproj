@@ -162,6 +162,7 @@
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\InsAngleCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Trees\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Models\InsModel.cs" />
     <Compile Include="Model\Insolation\Services\Calc\IllumAreaBase.cs" />
@@ -270,7 +271,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="AutoCADNetLoad.scr" />
-    <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualInsPointIllums.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

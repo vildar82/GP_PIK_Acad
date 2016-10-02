@@ -120,5 +120,11 @@ namespace PIK_GP_Acad.Insolation.Services
             var resPt = closestPt.Point;
             return resPt;            
         }
+
+        public static Point2d GetPointInRayByLength (Point2d ptOrig, double angleRayIns, int length)
+        {            
+            var vecRay = Vector2d.XAxis.RotateBy(-angleRayIns)* length;
+            return ptOrig + vecRay;
+        }
     }
 }

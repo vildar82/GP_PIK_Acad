@@ -19,7 +19,9 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчет елочек
     /// </summary>
     public class TreeModel : ModelBase
-    {        
+    {
+        private Tolerance tolerancePoints = new Tolerance(1, 1);
+
         /// <summary>
         /// Для загрузки расчета
         /// </summary>
@@ -88,6 +90,15 @@ namespace PIK_GP_Acad.Insolation.Models
                     }                    
                 }
             }
+        }
+
+        /// <summary>
+        /// Проверка есть ли уже такая точка в списке точек инсоляции
+        /// </summary>        
+        public bool HasPoint (Point3d pt)
+        {
+            var res = Points.Any(p => p.Point.IsEqualTo(pt, tolerancePoints));
+            return res;
         }
 
         private void Points_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)

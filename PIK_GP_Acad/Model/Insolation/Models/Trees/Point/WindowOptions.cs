@@ -30,7 +30,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public double Quarter { get; set; } = 0.07;   
         /// <summary>
-        /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор)
+        /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор) 
+        /// [рад]
         /// </summary>
         public double ShadowAngle { get; set; }    
         /// <summary>

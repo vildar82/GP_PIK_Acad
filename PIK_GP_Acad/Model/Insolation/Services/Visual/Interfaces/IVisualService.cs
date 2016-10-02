@@ -11,7 +11,6 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Включение/выключение визуализации
         /// </summary>
-        bool IsOn { get; set; }
-        void CreateVisual (object model);
+        bool IsOn { get; set; }        
     }
 }

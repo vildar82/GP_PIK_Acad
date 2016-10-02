@@ -46,27 +46,40 @@ namespace PIK_GP_Acad.Insolation.Services
         //    visualPl(Hight, space, t);
         //}
 
-        public static List<IIlluminationArea> Invert (List<IIlluminationArea> illums, double angleStart, double angleEnd)
+        public static List<IIlluminationArea> Invert (List<IIlluminationArea> illums, 
+            double angleStart, double angleEnd, Point2d ptOrig)
         {
             List<IIlluminationArea> inverts = new List<IIlluminationArea>();
-            double curStart = angleStart;            
-            Point2d cusStartPt = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, illums[0].PtStart, curStart);
-                        
-            foreach (var item in illums)
+
+            if (illums.Count == 0)
             {
-                if (item.AngleStartOnPlane- curStart > 0.1)
-                {                    
-                    var illum = new IllumAreaCentral(item.PtOrig, curStart, item.AngleStartOnPlane, cusStartPt, item.PtStart);
+                // Зон теней нет. От стартового угла до конечного - зона освещена                    
+                var illum = new IllumAreaCentral(ptOrig, angleStart, angleEnd,
+                    GetPointInRayByLength(ptOrig, angleStart, 50),
+                    GetPointInRayByLength(ptOrig, angleEnd, 50));
+                inverts.Add(illum);
+            }
+            else
+            {
+                double curStart = angleStart;
+                Point2d cusStartPt = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, illums[0].PtStart, curStart);
+
+                foreach (var item in illums)
+                {
+                    if (item.AngleStartOnPlane - curStart > 0.01)
+                    {
+                        var illum = new IllumAreaCentral(item.PtOrig, curStart, item.AngleStartOnPlane, cusStartPt, item.PtStart);
+                        inverts.Add(illum);
+                    }
+                    curStart = item.AngleEndOnPlane;
+                    cusStartPt = item.PtEnd;
+                }
+                if (angleEnd - curStart > 0.1)
+                {
+                    Point2d ptEnd = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
+                    var illum = new IllumAreaCentral(illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
                     inverts.Add(illum);
                 }
-                curStart = item.AngleEndOnPlane;
-                cusStartPt = item.PtEnd;
-            }
-            if (angleEnd - curStart >0.1)
-            {
-                Point2d ptEnd = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
-                var illum = new IllumAreaCentral(illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
-                inverts.Add(illum);
             }
             return inverts;
         }

@@ -12,11 +12,10 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Инсоляционные зоны точки
     /// </summary>
-    public class VisualInsPointIllums : VisualServiceBase, IVisualInsPointIllums
+    public class VisualInsPointIllums : VisualServiceBase
     {
-        public override void CreateVisual (object model)
-        {
-            var insPoint = model as InsPoint;
+        public void CreateVisual (InsPoint insPoint)
+        {            
             visuals = new List<IVisual>();
             foreach (var item in insPoint.Illums)
             {
