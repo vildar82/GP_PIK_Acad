@@ -52,7 +52,7 @@ namespace PIK_GP_Acad
                 // Главная
                 new PaletteCommand("Блок линии парковки",Resources.GP_LineParking,nameof(GP_InsertBlockLineParking),"Вставка блока линии парковки"),
                 new PaletteCommand("Блок парковки",Resources.GP_Parking,nameof(GP_InsertBlockParking),"Вставка блока парковки"),
-                //new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
+                new PaletteCommand("Спецификация парковок",Resources.GP_ParkingTable,nameof(GP_ParkingCalc),"Выбор блоков парковок и вставка текста машиномест или таблицы всех блоков в Модели."),
                 new PaletteCommand("Бергштрих",Resources.GP_Isoline, nameof(GP_Isoline), "Включение одиночных бергштрихов для линий и полилиний."),
                 new PaletteCommand("Уровни горизонталей",Resources.GP_HorizontalElevation, nameof(GP_HorizontalElevationStep), "Установка уровней для полилиний горизонталей с заданным шагом."),
                 new PaletteCommand("Дождеприемная решетка",Resources.GP_RainGrid,nameof(GP_InsertBlockRainGrid),"Вставка блока дождеприемной решетки"),
@@ -68,7 +68,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Enla",Resources.enla, nameof(GP_Enla), "Подсчет длин и площадей."),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
-                new PaletteCommand("Спецификация Блок-Секций",Resources.GP_BlockSectionTable, nameof(GP_BlockSectionTable), "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
+                //new PaletteCommand("Спецификация Блок-Секций",Resources.GP_BlockSectionTable, nameof(GP_BlockSectionTable), "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
                 new PaletteCommand("Контур Блок-Секций",Resources.GP_BlockSectionContour, nameof(GP_BlockSectionContour), "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
                 // Концепция
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
