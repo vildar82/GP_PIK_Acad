@@ -27,8 +27,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public void AddPoint (InsPoint p)
         {
-            var draws = GetDraws(p);
-            points.Add(new KeyValuePair<InsPoint, List<Drawable>>(p, draws));
+            //var draws = GetDraws(p);
+            //points.Add(new KeyValuePair<InsPoint, List<Drawable>>(p, draws));
         }        
 
         public List<Drawable> CreateVisual ()
@@ -36,21 +36,21 @@ namespace PIK_GP_Acad.Insolation.Services
             return points.SelectMany(s => s.Value).ToList();
         }
 
-        private List<Drawable> GetDraws (InsPoint p)
-        {            
-            var opt = VisualOptions[0];            
-            var draws = GetDrawsByOption(opt);
-        }
+        //private List<Drawable> GetDraws (InsPoint p)
+        //{            
+        //    var opt = VisualOptions[0];            
+        //    var draws = GetDrawsByOption(opt);
+        //}
 
-        private List<Drawable> GetDrawsByOption (InsPoint insPoint, TreeVisualOption opt, Point3d p1, Point3d p2, out Point3d p3, out Point3d p4)
-        {            
-            double cShadow;
-            var yShadow = Model.CalcService.CalcValues.YShadowLineByHeight(opt.Height, out cShadow);
+        //private List<Drawable> GetDrawsByOption (InsPoint insPoint, TreeVisualOption opt, Point3d p1, Point3d p2, out Point3d p3, out Point3d p4)
+        //{            
+        //    double cShadow;
+        //    var yShadow = Model.CalcService.CalcValues.YShadowLineByHeight(opt.Height, out cShadow);
 
-            p3 = IllumAreaBase.GetPointInRayByHeight(yShadow, insPoint.);
+        //    //p3 = IllumAreaBase.GetPointInRayByHeight(yShadow, insPoint.);
 
-            var visOpt = new VisualOption(opt.Color, Point3d.Origin, 60);
-            var h = CreateHatch()
-        }
+        //    var visOpt = new VisualOption(opt.Color, Point3d.Origin, 60);
+        //    //var h = CreateHatch()
+        //}
     }
 }

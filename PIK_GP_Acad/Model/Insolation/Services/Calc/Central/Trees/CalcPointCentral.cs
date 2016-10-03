@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Services
         Point3d ptCalc;
         Point2d ptCalc2d;
         InsCalcServiceCentral calc;
-        CalcValuesCentral values;
+        ICalcValues values;
         /// <summary>
         /// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
         /// Будут определены для этой расвчетной точки индивидуально
