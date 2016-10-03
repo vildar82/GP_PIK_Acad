@@ -7,13 +7,14 @@
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    d:DataContext="{d:DesignInstance local:TreesViewModel,
+    d:DataContext="{d:DesignInstance local:DesignTreesViewModel,
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="166" d:DesignWidth="156"
-    mc:Ignorable="d">
-    <!--<catel:UserControl.Resources>
-        <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
-    </catel:UserControl.Resources>-->
+    mc:Ignorable="d">    
+    <catel:UserControl.Resources>
+        <Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
+        <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
+    </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <!--  Точки  -->
@@ -55,11 +56,11 @@
                                 <!--  Управление  -->
                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                     <ToggleButton
-                                        Margin="1"
-                                        Content="Инс."
+                                        Margin="1"                                        
                                         IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
-                                        ToolTip="Визуализация зон инсоляции точки." />
-                                    <Button Margin="1" Content="Елочки" ToolTip="Пока просто так" />
+                                        ToolTip="Визуализация зон инсоляции точки." Height="20">
+                                        <Image Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
+                                    </ToggleButton>                                    
                                 </StackPanel>
                             </WrapPanel>
                         </Grid>
@@ -71,8 +72,10 @@
         </StackPanel>
         <!--  Управление елочками  -->
         <WrapPanel Grid.Row="1" Margin="2">
-            <ToggleButton Margin="1" Content="Инс." IsChecked="{Binding IsVisualIllumsOn}" />
-            <ToggleButton Margin="1" Content="елочки" IsChecked="{Binding IsVisualTreeOn}"/>
+            <ToggleButton Margin="1" IsChecked="{Binding IsVisualIllumsOn}" Height="20" ToolTip="Включение/выключение визуализации зон инсоляции точки"
+                         Content="{StaticResource InsIllums}" />
+            <ToggleButton Margin="1" IsChecked="{Binding IsVisualTreeOn}" ToolTip="Включение/выключение визуализации елочек" 
+                          Height="20" Content="{StaticResource InsTrees}"/>
         </WrapPanel>
         <!--  Настройки высот для визуализации  -->
         <!--<StackPanel Grid.Row="1">
