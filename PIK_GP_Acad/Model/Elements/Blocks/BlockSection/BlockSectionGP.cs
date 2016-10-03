@@ -33,16 +33,27 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         private void parseAttrs ()
         {
+            // Кол этажей
+            Floors = GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
             // Наименование
             Name = GetPropValue<string>(SettingsBS.Default.AttrName);
             // Площадь БКФН
             AreaBKFN = GetPropValue<double>(SettingsBS.Default.AttrAreaBKFN);
+            //if (Floors >= 30)
+            //    AreaBKFN *= 0.92;
             // Площадь квартир на одном этаже
             AreaLive = GetPropValue<double>(SettingsBS.Default.AttrAreaApart);
             // Площадь квартир общая на секцию (по всем этажам кроме 1)
-            AreaApartTotal = GetPropValue<double>(SettingsBS.Default.AttrAreaApartTotal);
-            // Кол этажей
-            Floors = GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);                                                       
+            //AreaApartTotal = GetPropValue<double>(SettingsBS.Default.AttrAreaApartTotal);
+            AreaApartTotal = CalcAreaApartTotal();            
+        }
+
+        private double CalcAreaApartTotal ()
+        {
+            var res = AreaLive * (Floors - 1);
+            if (Floors >= 30)
+                res *= 0.92;
+            return res;
         }
     }
 }
