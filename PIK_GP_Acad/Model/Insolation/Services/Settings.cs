@@ -43,7 +43,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public void Save ()
         {            
-            settings.Save(fileSettings, SerializationMode.Xml, new Catel.Runtime.Serialization.SerializationConfiguration());
+            //settings.Save(fileSettings, SerializationMode.Xml, new Catel.Runtime.Serialization.SerializationConfiguration());
         }
 
         private Settings Default ()
