@@ -18,6 +18,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
+using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Model.HorizontalElevation;
 using PIK_GP_Acad.Properties;
 
@@ -43,7 +44,7 @@ namespace PIK_GP_Acad
         //Имена блоков
         //public const string BlockNameDOO = "КП_ДОО";
         //public const string BlockNameSchool = "КП_СОШ";
-        public const string BlockNameKpParking = "КП_Паркинг";
+        public const string BlockNameKpParking = "КП_Паркинг";       
 
         public void InitCommands()
         {            
@@ -100,7 +101,7 @@ namespace PIK_GP_Acad
         //
         // Главная
         //
-        #region Главная        
+#region Главная        
 
         [CommandMethod(Group, nameof(GP_InsertBlockLineParking), CommandFlags.Modal)]
         public void GP_InsertBlockLineParking()
@@ -274,12 +275,12 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion Главная
+#endregion Главная
 
         //
         // БС
         //
-        #region ГП        
+#region ГП        
 
         [CommandMethod(Group, nameof(GP_BlockSectionInsert), CommandFlags.Modal)]        
         public void GP_BlockSectionInsert()
@@ -314,12 +315,12 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion ГП
+#endregion ГП
 
         //
         // Концепция
         //
-        #region Концепция       
+#region Концепция       
 
         [CommandMethod(Group, nameof(KP_BlockSectionInsert), CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
@@ -406,12 +407,12 @@ namespace PIK_GP_Acad
                 aps.Calc();
             });
         }
-        #endregion Концепция
+#endregion Концепция
 
         //
         // Штамп
         //
-        #region Штамп        
+#region Штамп        
 
         [CommandMethod(Group, nameof(GP_BlockFrame), CommandFlags.Modal)]
         public void GP_BlockFrame()
@@ -431,21 +432,21 @@ namespace PIK_GP_Acad
             });
         }
 
-        #endregion Штамп
-
-        //
-        // В разработке    
-        //        
-        #region В разработке        
-
         [CommandMethod(Group, nameof(GP_BlockStampBooklet), CommandFlags.Modal)]
-        public void GP_BlockStampBooklet()
+        public void GP_BlockStampBooklet ()
         {
             CommandStart.Start(doc =>
             {
                 InsertBlock.Insert("ГП_Рамка_Буклет", doc.Database);
             });
         }
+
+#endregion Штамп
+
+        //
+        // В разработке    
+        //        
+#region В разработке        
 
         [CommandMethod(Group, nameof(GP_FCS_Balance), CommandFlags.Modal)]
         public static void GP_FCS_Balance ()
@@ -459,45 +460,73 @@ namespace PIK_GP_Acad
             });
         }
 
-
-        [CommandMethod(Group, nameof(KP_InsolationPoint), CommandFlags.Modal)]
-        public void KP_InsolationPoint ()
+        [CommandMethod(Group, nameof(GP_InsolationService), CommandFlags.Modal)]
+        public void GP_InsolationService ()
         {
             CommandStart.Start(doc =>
-            {
-                using (var t = doc.TransactionManager.StartTransaction())
-                {
-                    var inso = new Insolation.InsolationService(doc.Database, new Insolation.MoscowOptions());
-                    var pt = doc.Editor.GetPointWCS("\nУкажите точку:");
-                    inso.CalcPoint(pt);
-                    t.Commit();
-                }
+            {                
+                Insolation.Services.InsService.Start(doc);
             });
         }
-        #endregion В разработке
+        
+#endregion В разработке
 
-
-        public void Initialize()
+        public void Initialize ()
         {
-            // Передача списка команд для палитры ПИК в AcadLib.  
-            InitCommands();          
+            // Передача списка команд для палитры ПИК в AcadLib.             
+            InitCommands();
             PaletteSetCommands.InitPalette(CommandsPalette);
 
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
-            if (File.Exists(fileCivilDll))
+            LoadDll(fileCivilDll);
+
+            // Загрузка ресурсов WPF
+            try
+            {
+                // загрузка Orchestra
+                LoadService.LoadCatel();                
+
+                if (System.Windows.Application.Current == null)
+                {
+                    new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                }
+                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                new Uri("PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml", UriKind.Relative)) as ResourceDictionary);
+                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                new Uri("Catel.Extensions.Controls;component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);                
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Controls.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Fonts.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Colors.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Accents/Blue.xaml", UriKind.Relative)) as ResourceDictionary);
+                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
+                //new Uri("MahApps.Metro;component/Styles/Accents/BaseLight.xaml", UriKind.Relative)) as ResourceDictionary);
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Log.Error(ex, "Загрузка ресурсов WPF");
+            }
+        }
+
+        private static void LoadDll (string  file)
+        {            
+            if (File.Exists(file))
             {
                 try
                 {
-                    Assembly.LoadFrom(fileCivilDll);
+                    Assembly.LoadFrom(file);
                 }
                 catch { }
             }
         }
-        
+
         public void Terminate()
         {
-            
+            //System.Windows.Application.Current.Shutdown();
         }
     }        
 }

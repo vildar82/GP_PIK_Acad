@@ -34,17 +34,12 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         /// </summary>
         public string Type { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel {
-            get {
-                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
-                return plCopy;
-            }
-        }
+        
 
         public int Height { get; set; }
-        public abstract ObjectId IdPlContour { get; set;}        
+        public abstract ObjectId IdPlContour { get; set;}
+
+        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Social;
 
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {
@@ -65,6 +60,14 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
                 IdPlContour = plContour.Id;
             }
             
+        }
+
+        public Polyline GetContourInModel ()
+        {
+            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+            var plCopy = (Polyline)pl.Clone();
+            plCopy.TransformBy(Transform);
+            return plCopy;
         }
 
         private int GetPlaces (string paramName)
@@ -88,7 +91,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
             List<IODRecord> recs = new List<IODRecord>();
 
             // Запись ODBuilding
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Social, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour,OD.Records.BuildingType.Social, Height);
             recs.Add(odBuild);
 
             // Запись ODCoverage

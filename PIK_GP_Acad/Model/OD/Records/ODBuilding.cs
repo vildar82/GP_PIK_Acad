@@ -42,17 +42,5 @@ namespace PIK_GP_Acad.OD.Records
         }
     }
 
-    public class BuildingType
-    {
-        public static readonly BuildingType Live = new BuildingType(ODBuilding.BuildingLive);
-        public static readonly BuildingType Social = new BuildingType(ODBuilding.BuildingSocial);
-        public static readonly BuildingType Garage = new BuildingType(ODBuilding.BuildingGarage);
-
-        public readonly string Name;  
-                      
-        private BuildingType (string name)
-        {
-            Name = name;            
-        }
-    }
+    
 }

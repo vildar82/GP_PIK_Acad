@@ -31,14 +31,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         public double AreaLive { get; set; }        
         public ObjectId IdPlContour { get; set; }
         public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel {
-            get {
-                var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
-                return plCopy;
-            }
-        }
+        
         public Rectangle Rectangle {
             get {
                 if (r == null)
@@ -46,6 +39,8 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
                 return r;
             }
         }
+
+        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Living;
 
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {
@@ -64,6 +59,14 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             }
         }
 
+        public Polyline GetContourInModel ()
+        {
+            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
+            var plCopy = (Polyline)pl.Clone();
+            plCopy.TransformBy(Transform);
+            return plCopy;
+        }
+
         protected virtual void Define (BlockReference blRef)
         {
             Height = Floors * 3 + 3;
@@ -71,7 +74,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public List<IODRecord> GetODRecords ()
         {
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Live, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour, OD.Records.BuildingType.Live, Height);
             return new List<IODRecord> { odBuild };
         }
 

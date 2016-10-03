@@ -127,7 +127,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                             var blSecKP = ElementFactory.Create<BlockSectionKP>(blRef);
                             if (blSecKP != null)
                             {
-                                var contor = blSecKP.ContourInModel;
+                                var contor = blSecKP.GetContourInModel();
 
                                 if (blSecKP.Error != null)
                                 {

@@ -20,22 +20,36 @@ namespace PIK_GP_Acad.Elements.Buildings
 
         public ObjectId IdEnt { get; set; }
         public int Floors { get; set; }
-        public Extents3d ExtentsInModel { get; set; }
-        public Entity ContourInModel { get; set; }
+        public Extents3d ExtentsInModel { get; set; }        
         public List<FCProperty> FCProperties { get; set; }
         public int Height { get; set; }  
         public Error Error { get; set; }        
         public ClassType ClassType { get; set; }
 
+        public BuildingTypeEnum BuildingType { get; set; }
+
         public Building (Entity ent, int height, List<FCProperty> props, ClassType classType)
         {
             IdEnt = ent.Id;
-            ExtentsInModel = ent.GeometricExtents;
-            ContourInModel = ent;
+            ExtentsInModel = ent.GeometricExtents;            
             ClassType = classType;
             FCProperties = props;
             Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
             Height = height;            
-        }       
+        }
+        public Polyline GetContourInModel()
+        {
+            var ent = IdEnt.GetObject(OpenMode.ForRead) as Entity;
+            if (ent is Polyline)
+            {
+                var plCopy = (Polyline)ent.Clone();
+                return plCopy;
+            }
+            else if (ent is Hatch)
+            {
+                // Найти контур штриховки и перевести его в полилинию.
+            }
+            return null;
+        }
     }
 }

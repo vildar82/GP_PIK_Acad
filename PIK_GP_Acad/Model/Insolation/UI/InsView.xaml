@@ -1,0 +1,67 @@
+﻿<catel:UserControl
+    x:Class="PIK_GP_Acad.Insolation.UI.InsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:catel="http://catel.codeplex.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{DynamicResource DarkThemeBackgroundBrush}"
+    d:DataContext="{d:DesignInstance local:InsViewModel,
+                                     IsDesignTimeCreatable=False}"
+    mc:Ignorable="d">
+    <catel:UserControl.Resources>
+        <!--<ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>-->
+        <Image x:Key="TreesImage" Source="/PIK_GP_Acad;component/Resources/trees.png" ToolTip="Елочки" />
+    </catel:UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <ToggleButton
+            x:Name="chkBoxInsActivated"
+            Grid.Row="0"
+            Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+            Style="{DynamicResource ToggleButtonOnOff}"
+            BorderThickness="1"
+            IsChecked="{Binding IsInsActivated}" />
+        <!--  Регион  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="1" HorizontalAlignment="Right"
+            IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}"
+            Orientation="Horizontal">
+            <TextBlock Margin="2" VerticalAlignment="Center" Text="Регион:" />
+            <TextBlock
+                Margin="2" VerticalAlignment="Center"
+                Text="{Binding Options.Region.City}"
+                ToolTip="Город" />
+            <TextBlock
+                Margin="2" VerticalAlignment="Center"
+                Text="{Binding Options.Region.Latitude}"
+                ToolTip="Широта °" />
+            <Button
+                Margin="2"
+                Command="{Binding SelectRegion}"
+                Content="..." ToolTip="Выбор региорна" />
+        </StackPanel>
+        <!--  Выбор расчета  -->
+        <TabControl
+            Grid.Row="1" Grid.Column="0"
+            Background="Transparent"
+            IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}">
+            <!--  Вкладка - Елочки  -->
+            <TabItem Width="25" Background="Transparent" Header="{StaticResource TreesImage}">
+                <TabItem.Content>
+                    <local:TreesView DataContext="{Binding Tree}" />
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</catel:UserControl>

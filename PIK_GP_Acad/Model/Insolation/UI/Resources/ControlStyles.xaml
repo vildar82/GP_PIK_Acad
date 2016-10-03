@@ -1,0 +1,64 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+                    xmlns:catel="http://catel.codeplex.com"
+                    xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI">
+    <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="LightGray" />
+    <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#5C5C5C" />
+    <!--<Style x:Key="ControlBase" TargetType="FrameworkElement">
+        <Setter Property="Margin" Value="5"/>
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource ControlBase}">
+    </Style>
+    <Style TargetType="TextBlock" BasedOn="{StaticResource ControlBase}">
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource ControlBase}">
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="TextBox" x:Key="ReadOnly" BasedOn="{StaticResource ControlBase}">
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="Background" Value="{StaticResource ReadOnlyBackgroundBrush}"/>
+    </Style>
+    <Style TargetType="ListBox" BasedOn="{StaticResource ControlBase}"></Style>
+    <Style TargetType="TabControl" BasedOn="{StaticResource ControlBase}"></Style>
+    <Style TargetType="Button" BasedOn="{StaticResource ControlBase}"></Style>-->
+    <!--<Style TargetType="{x:Type Window}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>-->
+    <Style TargetType="{x:Type UserControl}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
+    <!--<Style TargetType="{x:Type catel:DataWindow}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>-->
+    <Style TargetType="{x:Type catel:UserControl}">
+        <Setter Property="Background" Value="{DynamicResource DarkThemeBackgroundBrush}" />
+    </Style>
+    <Style x:Key="ToggleButtonOnOff" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Themes:ButtonChrome x:Name="Chrome" BorderBrush="{TemplateBinding BorderBrush}" 
+                                         Background="{TemplateBinding Background}" 
+                                         RenderMouseOver="{TemplateBinding IsMouseOver}" 
+                                         RenderPressed="{TemplateBinding IsPressed}" 
+                                         RenderDefaulted="{TemplateBinding Button.IsDefaulted}" 
+                                         SnapsToDevicePixels="true">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Themes:ButtonChrome>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Content" Value="On"/>
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="false">
+                            <Setter Property="Content" Value="Off"/>
+                            <Setter Property="Background" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// </summary>        
         public List<IODRecord> GetODRecords ()
         {
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, BuildingType.Live, Height);
+            var odBuild = ODBuilding.GetRecord(this, IdPlContour,OD.Records.BuildingType.Live, Height);
             return new List<IODRecord> { odBuild };
         }
     }

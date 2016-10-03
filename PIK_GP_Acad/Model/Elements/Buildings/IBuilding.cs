@@ -14,10 +14,9 @@ namespace PIK_GP_Acad.Elements.Buildings
     public interface IBuilding: IElement
     {
         int Floors { get; }
-        Extents3d ExtentsInModel { get; }
-        Entity ContourInModel { get; }
-        int Height { get; }
-
-        //Polyline GetContour ();
+        Extents3d ExtentsInModel { get; }        
+        int Height { get; }        
+        Polyline GetContourInModel ();
+        BuildingTypeEnum BuildingType { get; set; }
     }
 }
