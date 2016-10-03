@@ -9,8 +9,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:DesignTreesViewModel,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="166" d:DesignWidth="156"
-    mc:Ignorable="d">    
+    d:DesignHeight="171" d:DesignWidth="184"
+    mc:Ignorable="d">
     <catel:UserControl.Resources>
         <Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
         <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
@@ -24,29 +24,23 @@
         </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
         <StackPanel Grid.Row="0">
-            <ListBox
-                HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
+            <ListBox                                
                 Background="Transparent" BorderThickness="0"
                 ItemsSource="{Binding Points}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
                 SelectedItem="{Binding SelectedPoint}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <!--<Border Margin="1" BorderBrush="Gray" BorderThickness="1">-->
-                        <Grid
-                            Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="2" 
+                                    Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
+                            <TextBlock                                
                                 Margin="3"
                                 FontSize="20" FontWeight="Bold"
                                 Text="{Binding Number}" />
-                            <WrapPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <WrapPanel VerticalAlignment="Center">
                                 <!--  Инфо  -->
                                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Orientation="Horizontal">
                                     <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Type, Converter={catel:ObjectToDisplayNameConverter}}" />
@@ -54,16 +48,14 @@
                                     <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, Converter={converters:MinToHoursConverter}, StringFormat={} макс:{0}ч.}" />
                                 </StackPanel>
                                 <!--  Управление  -->
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <ToggleButton
+                                <ToggleButton
                                         Margin="1"                                        
                                         IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
                                         ToolTip="Визуализация зон инсоляции точки." Height="20">
-                                        <Image Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
-                                    </ToggleButton>                                    
-                                </StackPanel>
+                                    <Image Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
+                                </ToggleButton>
                             </WrapPanel>
-                        </Grid>
+                        </StackPanel>
                         <!--</Border>-->
                     </DataTemplate>
                 </ListBox.ItemTemplate>
