@@ -31,6 +31,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 var calcPt = new CalcPointCentral(insPoint, map, insService);
                 // Расчет освещенности в точке
                 illumAreas = calcPt.Calc();
+                insPoint.AngleStartOnPlane = calcPt.AngleStartOnPlane;
+                insPoint.AngleEndOnPlane = calcPt.AngleEndOnPlane;
                 t.Commit();
             }
             return illumAreas;

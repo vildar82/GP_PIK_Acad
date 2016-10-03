@@ -75,6 +75,20 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         /// <summary>
+        /// Угол солнца по углу проекции
+        /// </summary>
+        /// <param name="angleOnPlane">Угол на проекции (рад)</param>        
+        public double AngleSun (double angleOnPlane)
+        {
+            var y = Math.Tan(angleOnPlane);
+            var c = y / ratioYtoC;
+            var resAngleSun = Math.Atan(c);
+            if (resAngleSun < 0)
+                resAngleSun = Math.PI + resAngleSun;
+            return resAngleSun;
+        }
+
+        /// <summary>
         /// Угол проекции данного угла солнца
         /// </summary>
         /// <param name="angleSun">Угол солнца (от 0 до Пи)</param>
@@ -87,21 +101,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (resAngleOnPlane < 0)
                 resAngleOnPlane = Math.PI + resAngleOnPlane;
             return resAngleOnPlane;
-        }
-
-        /// <summary>
-        /// Угол солнца по углу проекции
-        /// </summary>
-        /// <param name="angleOnPlane">Угол на проекции (рад)</param>        
-        public double AngleSun(double angleOnPlane)
-        {
-            var y = Math.Tan(angleOnPlane);
-            var c = y / ratioYtoC;
-            var resAngleSun = Math.Atan(c);
-            if (resAngleSun < 0)
-                resAngleSun = Math.PI + resAngleSun;
-            return resAngleSun;
-        }
+        }        
 
         /// <summary>
         /// Отклонение луча в сторону - длина и направление отклонения

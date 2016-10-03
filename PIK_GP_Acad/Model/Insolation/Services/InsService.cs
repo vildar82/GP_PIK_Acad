@@ -9,6 +9,7 @@ using Catel;
 using Catel.ApiCop;
 using Catel.ApiCop.Listeners;
 using Catel.Data;
+using Catel.ExceptionHandling;
 using Catel.IoC;
 using Catel.Services;
 using Catel.Windows;
@@ -41,7 +42,10 @@ namespace PIK_GP_Acad.Insolation.Services
             //DesignTreesViewModel desigVM = new UI.DesignTreesViewModel();
 
             // Регистрация валидатора Catel.Extensions.FluentValidation
-            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();            
+            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
+
+            var exceptionService = ServiceLocator.Default.ResolveType<IExceptionService>();            
+            exceptionService.Register<Exception>(exception => ShowMessage(exception.ToString(), MessageImage.Error));
 
             Settings = new Settings();
             Settings.Load();
@@ -142,8 +146,13 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void Dispatcher_UnhandledException (object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
+            ShowMessage(e.Exception.Message, MessageImage.Error);
+        }
+
+        private static void ShowMessage (string msg, MessageImage img)
+        {
             var messageService = ServiceLocator.Default.ResolveType<IMessageService>();
-            messageService.ShowAsync(e.Exception.Message, "", MessageButton.OK, MessageImage.Error);
-        }        
+            messageService.ShowAsync(msg, "Инсоляция", MessageButton.OK, img);
+        }
     }
 }

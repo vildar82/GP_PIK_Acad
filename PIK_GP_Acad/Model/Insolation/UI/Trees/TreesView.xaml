@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    d:DataContext="{d:DesignInstance local:DesignTreesViewModel,
+    d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="166" d:DesignWidth="156"
     mc:Ignorable="d">

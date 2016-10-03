@@ -15,6 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             // Штриховка
             var ptCol = new Point2dCollection(points.ToArray());
+            ptCol.Add(points[0]);
             var dCol = new DoubleCollection(new double[points.Count]);            
 
             var h = new Hatch();

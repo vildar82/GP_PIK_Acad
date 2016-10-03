@@ -48,6 +48,16 @@ namespace PIK_GP_Acad.Insolation.Models
         public bool IsVisualIllumsOn { get; set; }
 
         /// <summary>
+        /// Начальный угол - ограничивающий освещение точки.
+        /// [рад]
+        /// </summary>
+        public double AngleStartOnPlane { get; set; }
+        /// <summary>
+        /// Конечный угол в плане (радиан)
+        /// </summary>
+        public double AngleEndOnPlane { get; set; }
+
+        /// <summary>
         /// Расчет точки - зон освещенности и времени
         /// </summary>
         public void Calc ()

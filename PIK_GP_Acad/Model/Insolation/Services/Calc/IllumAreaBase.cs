@@ -13,8 +13,7 @@ using AcadLib;
 namespace PIK_GP_Acad.Insolation.Services
 {
     public abstract class IllumAreaBase : IIlluminationArea
-    {
-        private VisualOption visualOptions = new VisualOption(System.Drawing.Color.MediumVioletRed, Point3d.Origin);
+    {        
         public Point2d PtOrig { get; set; }
         public Point2d PtStart { get; set; }
         public Point2d PtEnd{ get; set; }
@@ -61,13 +60,16 @@ namespace PIK_GP_Acad.Insolation.Services
             return merged;
         }
 
+        
+
         public List<Drawable> CreateVisual ()
         {
             List<Drawable> draws = new List<Drawable>();
 
             // Штриховка
+            var visOpt = new VisualOption(System.Drawing.Color.Red, Point3d.Origin, 60);
             var points = new List<Point2d> { PtOrig, PtStart, PtEnd };
-            var h = VisualHelper.CreateHatch(points, visualOptions);
+            var h = VisualHelper.CreateHatch(points, visOpt);
             draws.Add(h);
 
             // Угловой размер
@@ -78,6 +80,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 PtOrig.Convert3d(), ptDim2.Convert3d(), ptCenter.Convert3d(), Time.ToHours() + "ч.", ObjectId.Null);
             dim.Color = Color.FromColor(System.Drawing.Color.Red);
             dim.Dimtxt = 1.5;
+            dim.Dimscale = 0.5;
 
             draws.Add(dim);
 

@@ -65,8 +65,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 Points.Add(p);
 
                 p.IsVisualIllumsOn = true;
-                if (IsVisualTreeOn)
-                    VisualTrees.AddPoint(p);
+
+                VisualTrees.AddPoint(p);                
             }
         }        
 
