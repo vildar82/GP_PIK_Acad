@@ -67,6 +67,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Шумовое заграждение 3",Resources.GP_LineNoizeBarrier2, nameof(GP_PolylineNoizeBarrier3), "Рисование полилинии с типом линии 'ГП-Шумовое_ограждение_3'. Внимание: в типе линии используется форма из файла acadtopo.shx. При передаче файла с таким типом линии вне ПИК, необходимо передавать этот файл."),
                 new PaletteCommand("ArcGIS",Resources.ArcGIS, nameof(GP_ArcGIS), "Запуск программы ArcGis"),
                 new PaletteCommand("Enla",Resources.enla, nameof(GP_Enla), "Подсчет длин и площадей."),
+                new PaletteCommand(ResponsibleUsers,"Инсоляция",Resources.Sun.ToBitmap(), nameof(GP_InsolationService), "Расчет инсоляции."),
                 // БС
                 new PaletteCommand("Блоки Блок-Секций", Resources.GP_BlockSectionInsert,nameof(GP_BlockSectionInsert),"Вставка блока Блок-Секции из списка.", GroupBS),
                 new PaletteCommand("Спецификация Блок-Секций",Resources.GP_BlockSectionTable, nameof(GP_BlockSectionTable), "Вставка таблицы расчета выбранных блоков Блок-Секций.", GroupBS ),
@@ -484,7 +485,7 @@ namespace PIK_GP_Acad
             // Загрузка ресурсов WPF
             try
             {
-                // загрузка Orchestra
+                // загрузка Catel
                 LoadService.LoadCatel();                
 
                 if (System.Windows.Application.Current == null)
