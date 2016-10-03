@@ -23,11 +23,14 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsPoint (InsModel model)
         {
             this.model = model;
-            Window = new WindowOptions();            
+            Window = new WindowOptions();
+            Number = model.Tree.Points.Count+1;           
         }
 
         [ExcludeFromSerialization]
         public VisualInsPointIllums VisualIllums { get; private set; }
+        [ExcludeFromSerialization]
+        public  VisualInsPointInfo VisualPointInfo { get; private set; }
 
         /// <summary>
         /// Номер точки
@@ -56,9 +59,16 @@ namespace PIK_GP_Acad.Insolation.Models
             if (VisualIllums == null)
             {
                 VisualIllums = new VisualInsPointIllums();
-            }
-            // Создание объектов визуализации
-            VisualIllums.CreateVisual(this);            
+            }            
+            VisualIllums.CreateVisual(this);
+
+            // Визуализация описания точки
+            if (VisualPointInfo == null)
+                VisualPointInfo = new VisualInsPointInfo(this);
+            else
+                VisualPointInfo.InsPoint = this;
+            if (model.IsInsActivated)
+                VisualPointInfo.IsOn = true;
         }        
         
         private void OnIsVisualIllumsOnChanged ()

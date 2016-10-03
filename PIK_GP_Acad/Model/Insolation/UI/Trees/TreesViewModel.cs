@@ -31,7 +31,10 @@ namespace PIK_GP_Acad.Insolation.UI
         [Expose("VisualOptions")]
         [Expose("Points")]
         [Expose("IsVisualIllumsOn")]
+        [Expose("IsVisualTreeOn")]        
         public TreeModel TreeModel { get; set; }  
+
+        public InsPoint SelectedPoint { get; set; }
 
         public string AddpointInfo { get; set; }
 

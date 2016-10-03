@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
-        private void Switch ()
+        protected void Switch ()
         {            
             if (visuals != null)
             {

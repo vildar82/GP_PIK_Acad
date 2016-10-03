@@ -24,15 +24,18 @@
         <!--  Список расчетных точекк  -->
         <StackPanel Grid.Row="0">
             <ListBox
+                HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
                 Background="Transparent" BorderThickness="0"
                 ItemsSource="{Binding Points}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                SelectedItem="{Binding SelectedPoint}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <!--<Border Margin="1" BorderBrush="Gray" BorderThickness="1">-->
-                        <Grid Margin="2" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}"
-                              HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Grid
+                            Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
@@ -44,7 +47,7 @@
                                 Text="{Binding Number}" />
                             <WrapPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                 <!--  Инфо  -->
-                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Orientation="Horizontal">
                                     <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Type, Converter={catel:ObjectToDisplayNameConverter}}" />
                                     <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, Converter={converters:MinToHoursConverter}, StringFormat={} Всего:{0}ч.\,}" />
                                     <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, Converter={converters:MinToHoursConverter}, StringFormat={} макс:{0}ч.}" />
@@ -56,7 +59,7 @@
                                         Content="Инс."
                                         IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
                                         ToolTip="Визуализация зон инсоляции точки." />
-                                    <Button Margin="1" Content="Елочки" />
+                                    <Button Margin="1" Content="Елочки" ToolTip="Пока просто так" />
                                 </StackPanel>
                             </WrapPanel>
                         </Grid>
@@ -69,7 +72,7 @@
         <!--  Управление елочками  -->
         <WrapPanel Grid.Row="1" Margin="2">
             <ToggleButton Margin="1" Content="Инс." IsChecked="{Binding IsVisualIllumsOn}" />
-            <Button Margin="1" Content="Настройки" />
+            <ToggleButton Margin="1" Content="елочки" IsChecked="{Binding IsVisualTreeOn}"/>
         </WrapPanel>
         <!--  Настройки высот для визуализации  -->
         <!--<StackPanel Grid.Row="1">

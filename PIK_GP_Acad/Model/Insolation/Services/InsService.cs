@@ -29,6 +29,7 @@ namespace PIK_GP_Acad.Insolation.Services
         static InsServicePallete palette;
         static InsViewModel insViewModel;
         static InsView insView;
+        static bool isOn;
 
         public static ISettings Settings { get; private set; }
 
@@ -45,10 +46,18 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings = new Settings();
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
+
+            Application.QuitWillStart += Application_QuitWillStart;
+        }
+
+        private static void Application_QuitWillStart (object sender, EventArgs e)
+        {
+            isOn = false;
         }
 
         public static void Start (Document doc)
-        {            
+        {
+            isOn = true;
             if (insModels == null)
                 insModels = new Dictionary<Document, InsModel>();
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
@@ -60,13 +69,17 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public static void Stop ()
         {
-            Application.DocumentManager.DocumentActivated -= (o,e) => ChangeDocument(e.Document);
-            //Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => RemoveDocument(e.Document);
-            //Settings.Save();
-            //palette.Visible = false;
-            //palette = null;
-            //insModels = null;
-            //insViewModel = null;
+            if (isOn)
+            {                
+                Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
+                Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => RemoveDocument(e.Document);
+                //Settings.Save();
+                //palette.Visible = false;
+                palette = null;
+                insModels = null;
+                insViewModel = null;
+                isOn = false;
+            }
 
 //#if DEBUG
 //            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
@@ -89,11 +102,12 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void RemoveDocument (Document doc)
         {
-            //insModels.Remove(doc);
+            insModels.Remove(doc);
         }
 
         private async static void ChangeDocument (Document doc)
         {
+            if (!isOn) return;
             InsModel insModel;
             if (!insModels.TryGetValue(doc, out insModel))
             {

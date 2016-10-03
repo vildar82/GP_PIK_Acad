@@ -15,12 +15,14 @@ namespace PIK_GP_Acad.Insolation.Services
     public class VisualInsPointIllums : VisualServiceBase
     {
         public void CreateVisual (InsPoint insPoint)
-        {            
+        {   
             visuals = new List<IVisual>();
             foreach (var item in insPoint.Illums)
             {
                 visuals.Add(item);
-            }            
+            }
+            // Обновление
+            Switch();   
         }       
     }
 }

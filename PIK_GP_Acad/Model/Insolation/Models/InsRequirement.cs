@@ -14,5 +14,11 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         public InsRequirementEnum Type { get; set; }
         public Color Color { get; set; }
+
+        public static string GetTypeString (InsRequirementEnum type)
+        {
+            var converter = new Catel.MVVM.ObjectToDisplayNameConverter();
+            return (string)converter.Convert(type, typeof(string), null, null);
+        }
     }
 }

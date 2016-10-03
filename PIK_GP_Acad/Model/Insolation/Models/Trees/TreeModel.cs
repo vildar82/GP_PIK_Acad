@@ -38,16 +38,20 @@ namespace PIK_GP_Acad.Insolation.Models
             this.InsModel = insModel;
             Points = new ObservableCollection<InsPoint>();
             //Points.CollectionChanged += Points_CollectionChanged;
-            VisualOptions = InsService.Settings.TreeVisualOptions;            
+            VisualOptions = InsService.Settings.TreeVisualOptions;
+            VisualTrees = new VisualTree();
         }
         [ExcludeFromSerialization]
-        public InsModel InsModel { get; set; } 
+        public InsModel InsModel { get; set; }
+        [ExcludeFromSerialization]
+        public VisualTree VisualTrees { get; set; }
         public ObservableCollection<TreeVisualOption> VisualOptions { get; set; } 
         /// <summary>
         /// Расчетные точки
         /// </summary>
         public ObservableCollection<InsPoint> Points { get; set; }
         public bool IsVisualIllumsOn { get; set; }
+        public bool IsVisualTreeOn { get; set; }
         /// <summary>
         /// Задание новой расчетной точки.        
         /// </summary>        
@@ -59,7 +63,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 p.Calc();
                 Points.Add(p);
-                p.IsVisualIllumsOn = true;
+                p.IsVisualIllumsOn = true;                
             }
         }        
 
@@ -108,8 +112,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 for (int i = 0; i < Points.Count; i++)
                 {
                     var p = Points[i];
-                    if (p.Number != i)
-                        p.Number = i;
+                    var num = i +1;
+                    if (p.Number != num)
+                        p.Number = num;
                 }
             }
         }
