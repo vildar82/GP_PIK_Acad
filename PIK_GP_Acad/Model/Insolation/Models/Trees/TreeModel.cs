@@ -39,7 +39,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Points = new ObservableCollection<InsPoint>();
             //Points.CollectionChanged += Points_CollectionChanged;
             VisualOptions = InsService.Settings.TreeVisualOptions;
-            VisualTrees = new VisualTree();
+            VisualTrees = new VisualTree(InsModel, VisualOptions.ToList());
         }
         [ExcludeFromSerialization]
         public InsModel InsModel { get; set; }
@@ -63,7 +63,10 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 p.Calc();
                 Points.Add(p);
-                p.IsVisualIllumsOn = true;                
+
+                p.IsVisualIllumsOn = true;
+                if (IsVisualTreeOn)
+                    VisualTrees.AddPoint(p);
             }
         }        
 
@@ -94,6 +97,11 @@ namespace PIK_GP_Acad.Insolation.Models
                     }                    
                 }
             }
+        }
+
+        private void OnIsVisualTreeOnChanged()
+        {
+            VisualTrees.IsOn = IsVisualTreeOn;
         }
 
         /// <summary>

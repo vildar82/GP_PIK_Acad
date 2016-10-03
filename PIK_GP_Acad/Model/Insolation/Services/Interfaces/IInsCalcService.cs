@@ -11,7 +11,7 @@ namespace PIK_GP_Acad.Insolation.Services
     public interface IInsCalcService
     {
         InsOptions Options { get; set; }
-
+        ICalcValues CalcValues { get; set; }
         ICalcTrees TreesCalc { get; set; }        
         void CreateShadowMap ();
         InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums);

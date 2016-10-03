@@ -9,7 +9,7 @@ using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class CalcValuesCentral
+    public class CalcValuesCentral : ICalcValues
     {
         private double FiTan;
         private double FiCos;

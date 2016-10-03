@@ -162,6 +162,7 @@
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\ICalcValues.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\InsAngleCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Trees\CalcPointCentral.cs" />
     <Compile Include="Model\Insolation\Models\InsModel.cs" />
@@ -192,10 +193,11 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\SelectPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisual.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Trees\InsIllumVisualOptions.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualInsPointIllums.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualInsPointInfo.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualTree.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualServiceBase.cs" />
     <Compile Include="Model\Insolation\UI\InsRegionView.xaml.cs">
       <DependentUpon>InsRegionView.xaml</DependentUpon>

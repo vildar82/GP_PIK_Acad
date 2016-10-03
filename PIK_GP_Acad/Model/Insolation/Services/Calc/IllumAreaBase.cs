@@ -14,7 +14,7 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public abstract class IllumAreaBase : IIlluminationArea
     {
-        private InsIllumVisualOptions visualOptions = new InsIllumVisualOptions();
+        private VisualOption visualOptions = new VisualOption(System.Drawing.Color.MediumVioletRed, Point3d.Origin);
         public Point2d PtOrig { get; set; }
         public Point2d PtStart { get; set; }
         public Point2d PtEnd{ get; set; }
@@ -63,26 +63,11 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public List<Drawable> CreateVisual ()
         {
-            List<Drawable> draws = new List<Drawable>();           
+            List<Drawable> draws = new List<Drawable>();
 
             // Штриховка
-            var ptCol = new Point2dCollection();
-            ptCol.Add(PtOrig);
-            ptCol.Add(PtStart);
-            ptCol.Add(PtEnd);
-            ptCol.Add(PtOrig);
-            var dCol = new DoubleCollection(3);
-            dCol.Add(0);
-            dCol.Add(0);
-            dCol.Add(0);
-            dCol.Add(0);
-
-            var h = new Hatch();            
-            h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
-            h.Color = Color.FromColor(visualOptions.Color);
-            h.Transparency = new Transparency(visualOptions.Transparency);
-            h.AppendLoop(HatchLoopTypes.Default, ptCol, dCol);                                                
-            
+            var points = new List<Point2d> { PtOrig, PtStart, PtEnd };
+            var h = VisualHelper.CreateHatch(points, visualOptions);
             draws.Add(h);
 
             // Угловой размер

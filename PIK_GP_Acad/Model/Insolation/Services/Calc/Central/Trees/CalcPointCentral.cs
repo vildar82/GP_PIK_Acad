@@ -15,6 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public class CalcPointCentral
     {
+        Plane plane = new Plane();
         InsPoint insPt;
         Map map;
         Point3d ptCalc;
@@ -25,12 +26,11 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
         /// Будут определены для этой расвчетной точки индивидуально
         /// </summary>
-        double angleStartOnPlane;
+        public double AngleStartOnPlane { get; private set; }
         /// <summary>
         /// Конечный угол в плане (радиан). Начальное значение = 180 - заход
         /// </summary>
-        double angleEndOnPlane;
-        Plane plane = new Plane();
+        public double AngleEndOnPlane { get; private set; }        
 
         public CalcPointCentral (InsPoint insPt, Map map, InsCalcServiceCentral insCalcService)
         {
@@ -41,8 +41,8 @@ namespace PIK_GP_Acad.Insolation.Services
             this.calc = insCalcService;
             values = insCalcService.CalcValues;
 
-            angleStartOnPlane = values.SunCalcAngleStartOnPlane;
-            angleEndOnPlane = values.SunCalcAngleEndOnPlane;
+            AngleStartOnPlane = values.SunCalcAngleStartOnPlane;
+            AngleEndOnPlane = values.SunCalcAngleEndOnPlane;
         }
 
         public List<IIlluminationArea> Calc ()
@@ -70,7 +70,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 resAreas = IllumAreaBase.Merge(resAreas);
 
                 // Инвертировать зоны теней в зоны освещенностей    
-                resAreas = IllumAreaCentral.Invert(resAreas, angleStartOnPlane, angleEndOnPlane, ptCalc2d);
+                resAreas = IllumAreaCentral.Invert(resAreas, AngleStartOnPlane, AngleEndOnPlane, ptCalc2d);
             }
             return resAreas;
         }
@@ -85,8 +85,8 @@ namespace PIK_GP_Acad.Insolation.Services
             double yShadow = ptCalc2d.Y - yShadowLen;
 
             // Линия тени
-            var xRayToStart = values.GetXRay(yShadowLen, angleStartOnPlane);
-            var xRayToEnd = values.GetXRay(yShadowLen, angleEndOnPlane);
+            var xRayToStart = values.GetXRay(yShadowLen, AngleStartOnPlane);
+            var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
             Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
                               new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
             //#if DEBUG
@@ -163,8 +163,8 @@ namespace PIK_GP_Acad.Insolation.Services
             double cSunPlane;
             double ySunPlane = values.YShadowLineByHeight(maxHeight, out cSunPlane);
             // растояние до точки пересечения луча и линии тени
-            double xRayToStart = values.GetXRay(ySunPlane, angleStartOnPlane);
-            double xRayToEnd = values.GetXRay(ySunPlane, angleEndOnPlane);
+            double xRayToStart = values.GetXRay(ySunPlane, AngleStartOnPlane);
+            double xRayToEnd = values.GetXRay(ySunPlane, AngleEndOnPlane);
             Extents3d ext = new Extents3d(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
                                           new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
             return ext;
@@ -183,17 +183,17 @@ namespace PIK_GP_Acad.Insolation.Services
                 out vecWindowOutPerp, out vecWinToEast, out vecWinToWest);
 
             // Угол восточной плоскости окна больше стартового угла
-            if (windowStartAngle > angleStartOnPlane)
+            if (windowStartAngle > AngleStartOnPlane)
             {
                 // Восточный угол окна больше конечного угла
-                if (windowEndAngle > angleStartOnPlane && windowEndAngle < angleEndOnPlane)
-                    angleEndOnPlane = windowEndAngle;
+                if (windowEndAngle > AngleStartOnPlane && windowEndAngle < AngleEndOnPlane)
+                    AngleEndOnPlane = windowEndAngle;
                 else
-                    angleStartOnPlane = windowStartAngle;
+                    AngleStartOnPlane = windowStartAngle;
             }            
 
             // Если стартовый угол больше конечного - то освещения вообще нет
-            if (angleStartOnPlane >= angleEndOnPlane)
+            if (AngleStartOnPlane >= AngleEndOnPlane)
             {
                 res = false;
             }
@@ -207,19 +207,19 @@ namespace PIK_GP_Acad.Insolation.Services
                 double windowOutPerpendAngle = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle);
 
                 // Проверка ограничения от самого здания с восточной стороны
-                if (windowOutPerpendAngle > angleStartOnPlane)
+                if (windowOutPerpendAngle > AngleStartOnPlane)
                 {
                     DefineRestrictionAngleInSide(vecWinToEast, yShadowLen, true);
                 }
 
-                if (angleStartOnPlane >= angleEndOnPlane)
+                if (AngleStartOnPlane >= AngleEndOnPlane)
                 {
                     res = false;
                 }
                 else
                 {
                     // Проверка ограничения от самого здания с западной стороны
-                    if (windowOutPerpendAngle < angleEndOnPlane)
+                    if (windowOutPerpendAngle < AngleEndOnPlane)
                     {
                         DefineRestrictionAngleInSide(vecWinToWest, yShadowLen, false);
                     }
@@ -229,14 +229,14 @@ namespace PIK_GP_Acad.Insolation.Services
                 {
                     // Окончательная проверка углов
                     // Стартовый угол не может быть больше конечного
-                    if (angleStartOnPlane >= angleEndOnPlane)
+                    if (AngleStartOnPlane >= AngleEndOnPlane)
                     {
                         res = false;
                     }
                     else
                     {
                         // Конечный угол не может быть больше Pi
-                        if (angleEndOnPlane >= Math.PI)
+                        if (AngleEndOnPlane >= Math.PI)
                         {
                             throw new Exception("Ошибка расчета ограничивающих углов.");
                         }
@@ -301,17 +301,17 @@ namespace PIK_GP_Acad.Insolation.Services
         private IIlluminationArea CreateIllumShadow (Tuple<Point2d, double> angleStart, Tuple<Point2d, double> angleEnd)
         {
             // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
-            if (angleEnd.Item2 < angleStartOnPlane || angleStart.Item2 > angleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
+            if (angleEnd.Item2 < AngleStartOnPlane || angleStart.Item2 > AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
                 return null;
-            if (angleStart.Item2 < angleStartOnPlane)
+            if (angleStart.Item2 < AngleStartOnPlane)
             {
-                var ptStart = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleStart.Item1, angleStartOnPlane);
-                angleStart = new Tuple<Point2d, double>(ptStart, angleStartOnPlane);
+                var ptStart = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
+                angleStart = new Tuple<Point2d, double>(ptStart, AngleStartOnPlane);
             }
-            if (angleEnd.Item2 > angleEndOnPlane)
+            if (angleEnd.Item2 > AngleEndOnPlane)
             {
-                var ptEnd = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleEnd.Item1, angleEndOnPlane);
-                angleEnd = new Tuple<Point2d, double>(ptEnd, angleEndOnPlane);
+                var ptEnd = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
+                angleEnd = new Tuple<Point2d, double>(ptEnd, AngleEndOnPlane);
             }
             var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
             return ilum;
@@ -480,16 +480,16 @@ namespace PIK_GP_Acad.Insolation.Services
             if (isEast)
             {
                 angleLimitByOwnerBuilding = GetMaxRestrictionAngle(vertexesSide,
-                d => d < angleEndOnPlane && d > angleStartOnPlane);
+                d => d < AngleEndOnPlane && d > AngleStartOnPlane);
             }
             else
             {
                 angleLimitByOwnerBuilding = GetMinRestrictionAngle(vertexesSide,
-                d => d> angleStartOnPlane && d < angleEndOnPlane);
+                d => d> AngleStartOnPlane && d < AngleEndOnPlane);
             }            
 
             if (angleLimitByOwnerBuilding != 0)
-                angleEndOnPlane = angleLimitByOwnerBuilding;
+                AngleEndOnPlane = angleLimitByOwnerBuilding;
         }
     }
 }

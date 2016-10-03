@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         public ICalcTrees TreesCalc { get; set; }
-        public CalcValuesCentral CalcValues { get; set; }
+        public ICalcValues CalcValues { get; set; }
         public InsOptions Options { get; set; }
 
         /// <summary>
