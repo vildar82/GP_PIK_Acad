@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 visuals.Add(item);
             }
             // Обновление
-            Switch();   
+            Update();   
         }       
     }
 }

@@ -15,16 +15,20 @@ using Catel.MVVM;
 using Catel.Fody;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
+using Catel.IoC;
+using Catel.Services;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
     public class TreesViewModel : ViewModelBase
     {
-        public TreesViewModel () { }
+        public TreesViewModel () : this(null)
+        { }
         public TreesViewModel (TreeModel treeModel)
         {
             TreeModel = treeModel;
             AddPoint = new TaskCommand(OnAddPointExecute, OnAddPointCanExecute);
+            ShowPoint = new TaskCommand(OnShowPointExecute);
         }        
 
         [Model]
@@ -35,15 +39,17 @@ namespace PIK_GP_Acad.Insolation.UI
         public TreeModel TreeModel { get; set; }  
 
         public InsPoint SelectedPoint { get; set; }
-
         public string AddpointInfo { get; set; }
 
         public TaskCommand AddPoint { get; private set; }
+        public TaskCommand ShowPoint { get; private set; }
+        
+
 
         private async Task OnAddPointExecute ()
         {
-            TreeModel.NewPoint();
-        }
+            TreeModel.AddPoint();
+        }        
 
         private bool OnAddPointCanExecute ()
         {
@@ -60,7 +66,12 @@ namespace PIK_GP_Acad.Insolation.UI
             }            
             return res;
         }
-    }    
+
+        private async Task OnShowPointExecute ()
+        {
+            TreeModel.ShowPoint(SelectedPoint);
+        }
+    }
 
     public class DesignTreesViewModel : TreesViewModel
     {
@@ -70,7 +81,7 @@ namespace PIK_GP_Acad.Insolation.UI
             TreeModel.Points = new ObservableCollection<InsPoint>() {
                 new InsPoint(null) {
                     InsValue = new InsValue () {
-                        MaxContinuosTime =120, TotalTime= 240, Requirement = new InsRequirement () {
+                        MaxContinuosTime =1.6, TotalTime= 4.5, Requirement = new InsRequirement () {
                             Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green } },
                     Building = new InsBuilding () { BuildingType = Elements.Buildings.BuildingTypeEnum.Living } }                    
             };            

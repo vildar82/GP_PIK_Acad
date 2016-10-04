@@ -10,10 +10,13 @@ namespace PIK_GP_Acad.Elements.Buildings
     public enum BuildingTypeEnum
     {
         [Description("Жилое")]
+        [Catel.ComponentModel.DisplayName("Жилое")]
         Living,
         [Description("Социальное")]
+        [Catel.ComponentModel.DisplayName("Социальное")]
         Social,
         [Description("Гараж")]
+        [Catel.ComponentModel.DisplayName("Гараж")]
         Garage,
     }
 }

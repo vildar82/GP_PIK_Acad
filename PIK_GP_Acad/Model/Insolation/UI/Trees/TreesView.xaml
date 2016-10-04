@@ -2,80 +2,126 @@
     x:Class="PIK_GP_Acad.Insolation.UI.TreesView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:catel="http://catel.codeplex.com"
-    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:myconverters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:DesignTreesViewModel,
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="166" d:DesignWidth="156"
-    mc:Ignorable="d">    
+    mc:Ignorable="d">
     <catel:UserControl.Resources>
-        <Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
-        <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
+        <BitmapImage x:Key="tree" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png" />
+        <BitmapImage x:Key="ilums" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
+        <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
+        <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
+
+        <!--<Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
+        <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
+        <Image x:Key="options" Source="/PIK_GP_Acad;component/Resources/options.png" />
+        <Image x:Key="Close" Source="/PIK_GP_Acad;component/Resources/Close.png" />-->
+        <sys:Double x:Key="ImageButtonHeight">22</sys:Double>
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <!--  Точки  -->
             <RowDefinition />
+            <RowDefinition Height="Auto" />
             <!--  Визуализация высот  -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
-        <StackPanel Grid.Row="0">
-            <ListBox
-                HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
-                Background="Transparent" BorderThickness="0"
-                ItemsSource="{Binding Points}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                SelectedItem="{Binding SelectedPoint}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <!--<Border Margin="1" BorderBrush="Gray" BorderThickness="1">-->
-                        <Grid
-                            Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                            Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="3"
-                                FontSize="20" FontWeight="Bold"
-                                Text="{Binding Number}" />
-                            <WrapPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                <!--  Инфо  -->
-                                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Orientation="Horizontal">
-                                    <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Type, Converter={catel:ObjectToDisplayNameConverter}}" />
-                                    <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, Converter={converters:MinToHoursConverter}, StringFormat={} Всего:{0}ч.\,}" />
-                                    <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, Converter={converters:MinToHoursConverter}, StringFormat={} макс:{0}ч.}" />
-                                </StackPanel>
-                                <!--  Управление  -->
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <ToggleButton
-                                        Margin="1"                                        
-                                        IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
-                                        ToolTip="Визуализация зон инсоляции точки." Height="20">
-                                        <Image Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png"/>
-                                    </ToggleButton>                                    
-                                </StackPanel>
-                            </WrapPanel>
-                        </Grid>
-                        <!--</Border>-->
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <ListBox
+            x:Name="lbPoints"
+            Grid.Row="0"
+            HorizontalContentAlignment="Stretch"
+            Background="Transparent" BorderThickness="0"
+            ItemsSource="{Binding Points}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectedItem="{Binding SelectedPoint}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <catel:EventToCommand Command="{Binding ShowPoint}" DisableAssociatedObjectOnCannotExecute="False" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="2" HorizontalAlignment="Stretch" Background="{Binding InsValue.Requirement.Color, Converter={myconverters:ColorToBrushConverter}}"
+                          ToolTip="{Binding Converter={catel:MethodToValueConverter}, ConverterParameter='Info'}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"                            
+                            Margin="3"
+                            FontSize="20" FontWeight="Bold"
+                            Text="{Binding Number}" />
+                        <WrapPanel Grid.Column="1">                            
+                            <!--  Инфо  -->
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name}" VerticalAlignment="Center"/>
+                                <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, StringFormat={} всего:{0}ч.\,}" VerticalAlignment="Center" />
+                                <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, StringFormat={} макс:{0}ч.}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <!--  Кнопки  -->
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <ToggleButton
+                                    Height="{StaticResource ImageButtonHeight}"
+                                    Margin="1"
+                                    Background="Transparent"
+                                    IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
+                                    IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type catel:UserControl}}, Path=DataContext.IsVisualIllumsOn}"
+                                    ToolTip="Визуализация зон инсоляции точки.">
+                                    <Image Source="{StaticResource ilums}" />
+                                </ToggleButton>
+                                <Button
+                                    Height="{StaticResource ImageButtonHeight}"
+                                    Margin="1"
+                                    Background="Transparent"
+                                    Command="{Binding EditPoint}"
+                                    ToolTip="Редактирование параметров точки">
+                                    <Image Source="{StaticResource options}" />
+                                </Button>
+                                <Button
+                                    Height="{StaticResource ImageButtonHeight}"
+                                    Margin="1"
+                                    Background="Transparent"
+                                    Command="{Binding DeletePoint}"
+                                    ToolTip="Удаление выделенной точки в списке">
+                                    <Image Source="{StaticResource Close}" />
+                                </Button>
+                            </StackPanel>
+                        </WrapPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Button Command="{Binding AddPoint}" Content="Добавить точку" ToolTip="{Binding AddpointInfo}" />
         </StackPanel>
         <!--  Управление елочками  -->
-        <WrapPanel Grid.Row="1" Margin="2">
-            <ToggleButton Margin="1" IsChecked="{Binding IsVisualIllumsOn}" Height="20" ToolTip="Включение/выключение визуализации зон инсоляции точки"
-                         Content="{StaticResource InsIllums}" />
-            <ToggleButton Margin="1" IsChecked="{Binding IsVisualTreeOn}" ToolTip="Включение/выключение визуализации елочек" 
-                          Height="20" Content="{StaticResource InsTrees}"/>
+        <WrapPanel Grid.Row="2" Margin="2">
+            <ToggleButton
+                Height="{StaticResource ImageButtonHeight}"
+                Margin="1"
+                Background="Transparent"
+                IsChecked="{Binding IsVisualIllumsOn}"
+                ToolTip="Включение/выключение визуализации зон инсоляции точки">
+                <Image Source="{StaticResource ilums}" />
+            </ToggleButton>
+            <ToggleButton
+                Height="{StaticResource ImageButtonHeight}"
+                Margin="1"
+                Background="Transparent"
+                IsChecked="{Binding IsVisualTreeOn}"
+                ToolTip="Включение/выключение визуализации елочек">
+                <Image Source="{StaticResource tree}" />
+            </ToggleButton>
+
         </WrapPanel>
         <!--  Настройки высот для визуализации  -->
         <!--<StackPanel Grid.Row="1">

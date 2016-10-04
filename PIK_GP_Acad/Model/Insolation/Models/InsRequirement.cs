@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -14,11 +15,6 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         public InsRequirementEnum Type { get; set; }
         public Color Color { get; set; }
-
-        public static string GetTypeString (InsRequirementEnum type)
-        {
-            var converter = new Catel.MVVM.ObjectToDisplayNameConverter();
-            return (string)converter.Convert(type, typeof(string), null, null);
-        }
+        public string Name { get { return InsService.GetDisplayName(Type); } }
     }
 }

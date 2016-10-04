@@ -45,7 +45,7 @@ namespace PIK_GP_Acad.Insolation.UI
         }        
 
         private async Task OnSelectRegionExecute ()
-        {
+        {            
             var regionViewModel = new InsRegionViewModel(InsModel.Options.Region);
             var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (await uiVisualizerService.ShowDialogAsync(regionViewModel) == true)

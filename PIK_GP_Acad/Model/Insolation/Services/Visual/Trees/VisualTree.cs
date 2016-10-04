@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualTree : VisualServiceBase, IVisual
     {
-        List<InsPoint> points = new List<InsPoint>();
+        public ObservableCollection<InsPoint> Points { get; set; }
 
         public List<TreeVisualOption> VisualOptions { get; set; }
         public InsModel Model { get; set; }
@@ -26,16 +27,16 @@ namespace PIK_GP_Acad.Insolation.Services
             visuals = new List<IVisual> { this };
         }
 
-        public void AddPoint (InsPoint p)
-        {            
-            points.Add(p);
-            Switch();
-        }        
+        //public void AddPoint (InsPoint p)
+        //{            
+        //    Points.Add(p);
+        //    Update();
+        //}        
 
         public List<Drawable> CreateVisual ()
         {
             List<Drawable> drawsAllPointsTrees = new List<Drawable>();
-            foreach (var item in points)
+            foreach (var item in Points)
             {
                 var drawsPointTrees = GetTreeDraws(item);
                 drawsAllPointsTrees.AddRange(drawsPointTrees);

@@ -17,8 +17,6 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class InsModel : ModelBase
     {
-        private bool isInsActivated;         
-
         /// <summary>
         /// Для восстановление сохраненного расчета инсоляции
         /// Пока не реализовано
@@ -32,16 +30,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Doc = doc;
         }
 
-        public bool IsInsActivated {
-            get { return isInsActivated; }
-            set {
-                if (value != isInsActivated)
-                {
-                    ActivateIns(value);                    
-                }
-                isInsActivated = value;
-            }
-        }        
+        public bool IsInsActivated { get; set; }
 
         public Document Doc { get; set; }
         public Map Map { get; set; }
@@ -61,9 +50,9 @@ namespace PIK_GP_Acad.Insolation.Models
             base.OnInitialized();            
         }
 
-        private void ActivateIns (bool value)
+        private void OnIsInsActivatedChanged()
         {
-            if (value)
+            if (IsInsActivated)
             {
                 if (Map == null)
                 {
@@ -74,11 +63,13 @@ namespace PIK_GP_Acad.Insolation.Models
                     CalcService = InsService.GetCalcService(Options);
                 }
                 // Включить визуализацию
+                Tree.VisualsOnOff(true);
             }
             else
             {
                 // Отключить инсоляцию для этого документа (всю визуализацию)                
-            }            
-        }
+                Tree.VisualsOnOff(false);
+            }
+        }       
     }
 }

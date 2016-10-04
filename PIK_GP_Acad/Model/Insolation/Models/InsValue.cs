@@ -22,9 +22,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public InsRequirement Requirement { get; set; }
         /// <summary>
-        /// Макимальная продолжительность непрерывной инсоляции
+        /// Макимальная продолжительность непрерывной инсоляции, [ч.]
         /// </summary>
-        public int MaxContinuosTime { get; set; }
-        public int TotalTime { get; set; }
+        public double MaxContinuosTime { get; set; }
+        /// <summary>
+        /// Суммарная инсоляция, [ч.]
+        /// </summary>
+        public double TotalTime { get; set; }
     }
 }

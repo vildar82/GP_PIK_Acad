@@ -7,7 +7,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Models;
 
-namespace PIK_GP_Acad.Insolation.Services.Calc
+namespace PIK_GP_Acad.Insolation.Services
 {
     public static class InsCalcServiceFactory
     {

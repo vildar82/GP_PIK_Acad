@@ -14,15 +14,9 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsPointViewModel : ViewModelBase
     {
-        static List<BuildingTypeName> buildingTypes = new List<BuildingTypeName> {
-            new BuildingTypeName { Type= BuildingTypeEnum.Living, Name = "Жилое" },
-            new BuildingTypeName { Type = BuildingTypeEnum.Social, Name = "Социальное" }
-        };        
-
         public InsPointViewModel (InsPoint insPoint): base()
         {            
-            InsPoint = insPoint;            
-            SelectedBuildingType = GetBuildingTypeNameByType(InsPoint.Building.BuildingType);            
+            InsPoint = insPoint;                        
         }        
 
         [Model]
@@ -32,8 +26,8 @@ namespace PIK_GP_Acad.Insolation.UI
         [Expose("Window")]   
         [Expose("InsValue")]    
         public InsPoint InsPoint { get; set; }
-        public List<BuildingTypeName> BuildingTypes { get; set; } = buildingTypes;
-        public BuildingTypeName SelectedBuildingType { get; set; }        
+        public List<BuildingTypeEnum> BuildingTypes { get; set; } =
+            new List<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };        
 
         protected override async Task InitializeAsync ()
         {
@@ -47,23 +41,6 @@ namespace PIK_GP_Acad.Insolation.UI
             // TODO: unsubscribe from events here            
 
             await base.CloseAsync();
-        }
-
-        private void OnSelectedBuildingTypeChanged()
-        {
-            InsPoint.Building.BuildingType = SelectedBuildingType.Type;
-        }
-
-        private BuildingTypeName GetBuildingTypeNameByType (BuildingTypeEnum buildingType)
-        {
-            var res = buildingTypes.Find(f => f.Type == buildingType);
-            return res;
-        }        
+        }       
     }
-
-    public class BuildingTypeName : ModelBase
-    {
-        public BuildingTypeEnum Type { get; set; }
-        public string Name { get; set; }
-    }         
 }

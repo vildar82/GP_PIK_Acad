@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Elements.Buildings;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -19,6 +20,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get; private set; }
         public BuildingTypeEnum BuildingType { get; set; }
+        public string BuildinTypeName { get { return InsService.GetDisplayName(BuildingType); } }
 
         public InsBuilding () { }
 

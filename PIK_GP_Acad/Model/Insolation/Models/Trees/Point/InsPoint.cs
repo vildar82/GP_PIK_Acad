@@ -5,9 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Geometry;
 using Catel.Data;
+using Catel.IoC;
+using Catel.MVVM;
 using Catel.Runtime.Serialization;
+using Catel.Services;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation.Services;
+using PIK_GP_Acad.Insolation.UI;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -18,19 +23,30 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         InsModel model;
 
+        [ExcludeFromSerialization]
+        public VisualInsPointIllums VisualIllums { get; private set; }
+        [ExcludeFromSerialization]
+        public VisualInsPointInfo VisualPointInfo { get; private set; }
+
         public InsPoint () { }
 
         public InsPoint (InsModel model)
         {
             this.model = model;
             Window = new WindowOptions();
-            Number = model.Tree.Points.Count+1;           
+            Number = model.Tree.Points.Count + 1;
         }
 
-        [ExcludeFromSerialization]
-        public VisualInsPointIllums VisualIllums { get; private set; }
-        [ExcludeFromSerialization]
-        public  VisualInsPointInfo VisualPointInfo { get; private set; }
+        protected override void OnInitialized ()
+        {
+            base.OnInitialized();
+            EditPoint = new TaskCommand(OnEditPointExecute);
+            DeletePoint = new TaskCommand(OnDeletePointExecute);
+        }
+
+        public TaskCommand EditPoint { get; private set; }
+        public TaskCommand DeletePoint { get; private set; }
+
 
         /// <summary>
         /// Номер точки
@@ -84,10 +100,44 @@ namespace PIK_GP_Acad.Insolation.Models
         private void OnIsVisualIllumsOnChanged ()
         {
             // Включение/выключение визуализации инсоляционных зон точки
-            if (VisualIllums != null && model.Tree.IsVisualIllumsOn)
+            if (VisualIllums != null)
             {
                 VisualIllums.IsOn = IsVisualIllumsOn;
             }
         }
+
+        private async Task OnEditPointExecute ()
+        {
+            var insPointVM = new InsPointViewModel(this);
+            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            if (await uiVisualizerService.ShowDialogAsync(insPointVM) == true)
+            {
+                // Обновление расета точки
+            }
+        }
+
+        private async Task OnDeletePointExecute ()
+        {
+            model.Tree.DeletePoint(this);
+            VisualIllums.IsOn = false;
+            VisualPointInfo.IsOn = false;
+        }
+        
+        /// <summary>
+        /// Описание точки
+        /// </summary>        
+        public string Info()
+        {
+            var info = new StringBuilder();
+
+            info.Append("Номер: ").Append(Number).Append(", коорд. - ").Append(Point).AppendLine();
+            info.Append("Инсоляция: ").Append(InsValue.Requirement.Name).Append(", макс - ").
+                Append(InsValue.MaxContinuosTime).Append("ч., всего - ").Append(InsValue.TotalTime).AppendLine();
+            info.Append("Здание: ").Append(Building.BuildinTypeName).Append(", высота - ").Append(Building.Height).AppendLine();
+            info.Append("Окно: ширина - ").Append(Window.Width).Append(", глубина четверти - ").Append(Window.Quarter).
+                Append(", конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth);
+
+            return info.ToString();
+        }        
     }
 }

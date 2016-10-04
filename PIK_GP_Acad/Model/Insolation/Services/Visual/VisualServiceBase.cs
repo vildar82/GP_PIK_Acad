@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (value != isOn)
                 {
                     isOn = value;
-                    Switch();                    
+                    Update();                    
                 }
             }
         }        
@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
-        protected void Switch ()
+        public void Update ()
         {            
             if (visuals != null)
             {

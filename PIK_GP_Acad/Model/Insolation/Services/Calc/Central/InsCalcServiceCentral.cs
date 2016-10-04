@@ -76,8 +76,8 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             var req = InsService.GetInsReqByEnum(rate);
             insValue.Requirement = req;
-            insValue.MaxContinuosTime = maxTimeContinuosIlum;
-            insValue.TotalTime = totalTime;
+            insValue.MaxContinuosTime = maxTimeContinuosIlum.ToHours();
+            insValue.TotalTime = totalTime.ToHours();
 
             return insValue;
         }

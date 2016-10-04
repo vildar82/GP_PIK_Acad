@@ -60,8 +60,6 @@ namespace PIK_GP_Acad.Insolation.Services
             return merged;
         }
 
-        
-
         public List<Drawable> CreateVisual ()
         {
             List<Drawable> draws = new List<Drawable>();

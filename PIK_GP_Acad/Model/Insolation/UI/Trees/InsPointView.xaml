@@ -20,7 +20,7 @@
         <WrapPanel Grid.Row="0" Margin="2">
             <StackPanel Margin="2">
                 <TextBlock Text="Тип здания:"/>
-                <ComboBox ItemsSource="{Binding BuildingTypes}" SelectedItem="{Binding SelectedBuildingType}">
+                <ComboBox ItemsSource="{Binding BuildingTypes}" SelectedItem="{Binding Building.BuildingType}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
