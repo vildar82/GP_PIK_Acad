@@ -66,8 +66,8 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 try
                 {
-                    p.Calc();
-                    Points.Add(p);
+                    p.Update();
+                    Points.Add(p);                    
 
                     // Сразу включение зон инсоляции
                     p.IsVisualIllumsOn = true;
@@ -100,6 +100,8 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
+        
+
         /// <summary>
         /// Удаление точки
         /// </summary>        
@@ -107,6 +109,14 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Points.Remove(insPoint);
             //VisualTrees.Update(); // Обновляется в Points_CollectionChanged            
+        }
+
+        /// <summary>
+        /// Точки принадлежащие зданию
+        /// </summary>        
+        public List<InsPoint> GetPointsInBuilding (InsBuilding building)
+        {
+            return Points.Where(p => p.Building == building).ToList();
         }
 
         /// <summary>
@@ -123,6 +133,14 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 item.VisualPointInfo.IsOn = onOff;
             }
+        }
+
+        /// <summary>
+        /// Обновление визуализации елочек
+        /// </summary>        
+        public void UpdateVisualTree (InsPoint insPoint)
+        {
+            VisualTrees.Update();
         }
 
         /// <summary>
@@ -163,6 +181,16 @@ namespace PIK_GP_Acad.Insolation.Models
                     {
                         item.IsVisualIllumsOn = onOff;
                     }                    
+                }
+                
+                // Елочки
+                if (saveState)
+                {
+                    VisualTrees.IsOn = onOff ? IsVisualTreeOn : false;
+                }
+                else
+                {
+                    VisualTrees.IsOn = onOff;
                 }
             }
         }

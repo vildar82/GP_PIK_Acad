@@ -36,14 +36,14 @@ namespace PIK_GP_Acad.Insolation.Services
 
             // Подпись
             // Макимальная непрерывная инсоляция            
-            var ptText = InsPoint.Point + new Vector3d(0, 1, 0);
+            var ptText = InsPoint.Point + new Vector3d(0, 0.5, 0);
             var opt = new VisualOption(InsPoint.InsValue.Requirement.Color, ptText);            
-            draws.Add(CreateText(InsPoint.InsValue.MaxContinuosTime + "ч.", opt, 0.5, AttachmentPoint.BottomCenter));
+            draws.Add(CreateText(InsPoint.InsValue.MaxContinuosTimeString, opt, 0.5, AttachmentPoint.BottomCenter));
             // Тип требования
-            opt.Position = ptText + new Vector3d(0,2,0);
+            opt.Position = ptText + new Vector3d(0,0.8,0);
             draws.Add(CreateText(InsPoint.InsValue.Requirement.Name, opt, 0.5, AttachmentPoint.BottomCenter));
             // Номер точки
-            opt.Position = ptText + new Vector3d(0, 2, 0);
+            opt.Position = ptText + new Vector3d(0, 0.8, 0);
             draws.Add(CreateText(InsPoint.Number.ToString(), opt, 1.5, AttachmentPoint.BottomCenter));
 
             return draws;

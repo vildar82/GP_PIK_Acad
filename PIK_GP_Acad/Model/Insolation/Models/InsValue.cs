@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using Catel.Data;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -22,12 +23,20 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public InsRequirement Requirement { get; set; }
         /// <summary>
-        /// Макимальная продолжительность непрерывной инсоляции, [ч.]
+        /// Макимальная продолжительность непрерывной инсоляции, [мин]
         /// </summary>
-        public double MaxContinuosTime { get; set; }
+        public int MaxContinuosTime { get; set; }
         /// <summary>
-        /// Суммарная инсоляция, [ч.]
+        /// Суммарная инсоляция, [мин]
         /// </summary>
-        public double TotalTime { get; set; }
+        public int TotalTime { get; set; }
+
+        public string TotalTimeString {
+            get { return TotalTime.ToHours() + "ч."; }
+        }
+        public string MaxContinuosTimeString {
+            get { return MaxContinuosTime.ToHours() + "ч."; }
+        }
+
     }
 }

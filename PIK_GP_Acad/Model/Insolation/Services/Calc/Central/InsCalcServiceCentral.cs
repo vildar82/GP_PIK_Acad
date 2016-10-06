@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
+using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Models;
 
@@ -33,13 +34,12 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Определение требования освещенности
         /// </summary>
-        public InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums)
+        public InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums, BuildingTypeEnum buildingType)
         {
-            var insValue = new InsValue();
-            var rate = InsRequirementEnum.A;
+            var insValue = new InsValue();            
             int maxTimeContinuosIlum = 0;
             int curContinuosTime = 0;
-            int totalTime = 0;            
+            int totalTime = 0;
             IIlluminationArea prev = null;
             foreach (var item in illums)
             {
@@ -50,36 +50,56 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (prev != null)
                 {
                     var interval = CalcTime(prev.AngleEndOnPlane, item.AngleStartOnPlane);
-                    if (interval >=10)
+                    if (interval >= 10)
                     {
                         curContinuosTime = item.Time;
-                    }                    
-                }               
+                    }
+                }
 
                 if (curContinuosTime > maxTimeContinuosIlum)
                     maxTimeContinuosIlum = curContinuosTime;
 
                 prev = item;
             }
-            // Непрерывная (более 2часов)
-            if (maxTimeContinuosIlum >= 120)
-            {
-                rate = InsRequirementEnum.C;
-            }
-            else if (totalTime >= 150 && maxTimeContinuosIlum>=60)
-            {
-                rate = InsRequirementEnum.D;
-            }
-            else if (maxTimeContinuosIlum>=90)
-            {
-                rate = InsRequirementEnum.B;
-            }
-            var req = InsService.GetInsReqByEnum(rate);
+
+            InsRequirement req = DefineInsRequirement(maxTimeContinuosIlum, totalTime, buildingType);
+
             insValue.Requirement = req;
-            insValue.MaxContinuosTime = maxTimeContinuosIlum.ToHours();
-            insValue.TotalTime = totalTime.ToHours();
+            insValue.MaxContinuosTime = maxTimeContinuosIlum;
+            insValue.TotalTime = totalTime;
 
             return insValue;
+        }
+
+        public InsRequirement DefineInsRequirement (int maxTimeContinuosIlum, int totalTime, BuildingTypeEnum buildingType)
+        {
+            var rate = InsRequirementEnum.A;
+
+            if (buildingType == BuildingTypeEnum.Social)
+            {
+                if (maxTimeContinuosIlum >= 120)
+                {
+                    rate = InsRequirementEnum.C;
+                }
+            }
+            else
+            {
+                // Непрерывная (более 2часов)
+                if (maxTimeContinuosIlum >= 120)
+                {
+                    rate = InsRequirementEnum.C;
+                }
+                else if (totalTime >= 150 && maxTimeContinuosIlum >= 60)
+                {
+                    rate = InsRequirementEnum.D;
+                }
+                else if (maxTimeContinuosIlum >= 90)
+                {
+                    rate = InsRequirementEnum.B;
+                }
+            }
+            var req = InsService.GetInsReqByEnum(rate);
+            return req;
         }
 
         private int CalcTime (double angleStart, double angleEnd)

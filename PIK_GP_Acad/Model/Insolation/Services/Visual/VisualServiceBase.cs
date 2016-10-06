@@ -18,11 +18,8 @@ namespace PIK_GP_Acad.Insolation.Services
         public bool IsOn {
             get { return isOn; }
             set {
-                if (value != isOn)
-                {
-                    isOn = value;
-                    Update();                    
-                }
+                isOn = value;
+                Update();
             }
         }        
 

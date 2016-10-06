@@ -78,7 +78,7 @@ namespace PIK_GP_Acad.Insolation.UI
             TreeModel.Points = new ObservableCollection<InsPoint>() {
                 new InsPoint(null) {
                     InsValue = new InsValue () {
-                        MaxContinuosTime =1.6, TotalTime= 4.5, Requirement = new InsRequirement () {
+                        MaxContinuosTime =150, TotalTime= 280, Requirement = new InsRequirement () {
                             Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green } },
                     Building = new InsBuilding () { BuildingType = Elements.Buildings.BuildingTypeEnum.Living } }                    
             };                        

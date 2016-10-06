@@ -50,7 +50,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="2" HorizontalAlignment="Stretch" Background="{Binding InsValue.Requirement.Color, Converter={myconverters:ColorToBrushConverter}}"
-                          ToolTip="{Binding Converter={catel:MethodToValueConverter}, ConverterParameter='Info'}">
+                          ToolTip="{Binding Info}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -64,8 +64,8 @@
                             <!--  Инфо  -->
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <TextBlock Margin="1" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name}" VerticalAlignment="Center"/>
-                                <TextBlock Margin="1" Text="{Binding InsValue.TotalTime, StringFormat={} всего:{0}ч.\,}" VerticalAlignment="Center" />
-                                <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTime, StringFormat={} макс:{0}ч.}" VerticalAlignment="Center" />
+                                <TextBlock Margin="1" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего:{0}\,}" VerticalAlignment="Center" />
+                                <TextBlock Margin="1" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс:{0}}" VerticalAlignment="Center" />
                             </StackPanel>
                             <!--  Кнопки  -->
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
