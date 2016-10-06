@@ -11,12 +11,11 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
+    [Serializable]
     public class InsOptions : ModelBase
     {
         public InsOptions ()
-        {
-            Transparence = 120; TileSize = 1; Region = InsService.Settings.Regions[0];
-            ShadowDegreeStep = 1; SunCalcAngleStart = 15.0; SunCalcAngleEnd = 165.0;
+        {            
         }
 
         public byte Transparence { get; set; }/* = 120;        */
@@ -36,6 +35,16 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Конечный расчетный угол (минус последний час) [град]. Заход(центр) = 180град -15
         /// </summary>
-        public double SunCalcAngleEnd { get; set; }/* = 165.0;        */ 
+        public double SunCalcAngleEnd { get; set; }/* = 165.0;        */
+
+
+        public static InsOptions Default ()
+        {
+            InsOptions defaultOptions = new InsOptions {
+                Transparence = 120, TileSize = 1, Region = InsService.Settings.Regions[0],
+                ShadowDegreeStep = 1, SunCalcAngleStart = 15.0, SunCalcAngleEnd = 165.0
+            };
+            return defaultOptions;
+        }
     }
 }

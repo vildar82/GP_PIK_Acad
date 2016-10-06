@@ -19,9 +19,16 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Расчет елочек
     /// </summary>
+    [Serializable]
     public class TreeModel : ModelBase
     {
         private Tolerance tolerancePoints = new Tolerance(1, 1);
+
+        [ExcludeFromSerialization]
+        public InsModel Model { get; set; }
+
+        [ExcludeFromSerialization]
+        private VisualTree VisualTrees { get; set; }
 
         /// <summary>
         /// Для загрузки расчета
@@ -36,23 +43,28 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <param name="insModel">Модель инсоляции</param>
         public TreeModel(InsModel insModel)
         {
-            this.InsModel = insModel;            
-            VisualTrees = new VisualTree(InsModel);
+            this.Model = insModel;            
+            VisualTrees = new VisualTree(Model);
             Points = new ObservableCollection<InsPoint>();
             //Points.CollectionChanged += Points_CollectionChanged;            
             IsVisualIllumsOn = true;
+        }                
+        
+        public void Initialize (InsModel insModel)
+        {
+            Model = insModel;
+            foreach (var item in Points)
+            {
+                item.Initialize(this);
+            }
         }
 
-        [ExcludeFromSerialization]
-        public InsModel InsModel { get; set; }
-
-        [ExcludeFromSerialization]
-        public VisualTree VisualTrees { get; set; }
-        
         /// <summary>
         /// Расчетные точки
         /// </summary>
         public ObservableCollection<InsPoint> Points { get; set; }
+
+
         public bool IsVisualIllumsOn { get; set; }
         public bool IsVisualTreeOn { get; set; }
 
@@ -82,7 +94,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void AddPoint ()
         {
             SelectPoint selPt = new SelectPoint();
-            InsPoint p = selPt.SelectNewPoint(InsModel);
+            InsPoint p = selPt.SelectNewPoint(Model);
             if (p != null)
             {
                 CalcPoint(p);
@@ -111,7 +123,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (selectedPoint == null) return;
 
-            var doc = InsModel.Doc;
+            var doc = Model.Doc;
             using (doc.LockDocument())
             {
                 Editor ed = doc.Editor;
@@ -121,9 +133,7 @@ namespace PIK_GP_Acad.Insolation.Models
                                                    new Point3d(point.X + delta, point.Y + delta, 0));
                 ed.Zoom(extPoint);
             }
-        }
-
-        
+        }        
 
         /// <summary>
         /// Удаление точки
@@ -149,14 +159,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void VisualsOnOff (bool onOff)
         {
             // Вкл/откл зон инсоляции точек с сохранением сосотояния
-            VisualIllumsOnOff(onOff, true);
-            VisualTreeOnOff(onOff, true);
-
-            // Включение/отключение описания точек (подпись точек)
-            foreach (var item in Points)
-            {
-                item.VisualPointInfo.IsOn = onOff;
-            }
+            VisualPointsOnOff(onOff, true);
+            VisualTreeOnOff(onOff, true);            
         }
 
         /// <summary>
@@ -174,29 +178,22 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         private void OnIsVisualIllumsOnChanged ()
         {
-            VisualIllumsOnOff(IsVisualIllumsOn, false);
+            VisualPointsOnOff(IsVisualIllumsOn, false);
         }
 
         /// <summary>
         /// Включение/выключение визуализации зон инсоляции точек
         /// <param name="onOff">Null - по состоянию в точке, иначе принудительно</param>
         /// </summary>        
-        private void VisualIllumsOnOff (bool onOff, bool saveState)
+        private void VisualPointsOnOff (bool onOff, bool saveState)
         {
-            // Включение/выключение визуализации инсоляции всех точек
+            // Включение/выключение визуализации инсоляции точек
             if (Points != null)
             {
                 foreach (var item in Points)
                 {
                     // Изменение состояние на заданное                    
-                    if (saveState)
-                    {
-                        item.VisualIllums.IsOn = onOff ? item.IsVisualIllumsOn : false;
-                    }
-                    else
-                    {
-                        item.IsVisualIllumsOn = onOff;
-                    }
+                    item.VisualOnOff(onOff, saveState);
                 }                
             }
         }
@@ -241,8 +238,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 var num = i + 1;
                 if (p.Number != num)
                 {
-                    p.Number = num;
-                    p.VisualPointInfo.Update();
+                    p.Number = num;                    
                 }
             }
             VisualTrees.Update();

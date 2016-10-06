@@ -10,6 +10,7 @@ using Catel.IO;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
+    [Serializable]
     public class InsRegion : ModelBase, IEquatable<InsRegion>
     {        
         private static string FileRegions = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder, 

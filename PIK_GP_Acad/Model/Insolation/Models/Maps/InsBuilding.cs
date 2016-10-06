@@ -12,12 +12,14 @@ using PIK_GP_Acad.Insolation.Services;
 namespace PIK_GP_Acad.Insolation.Models
 {
     public class InsBuilding
-    {        
+    {
+        [ExcludeFromSerialization]
         public IBuilding Building { get; private  set; }        
         public Polyline Contour { get; private set; }
         public int Height { get; private set; }
         public double YMax { get; private set; }
-        public double YMin { get; private set; }        
+        public double YMin { get; private set; }
+        [ExcludeFromSerialization]
         public Extents3d ExtentsInModel { get; private set; }
         public BuildingTypeEnum BuildingType { get; set; }
         public string BuildinTypeName { get { return InsService.GetDisplayName(BuildingType); } }

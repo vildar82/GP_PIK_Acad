@@ -9,6 +9,7 @@ using AcadLib.WPF;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
+    [Serializable]
     public class WindowConstruction
     {
         /// <summary>

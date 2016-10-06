@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Insolation.Services;
@@ -16,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Модель инсоляции в привязке к документу
     /// </summary>
-    public class InsModel : ModelBase
+    public class InsModel : SavableModelBase<InsModel>
     {
         /// <summary>
         /// Для восстановление сохраненного расчета инсоляции
@@ -29,14 +31,18 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsModel (Document doc): base()
         {
             Doc = doc;
+            // Дефолтные настройки
+            Options = InsOptions.Default();
         }
 
         public bool IsInsActivated { get; set; }
 
         [ExcludeFromSerialization]
         public Document Doc { get; set; }
+
         [ExcludeFromSerialization]
         public Map Map { get; set; }
+
         [ExcludeFromSerialization]        
         public IInsCalcService CalcService { get; set; }
         /// <summary>
@@ -46,32 +52,45 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Расчет елочек
         /// </summary>
-        public TreeModel Tree { get; set; }
+        public TreeModel Tree { get; set; }        
 
-        protected override void OnInitialized ()
+        private void Initialize (Document doc)
         {
-            base.OnInitialized();            
+            Doc = doc;
+            if (IsInsActivated)
+                OnIsInsActivatedChanged();
         }
 
         private void OnIsInsActivatedChanged()
         {
             if (IsInsActivated)
             {
-                if (Map == null)
-                {
-                    // Дефолтные настройки
-                    Options = new InsOptions();
+                if (Map == null)                                    
                     Map = new Map(Doc);
+                if (Tree == null)
                     Tree = new TreeModel(this);
-                    DefineCalcService();                    
-                }
-                // Включить визуализацию
-                Tree.VisualsOnOff(true);
+                else
+                    Tree.Initialize(this);
+                DefineCalcService();
+                Doc.Database.BeginSave += Database_BeginSave;                
             }
             else
             {
                 // Отключить инсоляцию для этого документа (всю визуализацию)                
                 Tree.VisualsOnOff(false);
+                Doc.Database.BeginSave -= Database_BeginSave;
+            }
+        }
+
+        private void Database_BeginSave (object sender, Autodesk.AutoCAD.DatabaseServices.DatabaseIOEventArgs e)
+        {
+            try
+            {
+                SaveIns();
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
@@ -88,6 +107,33 @@ namespace PIK_GP_Acad.Insolation.Models
                 res = true;
             }
             return res;
+        }        
+
+        public void SaveIns ()
+        {            
+            // серилизация расчета            
+            using (var fileStream = File.Create(@"\\picompany.ru\root\dep_ort\8.САПР\проекты\AutoCAD\РГ\ГП\Концепция\Инсоляция\Расчет в точке\insModel.xml"))
+            {
+                Save(fileStream, SerializationMode.Xml, new SerializationConfiguration());
+            }
         }
+
+        public static InsModel LoadIns (Document doc)
+        {
+            InsModel res = null;
+            using (var fileStream = File.Open(@"\\picompany.ru\root\dep_ort\8.САПР\проекты\AutoCAD\РГ\ГП\Концепция\Инсоляция\Расчет в точке\insModel.xml", FileMode.Open))
+            {
+                res = Load<InsModel>(fileStream, SerializationMode.Xml, new SerializationConfiguration());
+                
+            }
+
+            if (res != null)
+            {
+                // Инициализация объекта
+                res.Initialize(doc);
+            }
+
+            return res;
+        }        
     }
 }

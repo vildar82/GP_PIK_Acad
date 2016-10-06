@@ -61,22 +61,20 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         public static void Stop ()
-        {                    
-                Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
-                Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
-                //Settings.Save();
-                //palette.Visible = false;
-                palette = null;
-                insModels = null;
-                insViewModel = null;
+        {
+            Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
+            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
+            //Settings.Save();
+            //palette.Visible = false;
+            palette = null;
+            insModels = null;
+            insViewModel = null;
 #if DEBUG
             var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
             ApiCopManager.AddListener(apiCopFilelistener);
             ApiCopManager.WriteResults();
 #endif
         }
-
-        
 
         public static IInsCalcService GetCalcService (InsOptions options)
         {
@@ -121,10 +119,13 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (doc == null) return;
 
-            InsModel insModel;
+            InsModel insModel;            
             if (!insModels.TryGetValue(doc, out insModel))
             {
-                insModel = new InsModel(doc);
+                // Загрузка
+                insModel = InsModel.LoadIns(doc);
+                if (insModel == null)
+                    insModel = new InsModel(doc);
                 insModels.Add(doc, insModel);
             }
 
@@ -149,6 +150,8 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (e.NewState == Autodesk.AutoCAD.Windows.StateEventIndex.Hide)
             {
+                // Сохранить расчеты ???
+
                 Stop();
             }
         }

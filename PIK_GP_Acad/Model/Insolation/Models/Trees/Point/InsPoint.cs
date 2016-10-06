@@ -13,29 +13,35 @@ using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 using AcadLib;
+using System.Xml.Serialization;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Расчетная точка
     /// </summary>
+    [Serializable]
     public class InsPoint : ModelBase
     {
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }
 
         [ExcludeFromSerialization]
-        public VisualInsPointIllums VisualIllums { get; private set; }
+        private VisualInsPointIllums VisualIllums { get; set; }
         [ExcludeFromSerialization]
-        public VisualInsPointInfo VisualPointInfo { get; private set; }
+        private VisualInsPointInfo VisualPointInfo { get; set; }
 
         public InsPoint () { }
 
         public InsPoint (InsModel model)
         {
             this.Model = model;
-            Window = new WindowOptions();
-            Number = model.Tree.Points.Count + 1;
+            Window = new WindowOptions { Construction = WindowConstruction.WindowConstructions[0] };                    
+        }
+
+        public void Initialize (TreeModel treeModel)
+        {
+            Model = treeModel.Model;
         }
 
         protected override void OnInitialized ()
@@ -52,15 +58,29 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Номер точки
         /// </summary>
         public int Number { get; set; }
-        public Point3d Point { get; set;}
+        
+        [XmlIgnore]
+        public Point3d Point { get; set;}        
+        
+        [IncludeInSerialization]
+        public double[] PointAsXYZ {
+            get { return new double[] { Point.X, Point.Y, Point.Z }; }
+            set { Point = new Point3d(value); }
+        }        
+
         [ExcludeFromSerialization]
         public InsBuilding Building { get; set; }
+
         [ExcludeFromSerialization]
         public List<IIlluminationArea> Illums { get; set; }
+
         [ExcludeFromSerialization]
         public InsValue InsValue { get; set; }        
+
         public int Height { get; set; }
+
         public WindowOptions Window { get; set; }
+
         public bool IsVisualIllumsOn { get; set; }
 
         /// <summary>
@@ -92,6 +112,11 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 VisualIllums.IsOn = IsVisualIllumsOn;
             }
+        }
+
+        private void OnNumberChanged ()
+        {
+            VisualPointInfo.Update();
         }
 
         private async Task OnEditPointExecute ()
@@ -150,6 +175,26 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         /// <summary>
+        /// Включение выключение зон визуализации
+        /// </summary>
+        /// <param name="onOff"></param>
+        /// <param name="saveState"></param>
+        public void VisualOnOff(bool onOff, bool saveState)
+        {
+            // Изменение состояние на заданное                    
+            if (saveState)
+            {
+                VisualIllums.IsOn = onOff ? IsVisualIllumsOn : false;
+            }
+            else
+            {
+                IsVisualIllumsOn = onOff;
+            }
+
+            VisualPointInfo.IsOn = onOff;
+        }
+
+        /// <summary>
         /// Обноаление - расчета и визуализации
         /// </summary>
         public void Update ()
@@ -175,7 +220,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualPointInfo.InsPoint = this;
 
 
-            // Обноаление визуальных объектов на чертеже, если включены
+            // Обновление визуальных объектов на чертеже, если включены
             if (Model.IsInsActivated)
             {
                 // Зоны освещ.

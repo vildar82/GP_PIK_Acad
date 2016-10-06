@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Настройки расчетной точки
     /// </summary>
+    [Serializable]
     public class WindowOptions : ModelBase
     {
         public WindowOptions ()
@@ -24,7 +26,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Тип конструкции
         /// </summary>
-        public WindowConstruction Construction { get; set; } = WindowConstruction.WindowConstructions[0];
+        [IncludeInSerialization]
+        public WindowConstruction Construction { get; set; }
         /// <summary>
         /// Глубина четверти
         /// </summary>

@@ -171,6 +171,7 @@
     <Compile Include="Model\Insolation\Services\Calc\IllumAreaBase.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcTrees.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\IVisualOption.cs" />
+    <Compile Include="Model\Insolation\Services\Serialize\XmlPoint3d.cs" />
     <Compile Include="Model\Insolation\Services\Settings.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ISettings.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\WindowConstruction.cs" />
@@ -461,6 +462,7 @@
   <ItemGroup>
     <Resource Include="Resources\Close.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
