@@ -31,8 +31,7 @@ namespace PIK_GP_Acad.Insolation.UI
             ShowPoint = new TaskCommand(OnShowPointExecute);
         }        
 
-        [Model]
-        [Expose("VisualOptions")]
+        [Model]        
         [Expose("Points")]
         [Expose("IsVisualIllumsOn")]
         [Expose("IsVisualTreeOn")]        
@@ -43,8 +42,6 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public TaskCommand AddPoint { get; private set; }
         public TaskCommand ShowPoint { get; private set; }
-        
-
 
         private async Task OnAddPointExecute ()
         {
@@ -84,8 +81,7 @@ namespace PIK_GP_Acad.Insolation.UI
                         MaxContinuosTime =1.6, TotalTime= 4.5, Requirement = new InsRequirement () {
                             Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green } },
                     Building = new InsBuilding () { BuildingType = Elements.Buildings.BuildingTypeEnum.Living } }                    
-            };            
-            TreeModel.VisualOptions = Settings.DefaultTreeVisualOptions();            
+            };                        
         }
     }
 }

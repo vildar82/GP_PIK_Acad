@@ -82,6 +82,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private bool CorrectCalcPoint (ref Point3d pt, InsBuilding building)
         {
+            bool res;
             // Корректировка точки
             Point3d correctPt;
             using (var t = doc.TransactionManager.StartTransaction())
@@ -91,7 +92,17 @@ namespace PIK_GP_Acad.Insolation.Models
                 t.Commit();
             }
             
-            var res = (pt - correctPt).Length < 5;
+            if ((pt - correctPt).Length < 1)
+            {
+                // Точка достаточно близко к контуру - поправка точки и ОК.
+                pt = correctPt;
+                res = true;
+            }
+            else
+            {
+                // Точка далеко от контура - не пойдет.
+                res = false;
+            }
             return res;
         }
     }

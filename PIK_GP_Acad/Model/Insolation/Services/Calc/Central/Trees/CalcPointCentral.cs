@@ -32,9 +32,9 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public double AngleEndOnPlane { get; private set; }        
 
-        public CalcPointCentral (InsPoint insPt, Map map, InsCalcServiceCentral insCalcService)
+        public CalcPointCentral (InsPoint insPt, InsCalcServiceCentral insCalcService)
         {
-            this.map = map;
+            this.map = insPt.Model.Map;
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
@@ -185,12 +185,22 @@ namespace PIK_GP_Acad.Insolation.Services
             // Угол восточной плоскости окна больше стартового угла
             if (windowStartAngle > AngleStartOnPlane)
             {
-                // Восточный угол окна больше конечного угла
-                if (windowEndAngle > AngleStartOnPlane && windowEndAngle < AngleEndOnPlane)
-                    AngleEndOnPlane = windowEndAngle;
-                else
+                if (windowStartAngle< AngleEndOnPlane)
+                {
                     AngleStartOnPlane = windowStartAngle;
-            }            
+                }
+                else
+                {
+                    if (windowEndAngle <= AngleStartOnPlane || windowEndAngle >= AngleEndOnPlane)
+                    {
+                        AngleStartOnPlane = windowStartAngle;
+                    }
+                }                                
+            }   
+            if (windowEndAngle < AngleEndOnPlane)
+            {
+                AngleEndOnPlane = windowEndAngle;
+            }
 
             // Если стартовый угол больше конечного - то освещения вообще нет
             if (AngleStartOnPlane >= AngleEndOnPlane)

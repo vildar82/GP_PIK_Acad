@@ -21,7 +21,8 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class InsPoint : ModelBase
     {
-        InsModel model;
+        [ExcludeFromSerialization]
+        public InsModel Model { get; set; }
 
         [ExcludeFromSerialization]
         public VisualInsPointIllums VisualIllums { get; private set; }
@@ -32,7 +33,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public InsPoint (InsModel model)
         {
-            this.model = model;
+            this.Model = model;
             Window = new WindowOptions();
             Number = model.Tree.Points.Count + 1;
         }
@@ -78,8 +79,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Calc ()
         {
-            Illums = model.CalcService.TreesCalc.CalcPoint(this, model.Map);
-            InsValue = model.CalcService.CalcTimeAndGetRate(Illums);
+            Illums = Model.CalcService.TreesCalc.CalcPoint(this);
+            InsValue = Model.CalcService.CalcTimeAndGetRate(Illums);
 
             // Визуализация зон инсоляции точки
             if (VisualIllums == null)
@@ -93,7 +94,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualPointInfo = new VisualInsPointInfo(this);
             else
                 VisualPointInfo.InsPoint = this;
-            if (model.IsInsActivated)
+            if (Model.IsInsActivated)
                 VisualPointInfo.IsOn = true;
         }        
         
@@ -118,7 +119,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private async Task OnDeletePointExecute ()
         {
-            model.Tree.DeletePoint(this);
+            Model.Tree.DeletePoint(this);
             VisualIllums.IsOn = false;
             VisualPointInfo.IsOn = false;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,9 @@ namespace PIK_GP_Acad.Insolation.UI
     public class InsPointViewModel : ViewModelBase
     {
         public InsPointViewModel (InsPoint insPoint): base()
-        {            
-            InsPoint = insPoint;                        
+        {
+            BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
+            InsPoint = insPoint;                                    
         }        
 
         [Model]
@@ -26,8 +28,8 @@ namespace PIK_GP_Acad.Insolation.UI
         [Expose("Window")]   
         [Expose("InsValue")]    
         public InsPoint InsPoint { get; set; }
-        public List<BuildingTypeEnum> BuildingTypes { get; set; } =
-            new List<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };        
+
+        public ObservableCollection<BuildingTypeEnum> BuildingTypes { get; set; }        
 
         protected override async Task InitializeAsync ()
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Catel;
 using Catel.ApiCop;
@@ -37,16 +38,15 @@ namespace PIK_GP_Acad.Insolation.Services
 #if DEBUG
             Catel.Logging.LogManager.AddDebugListener();
 #endif
+            Catel.Logging.LogManager.LogMessage += LogManager_LogMessage;
+
             // Регистрация валидатора Catel.Extensions.FluentValidation
             ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
-
-            var exceptionService = ServiceLocator.Default.ResolveType<IExceptionService>();            
-            exceptionService.Register<Exception>(exception => ShowMessage(exception.ToString(), MessageImage.Error));
 
             Settings = new Settings();
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);            
-        }        
+        }
 
         public static void Start (Document doc)
         {
@@ -68,14 +68,15 @@ namespace PIK_GP_Acad.Insolation.Services
                 //palette.Visible = false;
                 palette = null;
                 insModels = null;
-                insViewModel = null;            
-
-//#if DEBUG
-//            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
-//            ApiCopManager.AddListener(apiCopFilelistener);
-//            ApiCopManager.WriteResults();
-//#endif
+                insViewModel = null;
+#if DEBUG
+            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
+            ApiCopManager.AddListener(apiCopFilelistener);
+            ApiCopManager.WriteResults();
+#endif
         }
+
+        
 
         public static IInsCalcService GetCalcService (InsOptions options)
         {
@@ -87,6 +88,24 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var req = dictInsReq[type];
             return req;
+        }
+
+        /// <summary>
+        /// Возвращает значение атрибута Catel.ComponentModel.DisplayName навешенного на этот объект
+        /// </summary>        
+        public static string GetDisplayName (object obj)
+        {
+            var converter = new Catel.MVVM.ObjectToDisplayNameConverter();
+            return (string)converter.Convert(obj, typeof(string), null, null);
+        }
+
+        public static void ShowMessage (string msg, MessageImage img)
+        {
+            ServiceLocator.Default.ResolveType<IMessageService>().ShowAsync(msg, "Инсоляция", MessageButton.OK, img);
+        }
+        public static void ShowMessage (Exception ex, string msg)
+        {
+            ShowMessage($"{msg} \n\r {ex.Message}", MessageImage.Error);
         }
 
         private static void CloseDocument (Document doc)
@@ -137,21 +156,12 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void Dispatcher_UnhandledException (object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             ShowMessage(e.Exception.Message, MessageImage.Error);
-        }
+        }        
 
-        private static void ShowMessage (string msg, MessageImage img)
+        private static void LogManager_LogMessage (object sender, Catel.Logging.LogMessageEventArgs e)
         {
-            var messageService = ServiceLocator.Default.ResolveType<IMessageService>();
-            messageService.ShowAsync(msg, "Инсоляция", MessageButton.OK, img);
-        }
-
-        /// <summary>
-        /// Возвращает значение атрибута Catel.ComponentModel.DisplayName навешенного на этот объект
-        /// </summary>        
-        public static string GetDisplayName (object obj)
-        {
-            var converter = new Catel.MVVM.ObjectToDisplayNameConverter();
-            return (string)converter.Convert(obj, typeof(string), null, null);
+            if (e.LogEvent == Catel.Logging.LogEvent.Error)
+                Logger.Log.Debug(e.Message);
         }
     }
 }

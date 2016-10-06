@@ -15,8 +15,8 @@
     <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2">
         <StackPanel HorizontalAlignment="Center" Margin="2">
             <WrapPanel HorizontalAlignment="Center" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={catel:BooleanToOppositeBooleanConverter}}">
-                <StackPanel Margin="3">
-                    <TextBlock Text="Ширина окна, м" />
+                <StackPanel Margin="3" HorizontalAlignment="Center">
+                    <TextBlock Text="Ширина окна, м" HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding Width}" HorizontalContentAlignment="Center">
                         <i:Interaction.Behaviors>
                             <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
@@ -25,7 +25,7 @@
                 </StackPanel>
                 <StackPanel Margin="3">
                     <TextBlock Text="Тип конструкции" />
-                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}" HorizontalContentAlignment="Center">
+                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">

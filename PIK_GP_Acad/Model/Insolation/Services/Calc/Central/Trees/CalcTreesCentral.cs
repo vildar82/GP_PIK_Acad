@@ -22,13 +22,14 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Расчет инсоляции в точке
         /// </summary>
-        public List<IIlluminationArea> CalcPoint (InsPoint insPoint, Map map)
+        public List<IIlluminationArea> CalcPoint (InsPoint insPoint)
         {
             List<IIlluminationArea> illumAreas;
-            using (map.Doc.LockDocument())
-            using (var t = map.Doc.Database.TransactionManager.StartTransaction())
+            var doc = insPoint.Model.Doc;
+            using (doc.LockDocument())
+            using (var t = doc.Database.TransactionManager.StartTransaction())
             {
-                var calcPt = new CalcPointCentral(insPoint, map, insService);
+                var calcPt = new CalcPointCentral(insPoint, insService);
                 // Расчет освещенности в точке
                 illumAreas = calcPt.Calc();
                 insPoint.AngleStartOnPlane = calcPt.AngleStartOnPlane;

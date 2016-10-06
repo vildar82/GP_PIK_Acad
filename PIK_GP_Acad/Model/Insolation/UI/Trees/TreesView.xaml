@@ -69,15 +69,16 @@
                             </StackPanel>
                             <!--  Кнопки  -->
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <!--Вкл/выкл зон инсоляции точки-->
                                 <ToggleButton
                                     Height="{StaticResource ImageButtonHeight}"
                                     Margin="1"
                                     Background="Transparent"
-                                    IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
-                                    IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type catel:UserControl}}, Path=DataContext.IsVisualIllumsOn}"
+                                    IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"                                    
                                     ToolTip="Визуализация зон инсоляции точки.">
                                     <Image Source="{StaticResource ilums}" />
                                 </ToggleButton>
+                                <!--Редактирование параметров точки-->
                                 <Button
                                     Height="{StaticResource ImageButtonHeight}"
                                     Margin="1"
@@ -86,6 +87,7 @@
                                     ToolTip="Редактирование параметров точки">
                                     <Image Source="{StaticResource options}" />
                                 </Button>
+                                <!--Удаление точки-->
                                 <Button
                                     Height="{StaticResource ImageButtonHeight}"
                                     Margin="1"
@@ -110,7 +112,7 @@
                 Margin="1"
                 Background="Transparent"
                 IsChecked="{Binding IsVisualIllumsOn}"
-                ToolTip="Включение/выключение визуализации зон инсоляции точки">
+                ToolTip="Включение/выключение визуализации зон инсоляции всех точек">
                 <Image Source="{StaticResource ilums}" />
             </ToggleButton>
             <ToggleButton

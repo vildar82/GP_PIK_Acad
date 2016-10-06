@@ -28,9 +28,10 @@
             x:Name="chkBoxInsActivated"
             Grid.Row="0"
             Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-            Style="{DynamicResource ToggleButtonOnOff}"
+            Style="{StaticResource ToggleButtonOnOff}"
             BorderThickness="1"
-            IsChecked="{Binding IsInsActivated}" />
+            IsChecked="{Binding IsInsActivated}" 
+            ToolTip="Включение/отключение инсоляции для документа."/>
         <!--  Регион  -->
         <StackPanel
             Grid.Row="0"

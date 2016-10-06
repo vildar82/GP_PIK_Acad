@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 
@@ -32,9 +33,11 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public bool IsInsActivated { get; set; }
 
+        [ExcludeFromSerialization]
         public Document Doc { get; set; }
+        [ExcludeFromSerialization]
         public Map Map { get; set; }
-        [XmlIgnore]
+        [ExcludeFromSerialization]        
         public IInsCalcService CalcService { get; set; }
         /// <summary>
         /// Настройки инсоляции

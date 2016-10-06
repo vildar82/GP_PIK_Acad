@@ -17,12 +17,10 @@ namespace PIK_GP_Acad.Insolation.Services
     public class VisualTree : VisualServiceBase, IVisual
     {
         public ObservableCollection<InsPoint> Points { get; set; }
-
-        public List<TreeVisualOption> VisualOptions { get; set; }
+                
         public InsModel Model { get; set; }
-        public VisualTree(InsModel model,List<TreeVisualOption> visualOptions)
-        {
-            VisualOptions = visualOptions;
+        public VisualTree(InsModel model)
+        {            
             Model = model;
             visuals = new List<IVisual> { this };
         }
@@ -53,7 +51,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Point2d p3;
             Point2d p4;
 
-            foreach (var treeVisOpt in Model.Tree.VisualOptions)
+            foreach (var treeVisOpt in InsService.Settings.TreeVisualOptions)
             {
                 var draws = GetDrawsByOption(insPoint, treeVisOpt, p1, p2, out p3, out p4);
                 drawsInsPointTrees.AddRange(draws);
