@@ -22,14 +22,16 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         public InsCalcServiceCentral(InsOptions options)
         {
-            Options = options;
-            CalcValues = new CalcValuesCentral(Options);
+            //Options = options;
+            Region = options.Region;
+            CalcValues = new CalcValuesCentral(options);
             TreesCalc = new CalcTreesCentral(this);
         }
 
         public ICalcTrees TreesCalc { get; set; }
         public ICalcValues CalcValues { get; set; }
-        public InsOptions Options { get; set; }
+        //public InsOptions Options { get; set; }
+        public InsRegion Region { get; set; }
 
         /// <summary>
         /// Определение требования освещенности
@@ -127,6 +129,12 @@ namespace PIK_GP_Acad.Insolation.Services
             //{
             //    illum.Create(cs);
             //}
-        }       
+        }
+
+        public bool IsIdenticalOptions (InsOptions options)
+        {
+            var res = Region.Latitude == options.Region.Latitude;
+            return res;            
+        }
     }
 }

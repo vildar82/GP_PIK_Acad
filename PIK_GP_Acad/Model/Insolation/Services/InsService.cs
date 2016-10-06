@@ -140,7 +140,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 if (await insViewModel.SaveViewModelAsync() == true)
                 {
-                    insViewModel.InsModel = insModel;
+                    insViewModel.Model = insModel;
                 }
             }
         }

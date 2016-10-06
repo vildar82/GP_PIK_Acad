@@ -63,7 +63,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     Options = new InsOptions();
                     Map = new Map(Doc);
                     Tree = new TreeModel(this);
-                    CalcService = InsService.GetCalcService(Options);
+                    DefineCalcService();                    
                 }
                 // Включить визуализацию
                 Tree.VisualsOnOff(true);
@@ -73,6 +73,21 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Отключить инсоляцию для этого документа (всю визуализацию)                
                 Tree.VisualsOnOff(false);
             }
-        }       
+        }
+
+        /// <summary>
+        /// Определение расчетного сервиса по Options
+        /// </summary>
+        /// <returns>Изменилось или нет</returns>
+        public bool DefineCalcService ()
+        {
+            bool res = false;
+            if (CalcService == null || !CalcService.IsIdenticalOptions (Options))
+            { 
+                CalcService = InsService.GetCalcService(Options);
+                res = true;
+            }
+            return res;
+        }
     }
 }

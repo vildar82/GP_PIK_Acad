@@ -296,13 +296,14 @@ namespace PIK_GP_Acad.Insolation.Services
                 // угол к расчетной точке (от 0 по часовой стрелке)
                 if (!ptCalc2d.IsEqualTo(iPt))
                 {
-                    var angle = values.GetInsAngleFromAcad((iPt -ptCalc2d).Angle);
+                    var angle = values.GetInsAngleFromAcad((iPt -ptCalc2d).Angle);                    
                     angles.Add(new Tuple<Point2d, double>(iPt, angle));
                 }
             }
             if (angles.Count > 1)
             {
                 angles.Sort((p1, p2) => p1.Item2.CompareTo(p2.Item2));
+                
                 ilum = CreateIllumShadow(angles[0], angles[angles.Count - 1]);
             }
             return ilum;
@@ -310,9 +311,18 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private IIlluminationArea CreateIllumShadow (Tuple<Point2d, double> angleStart, Tuple<Point2d, double> angleEnd)
         {
+            if (angleEnd.Item2 -angleStart.Item2 > Math.PI)
+            {
+                // Переворот начального и конечного угла
+                var t1 = angleEnd;
+                angleEnd = angleStart;
+                angleStart = t1;
+            }
+
             // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
             if (angleEnd.Item2 < AngleStartOnPlane || angleStart.Item2 > AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
-                return null;
+                return null;            
+            
             if (angleStart.Item2 < AngleStartOnPlane)
             {
                 var ptStart = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);

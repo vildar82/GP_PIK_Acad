@@ -19,7 +19,7 @@ namespace PIK_GP_Acad.Insolation.UI
     {
         public InsViewModel (InsModel insModel) : base()
         {
-            InsModel = insModel;
+            Model = insModel;
             SelectRegion = new TaskCommand(OnSelectRegionExecute);
         }
 
@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.UI
         [Expose("Options")]
         [Expose("Tree")]
         [Expose("IsInsActivated")]
-        public InsModel InsModel { get; set; }
+        public InsModel Model { get; set; }
         public TaskCommand SelectRegion { get; private set; }
 
         protected override async Task InitializeAsync ()
@@ -46,11 +46,17 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private async Task OnSelectRegionExecute ()
         {            
-            var regionViewModel = new InsRegionViewModel(InsModel.Options.Region);
+            var regionViewModel = new InsRegionViewModel(Model.Options.Region);
             var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (await uiVisualizerService.ShowDialogAsync(regionViewModel) == true)
             {
-                InsModel.Options.Region = regionViewModel.InsRegion;
+                Model.Options.Region = regionViewModel.InsRegion;
+                // Если регион изменился настолько, что поменялся расчетный сервис, то обноаление всех расчетов
+                if (Model.DefineCalcService())
+                {
+                    // Обновление расчета
+                    Model.Tree.Update();
+                }
             }
         }  
     }

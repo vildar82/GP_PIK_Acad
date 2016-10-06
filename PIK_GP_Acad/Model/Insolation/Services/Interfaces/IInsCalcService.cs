@@ -11,7 +11,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public interface IInsCalcService
     {
-        InsOptions Options { get; set; }
+        //InsOptions Options { get; set; }
         ICalcValues CalcValues { get; set; }
         ICalcTrees TreesCalc { get; set; }        
         void CreateShadowMap ();
@@ -24,5 +24,6 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="totalTime">Общее время инсоляции</param>
         /// <param name="buildingType">Тип здания</param>        
         InsRequirement DefineInsRequirement (int maxTimeContinuosIlum, int totalTime, BuildingTypeEnum buildingType);
+        bool IsIdenticalOptions (InsOptions options);
     }
 }

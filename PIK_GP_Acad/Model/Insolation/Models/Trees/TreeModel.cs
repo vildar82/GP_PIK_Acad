@@ -55,6 +55,27 @@ namespace PIK_GP_Acad.Insolation.Models
         public ObservableCollection<InsPoint> Points { get; set; }
         public bool IsVisualIllumsOn { get; set; }
         public bool IsVisualTreeOn { get; set; }
+
+        /// <summary>
+        /// Обновление полное рачета елочек
+        /// </summary>
+        public void Update ()
+        {
+            foreach (var item in Points)
+            {
+                CalcPoint(item);
+            }
+            UpdateVisualTree(null);
+        }
+
+        /// <summary>
+        /// Обновление визуализации елочек
+        /// </summary>        
+        public void UpdateVisualTree (InsPoint insPoint)
+        {
+            VisualTrees.Update();
+        }
+
         /// <summary>
         /// Задание новой расчетной точки.        
         /// </summary>        
@@ -64,20 +85,22 @@ namespace PIK_GP_Acad.Insolation.Models
             InsPoint p = selPt.SelectNewPoint(InsModel);
             if (p != null)
             {
-                try
-                {
-                    p.Update();
-                    Points.Add(p);                    
+                CalcPoint(p);
+                Points.Add(p);
+                // Сразу включение зон инсоляции
+                p.IsVisualIllumsOn = true;
+            }
+        }
 
-                    // Сразу включение зон инсоляции
-                    p.IsVisualIllumsOn = true;
-
-                    //VisualTrees.AddPoint(p); // Обновляется в Points_CollectionChanged            
-                }
-                catch (Exception ex)
-                {
-                    InsService.ShowMessage(ex, "Ошибка при добавлении точки.");
-                }                
+        private void CalcPoint (InsPoint p)
+        {
+            try
+            {
+                p.Update();                
+            }
+            catch (Exception ex)
+            {
+                InsService.ShowMessage(ex, "Ошибка при добавлении точки.");
             }
         }
 
@@ -127,20 +150,13 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Вкл/откл зон инсоляции точек с сохранением сосотояния
             VisualIllumsOnOff(onOff, true);
+            VisualTreeOnOff(onOff, true);
 
             // Включение/отключение описания точек (подпись точек)
             foreach (var item in Points)
             {
                 item.VisualPointInfo.IsOn = onOff;
             }
-        }
-
-        /// <summary>
-        /// Обновление визуализации елочек
-        /// </summary>        
-        public void UpdateVisualTree (InsPoint insPoint)
-        {
-            VisualTrees.Update();
         }
 
         /// <summary>
@@ -175,23 +191,31 @@ namespace PIK_GP_Acad.Insolation.Models
                     // Изменение состояние на заданное                    
                     if (saveState)
                     {
-                        item.VisualIllums.IsOn = onOff? item.IsVisualIllumsOn: false;
+                        item.VisualIllums.IsOn = onOff ? item.IsVisualIllumsOn : false;
                     }
                     else
                     {
                         item.IsVisualIllumsOn = onOff;
-                    }                    
-                }
-                
-                // Елочки
-                if (saveState)
-                {
-                    VisualTrees.IsOn = onOff ? IsVisualTreeOn : false;
-                }
-                else
-                {
-                    VisualTrees.IsOn = onOff;
-                }
+                    }
+                }                
+            }
+        }
+
+        /// <summary>
+        /// Включение/отключение
+        /// </summary>
+        /// <param name="onOff">Вкл/выкл</param>
+        /// <param name="saveState">Сохранение состояния</param>
+        private void VisualTreeOnOff (bool onOff, bool saveState)
+        {
+            // Елочки
+            if (saveState)
+            {
+                VisualTrees.IsOn = onOff ? IsVisualTreeOn : false;
+            }
+            else
+            {
+                VisualTrees.IsOn = onOff;
             }
         }
 
