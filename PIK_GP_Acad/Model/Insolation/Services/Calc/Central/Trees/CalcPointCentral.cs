@@ -64,7 +64,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 foreach (var bHeight in heights)
                 {
                     // зоны тени для домов этой высоты
-                    var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key);
+                    var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key-insPt.Height);
                     resAreas.AddRange(illumsByHeight);
                 }
                 resAreas = IllumAreaBase.Merge(resAreas);
@@ -212,7 +212,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 var buildingOwner = insPt.Building;
                 // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
                 double cShadow;
-                double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height, out cShadow);                
+                double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height-insPt.Height, out cShadow);                
 
                 double windowOutPerpendAngle = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle);
 
