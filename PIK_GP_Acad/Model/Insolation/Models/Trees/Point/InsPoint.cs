@@ -27,9 +27,9 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsModel Model { get; set; }
 
         [ExcludeFromSerialization]
-        private VisualInsPointIllums VisualIllums { get; set; }
+        private VisualPointIllums VisualIllums { get; set; }
         [ExcludeFromSerialization]
-        private VisualInsPointInfo VisualPointInfo { get; set; }
+        private VisualPointInfo VisualPointInfo { get; set; }
 
         public InsPoint () { }
 
@@ -211,11 +211,11 @@ namespace PIK_GP_Acad.Insolation.Models
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки
             if (VisualIllums == null)            
-                VisualIllums = new VisualInsPointIllums();            
+                VisualIllums = new VisualPointIllums();            
             VisualIllums.CreateVisual(this);
             // Визуализация описания точки
             if (VisualPointInfo == null)
-                VisualPointInfo = new VisualInsPointInfo(this);
+                VisualPointInfo = new VisualPointInfo(this);
             else
                 VisualPointInfo.InsPoint = this;
 

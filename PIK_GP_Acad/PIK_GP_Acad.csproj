@@ -197,8 +197,8 @@
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisual.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualInsPointIllums.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualInsPointInfo.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointIllums.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointInfo.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualTree.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualServiceBase.cs" />

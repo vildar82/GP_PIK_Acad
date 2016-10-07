@@ -17,10 +17,10 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация описания точки на чертеже
     /// </summary>
-    public class VisualInsPointInfo : VisualServiceBase, IVisual
+    public class VisualPointInfo : VisualServiceBase, IVisual
     {
         public InsPoint InsPoint { get; set; }
-        public VisualInsPointInfo (InsPoint insPoint)
+        public VisualPointInfo (InsPoint insPoint)
         {
             InsPoint = insPoint;
             visuals = new List<IVisual> { this };

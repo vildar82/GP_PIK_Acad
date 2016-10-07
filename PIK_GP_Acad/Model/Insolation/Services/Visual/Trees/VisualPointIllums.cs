@@ -12,7 +12,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Инсоляционные зоны точки
     /// </summary>
-    public class VisualInsPointIllums : VisualServiceBase
+    public class VisualPointIllums : VisualServiceBase
     {
         public void CreateVisual (InsPoint insPoint)
         {   
