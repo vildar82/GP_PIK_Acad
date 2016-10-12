@@ -253,28 +253,14 @@ namespace PIK_GP_Acad.Insolation.Models
             if (values.Count == 7)
             {
                 int index = 0;
-                Height = GetTVValue<int>(values[index++]);
+                Height = values[index++].GetTvValue<int>();
                 Window = new WindowOptions(
-                        GetTVValue<double>(values[index++]),
-                        GetTVValue<double>(values[index++]),
-                        GetTVValue<int>(values[index++]) == 0 ? false : true,
-                        GetTVValue<double>(values[index++]),
-                        WindowConstruction.Find(GetTVValue<string>(values[index++])));
+                        values[index++].GetTvValue<double>(),
+                        values[index++].GetTvValue<double>(),
+                        values[index++].GetTvValue<int>() == 0 ? false : true,
+                        values[index++].GetTvValue<double>(),
+                        WindowConstruction.Find(values[index++].GetTvValue<string>()));
             }
-        }
-
-        private T GetTVValue<T> (TypedValue tv)
-        {
-            T res;
-            if (tv.Value is T)
-            {
-                res = (T)tv.Value;
-            }
-            else
-            {
-                res = default(T);
-            }
-            return res;
         }
     }
 }

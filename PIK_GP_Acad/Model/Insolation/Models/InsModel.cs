@@ -21,20 +21,31 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Модель инсоляции в привязке к документу
     /// </summary>
-    public class InsModel : SavableModelBase<InsModel>
+    public class InsModel : ModelBase
     {
         /// <summary>
         /// Для восстановление сохраненного расчета инсоляции
         /// Пока не реализовано
         /// </summary>
         public InsModel () { }
+
+        /// <summary>
+        /// Создание модели расчета из списка значений считанных из словаря чертежа
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="doc"></param>
+        public InsModel (List<TypedValue> values, Document doc)
+        {            
+            Doc = doc;            
+        }
+
         ///// <summary>
         ///// Создание нового расчета инсоляции для документа
         ///// </summary>        
         //public InsModel (Document doc): base()
         //{
         //    Doc = doc;
-            
+
         //}
 
         /// <summary>
@@ -58,11 +69,14 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Сервис расчета
             if (CalcService == null)
-                DefineCalcService();            
+                DefineCalcService();
 
             // Создание расчета
             if (Tree == null)
-                Tree = new TreeModel(this);
+            {
+                Tree = new TreeModel();
+                Tree.Initialize(this);
+            }
 
             // Загрузка точек из найденных на карте
             if (Map.InsPoints.Any())
@@ -129,6 +143,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SaveIns ()
         {
+            // Сохранение настроек
+            var values = Options.GetDataValues();
+            InsExtDataHelper.SaveToNod(Doc, values, "InsOptions");
+            // Сохранение расчета елочек
+            values = Tree.GetDataValues();
+            InsExtDataHelper.SaveToNod(Doc, values, "TreeModel");
+            
             //try
             //{
             //    // серилизация расчета            
@@ -147,7 +168,27 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <returns>Расчет инсоляции или null</returns>
         public static InsModel LoadIns (Document doc)
         {
-            InsModel res = null;
+            InsModel model = null;
+            
+            // Считывание настроек
+            var values = InsExtDataHelper.LoadFromNod(doc, "InsOptions");
+            if (values == null) return model;
+            var options = new InsOptions();
+            options.SetDataValues(values);
+
+            // Считывание расчета елочек
+            values = InsExtDataHelper.LoadFromNod(doc, "TreeModel");
+            if (values == null) return model;
+            var tree = new TreeModel();
+            tree.SetDataValues(values);            
+
+            model = new InsModel();
+            model.Options = options;
+            model.Tree = tree;
+            model.Tree.Initialize(model);
+
+            model.Initialize(doc);
+
             //try
             //{
             //    using (var fileStream = File.Open(@"\\picompany.ru\root\dep_ort\8.САПР\проекты\AutoCAD\РГ\ГП\Концепция\Инсоляция\Расчет в точке\insModel.xml", FileMode.Open))
@@ -157,7 +198,7 @@ namespace PIK_GP_Acad.Insolation.Models
             //}
             //catch { }
 
-            return res;
+            return model;
         }
 
         /// <summary>

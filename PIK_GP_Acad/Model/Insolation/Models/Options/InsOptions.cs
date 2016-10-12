@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using AcadLib;
+using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
-{
-    [Serializable]
-    public class InsOptions : ModelBase
+{    
+    public class InsOptions : ModelBase, INodDataSave
     {
         public InsOptions ()
         {            
@@ -45,6 +45,16 @@ namespace PIK_GP_Acad.Insolation.Models
                 ShadowDegreeStep = 1, SunCalcAngleStart = 15.0, SunCalcAngleEnd = 165.0
             };
             return defaultOptions;
+        }
+
+        public List<TypedValue> GetDataValues ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDataValues (List<TypedValue> values)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,6 +13,7 @@ using PIK_GP_Acad.Insolation.Services;
 using System.ComponentModel;
 using Catel.Runtime.Serialization;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -20,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчет елочек
     /// </summary>
     [Serializable]
-    public class TreeModel : ModelBase
+    public class TreeModel : ModelBase, INodDataSave
     {
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
 
@@ -37,28 +38,32 @@ namespace PIK_GP_Acad.Insolation.Models
         {           
 
         }
-        /// <summary>
-        /// Создание нового расчета
-        /// </summary>
-        /// <param name="insModel">Модель инсоляции</param>
-        public TreeModel(InsModel insModel)
+        
+        public void Initialize(InsModel insModel)
         {
-            this.Model = insModel;            
+            this.Model = insModel;
             VisualTrees = new VisualTree(Model);
             Points = new ObservableCollection<InsPoint>();
-        }                
+            if (TreeOptions == null)
+                TreeOptions = TreeOptions.Default();
+        }         
 
         /// <summary>
         /// Расчетные точки
         /// </summary>
         [ExcludeFromSerialization]
         public ObservableCollection<InsPoint> Points { get; private set; }
+                
+        /// <summary>
+        /// Настройки елочек
+        /// </summary>
+        public TreeOptions TreeOptions { get; set; }             
 
         /// <summary>
         /// Включение/выключение зон инсоляции для всех точек
         /// </summary>
         public bool IsVisualIllumsOn { get; set; }
-        public bool IsVisualTreeOn { get; set; }
+        public bool IsVisualTreeOn { get; set; }        
 
         /// <summary>
         /// Обновление полное рачета елочек
@@ -239,8 +244,37 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void CheckPoints ()
         {
-            // Проверка точек                      
-            
+            // Проверка точек   
+        }        
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            // Список значений расчета       
+            List<TypedValue> values = new List<TypedValue>() {
+                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualIllumsOn? 1:0),
+                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualTreeOn? 1:0),
+            };
+
+            // Сохранение настроек елочек
+            var valuesTreeOptions = TreeOptions.GetDataValues(doc);
+            InsExtDataHelper.SaveToNod(doc, valuesTreeOptions, "TreeOptions");
+
+            return values;
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values.Count==2)
+            {
+                int index = 0;
+                IsVisualIllumsOn = values[index++].GetTvValue<int>() == 0 ? false : true;
+                IsVisualTreeOn = values[index++].GetTvValue<int>() == 0 ? false : true;
+            }
+
+            // Загрузка настроек елочек из словаря
+            var valuesTreeOptions = InsExtDataHelper.LoadFromNod(doc, "TreeOptions");
+            TreeOptions = new TreeOptions();
+            TreeOptions.SetDataValues(valuesTreeOptions, doc);
         }
     }
 }

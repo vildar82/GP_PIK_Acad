@@ -16,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private static string fileSettings = AcadLib.IO.Path.GetSharedFile("Insolation", "Settings.xml");
         private static Settings settings;
         public ObservableCollection<InsRegion> Regions { get; set; }
-        public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
+        
         public ObservableCollection<InsRequirement> InsRequirements { get; set; }
 
         public Settings ()
@@ -36,8 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     settings = Load(fileStream, SerializationMode.Xml,new Catel.Runtime.Serialization.SerializationConfiguration());                                        
                 }
             }            
-            Regions = settings.Regions==null? DefaultRegions(): settings.Regions;
-            TreeVisualOptions = settings.TreeVisualOptions == null ? DefaultTreeVisualOptions() : settings.TreeVisualOptions;
+            Regions = settings.Regions==null? DefaultRegions(): settings.Regions;            
             InsRequirements = settings.InsRequirements == null ? DefaultInsRequirements() : settings.InsRequirements;            
         }
 
@@ -49,8 +48,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private Settings Default ()
         {
             Settings settings = new Settings();
-            settings.Regions = DefaultRegions();
-            settings.TreeVisualOptions = DefaultTreeVisualOptions();
+            settings.Regions = DefaultRegions();            
             settings.InsRequirements = DefaultInsRequirements();
             return settings;
         }
@@ -72,15 +70,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return regions;
         }
 
-        public static ObservableCollection<TreeVisualOption> DefaultTreeVisualOptions ()
-        {
-            ObservableCollection<TreeVisualOption> visuals = new ObservableCollection<TreeVisualOption> {
-                new TreeVisualOption (Color.FromArgb(205, 32, 39), 35),
-                new TreeVisualOption (Color.FromArgb(241, 235, 31), 55),
-                new TreeVisualOption (Color.FromArgb(19, 155, 72), 75),
-            };
-            return visuals;
-        }
+        
 
         public static ObservableCollection<InsRequirement> DefaultInsRequirements ()
         {

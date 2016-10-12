@@ -152,6 +152,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public abstract void Initialize (TreeModel treeModel);
         public abstract void Update ();
         public abstract void VisualOnOff (bool onOff, bool saveState);
+
         public virtual void Delete ()
         {
             // Удаление точки с чертежа

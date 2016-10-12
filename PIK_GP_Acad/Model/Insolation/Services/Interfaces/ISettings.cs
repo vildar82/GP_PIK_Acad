@@ -11,8 +11,7 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public interface ISettings
     {
-        ObservableCollection<InsRegion> Regions { get; set; }
-        ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
+        ObservableCollection<InsRegion> Regions { get; set; }        
         ObservableCollection<InsRequirement> InsRequirements { get; set; }        
 
         void Load ();

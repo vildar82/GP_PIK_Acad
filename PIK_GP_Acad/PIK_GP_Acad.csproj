@@ -161,6 +161,8 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
+    <Compile Include="Model\Insolation\Services\Serialize\INodDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IExtDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
