@@ -93,17 +93,15 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         /// <summary>
-        /// Найти точку на луче (заданном углом) как перпендикуляр от заданной точки
+        /// Найти точку на луче (заданном углом) на том же расстоянии от центра что и другая точка
         /// </summary>
         /// <param name="ptOtherRay">Точка на другом луче</param>
         /// <param name="angleRay">Угол луча на котором нужно найти точку. Угол от 0 (восхода) по часовой стрелке</param>
         /// <returns>Определенная точка</returns>
         public static Point2d GetPointInRayFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
         {
-            Vector2d vecRay = (Vector2d.XAxis * (ptOtherRay - ptOrig).Length).RotateBy(-angleRay);            
-            Line2d lineRay = new Line2d(ptOrig, vecRay);
-            var closestPt = lineRay.GetClosestPointTo(ptOtherRay);
-            var resPt = closestPt.Point;
+            Vector2d vecRay = (Vector2d.XAxis * (ptOtherRay - ptOrig).Length).RotateBy(-angleRay);
+            var resPt = ptOrig + vecRay;            
             return resPt;            
         }
 
