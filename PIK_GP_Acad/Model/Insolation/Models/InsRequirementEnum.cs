@@ -13,6 +13,9 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public enum InsRequirementEnum
     {
+        [Description("Не определено")]
+        [Catel.ComponentModel.DisplayName("Не определено")]
+        None,
         /// <summary>
         /// Прерывистая
         /// 2,5 часа прерывистой исноляции (при этом непрерывная >=1ч)

@@ -17,18 +17,20 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsViewModel : ViewModelBase
     {
-        public InsViewModel (InsModel insModel) : base()
-        {
-            Model = insModel;
+        public InsViewModel () : base()
+        {            
             SelectRegion = new TaskCommand(OnSelectRegionExecute);
+            Update = new TaskCommand(OnUpdateExecute);
         }
 
         [Model]
         [Expose("Options")]
         [Expose("Tree")]
-        [Expose("IsInsActivated")]
+        [Expose("IsUpdateRequired")]
+        [Expose("UpdateInfo")]
         public InsModel Model { get; set; }
         public TaskCommand SelectRegion { get; private set; }
+        public TaskCommand Update { get; private set; }        
 
         protected override async Task InitializeAsync ()
         {
@@ -58,6 +60,11 @@ namespace PIK_GP_Acad.Insolation.UI
                     Model.Tree.Update();
                 }
             }
-        }  
+        }
+
+        private async Task OnUpdateExecute ()
+        {
+            Model?.Update();
+        }
     }
 }

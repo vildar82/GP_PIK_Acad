@@ -62,7 +62,7 @@ namespace PIK_GP_Acad.Insolation.Services
             else
             {
                 double curStart = angleStart;
-                Point2d cusStartPt = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, illums[0].PtStart, curStart);
+                Point2d cusStartPt = GetPointInRayFromPoint(illums[0].PtOrig, illums[0].PtStart, curStart);
 
                 foreach (var item in illums)
                 {
@@ -76,7 +76,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
                 if (angleEnd - curStart > 0.1)
                 {
-                    Point2d ptEnd = GetPointInRayPerpendicularFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
+                    Point2d ptEnd = GetPointInRayFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
                     var illum = new IllumAreaCentral(illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
                     inverts.Add(illum);
                 }

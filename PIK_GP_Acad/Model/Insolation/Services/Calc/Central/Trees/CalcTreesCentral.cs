@@ -24,7 +24,13 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public List<IIlluminationArea> CalcPoint (InsPoint insPoint)
         {
-            List<IIlluminationArea> illumAreas;
+            List<IIlluminationArea> illumAreas = new List<IIlluminationArea> ();
+
+            if (insPoint.Building == null)
+            {
+                return illumAreas;
+            }
+
             var doc = insPoint.Model.Doc;
             using (doc.LockDocument())
             using (var t = doc.Database.TransactionManager.StartTransaction())

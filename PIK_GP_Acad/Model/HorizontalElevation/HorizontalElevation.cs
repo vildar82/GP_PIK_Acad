@@ -11,12 +11,12 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.Runtime;
 
-namespace PIK_GP_Acad.Model.HorizontalElevation
+namespace PIK_GP_Acad.HorizontalElevation
 {
    /// <summary>
    /// Изменение уровней горизонталей
    /// </summary>
-   public class HorizontalElevation
+   public class HorizontalElevationService
    {
       Document doc;
       Database db;
@@ -26,7 +26,7 @@ namespace PIK_GP_Acad.Model.HorizontalElevation
       double curElev;
       double stepElev;
 
-      public HorizontalElevation()
+      public HorizontalElevationService()
       {
          doc =  Application.DocumentManager.MdiActiveDocument;
          db = doc.Database;

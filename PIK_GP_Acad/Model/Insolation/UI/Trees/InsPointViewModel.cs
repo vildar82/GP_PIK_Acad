@@ -22,14 +22,23 @@ namespace PIK_GP_Acad.Insolation.UI
         }        
 
         [Model]
-        [Expose("Number")]
-        [Expose("Building")]
+        [Expose("Number")]        
         [Expose("Height")]  
         [Expose("Window")]   
         [Expose("InsValue")]    
         public InsPoint InsPoint { get; set; }
 
-        public ObservableCollection<BuildingTypeEnum> BuildingTypes { get; set; }        
+        public ObservableCollection<BuildingTypeEnum> BuildingTypes { get; set; }
+
+        private InsBuilding building;
+        public InsBuilding Building {
+            get {
+                if (building == null)
+                    building = InsPoint.Building;
+                return building;
+            }
+            set { building = value; }
+        }
 
         protected override async Task InitializeAsync ()
         {

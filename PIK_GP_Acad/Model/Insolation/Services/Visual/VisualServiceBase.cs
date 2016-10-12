@@ -13,39 +13,36 @@ namespace PIK_GP_Acad.Insolation.Services
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
         private bool isOn;
         private List<Drawable> draws;
-        protected List<IVisual> visuals;        
 
-        public bool IsOn {
+        public abstract List<Drawable> CreateVisual ();
+
+        public bool VisualIsOn {
             get { return isOn; }
             set {
                 isOn = value;
-                Update();
+                VisualUpdate();
             }
-        }        
+        }
 
         /// <summary>
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
-        public void Update ()
-        {            
-            if (visuals != null)
+        public void VisualUpdate ()
+        {
+            var tm = TransientManager.CurrentTransientManager;
+            // Включение визуализации на чертеже
+            if (isOn)
             {
-                var tm = TransientManager.CurrentTransientManager;
-                
-                // Включение визуализации на чертеже
-                if (isOn)
+                UpdateDraws();
+                foreach (var d in draws)
                 {
-                    UpdateDraws();                    
-                    foreach (var d in draws)
-                    {
-                        tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
-                    }
+                    tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
                 }
-                // Выключение
-                else
-                {
-                    EraseDraws ();
-                }
+            }
+            // Выключение
+            else
+            {
+                EraseDraws();
             }
         }
 
@@ -66,12 +63,9 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             EraseDraws();
             draws = new List<Drawable>();
-            if (visuals == null) return;            
-            foreach (var item in visuals)
-            {
-                var ds = item.CreateVisual();
-                draws.AddRange(ds);                
-            }
-        }        
+            var ds = CreateVisual();
+            draws.AddRange(ds);
+
+        }       
     }
 }

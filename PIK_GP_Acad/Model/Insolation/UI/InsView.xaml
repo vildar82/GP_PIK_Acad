@@ -6,11 +6,13 @@
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
+    xmlns:service="clr-namespace:PIK_GP_Acad.Insolation.Services"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{DynamicResource DarkThemeBackgroundBrush}"
     d:DataContext="{d:DesignInstance local:InsViewModel,
                                      IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
+
     <catel:UserControl.Resources>
         <!--<ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,20 +20,55 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>-->
         <Image x:Key="TreesImage" Source="/PIK_GP_Acad;component/Resources/trees.png" ToolTip="Елочки" />
+        <!--<Image x:Key="update" Source="/PIK_GP_Acad;component/Resources/update.png" />-->
+        <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ToggleButton
-            x:Name="chkBoxInsActivated"
-            Grid.Row="0"
-            Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-            Style="{StaticResource ToggleButtonOnOff}"
-            BorderThickness="1"
-            IsChecked="{Binding IsInsActivated}" 
-            ToolTip="Включение/отключение инсоляции для документа."/>
+        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+            <ToggleButton
+                x:Name="chkBoxInsActivated"
+                Grid.Row="0"
+                Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+                Style="{StaticResource ToggleButtonOnOff}"
+                BorderThickness="1"
+                IsChecked="{Binding Path=(service:InsService.InsActivate)}"
+                ToolTip="Включение/отключение инсоляции для документа." />
+            <Button
+                Grid.Row="0"
+                Height="20"
+                Margin="2"
+                Background="Transparent"
+                Command="{Binding Update}"                
+                IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}"
+                ToolTip="{Binding UpdateInfo}">
+                <Image Source="{StaticResource update}"/>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsUpdateRequired}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Name="Alarm">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <ColorAnimation
+                                                AutoReverse="True" Duration="0:0:1" FillBehavior="Stop"
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                To="Yellow" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="Alarm" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
         <!--  Регион  -->
         <StackPanel
             Grid.Row="0"

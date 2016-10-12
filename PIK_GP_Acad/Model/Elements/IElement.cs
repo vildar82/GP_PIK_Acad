@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib.Errors;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Elements
 {
@@ -12,6 +13,7 @@ namespace PIK_GP_Acad.Elements
     /// </summary>
     public interface IElement
     {
+        ObjectId IdEnt { get; }
         Error Error { get; }
     }
 }

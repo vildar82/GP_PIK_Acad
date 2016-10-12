@@ -14,6 +14,8 @@ using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 using AcadLib;
 using System.Xml.Serialization;
+using Autodesk.AutoCAD.GraphicsInterface;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -21,25 +23,30 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчетная точка
     /// </summary>
     [Serializable]
-    public class InsPoint : ModelBase
+    public class InsPoint : InsPointBase, IInsPoint
     {
-        [ExcludeFromSerialization]
-        public InsModel Model { get; set; }
+        public const string DataRec = "InsPoint";        
 
+        public bool IsVisualIllumsOn { get; set; }
         [ExcludeFromSerialization]
-        private VisualPointIllums VisualIllums { get; set; }
-        [ExcludeFromSerialization]
-        private VisualPointInfo VisualPointInfo { get; set; }
+        private VisualPointIllums VisualIllums { get; set; }        
 
         public InsPoint () { }
 
-        public InsPoint (InsModel model)
-        {
-            this.Model = model;
-            Window = new WindowOptions { Construction = WindowConstruction.WindowConstructions[0] };                    
+        public InsPoint (InsModel model, Point3d pt) : base(pt, model)
+        {               
+            Window = WindowOptions.Default();
         }
 
-        public void Initialize (TreeModel treeModel)
+        /// <summary>
+        /// Создание расчетной точки из словарных записей объекта
+        /// </summary>        
+        public InsPoint (List<TypedValue> values, DBPoint dbPt, InsModel model) : base(dbPt, model)
+        {
+            SetDataValues(values);            
+        }
+
+        public override void Initialize (TreeModel treeModel)
         {
             Model = treeModel.Model;
         }
@@ -47,81 +54,37 @@ namespace PIK_GP_Acad.Insolation.Models
         protected override void OnInitialized ()
         {
             base.OnInitialized();
-            EditPoint = new TaskCommand(OnEditPointExecute);
+            EditPoint = new TaskCommand(OnEditPointExecute, OnEditPointCanExecute);
             DeletePoint = new TaskCommand(OnDeletePointExecute);
-        }
+        }        
 
         public TaskCommand EditPoint { get; private set; }
         public TaskCommand DeletePoint { get; private set; }
 
-        /// <summary>
-        /// Номер точки
-        /// </summary>
-        public int Number { get; set; }
-        
-        [XmlIgnore]
-        public Point3d Point { get; set;}        
-        
-        [IncludeInSerialization]
-        public double[] PointAsXYZ {
-            get { return new double[] { Point.X, Point.Y, Point.Z }; }
-            set { Point = new Point3d(value); }
-        }        
-
-        [ExcludeFromSerialization]
-        public InsBuilding Building { get; set; }
-
-        [ExcludeFromSerialization]
-        public List<IIlluminationArea> Illums { get; set; }
-
-        [ExcludeFromSerialization]
-        public InsValue InsValue { get; set; }        
-
-        public int Height { get; set; }
-
-        public WindowOptions Window { get; set; }
-
-        public bool IsVisualIllumsOn { get; set; }
-
-        /// <summary>
-        /// Начальный угол - ограничивающий освещение точки.
-        /// [рад]
-        /// </summary>
-        public double AngleStartOnPlane { get; set; }
-        /// <summary>
-        /// Конечный угол в плане (радиан)
-        /// </summary>
-        public double AngleEndOnPlane { get; set; }
-
-        [ExcludeFromSerialization]
-        public string Info { get; set; }
+        public override string DataRecName { get { return DataRec; } }
 
         /// <summary>
         /// Расчет точки - зон освещенности и времени
         /// </summary>
         private void Calc ()
         {
-            Illums = Model.CalcService.TreesCalc.CalcPoint(this);
-            InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, Building.BuildingType);
-        }        
-        
-        private void OnIsVisualIllumsOnChanged ()
-        {
-            // Включение/выключение визуализации инсоляционных зон точки
-            if (VisualIllums != null)
+            var building = Building;
+            if (building == null)
             {
-                VisualIllums.IsOn = IsVisualIllumsOn;
+                Illums = null;
+                InsValue = InsValue.Empty;
+                return;
             }
-        }
 
-        private void OnNumberChanged ()
-        {
-            VisualPointInfo.Update();
-        }
+            Illums = Model.CalcService.TreesCalc.CalcPoint(this);            
+            InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building.BuildingType);
+        }  
 
         private async Task OnEditPointExecute ()
         {
-            var oldBuildingType = Building.BuildingType;
+            var building = Building;
+            if (building == null) return;
+            var oldBuildingType = building.BuildingType;
 
             var insPointVM = new InsPointViewModel(this);
             var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
@@ -130,11 +93,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Обновление расчета точки
                 Update();
 
-                if (oldBuildingType != Building.BuildingType)
+                if (oldBuildingType != building.BuildingType)
                 {
                     // Учет изменения типа здания для всех точек на этом здании
-                    var insReq = Model.CalcService.DefineInsRequirement(InsValue.MaxContinuosTime, InsValue.TotalTime, Building.BuildingType);
-                    var pointsInBuilding = Model.Tree.GetPointsInBuilding(Building);
+                    var insReq = Model.CalcService.DefineInsRequirement(InsValue.MaxContinuosTime, InsValue.TotalTime, building.BuildingType);
+                    var pointsInBuilding = Model.Tree.GetPointsInBuilding(building);
                     foreach (var item in pointsInBuilding)
                     {
                         if (item != this)
@@ -147,16 +110,41 @@ namespace PIK_GP_Acad.Insolation.Models
 
                 // Обновление елочек
                 Model.Tree.UpdateVisualTree(this);
+
+                // Сохранение точки в словарь
+                InsExtDataHelper.Save(this, Model.Doc);
             }
-        }        
+        }
+        private bool OnEditPointCanExecute ()
+        {
+            return Building != null;
+        }
 
         private async Task OnDeletePointExecute ()
         {
-            Model.Tree.DeletePoint(this);
-            VisualIllums.IsOn = false;
-            VisualPointInfo.IsOn = false;
+            Delete();
         }
-        
+
+        /// <summary>
+        /// Удаление - из расчета, отключение визуализации
+        /// </summary>
+        public override void Delete ()
+        {
+            Model.Tree.DeletePoint(this);
+            VisualIllums.VisualIsOn = false;
+            //VisualPoint.VisualIsOn = false; - удалится вместе с точкой на чертеже (т.к. это overrule точки)
+            base.Delete();
+        }
+
+        private void OnIsVisualIllumsOnChanged ()
+        {
+            // Включение/выключение визуализации инсоляционных зон точки
+            if (VisualIllums != null)
+            {
+                VisualIllums.VisualIsOn = IsVisualIllumsOn;
+            }
+        }
+
         /// <summary>
         /// Описание точки
         /// </summary>        
@@ -167,7 +155,15 @@ namespace PIK_GP_Acad.Insolation.Models
             info.Append("Номер: ").Append(Number).Append(", Коорд. - ").Append(Point.ToStringEx()).Append(", Высота точки - ").Append(Height).AppendLine();
             info.Append("Инсоляция: ").Append(InsValue.Requirement.Name).Append(", Макс - ").
                 Append(InsValue.MaxContinuosTimeString).Append(", Всего - ").Append(InsValue.TotalTimeString).AppendLine();
-            info.Append("Здание: ").Append(Building.BuildinTypeName).Append(", Высота - ").Append(Building.Height).AppendLine();
+            var building = Building;
+            if (building == null)
+            {
+                info.Append("Здание: Неопределено").AppendLine();
+            }
+            else
+            {                
+                info.Append("Здание: ").Append(building.BuildinTypeName).Append(", Высота - ").Append(building.Height).AppendLine();
+            }
             info.Append("Окно: ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
                 Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth);
 
@@ -179,29 +175,36 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         /// <param name="onOff"></param>
         /// <param name="saveState"></param>
-        public void VisualOnOff(bool onOff, bool saveState)
+        public override void VisualOnOff(bool onOff, bool saveState)
         {
             // Изменение состояние на заданное                    
             if (saveState)
             {
-                VisualIllums.IsOn = onOff ? IsVisualIllumsOn : false;
+                VisualIllums.VisualIsOn = onOff ? IsVisualIllumsOn : false;
             }
             else
             {
                 IsVisualIllumsOn = onOff;
             }
 
-            VisualPointInfo.IsOn = onOff;
+            VisualPoint.VisualIsOn = onOff;
         }
 
         /// <summary>
         /// Обноаление - расчета и визуализации
         /// </summary>
-        public void Update ()
+        public override void Update ()
         {
-            Calc();
-            UpdateVisual();
-        }   
+            try
+            {
+                Calc();
+                UpdateVisual();                
+            }
+            catch (Exception ex)
+            {
+                InsService.ShowMessage(ex, "Ошибка обноаления точки.");
+            }
+        }
 
         /// <summary>
         /// Обноаление визуализации точки (зон инсоляции и описания точки)
@@ -210,27 +213,68 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки
-            if (VisualIllums == null)            
-                VisualIllums = new VisualPointIllums();            
-            VisualIllums.CreateVisual(this);
+            if (VisualIllums == null)
+                VisualIllums = new VisualPointIllums(this);
             // Визуализация описания точки
-            if (VisualPointInfo == null)
-                VisualPointInfo = new VisualPointInfo(this);
-            else
-                VisualPointInfo.InsPoint = this;
+            if (VisualPoint == null)
+                VisualPoint = new VisualPoint(this);
 
 
-            // Обновление визуальных объектов на чертеже, если включены
-            if (Model.IsInsActivated)
-            {
-                // Зоны освещ.
-                if (IsVisualIllumsOn)
-                    VisualIllums.Update();
-                // Описание точки
-                VisualPointInfo.IsOn = true;
-            }
+            // Зоны освещ.
+            if (IsVisualIllumsOn)
+                VisualIllums.VisualUpdate();
+            // Описание точки
+            VisualPoint.VisualIsOn = true;
+
 
             Info = GetInfo();
+        }
+
+        /// <summary>
+        /// Список значений для сохранения в словарь объекта чертежа
+        /// </summary>
+        /// <returns></returns>
+        public override List<TypedValue> GetDataValues ()
+        {
+            List<TypedValue> values = new List<TypedValue>() {
+                new TypedValue((int)DxfCode.ExtendedDataInteger32, Height),
+                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Width),
+                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Quarter),
+                new TypedValue((int)DxfCode.ExtendedDataInteger16, Window.IsCustomAngle? 1:0),
+                new TypedValue((int)DxfCode.ExtendedDataReal, Window.ShadowAngle),
+                new TypedValue((int)DxfCode.ExtendedDataAsciiString, Window.Construction.Name),
+                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Construction.Depth),
+            };
+            return values;
+        }
+
+        private void SetDataValues (List<TypedValue> values)
+        {
+            if (values.Count == 7)
+            {
+                int index = 0;
+                Height = GetTVValue<int>(values[index++]);
+                Window = new WindowOptions(
+                        GetTVValue<double>(values[index++]),
+                        GetTVValue<double>(values[index++]),
+                        GetTVValue<int>(values[index++]) == 0 ? false : true,
+                        GetTVValue<double>(values[index++]),
+                        WindowConstruction.Find(GetTVValue<string>(values[index++])));
+            }
+        }
+
+        private T GetTVValue<T> (TypedValue tv)
+        {
+            T res;
+            if (tv.Value is T)
+            {
+                res = (T)tv.Value;
+            }
+            else
+            {
+                res = default(T);
+            }
+            return res;
         }
     }
 }

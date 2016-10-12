@@ -34,14 +34,12 @@ namespace PIK_GP_Acad.Insolation.Models
             this.model = model;
             map = model.Map;
 
-            InsPoint p = new InsPoint(model);            
-            // Запрос точки
+            // Запрос точки            
             InsBuilding building;
             var pt = PromptSelectPointOnScreen(out building);
 
-            p.Point = pt;
-            p.Building = building;
-
+            var p = new InsPoint(model, pt);
+            p.Building = building;           
             // Окно настроек расчетной точки (парметры окна, здания, высота точки)
             var pViewModel = new InsPointViewModel(p);
             var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
@@ -55,55 +53,27 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private Point3d PromptSelectPointOnScreen ( out InsBuilding building)
+        private Point3d PromptSelectPointOnScreen (out InsBuilding building)
         {
             var pt = ed.GetPointWCS("\nВыбор расчетной точки (на внешней стене здания):");
             // Проверка точки
-            building = map.GetBuildingInPoint(pt);
+            building = InsPointBase.DefineBuilding(ref pt, model);
             if (building == null)
             {
-                ed.WriteMessage($"\nОшибка. Для указанной точки не определено здание! Повторите...");
+                ed.WriteMessage($"\nОшибка. Здание не определено. Укажите точку на внешнем контуре здания...");
                 pt = PromptSelectPointOnScreen(out building);
-            }
-            // Корректировка расчетной точки
-            if (!CorrectCalcPoint(ref pt, building))
-            {
-                ed.WriteMessage($"\nОшибка. Укажите точку точнее (на грани контура полилинии здания)! Повторите...");
-                pt = PromptSelectPointOnScreen(out building);
-            }
-            // Нет ли уже точки в этом месте
-            if (model.Tree.HasPoint(pt))
-            {
-                ed.WriteMessage($"\nОшибка. Указанная точка уже включена в расчет! Повторите...");
-                pt = PromptSelectPointOnScreen(out building);
-            }
-            return pt;
-        }
-
-        private bool CorrectCalcPoint (ref Point3d pt, InsBuilding building)
-        {
-            bool res;
-            // Корректировка точки
-            Point3d correctPt;
-            using (var t = doc.TransactionManager.StartTransaction())
-            {
-                building.InitContour();
-                correctPt = building.Contour.GetClosestPointTo(pt, true);
-                t.Commit();
-            }
-            
-            if ((pt - correctPt).Length < 1)
-            {
-                // Точка достаточно близко к контуру - поправка точки и ОК.
-                pt = correctPt;
-                res = true;
             }
             else
             {
-                // Точка далеко от контура - не пойдет.
-                res = false;
+                // Нет ли уже точки в этом месте
+                if (model.Tree.HasPoint(pt))
+                {
+                    ed.WriteMessage($"\nОшибка. Уже есть расчетная точка в этом месте. Укажите другую точку.");
+                    pt = PromptSelectPointOnScreen(out building);
+                }                
             }
-            return res;
-        }
+
+            return pt;
+        }       
     }
 }

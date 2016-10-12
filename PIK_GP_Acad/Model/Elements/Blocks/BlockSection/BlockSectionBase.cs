@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     public abstract class BlockSectionBase : BlockBase, IBuilding, IInfraworksExport
     {
         private Rectangle r;
-        
+        public ObjectId IdEnt { get; private set; }
         public int Floors { get; set; } = 1;
         public int Height { get; set; }
         /// <summary>
@@ -44,6 +44,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {
+            IdEnt = blRef.Id;
             ExtentsInModel = this.Bounds.Value;
             // Площадь по внешней полилинии
             Polyline plLayer;

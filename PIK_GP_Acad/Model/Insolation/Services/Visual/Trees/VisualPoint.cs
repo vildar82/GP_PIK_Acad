@@ -15,15 +15,26 @@ using static PIK_GP_Acad.Insolation.Services.VisualHelper;
 namespace PIK_GP_Acad.Insolation.Services
 {
     /// <summary>
-    /// Визуализация описания точки на чертеже
+    /// Визуализация описания точки на чертеже  - через DrwableOverrule, а не TransientGraphics
+    /// Перерисовыватся точка на чертеже - из объекта InsPointDraw (который находит соответствующую точку)
     /// </summary>
-    public class VisualPointInfo : VisualServiceBase, IVisual
+    public class VisualPoint : IVisualService
     {
+        private bool isOn;
+
         public InsPoint InsPoint { get; set; }
-        public VisualPointInfo (InsPoint insPoint)
+
+        public bool VisualIsOn {
+            get { return isOn; }
+            set {
+                isOn = value;
+                VisualUpdate();
+            }
+        }
+
+        public VisualPoint (InsPoint insPoint)
         {
             InsPoint = insPoint;
-            visuals = new List<IVisual> { this };
         }
 
         public List<Drawable> CreateVisual ()
@@ -40,13 +51,19 @@ namespace PIK_GP_Acad.Insolation.Services
             var opt = new VisualOption(InsPoint.InsValue.Requirement.Color, ptText);            
             draws.Add(CreateText(InsPoint.InsValue.MaxContinuosTimeString, opt, 0.5, AttachmentPoint.BottomCenter));
             // Тип требования
-            opt.Position = ptText + new Vector3d(0,0.8,0);
+            opt.Position = ptText + new Vector3d(0,1,0);
             draws.Add(CreateText(InsPoint.InsValue.Requirement.Name, opt, 0.5, AttachmentPoint.BottomCenter));
             // Номер точки
-            opt.Position = ptText + new Vector3d(0, 0.8, 0);
+            opt.Position = ptText + new Vector3d(0, 1, 0);
             draws.Add(CreateText(InsPoint.Number.ToString(), opt, 1.5, AttachmentPoint.BottomCenter));
 
             return draws;
         }
+
+        public void VisualUpdate ()
+        {
+            // Перерисовать точку
+            Autodesk.AutoCAD.ApplicationServices.Application.UpdateScreen();
+        }        
     }
 }

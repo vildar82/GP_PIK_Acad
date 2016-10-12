@@ -17,6 +17,7 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         Plane plane = new Plane();
         InsPoint insPt;
+        InsBuilding buildingOwner;
         Map map;
         Point3d ptCalc;
         Point2d ptCalc2d;
@@ -35,6 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public CalcPointCentral (InsPoint insPt, InsCalcServiceCentral insCalcService)
         {
             this.map = insPt.Model.Map;
+            buildingOwner = insPt.Building;
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
@@ -56,7 +58,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 // кусок карты
                 var scope = map.GetScope(ext);
                 // исключение из списка домов собственно расчетного дома
-                scope.Buildings.Remove(insPt.Building);
+                scope.Buildings.Remove(buildingOwner);
 
                 // Расчет зон теней
                 // группировка домов по высоте
@@ -208,8 +210,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 res = false;
             }
             else
-            {
-                var buildingOwner = insPt.Building;
+            {                
                 // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
                 double cShadow;
                 double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height-insPt.Height, out cShadow);                
@@ -325,12 +326,12 @@ namespace PIK_GP_Acad.Insolation.Services
             
             if (angleStart.Item2 < AngleStartOnPlane)
             {
-                var ptStart = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
+                var ptStart = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
                 angleStart = new Tuple<Point2d, double>(ptStart, AngleStartOnPlane);
             }
             if (angleEnd.Item2 > AngleEndOnPlane)
             {
-                var ptEnd = IllumAreaBase.GetPointInRayPerpendicularFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
+                var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
                 angleEnd = new Tuple<Point2d, double>(ptEnd, AngleEndOnPlane);
             }
             var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
@@ -358,7 +359,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private void DefineWindowSegmentAngles (out double windowStartAngle, out double windowEndAngle,
             out Vector2d vecWindowOutPerp, out Vector2d vecWinToEast, out Vector2d vecWinToWest)
         {
-            var contour = insPt.Building.Contour;
+            var contour = buildingOwner.Contour;
             var segStartIndex = (int)contour.GetParameterAtPoint(ptCalc);
             var segOwner = contour.GetLineSegment2dAt(segStartIndex);
             // линия перпендикулярно точке
@@ -488,7 +489,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private void DefineRestrictionAngleInSide (Vector2d vecWinToSide, double yShadow, bool isEast)
         {
             // Точки со стороны восточной стороны от окна (только в заданной теневой высоте)
-            var vertexesSide = GetVertexInSide(insPt.Building.Contour, ptCalc2d, vecWinToSide,
+            var vertexesSide = GetVertexInSide(buildingOwner.Contour, ptCalc2d, vecWinToSide,
                 (p) =>
                 {
                     var yV = ptCalc2d.Y - p.Y;

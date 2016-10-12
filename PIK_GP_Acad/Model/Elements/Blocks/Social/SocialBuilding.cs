@@ -21,6 +21,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         const string ParamPlaces = "^Количество мест"; // параметр видимости. Должен начинаться с числа мест
         const string LayerCoverage = "_ГП_проект проездов";
 
+        public ObjectId IdEnt { get; set; }
         /// <summary>
         /// Кол мест
         /// </summary>
@@ -33,8 +34,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         /// Тип - "ДОО на 100 мест".
         /// </summary>
         public string Type { get; set; }
-        public Extents3d ExtentsInModel { get; set; }
-        
+        public Extents3d ExtentsInModel { get; set; }        
 
         public int Height { get; set; }
         public abstract ObjectId IdPlContour { get; set;}
@@ -43,6 +43,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
 
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {
+            IdEnt = blRef.Id;
             Type = GetPropValue<string>("^ТИП", exactMatch: false);
             Floors = GetPropValue<int>("^ЭТАЖНОСТЬ", exactMatch: false);
             Height = Floors * 4;

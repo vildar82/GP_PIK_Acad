@@ -15,12 +15,14 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
     {
         public const string BlockName = "ГП_Парковка";        
         
+        public ObjectId IdEnt { get; set; }
         public bool IsInvalid { get; set; }
         public int Places { get; set; }
         public int InvalidPlaces { get; set; }
 
         public Parking (BlockReference blRef, string blName) : base(blRef, blName)
         {
+            IdEnt = blRef.Id;
             var view = GetPropValue<string>("Вид");
             parseView(view);
 

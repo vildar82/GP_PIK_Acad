@@ -45,7 +45,13 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private async Task OnAddPointExecute ()
         {
-            TreeModel.AddPoint();
+            // Выбор точки на чертеже и задание параметров окна
+            SelectPoint selPt = new SelectPoint();
+            InsPoint p = selPt.SelectNewPoint(TreeModel.Model);
+            // Расчет и добавление точки
+            TreeModel.AddPoint(p);
+            // Сохранение точки
+            InsExtDataHelper.Save(p, TreeModel.Model.Doc);
         }        
 
         private bool OnAddPointCanExecute ()
@@ -67,21 +73,6 @@ namespace PIK_GP_Acad.Insolation.UI
         private async Task OnShowPointExecute ()
         {
             TreeModel.ShowPoint(SelectedPoint);
-        }
-    }
-
-    public class DesignTreesViewModel : TreesViewModel
-    {
-        public DesignTreesViewModel()
-        {
-            TreeModel = new TreeModel();
-            TreeModel.Points = new ObservableCollection<InsPoint>() {
-                new InsPoint(null) {
-                    InsValue = new InsValue () {
-                        MaxContinuosTime =150, TotalTime= 280, Requirement = new InsRequirement () {
-                            Type = InsRequirementEnum.C, Color = System.Drawing.Color.Green } },
-                    Building = new InsBuilding () { BuildingType = Elements.Buildings.BuildingTypeEnum.Living } }                    
-            };                        
         }
     }
 }

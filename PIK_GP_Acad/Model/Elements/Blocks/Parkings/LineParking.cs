@@ -18,6 +18,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
     {
         public const string BlockName = "ГП_Линия-Парковки";        
         
+        public ObjectId IdEnt { get; set; }
         /// <summary>
         /// Ширина одного парковочного места
         /// </summary>
@@ -42,6 +43,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public LineParking (BlockReference blRef, string blName) : base(blRef, blName)
         {
+            IdEnt = blRef.Id;
             var view = GetPropValue<string>("Вид");
             parseView(view);
             Length = GetPropValue<double>("Длина");

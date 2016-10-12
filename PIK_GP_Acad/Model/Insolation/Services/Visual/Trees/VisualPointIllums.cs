@@ -14,15 +14,25 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualPointIllums : VisualServiceBase
     {
-        public void CreateVisual (InsPoint insPoint)
-        {   
-            visuals = new List<IVisual>();
-            foreach (var item in insPoint.Illums)
+        public InsPoint InsPoint { get; set; }
+
+        public VisualPointIllums(InsPoint insPoint)
+        {
+            InsPoint = insPoint;
+        }
+
+        public override List<Drawable> CreateVisual ()
+        {
+            List<Drawable> draws = new List<Drawable>();
+
+            if (InsPoint.Illums != null)
             {
-                visuals.Add(item);
+                foreach (var item in InsPoint.Illums)
+                {
+                    draws.AddRange(item.CreateVisual());
+                }
             }
-            // Обновление
-            Update();   
+            return draws;
         }       
     }
 }

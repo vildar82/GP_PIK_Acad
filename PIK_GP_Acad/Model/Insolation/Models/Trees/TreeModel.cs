@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Models
     [Serializable]
     public class TreeModel : ModelBase
     {
-        private Tolerance tolerancePoints = new Tolerance(1, 1);
+        private static Tolerance tolerancePoints = new Tolerance(1, 1);
 
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }
@@ -46,25 +46,17 @@ namespace PIK_GP_Acad.Insolation.Models
             this.Model = insModel;            
             VisualTrees = new VisualTree(Model);
             Points = new ObservableCollection<InsPoint>();
-            //Points.CollectionChanged += Points_CollectionChanged;            
-            IsVisualIllumsOn = true;
         }                
-        
-        public void Initialize (InsModel insModel)
-        {
-            Model = insModel;
-            foreach (var item in Points)
-            {
-                item.Initialize(this);
-            }
-        }
 
         /// <summary>
         /// Расчетные точки
         /// </summary>
-        public ObservableCollection<InsPoint> Points { get; set; }
+        [ExcludeFromSerialization]
+        public ObservableCollection<InsPoint> Points { get; private set; }
 
-
+        /// <summary>
+        /// Включение/выключение зон инсоляции для всех точек
+        /// </summary>
         public bool IsVisualIllumsOn { get; set; }
         public bool IsVisualTreeOn { get; set; }
 
@@ -75,46 +67,40 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             foreach (var item in Points)
             {
-                CalcPoint(item);
+                item.DefineBuilding();
+                item.Update();
             }
             UpdateVisualTree(null);
-        }
+        }        
 
         /// <summary>
         /// Обновление визуализации елочек
         /// </summary>        
         public void UpdateVisualTree (InsPoint insPoint)
         {
-            VisualTrees.Update();
+            VisualTrees.VisualUpdate();
         }
 
         /// <summary>
-        /// Задание новой расчетной точки.        
+        /// Расчет и добавление точки
         /// </summary>        
-        public void AddPoint ()
-        {
-            SelectPoint selPt = new SelectPoint();
-            InsPoint p = selPt.SelectNewPoint(Model);
+        public void AddPoint (InsPoint p)
+        {            
+            // Расчет и добавление точки
             if (p != null)
             {
-                CalcPoint(p);
-                Points.Add(p);
+                // определение здания, если еще не определено
+                if (p.Building == null)
+                {
+                    p.DefineBuilding();
+                }
+                p.CreatePoint();
+                Points.Add(p);                
+                p.Update();
                 // Сразу включение зон инсоляции
                 p.IsVisualIllumsOn = true;
             }
-        }
-
-        private void CalcPoint (InsPoint p)
-        {
-            try
-            {
-                p.Update();                
-            }
-            catch (Exception ex)
-            {
-                InsService.ShowMessage(ex, "Ошибка при добавлении точки.");
-            }
-        }
+        }        
 
         /// <summary>
         /// Показать точку на чертеже
@@ -208,26 +194,33 @@ namespace PIK_GP_Acad.Insolation.Models
             // Елочки
             if (saveState)
             {
-                VisualTrees.IsOn = onOff ? IsVisualTreeOn : false;
+                VisualTrees.VisualIsOn = onOff ? IsVisualTreeOn : false;
             }
             else
             {
-                VisualTrees.IsOn = onOff;
+                VisualTrees.VisualIsOn = onOff;
             }
         }
 
         private void OnIsVisualTreeOnChanged()
         {
-            VisualTrees.IsOn = IsVisualTreeOn;
+            VisualTrees.VisualIsOn = IsVisualTreeOn;
         }
 
         /// <summary>
         /// Проверка есть ли уже такая точка в списке точек инсоляции
         /// </summary>        
-        public bool HasPoint (Point3d pt)
-        {
-            var res = Points.Any(p => p.Point.IsEqualTo(pt, tolerancePoints));
-            return res;
+        /// <param name="dubl">Дублируется ли эта точка - т.е. если такая точка только одна, то ок, а две и больше - дубликаты</param>
+        public bool HasPoint (Point3d pt, bool dubl = false)
+        {            
+            if (dubl)
+            {
+                return Points.Where(p => p.Point.IsEqualTo(pt, tolerancePoints)).Skip(1).Any();
+            }
+            else
+            {
+                return Points.Any(p => p.Point.IsEqualTo(pt, tolerancePoints));
+            }            
         }
 
         private void Points_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
@@ -241,7 +234,13 @@ namespace PIK_GP_Acad.Insolation.Models
                     p.Number = num;                    
                 }
             }
-            VisualTrees.Update();
+            VisualTrees.VisualUpdate();
+        }
+
+        private void CheckPoints ()
+        {
+            // Проверка точек                      
+            
         }
     }
 }

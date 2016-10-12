@@ -12,7 +12,7 @@ using AcadLib;
 using AcadLib.Files;
 using Autodesk.AutoCAD.ApplicationServices;
 
-namespace PIK_GP_Acad.Model.HorizontalElevation
+namespace PIK_GP_Acad.HorizontalElevation
 {
    /// <summary>
    /// Настройки для горизронталей

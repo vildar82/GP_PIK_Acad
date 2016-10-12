@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
 using Catel;
 using Catel.ApiCop;
 using Catel.ApiCop.Listeners;
@@ -31,7 +34,7 @@ namespace PIK_GP_Acad.Insolation.Services
         static InsViewModel insViewModel;
         static InsView insView;        
 
-        public static ISettings Settings { get; private set; }
+        public static ISettings Settings { get; private set; }        
 
         static InsService()
         {
@@ -45,7 +48,25 @@ namespace PIK_GP_Acad.Insolation.Services
 
             Settings = new Settings();
             Settings.Load();
-            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);            
+            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);           
+        }
+
+        /// <summary>
+        /// Переключатель активации расчета
+        /// Если для текущего документа есть модель, значит расчет включен
+        /// Установка значение - включает/отключает расчет
+        /// </summary>
+        public static bool InsActivate {
+            get { return GetInsModel(null) != null; }
+            set {
+                ActivateIns(value);
+                RaiseStaticPropertyChanged(nameof(InsActivate));
+            }
+        }
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static void RaiseStaticPropertyChanged (string propName)
+        {
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propName));
         }
 
         public static void Start (Document doc)
@@ -53,15 +74,28 @@ namespace PIK_GP_Acad.Insolation.Services
             if (doc == null) return;
             if (insModels == null)
                 insModels = new Dictionary<Document, InsModel>();
+
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
             Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);
-            if(palette == null)
-                ChangeDocument(doc);
-            palette.Visible = true;           
-        }
+
+            InsPointDraw.Start();
+
+            if (palette == null)
+            {
+                insViewModel = new InsViewModel();
+                insView = new InsView(insViewModel);
+                palette = new InsServicePallete(insView);
+                palette.StateChanged += Palette_StateChanged;
+            }
+            palette.Visible = true;
+
+            ChangeDocument(doc);               
+        }        
 
         public static void Stop ()
         {
+            // TODO: Сохранение всех расчетов
+
             Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
             Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
             //Settings.Save();
@@ -69,6 +103,9 @@ namespace PIK_GP_Acad.Insolation.Services
             palette = null;
             insModels = null;
             insViewModel = null;
+
+            InsPointDraw.Stop();
+
 #if DEBUG
             var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
             ApiCopManager.AddListener(apiCopFilelistener);
@@ -106,44 +143,40 @@ namespace PIK_GP_Acad.Insolation.Services
             ShowMessage($"{msg} \n\r {ex.Message}", MessageImage.Error);
         }
 
+        /// <summary>
+        /// Поиск модели точки по инсоляционной точке на чертеже
+        /// </summary>        
+        /// <returns>Модель точки</returns>
+        public static IInsPoint FindInsPoint (Point3d pt, Database db)
+        {
+            IInsPoint res = null;
+            // Получение InsModel для соответствующего чертежа
+            var insModel = insModels.FirstOrDefault(m => m.Key.Database == db).Value;
+            if (insModel != null)
+            {
+                res =insModel.FindInsPoint(pt);
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Закрытие расчета для документа
+        /// </summary>        
         private static void CloseDocument (Document doc)
         {
             if (doc == null) return;
+
             // Сохранить инсоляцию если она активирована для этого чертежа
 
             // Очистка объекта
             insModels.Remove(doc);
         }
 
-        private async static void ChangeDocument (Document doc)
+        private static void ChangeDocument (Document doc)
         {
             if (doc == null) return;
-
-            InsModel insModel;            
-            if (!insModels.TryGetValue(doc, out insModel))
-            {
-                // Загрузка
-                insModel = InsModel.LoadIns(doc);
-                if (insModel == null)
-                    insModel = new InsModel(doc);
-                insModels.Add(doc, insModel);
-            }
-
-            if (palette == null)
-            {
-                insViewModel = new InsViewModel(insModel);
-                insView = new InsView(insViewModel);
-                insView.Dispatcher.UnhandledException += Dispatcher_UnhandledException;
-                palette = new InsServicePallete(insView);
-                palette.StateChanged += Palette_StateChanged;
-            }
-            else
-            {
-                if (await insViewModel.SaveViewModelAsync() == true)
-                {
-                    insViewModel.Model = insModel;
-                }
-            }
+            var insModel = GetInsModel(doc);
+            InsActivate = insModel != null;
         }
 
         private static void Palette_StateChanged (object sender, Autodesk.AutoCAD.Windows.PaletteSetStateEventArgs e)
@@ -151,20 +184,83 @@ namespace PIK_GP_Acad.Insolation.Services
             if (e.NewState == Autodesk.AutoCAD.Windows.StateEventIndex.Hide)
             {
                 // Сохранить расчеты ???
-
                 Stop();
             }
         }
-
-        private static void Dispatcher_UnhandledException (object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            ShowMessage(e.Exception.Message, MessageImage.Error);
-        }        
 
         private static void LogManager_LogMessage (object sender, Catel.Logging.LogMessageEventArgs e)
         {
             if (e.LogEvent == Catel.Logging.LogEvent.Error)
                 Logger.Log.Debug(e.Message);
+        }        
+        
+        /// <summary>
+        /// Включение отключение расчета для текущего документа
+        /// </summary>
+        /// <param name="onOff">Включение или выключение расчета</param>
+        private static void ActivateIns (bool onOff)
+        {
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc == null) return;
+
+            var insModel = GetInsModel(doc);            
+
+            // Сохранение текущей модели (состояние контролов - особенность Catel)            
+            if (insViewModel.Model!= null)
+            {
+                insViewModel.SaveViewModelAsync();
+                insViewModel.Model.SaveIns();
+            }
+
+            // Включение расчета для текущего документа
+            if (onOff)
+            {
+                if (insModel == null)
+                {
+                    // Загрузка сохраненного расчета в чертеже (если он есть)
+                    insModel = InsModel.LoadIns(doc);
+                    if (insModel == null)
+                    {
+                        // Создание нового расчета
+                        insModel = new InsModel();
+                    }
+                    // Инициализация расчета
+                    insModel.Initialize(doc);                                               
+
+                    insModels.Add(doc, insModel);
+                }                
+            }
+            // Отключение расчета для текущего документа
+            else
+            {
+                if (insModel != null)
+                {
+                    // Сохранение расчета
+                    insModel.SaveIns();
+                    // Удаление
+                    insModels.Remove(doc);
+                    insModel = null;
+                }
+            }
+            // Переключение на модель (или на null)                
+            insViewModel.Model = insModel;
+        }
+
+        /// <summary>
+        /// Поиск модели для документа
+        /// </summary>
+        /// <param name="doc">Документ или null, тогда текущий док)</param>
+        /// <returns></returns>
+        private static InsModel GetInsModel (Document doc)
+        {
+            InsModel res = null;
+            if (doc == null)
+            {
+                doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
+                if (doc == null) return res;
+            }
+            insModels.TryGetValue(doc, out res);
+            return res;
         }
     }
 }

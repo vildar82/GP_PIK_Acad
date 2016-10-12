@@ -34,5 +34,13 @@ namespace PIK_GP_Acad.Insolation.Models
             new WindowConstruction() { Name ="Раздельный оконный блок со стеклом и двухкамерным стеклопакетом", Depth = 0.21 },
             new WindowConstruction() { Name ="Раздельный оконный блок с двумя однокамерными стеклопакетами", Depth = 0.2 },
         };
+
+        public static WindowConstruction Find (string wcName)
+        {
+            var constr = WindowConstructions.FirstOrDefault(w => w.Name == wcName);
+            if (constr == null)
+                constr = WindowConstructions[0];
+            return constr;
+        }
     }
 }

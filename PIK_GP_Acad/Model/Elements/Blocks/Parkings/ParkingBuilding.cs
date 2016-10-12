@@ -27,6 +27,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
         const string LayerContour = "_ГП_здания паркингов";
         const string LayerCoverage = "_ГП_проект проездов";
 
+        public ObjectId IdEnt { get; set; }
         public int Floors { get; set; }
         public int Places { get; set; }
         public int InvalidPlaces { get; set; }
@@ -39,6 +40,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public ParkingBuilding (BlockReference blRef, string blName) : base(blRef, blName)
         {
+            IdEnt = blRef.Id;
             ExtentsInModel = Bounds.Value;
             Floors = GetPropValue<int>(ParamFloors, exactMatch: false);
             Height = Floors * 3;

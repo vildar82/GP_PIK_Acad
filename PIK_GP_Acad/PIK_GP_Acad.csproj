@@ -161,8 +161,14 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\Services\Serialize\IExtDataSave.cs" />
+    <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
+    <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
+    <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDraw.cs" />
+    <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\ICalcValues.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\InsAngleCentral.cs" />
@@ -194,11 +200,10 @@
     <Compile Include="Model\Insolation\Models\Maps\Scope.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\WindowOptions.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\SelectPoint.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisual.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointIllums.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointInfo.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualTree.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualServiceBase.cs" />
@@ -462,7 +467,9 @@
   <ItemGroup>
     <Resource Include="Resources\Close.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\update.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

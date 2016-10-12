@@ -14,24 +14,17 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация клочек
     /// </summary>
-    public class VisualTree : VisualServiceBase, IVisual
+    public class VisualTree : VisualServiceBase
     {
         public ObservableCollection<InsPoint> Points { get; set; }
                 
         public InsModel Model { get; set; }
         public VisualTree(InsModel model)
         {            
-            Model = model;
-            visuals = new List<IVisual> { this };
+            Model = model;            
         }
 
-        //public void AddPoint (InsPoint p)
-        //{            
-        //    Points.Add(p);
-        //    Update();
-        //}        
-
-        public List<Drawable> CreateVisual ()
+        public override List<Drawable> CreateVisual ()
         {
             List<Drawable> drawsAllPointsTrees = new List<Drawable>();
             foreach (var item in Points)

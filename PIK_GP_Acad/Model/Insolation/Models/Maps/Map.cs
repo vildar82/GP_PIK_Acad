@@ -16,31 +16,56 @@ namespace PIK_GP_Acad.Insolation.Models
     /// карта - чертеж с объектами расчета инсоляции
     /// </summary>
     public class Map
-    {
+    {        
+        InsModel model;        
         Database db;
         RTree<InsBuilding> treeBuildings;
         //RTree<Tile> treeTiles;
-        //public List<Tile> Tiles { get; set; }        
+        //public List<Tile> Tiles { get; set; }                
 
-        public Document Doc { get; set; }
-        public int MaxBuildingHeight { get; internal set; }
-        public List<InsBuilding> Buildings { get; private set; }        
-
-        public Map(Document doc)
+        public Map (InsModel model)
         {
-            this.Doc = doc;
-            this.db = doc.Database;            
-            LoadMap();            
+            this.model = model;
+            this.Doc = model.Doc;
+            this.db = Doc.Database;
+            LoadMap();
             // TODO: подписаться на события изменения объектов чертежа - чтобы отслеживать изменения карты
+            Doc.Database.ObjectAppended += Database_ObjectAppended;
         }
-
+        public bool IsEventsOn { get; set; }
+        public Document Doc { get; set; }
+        public int MaxBuildingHeight { get { return GetMaxBuildingHeight(); } }
+        public List<InsBuilding> Buildings { get; private set; }       
+        /// <summary>
+        /// Найденные точки инсоляции
+        /// </summary>
+        public List<ObjectId> InsPoints { get; private set; }
+        /// <summary>
+        /// Добавлено здание
+        /// </summary>
+        public event EventHandler<InsBuilding> BuildingAdded;
+        /// <summary>
+        /// Здание удалено
+        /// </summary>
+        public event EventHandler<InsBuilding> BuildingErased;
+        /// <summary>
+        /// Здание изменилось (удалено и создаено новое)
+        /// Передается старое здание
+        /// </summary>
+        public event EventHandler<InsBuilding> BuildingModified;
+        /// <summary>
+        /// Добавлена расчетная точка
+        /// </summary>
+        public event EventHandler<ObjectId> InsPointAdded;
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
         private void LoadMap ()
         {
+            IsEventsOn = false;
             FCS.FCService.Init(db);
             Buildings = new List<InsBuilding>();
+            InsPoints = new List<ObjectId>();
             treeBuildings = new RTree<InsBuilding>();
             using (var t = db.TransactionManager.StartTransaction())
             {
@@ -48,20 +73,59 @@ namespace PIK_GP_Acad.Insolation.Models
                 foreach (var idEnt in ms)
                 {
                     var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
-                    var building = ElementFactory.Create<IBuilding>(ent);
-                    if (building != null)
-                    {
-                        var insBuild = new InsBuilding(building);
-                        Buildings.Add(insBuild);                        
-                        treeBuildings.Add(new Rectangle(building.ExtentsInModel), insBuild);
-                    }
+                    DefineEnt(ent);
                 }
                 t.Commit();
-            }
+            }            
+            IsEventsOn = true;
+        }
+
+        private int GetMaxBuildingHeight ()
+        {
+            int res = 0;
             if (Buildings.Count != 0)
             {
-                MaxBuildingHeight = Buildings.Max(b => b.Height);
+                res = Buildings.Max(b => b.Height);
             }
+            return res;
+        }
+
+        private void DefineEnt (Entity ent)
+        {
+            var building = ElementFactory.Create<IBuilding>(ent);
+            if (building != null)
+            {
+                var insBuild = new InsBuilding(building);
+                Buildings.Add(insBuild);
+                var r = GetBuildingRectangle(insBuild);
+                treeBuildings.Add(r, insBuild);
+
+                // Подписывание на изменения объекта
+                ent.Modified += Building_Modified;
+                ent.Erased += Building_Erased;
+
+                // Оповещение расчета о изменении здания   
+                if (IsEventsOn)
+                    BuildingAdded?.Invoke(this, insBuild);
+            }
+            // Сбор точек инсоляции
+            else if (ent is DBPoint)
+            {
+                var dbPt = (DBPoint)ent;
+                if (InsPointHelper.IsInsPoint(dbPt))
+                {
+                    InsPoints.Add(dbPt.Id);
+
+                    // Оповещение о создании точки
+                    if (IsEventsOn)
+                        InsPointAdded?.Invoke(this, dbPt.Id);
+                }
+            }
+        }
+
+        private Rectangle GetBuildingRectangle (InsBuilding building)
+        {
+            return new Rectangle(building.ExtentsInModel);
         }
 
         /// <summary>
@@ -96,39 +160,78 @@ namespace PIK_GP_Acad.Insolation.Models
             return building;
         }
 
-        //private void CreateTiles (int tileSize)
-        //{
-        //    Tiles = new List<Tile>();
-        //    treeTiles = new RTree<Tile>();
-        //    Tile.Size = tileSize;
-        //    Rectangle boundsBuildings = treeBuildings.getBounds();
+        private InsBuilding FindBuildingByEnt (ObjectId id)
+        {
+            return Buildings.Find(b => b.Building.IdEnt == id);
+        }
 
-        //    double len = boundsBuildings.max[0] - boundsBuildings.min[0];
-        //    double width = boundsBuildings.max[1] - boundsBuildings.min[1];
+        /// <summary>
+        /// Добавление объекта в чертеж
+        /// </summary>        
+        private void Database_ObjectAppended (object sender, ObjectEventArgs e)
+        {
+            var ent = e.DBObject as Entity;
+            if (ent == null) return;
+            try
+            {
+                using (var t = ent.Database.TransactionManager.StartTransaction())
+                {
+                    DefineEnt(ent);
+                    t.Commit();
+                }
+            }
+            catch { }
+        }
 
-        //    int countTilesInLen = Convert.ToInt32(len / tileSize) + tileSize;
-        //    int countTilesInWidth = Convert.ToInt32(width / tileSize) + tileSize;
+        /// <summary>
+        /// Удаление здания
+        /// </summary>        
+        private void Building_Erased (object sender, ObjectErasedEventArgs e)
+        {
+            // Определение удаленного здания
+            InsBuilding building = FindBuildingByEnt(e.DBObject.Id);
+            if (building != null)
+            {                
+                Buildings.Remove(building);
+                var r = GetBuildingRectangle(building);
+                treeBuildings.Delete(r, building);
 
-        //    double tileHalfSize = tileSize * 0.5;
+                if (IsEventsOn)
+                    BuildingErased?.Invoke(this, building);
+            }
+        }        
 
-        //    double x;
-        //    double y = boundsBuildings.min[1];
-        //    for (int w = 0; w < countTilesInWidth; w++)
-        //    {
-        //        y += tileSize;
-        //        x = boundsBuildings.min[0];
-        //        for (int l = 0; l < countTilesInLen; l++)
-        //        {
-        //            x += tileSize;
-        //            Point3d center = new Point3d(x, y, 0);
-        //            Tile tile = new Tile(center);
-        //            Tiles.Add(tile);
+        /// <summary>
+        /// Изменение здания (перемещение)
+        /// </summary>        
+        private void Building_Modified (object sender, EventArgs e)
+        {
+            var ent = sender as Entity;
+            if (ent == null) return;           
 
-        //            // добавление в дерево
-        //            var r = new Rectangle(x - tileHalfSize, y - tileHalfSize, x + tileHalfSize, y + tileHalfSize, 0, 0);
-        //            treeTiles.Add(r, tile);
-        //        }
-        //    }            
-        //}        
+            // Поиск старого здания
+            var buildingOld = FindBuildingByEnt(ent.Id);
+            if (buildingOld == null) return;
+            // удаление старого здания из списка и создание нового
+            Buildings.Remove(buildingOld);
+            treeBuildings.Delete(GetBuildingRectangle(buildingOld), buildingOld);
+
+            IBuilding buildingNew;
+            using (var t = ent.Database.TransactionManager.StartTransaction())
+            {
+                buildingNew = ElementFactory.Create<IBuilding>(ent);
+                t.Commit();
+            }            
+            if (buildingNew != null)
+            {
+                var insBuildNew = new InsBuilding(buildingNew);
+                Buildings.Add(insBuildNew);
+                var r = GetBuildingRectangle(insBuildNew);
+                treeBuildings.Add(r, insBuildNew);                
+
+                if (IsEventsOn)
+                    BuildingModified?.Invoke(this, buildingOld);
+            }            
+        }        
     }
 }

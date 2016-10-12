@@ -98,7 +98,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="ptOtherRay">Точка на другом луче</param>
         /// <param name="angleRay">Угол луча на котором нужно найти точку. Угол от 0 (восхода) по часовой стрелке</param>
         /// <returns>Определенная точка</returns>
-        public static Point2d GetPointInRayPerpendicularFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
+        public static Point2d GetPointInRayFromPoint (Point2d ptOrig, Point2d ptOtherRay, double angleRay)
         {
             Vector2d vecRay = (Vector2d.XAxis * (ptOtherRay - ptOrig).Length).RotateBy(-angleRay);            
             Line2d lineRay = new Line2d(ptOrig, vecRay);

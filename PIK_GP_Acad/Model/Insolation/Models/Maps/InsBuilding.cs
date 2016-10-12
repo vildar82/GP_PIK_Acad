@@ -14,7 +14,8 @@ namespace PIK_GP_Acad.Insolation.Models
     public class InsBuilding
     {
         [ExcludeFromSerialization]
-        public IBuilding Building { get; private  set; }        
+        public IBuilding Building { get; private  set; }
+        [ExcludeFromSerialization]
         public Polyline Contour { get; private set; }
         public int Height { get; private set; }
         public double YMax { get; private set; }
@@ -22,6 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
         [ExcludeFromSerialization]
         public Extents3d ExtentsInModel { get; private set; }
         public BuildingTypeEnum BuildingType { get; set; }
+        [ExcludeFromSerialization]
         public string BuildinTypeName { get { return InsService.GetDisplayName(BuildingType); } }
 
         public InsBuilding () { }

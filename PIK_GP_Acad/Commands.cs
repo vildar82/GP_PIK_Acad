@@ -19,7 +19,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using PIK_GP_Acad.Insolation;
-using PIK_GP_Acad.Model.HorizontalElevation;
+using PIK_GP_Acad.HorizontalElevation;
 using PIK_GP_Acad.Properties;
 
 [assembly: CommandClass(typeof(PIK_GP_Acad.Commands))]
@@ -150,7 +150,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                HorizontalElevation horElev = new HorizontalElevation();
+                var horElev = new HorizontalElevationService();
                 horElev.Stepping();
             });
         }

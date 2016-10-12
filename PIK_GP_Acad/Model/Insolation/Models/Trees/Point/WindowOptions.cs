@@ -14,15 +14,21 @@ namespace PIK_GP_Acad.Insolation.Models
     [Serializable]
     public class WindowOptions : ModelBase
     {
-        public WindowOptions ()
+        public WindowOptions (double width, double quarter, bool isCustomAngle,
+            double shadowAngle, WindowConstruction constr)
         {
-                        
+            // ??? Отключить события Property Changed на время инициализации свойств. Сейчас, при изменении любого свойства срабатывает событие OnPropertyChanged
+            Width = width == 0? 1.5: width;
+            Quarter = quarter == 0? 0.07:quarter;
+            IsCustomAngle = isCustomAngle;
+            ShadowAngle = shadowAngle;
+            Construction = constr?? WindowConstruction.WindowConstructions[0];              
         }
 
         /// <summary>
         /// Ширина окна, м
         /// </summary>
-        public double Width { get; set; } = 1.5;
+        public double Width { get; set; }
         /// <summary>
         /// Тип конструкции
         /// </summary>
@@ -31,7 +37,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Глубина четверти
         /// </summary>
-        public double Quarter { get; set; } = 0.07;   
+        public double Quarter { get; set; } 
         /// <summary>
         /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор) 
         /// [рад]
@@ -50,6 +56,11 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Construction == null) return 0;                    
             double b = Math.Atan2(Construction.Depth + Quarter, Width + 0.065);
             return b;
+        }
+
+        public static WindowOptions Default()
+        {
+            return new WindowOptions(1.5, 0.07, false, 0, WindowConstruction.WindowConstructions[0]);
         }
 
         protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)

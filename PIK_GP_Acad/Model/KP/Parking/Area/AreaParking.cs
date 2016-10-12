@@ -82,11 +82,7 @@ namespace PIK_GP_Acad.KP.Parking.Area
                 if (AcadLib.Jigs.DragSel.Drag(Service.Ed, new[] { text.Id }, Point3d.Origin))
                 {
                     SaveFloors();
-                }
-                else
-                {
-                    text.Erase();
-                }
+                }                
                 t.Commit();
             }
         }

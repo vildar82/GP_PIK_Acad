@@ -37,8 +37,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Определение требования освещенности
         /// </summary>
         public InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums, BuildingTypeEnum buildingType)
-        {
-            var insValue = new InsValue();            
+        {            
             int maxTimeContinuosIlum = 0;
             int curContinuosTime = 0;
             int totalTime = 0;
@@ -65,11 +64,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             InsRequirement req = DefineInsRequirement(maxTimeContinuosIlum, totalTime, buildingType);
-
-            insValue.Requirement = req;
-            insValue.MaxContinuosTime = maxTimeContinuosIlum;
-            insValue.TotalTime = totalTime;
-
+            var insValue = new InsValue(req, maxTimeContinuosIlum, totalTime);
             return insValue;
         }
 
