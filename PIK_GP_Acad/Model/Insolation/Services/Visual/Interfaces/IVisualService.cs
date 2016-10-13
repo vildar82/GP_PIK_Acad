@@ -19,5 +19,9 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         void VisualUpdate ();
         List<Drawable> CreateVisual ();
+        /// <summary>
+        /// Удаление визуализации
+        /// </summary>
+        void VisualsDelete ();
     }
 }

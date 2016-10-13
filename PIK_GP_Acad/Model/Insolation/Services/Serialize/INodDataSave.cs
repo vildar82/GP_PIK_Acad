@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 
@@ -14,10 +15,12 @@ namespace PIK_GP_Acad.Insolation.Services
     public interface INodDataSave
     {        
         /// <summary>
-        /// Список сохраняемяхъ значений
-        /// </summary>
-        /// <returns></returns>
-        List<TypedValue> GetDataValues (Document doc);
-        void SetDataValues (List<TypedValue> values, Document doc);
+        /// Словарь для сохранения объекта
+        /// </summary>        
+        DicED GetExtDic (Document doc);
+        /// <summary>
+        /// установить значения из словаря в объект
+        /// </summary>        
+        void SetExtDic (DicED DicED, Document doc);
     }
 }

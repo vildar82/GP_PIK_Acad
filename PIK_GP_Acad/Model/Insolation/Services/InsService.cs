@@ -78,7 +78,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
             Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);
 
-            InsPointDraw.Start();
+            InsPointDrawOverrule.Start();
 
             if (palette == null)
             {
@@ -104,7 +104,7 @@ namespace PIK_GP_Acad.Insolation.Services
             insModels = null;
             insViewModel = null;
 
-            InsPointDraw.Stop();
+            InsPointDrawOverrule.Stop();
 
 #if DEBUG
             var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
@@ -236,7 +236,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (insModel != null)
                 {
                     // Сохранение расчета
-                    insModel.SaveIns();
+                    //insModel.SaveIns();
+                    insModel.Clear();
                     // Удаление
                     insModels.Remove(doc);
                     insModel = null;

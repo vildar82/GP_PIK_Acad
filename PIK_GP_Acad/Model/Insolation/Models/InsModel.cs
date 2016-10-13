@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
@@ -59,13 +60,20 @@ namespace PIK_GP_Acad.Insolation.Models
             // Дефолтные настройки
             if (Options == null)
                 Options = InsOptions.Default();
-                           
+
             // Загрузка карты
-            Map = new Map(this);
-            Map.BuildingAdded += Map_BuildingAdded;
-            Map.BuildingErased += Map_BuildingErased;
-            Map.BuildingModified += Map_BuildingModified;
-            Map.InsPointAdded += Map_InsPointAdded;
+            if (Map != null)
+            {
+                // ??? пока ничего
+            }
+            else
+            {
+                Map = new Map(this);
+                Map.BuildingAdded += Map_BuildingAdded;
+                Map.BuildingErased += Map_BuildingErased;
+                Map.BuildingModified += Map_BuildingModified;
+                Map.InsPointAdded += Map_InsPointAdded;
+            }
 
             // Сервис расчета
             if (CalcService == null)
@@ -74,15 +82,9 @@ namespace PIK_GP_Acad.Insolation.Models
             // Создание расчета
             if (Tree == null)
             {
-                Tree = new TreeModel();
-                Tree.Initialize(this);
+                Tree = new TreeModel();                
             }
-
-            // Загрузка точек из найденных на карте
-            if (Map.InsPoints.Any())
-            {
-                LoadPoints(Map.InsPoints);
-            }            
+            Tree.Initialize(this);
         }        
 
         /// <summary>
@@ -120,8 +122,10 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Обновление всех расчетов
         /// </summary>
         public void Update()
-        {            
-            Tree.Update();
+        {
+            // Заново инициализация
+            Initialize(Doc);
+
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
         }             
@@ -141,15 +145,35 @@ namespace PIK_GP_Acad.Insolation.Models
             return res;
         }        
 
+        /// <summary>
+        /// Сохранение расчета в словарь чертежа
+        /// </summary>
         public void SaveIns ()
         {
-            // Сохранение настроек
-            var values = Options.GetDataValues();
-            InsExtDataHelper.SaveToNod(Doc, values, "InsOptions");
-            // Сохранение расчета елочек
-            values = Tree.GetDataValues();
-            InsExtDataHelper.SaveToNod(Doc, values, "TreeModel");
-            
+            // Словарь InsModel
+            var DicED = new DicED("InsModel");
+
+            // Список значений самого расчета InsModelRec            
+            var values = GetDataValues();
+            if (values != null)
+            {
+                var recXd = new RecXD("InsModelRec", values);
+                DicED.AddRec(recXd);
+            }
+
+            // Словарь настроек InsOptions
+            var dicOpt = Options.GetExtDic(Doc);
+            dicOpt.Name = "InsOptions";
+            DicED.AddInner(dicOpt);
+
+            // Словарь расчета елочек TreeModel
+            var dicTree = Tree.GetExtDic(Doc);
+            dicTree.Name = "TreeModel";
+            DicED.AddInner(dicTree);
+
+            // Сохранение словаря InsModel в NOD чертежа
+            InsExtDataHelper.SaveToNod(Doc, DicED);
+
             //try
             //{
             //    // серилизация расчета            
@@ -169,24 +193,36 @@ namespace PIK_GP_Acad.Insolation.Models
         public static InsModel LoadIns (Document doc)
         {
             InsModel model = null;
-            
-            // Считывание настроек
-            var values = InsExtDataHelper.LoadFromNod(doc, "InsOptions");
-            if (values == null) return model;
-            var options = new InsOptions();
-            options.SetDataValues(values);
 
-            // Считывание расчета елочек
-            values = InsExtDataHelper.LoadFromNod(doc, "TreeModel");
-            if (values == null) return model;
-            var tree = new TreeModel();
-            tree.SetDataValues(values);            
+            // Загрузка словаря модели
+            var dicModel = InsExtDataHelper.LoadFromNod(doc, "InsModel");
+            if (dicModel == null) return model;
+
+            // список значений самой модели
+            var recModel = dicModel.GetRec("InsModelRec");
+
+            // Настройки
+            InsOptions opt = null;
+            var dicOpt = dicModel.GetInner("InsOptions");
+            if (dicOpt != null)
+            {
+                opt = new InsOptions();
+                opt.SetExtDic(dicOpt, doc);
+            }
+
+            // Расчет елочек
+            TreeModel tree = null;
+            var dicTree = dicModel.GetInner("TreeModel");
+            if (dicTree != null)
+            {
+                tree = new TreeModel();
+                tree.SetExtDic(dicTree, doc);
+            }
 
             model = new InsModel();
-            model.Options = options;
+            model.Options = opt;
             model.Tree = tree;
             model.Tree.Initialize(model);
-
             model.Initialize(doc);
 
             //try
@@ -208,39 +244,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var res = Tree.Points.FirstOrDefault(p => p.Point == pt);
             return res;
-        }
-
-        /// <summary>
-        /// Загрузка точек. Определение точек и добавление их в соответствующие расчеты
-        /// </summary>
-        /// <param name="idsPoint">Список инсоляционных найденных точек на чертеже</param>
-        private void LoadPoints (List<ObjectId> idsPoint)
-        {
-            using (Doc.LockDocument())
-            using (var t = Doc.TransactionManager.StartTransaction())
-            {
-                foreach (var idPt in idsPoint)
-                {
-                    var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
-                    if (dbPt == null) continue;
-
-                    InsPoint insPoint = null;
-
-                    // Загрузка из словаря всех записей
-                    var records = InsExtDataHelper.Load(dbPt, Doc);
-
-                    List<TypedValue> values;
-                    // Если это инсоляционная точка елочек
-                    if (records.TryGetValue(InsPoint.DataRec, out values))
-                    {
-                        insPoint = new InsPoint(values, dbPt, this);
-                        // Добавление точки в расчет елочек
-                        Tree.AddPoint(insPoint);
-                    }                                        
-                }
-                t.Commit();
-            }
-        }
+        }       
 
         private void Map_BuildingModified (object sender, InsBuilding e)
         {
@@ -256,6 +260,21 @@ namespace PIK_GP_Acad.Insolation.Models
             UpdateInfo = "Требуется обновление - удалено здание.";
         }
 
+        /// <summary>
+        /// Очистка расчета (отключение расчета)
+        /// </summary>
+        public void Clear ()
+        {
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
+            {
+                Map.Clear();
+                Tree.Clear();
+
+                t.Commit();
+            }
+        }
+
         private void Map_BuildingAdded (object sender, InsBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к.изменились здания на чертеже
@@ -267,6 +286,16 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             IsUpdateRequired = true;
             UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
+        }
+
+        private List<TypedValue> GetDataValues ()
+        {
+            // Пока нет значений для сохранения
+            return null;
+        }
+
+        private void SetDataValues (List<TypedValue> values)
+        {            
         }
     }
 }

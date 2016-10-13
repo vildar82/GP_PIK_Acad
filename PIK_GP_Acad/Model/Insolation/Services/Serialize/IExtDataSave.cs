@@ -10,7 +10,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Сохранение объекта в расширенные данные
     /// </summary>
-    public interface IExtDataSave
+    public interface IExtDataSave : ITypedDataValues
     {
         /// <summary>
         /// Имя записи - InsPoint
@@ -20,11 +20,6 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Объект автокада в который записываются расширенные данные
         /// </summary>
         /// <returns></returns>
-        ObjectId GetDBObject ();
-        /// <summary>
-        /// Список сохраняемяхъ значений
-        /// </summary>
-        /// <returns></returns>
-        List<TypedValue> GetDataValues ();
+        ObjectId GetDBObject ();        
     }
 }

@@ -47,8 +47,12 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDbo(dbPt);
         }
 
+        public TaskCommand DeletePoint { get; }
+        public TaskCommand EditPoint { get; }
+
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }
+
         [ExcludeFromSerialization]
         public Point3d Point { get; set; }        
         public double[] PointAsXYZ {
@@ -58,19 +62,16 @@ namespace PIK_GP_Acad.Insolation.Models
 
         [ExcludeFromSerialization]
         public ObjectId DBPointId { get; set; }
-
         /// <summary>
         /// Визуализирует точку
         /// </summary>        
         [ExcludeFromSerialization]
         public IVisualService VisualPoint { get; set; }
-
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }
         [ExcludeFromSerialization]
         public InsBuilding Building { get; set; }
-        public TaskCommand DeletePoint { get; }
-        public TaskCommand EditPoint { get; }
+        
         public int Height { get; set; }
         [ExcludeFromSerialization]
         public List<IIlluminationArea> Illums { get; set; }
@@ -89,25 +90,34 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Список значений для сохранения в словарь
         /// </summary>
         /// <returns></returns>
-        public abstract List<TypedValue> GetDataValues ();
+        public abstract List<TypedValue> GetDataValues (Document doc);
+        public abstract void SetDataValues (List<TypedValue> values, Document doc);
 
         /// <summary>
         /// Создание точки на чертеже
         /// </summary>
         public void CreatePoint()
-        {
+        {            
             var doc = Model.Doc;
             // Создать точку на чертеже и записать в нее xdata и dictionary
             using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {
-                var dbPoint = new DBPoint(Point);
-                var cs = doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-                DBPointId = cs.AppendEntity(dbPoint);
-                t.AddNewlyCreatedDBObject(dbPoint, true);
-                SubscribeDbo(dbPoint);
-
-                InsPointHelper.SetInsPoint(dbPoint);
+                DBPoint dbPoint;
+                // Если точка уже не была добавлена в чертеж
+                if (DBPointId.IsNull)
+                {
+                    dbPoint = new DBPoint(Point);
+                    var cs = doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+                    DBPointId = cs.AppendEntity(dbPoint);
+                    t.AddNewlyCreatedDBObject(dbPoint, true);
+                    InsPointHelper.SetInsPoint(dbPoint);
+                }
+                else
+                {
+                    dbPoint = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
+                }
+                SubscribeDbo(dbPoint);                
 
                 t.Commit();
             }
@@ -119,10 +129,24 @@ namespace PIK_GP_Acad.Insolation.Models
             //dbPoint.Copied += DbPoint_Copied; Создание нового объекта отслеживается картой Map
             dbPoint.Modified += DbPoint_Modified;
         }
+        private void UnSubscribeDbo (DBPoint dbPoint)
+        {
+            dbPoint.Erased -= DbPoint_Erased;            
+            dbPoint.Modified -= DbPoint_Modified;
+        }
 
         public ObjectId GetDBObject ()
         {
             return DBPointId;
+        }
+
+        /// <summary>
+        /// Очистка  - отключение
+        /// </summary>
+        public virtual void Clear()
+        {            
+            var dbPt = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
+            UnSubscribeDbo(dbPt);
         }
 
         /// <summary>
@@ -145,8 +169,11 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void DbPoint_Erased (object sender, ObjectErasedEventArgs e)
         {
-            // Удаление точки из расчета  
-            Delete();          
+            // Удаление точки из расчета. Проверка есть ли такая точка в расчете (если нет, то она уже удалена через палитру)            
+            if (Model.Tree.HasPoint(e.DBObject.Id))
+            {
+                Delete();
+            }            
         }
 
         public abstract void Initialize (TreeModel treeModel);

@@ -16,6 +16,7 @@ using AcadLib;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -43,9 +44,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public InsPoint (List<TypedValue> values, DBPoint dbPt, InsModel model) : base(dbPt, model)
         {
-            SetDataValues(values);            
+            SetDataValues(values, Model.Doc);            
         }
 
+        /// <summary>
+        /// ??? подумать над использованием !!! - обновление точки
+        /// </summary>        
         public override void Initialize (TreeModel treeModel)
         {
             Model = treeModel.Model;
@@ -206,6 +210,12 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
+        public override void Clear ()
+        {
+            VisualIllums.VisualsDelete();            
+            base.Clear();
+        }
+
         /// <summary>
         /// Обноаление визуализации точки (зон инсоляции и описания точки)
         /// </summary>
@@ -234,7 +244,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Список значений для сохранения в словарь объекта чертежа
         /// </summary>
         /// <returns></returns>
-        public override List<TypedValue> GetDataValues ()
+        public override List<TypedValue> GetDataValues (Document doc)
         {
             List<TypedValue> values = new List<TypedValue>() {
                 new TypedValue((int)DxfCode.ExtendedDataInteger32, Height),
@@ -248,7 +258,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return values;
         }
 
-        private void SetDataValues (List<TypedValue> values)
+        public override void SetDataValues (List<TypedValue> values, Document doc)
         {
             if (values.Count == 7)
             {
@@ -261,6 +271,6 @@ namespace PIK_GP_Acad.Insolation.Models
                         values[index++].GetTvValue<double>(),
                         WindowConstruction.Find(values[index++].GetTvValue<string>()));
             }
-        }
+        }        
     }
 }

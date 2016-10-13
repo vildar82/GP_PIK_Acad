@@ -14,6 +14,7 @@ using System.ComponentModel;
 using Catel.Runtime.Serialization;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
+using AcadLib.XData;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -21,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчет елочек
     /// </summary>
     [Serializable]
-    public class TreeModel : ModelBase, INodDataSave
+    public class TreeModel : ModelBase, INodDataSave, ITypedDataValues
     {
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
 
@@ -35,15 +36,36 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Для загрузки расчета
         /// </summary>
         public TreeModel ()
-        {           
-
+        {    
         }
         
+        /// <summary>
+        /// Инициализация расчета елочек - новая или обновление старого
+        /// </summary>        
         public void Initialize(InsModel insModel)
         {
             this.Model = insModel;
-            VisualTrees = new VisualTree(Model);
-            Points = new ObservableCollection<InsPoint>();
+
+            // Визуализация елочек
+            if (VisualTrees != null)
+            {
+                // Удаление старой визуализации
+                VisualTrees.VisualsDelete();                
+            }
+            VisualTrees = new VisualTree(insModel);
+
+            // Расчетные точки
+            if (Points == null)
+            {
+                Points = new ObservableCollection<InsPoint>();
+                VisualTrees.Points = Points;
+            }
+            else
+            {
+                // Очистка точек и новая загрузка
+                LoadPoints();
+            }
+            
             if (TreeOptions == null)
                 TreeOptions = TreeOptions.Default();
         }         
@@ -100,10 +122,9 @@ namespace PIK_GP_Acad.Insolation.Models
                     p.DefineBuilding();
                 }
                 p.CreatePoint();
-                Points.Add(p);                
-                p.Update();
-                // Сразу включение зон инсоляции
-                p.IsVisualIllumsOn = true;
+                Points.Add(p);       
+                // Обновление - Расчет и визуализация точки         
+                p.Update();                
             }
         }        
 
@@ -160,8 +181,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         private void OnPointsChanged ()
         {
-            Points.CollectionChanged += Points_CollectionChanged;
-            VisualTrees.Points = Points;            
+            Points.CollectionChanged += Points_CollectionChanged;            
         }
 
         /// <summary>
@@ -228,6 +248,14 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
+        /// <summary>
+        /// Проверка - есть ли точка с таким id в расчете
+        /// </summary>        
+        public bool HasPoint (ObjectId idPoint)
+        {
+            return Points.Any(p => p.DBPointId == idPoint);
+        }
+
         private void Points_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
         {
             for (int i = 0; i < Points.Count; i++)
@@ -242,39 +270,117 @@ namespace PIK_GP_Acad.Insolation.Models
             VisualTrees.VisualUpdate();
         }
 
+        /// <summary>
+        /// Очистка - отключение расчета
+        /// </summary>
+        public void Clear ()
+        {            
+            foreach (var item in Points)
+            {
+                item.Clear();
+            }
+        }
+
         private void CheckPoints ()
         {
             // Проверка точек   
         }        
 
-        public List<TypedValue> GetDataValues (Document doc)
+        public DicED GetExtDic (Document doc)
         {
-            // Список значений расчета       
-            List<TypedValue> values = new List<TypedValue>() {
-                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualIllumsOn? 1:0),
-                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualTreeOn? 1:0),
-            };
+            DicED dicTree = new DicED();
+
+            // Список значений расчета елочек                  
+            var recTree = new RecXD("TreeModelRec", GetDataValues(doc));
+            dicTree.AddRec(recTree);
 
             // Сохранение настроек елочек
-            var valuesTreeOptions = TreeOptions.GetDataValues(doc);
-            InsExtDataHelper.SaveToNod(doc, valuesTreeOptions, "TreeOptions");
+            var dicTreeOptions = TreeOptions.GetExtDic(doc);
+            dicTreeOptions.Name = "TreeOptions";
+            dicTree.AddInner(dicTreeOptions);
 
-            return values;
+            return dicTree;
+        }
+
+        /// <summary>
+        /// Установка значений из словаря.
+        /// Расчетная модель еще не задана!!!
+        /// </summary>        
+        public void SetExtDic (DicED dicTree, Document doc)
+        {
+            // Собственные значения рассчета елочек
+            var recTree = dicTree.GetRec("TreeModelRec");            
+            SetDataValues(recTree.Values, doc);
+
+            // настроки елочек            
+            var dicTreeOpt = dicTree.GetInner("TreeOptions");
+            TreeOptions = new TreeOptions();
+            TreeOptions.SetExtDic(dicTreeOpt, doc);
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue>() {
+                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualIllumsOn? 1:0),
+                new TypedValue((int)DxfCode.ExtendedDataInteger32, IsVisualTreeOn? 1:0),
+            };            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values.Count==2)
+            if (values == null || values.Count != 2)
+            {
+                // Default
+                IsVisualIllumsOn = false;
+                IsVisualTreeOn = false;
+            }
+            else
             {
                 int index = 0;
                 IsVisualIllumsOn = values[index++].GetTvValue<int>() == 0 ? false : true;
                 IsVisualTreeOn = values[index++].GetTvValue<int>() == 0 ? false : true;
             }
+        }
 
-            // Загрузка настроек елочек из словаря
-            var valuesTreeOptions = InsExtDataHelper.LoadFromNod(doc, "TreeOptions");
-            TreeOptions = new TreeOptions();
-            TreeOptions.SetDataValues(valuesTreeOptions, doc);
+        /// <summary>
+        /// Загрузка точек. Определение точек найденных на карте
+        /// </summary>        
+        private void LoadPoints ()
+        {
+            var doc = Model?.Doc;
+            if (doc == null) return;
+
+            Points.Clear();
+
+            var idPoints = Model.Map.InsPoints;
+            if (idPoints == null || idPoints.Count ==0)            
+                return;            
+            
+
+            using (doc.LockDocument())
+            using (var t =doc.TransactionManager.StartTransaction())
+            {
+                foreach (var idPt in idPoints)
+                {
+                    var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
+                    if (dbPt == null) continue;
+
+                    InsPoint insPoint = null;
+
+                    // Загрузка из словаря всех записей
+                    var records = InsExtDataHelper.Load(dbPt, doc);
+
+                    List<TypedValue> values;
+                    // Если это инсоляционная точка елочек
+                    if (records.TryGetValue(InsPoint.DataRec, out values))
+                    {
+                        insPoint = new InsPoint(values, dbPt, Model);
+                        // Добавление точки в расчет елочек
+                        AddPoint(insPoint);
+                    }
+                }
+                t.Commit();
+            }
         }
     }
 }

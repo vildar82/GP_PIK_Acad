@@ -11,12 +11,12 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class InsPointDraw : DrawableOverrule
+    public class InsPointDrawOverrule : DrawableOverrule
     {
-        private static InsPointDraw _overrule;
+        private static InsPointDrawOverrule _overrule;
         private static RXClass rxDbPoint = GetClass(typeof(DBPoint));
 
-        public InsPointDraw()
+        public InsPointDrawOverrule()
         {
             SetXDataFilter(AcadLib.XDataExt.PikApp);
         }
@@ -26,7 +26,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (_overrule == null)
             {
                 Overruling = true;
-                _overrule = new InsPointDraw();                
+                _overrule = new InsPointDrawOverrule();                
                 AddOverrule(rxDbPoint, _overrule, true);
             }
         }
@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (_overrule != null)
             {
-                _overrule = new InsPointDraw();
+                _overrule = new InsPointDrawOverrule();
                 RemoveOverrule(rxDbPoint, _overrule);
                 _overrule = null;
                 Overruling = false;

@@ -6,13 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using AcadLib;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
-    public class InsOptions : ModelBase, INodDataSave
+    public class InsOptions : ModelBase, INodDataSave, ITypedDataValues
     {
         public InsOptions ()
         {            
@@ -37,7 +39,6 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public double SunCalcAngleEnd { get; set; }/* = 165.0;        */
 
-
         public static InsOptions Default ()
         {
             InsOptions defaultOptions = new InsOptions {
@@ -47,14 +48,69 @@ namespace PIK_GP_Acad.Insolation.Models
             return defaultOptions;
         }
 
-        public List<TypedValue> GetDataValues ()
+        public DicED GetExtDic (Document doc)
         {
-            throw new NotImplementedException();
+            DicED dicOpt = new DicED();
+            var recOpt = new RecXD("InsOptions", GetDataValues(doc));
+            dicOpt.AddRec(recOpt);
+
+            // Регион
+            var dicRegion = Region.GetExtDic(doc);
+            dicRegion.Name = "InsRegion";
+            dicOpt.AddInner(dicRegion);
+
+            return dicOpt;
         }
 
-        public void SetDataValues (List<TypedValue> values)
+        public void SetExtDic (DicED dicOpt, Document doc)
         {
-            throw new NotImplementedException();
+            var recOpt = dicOpt.GetRec("InsOptions");
+            SetDataValues(recOpt?.Values, doc);            
+
+            // Регион
+            var dicRegion = dicOpt.GetInner("InsRegion");
+            var regionload = new InsRegion();
+            regionload.SetExtDic(dicRegion, doc);
+            // Определить регион из существующих
+            Region = InsService.Settings.Regions.FirstOrDefault(r => r == regionload);
+            if (Region == null)
+            {
+                Region = InsService.Settings.Regions[0];
+            }
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(Transparence),
+                TypedValueExt.GetTvExtData(TileSize),
+                TypedValueExt.GetTvExtData(ShadowDegreeStep),
+                TypedValueExt.GetTvExtData(SunCalcAngleStart),
+                TypedValueExt.GetTvExtData(SunCalcAngleEnd)
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values == null || values.Count != 5)
+            {
+                // Дефолтные настройки
+                var defOpt = Default();
+                Transparence = defOpt.Transparence;
+                TileSize = defOpt.TileSize;
+                ShadowDegreeStep = defOpt.ShadowDegreeStep;
+                SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
+                SunCalcAngleStart = defOpt.SunCalcAngleStart;
+            }
+            else
+            {
+                int index = 0;
+                Transparence = values[index++].GetTvValue<byte>();
+                TileSize = values[index++].GetTvValue<int>();
+                ShadowDegreeStep = values[index++].GetTvValue<int>();
+                SunCalcAngleStart = values[index++].GetTvValue<double>();
+                SunCalcAngleEnd = values[index++].GetTvValue<double>();
+            }
         }
     }
 }

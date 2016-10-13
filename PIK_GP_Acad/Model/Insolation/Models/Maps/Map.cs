@@ -52,7 +52,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Здание изменилось (удалено и создаено новое)
         /// Передается старое здание
         /// </summary>
-        public event EventHandler<InsBuilding> BuildingModified;
+        public event EventHandler<InsBuilding> BuildingModified;        
+
         /// <summary>
         /// Добавлена расчетная точка
         /// </summary>
@@ -232,6 +233,23 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (IsEventsOn)
                     BuildingModified?.Invoke(this, buildingOld);
             }            
-        }        
+        }
+
+        /// <summary>
+        /// Очистка карты - отключение
+        /// Транзация уже запущена
+        /// </summary>
+        public void Clear ()
+        {
+            // отписатся от всех событий
+            // Удалить всю визуализацию (пока нет)
+            Doc.Database.ObjectAppended -= Database_ObjectAppended;
+            foreach (var item in Buildings)
+            {
+                var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+                dbo.Modified -= Building_Modified;
+                dbo.Erased -= Building_Erased;
+            }
+        }
     }
 }

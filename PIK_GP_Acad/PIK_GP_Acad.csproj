@@ -169,7 +169,8 @@
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDraw.cs" />
+    <Compile Include="Model\Insolation\Services\Serialize\ITypedDataValues.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDrawOverrule.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\ICalcValues.cs" />

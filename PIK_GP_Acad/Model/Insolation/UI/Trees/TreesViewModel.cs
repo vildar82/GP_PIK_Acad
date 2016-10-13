@@ -50,6 +50,8 @@ namespace PIK_GP_Acad.Insolation.UI
             InsPoint p = selPt.SelectNewPoint(TreeModel.Model);
             // Расчет и добавление точки
             TreeModel.AddPoint(p);
+            // Включение зон инсоляции точки
+            p.IsVisualIllumsOn = true;
             // Сохранение точки
             InsExtDataHelper.Save(p, TreeModel.Model.Doc);
         }        

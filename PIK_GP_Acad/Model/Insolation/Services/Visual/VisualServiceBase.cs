@@ -66,6 +66,11 @@ namespace PIK_GP_Acad.Insolation.Services
             var ds = CreateVisual();
             draws.AddRange(ds);
 
-        }       
+        }
+
+        public void VisualsDelete ()
+        {
+            EraseDraws();
+        }
     }
 }

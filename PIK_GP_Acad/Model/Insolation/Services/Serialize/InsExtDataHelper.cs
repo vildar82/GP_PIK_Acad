@@ -43,7 +43,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     var dbo = idDbo.GetObject(OpenMode.ForWrite);
                     using (EntDictExt dic = new EntDictExt(dbo, plugin))
                     {
-                        dic.Save(obj.GetDataValues(), obj.DataRecName);                        
+                        dic.Save(obj.GetDataValues(doc), obj.DataRecName);                        
                     }
                 }
                 t.Commit();
@@ -54,26 +54,30 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Загрузка из словаря NOD
         /// </summary>
         /// <param name="doc"></param>
-        /// <param name="recName"></param>
-        public static List<TypedValue> LoadFromNod (Document doc, string recName)
+        /// <param name="dicName">Имя словаря объекта</param>
+        public static DicED LoadFromNod (Document doc, string dicName)
         {
-            var nod = new AcadLib.DictNOD(plugin, true);
-            var values = nod.Load(recName);
-            return values;
+            using (doc.LockDocument())
+            {
+                var nod = new AcadLib.DictNOD(plugin, true);
+                nod.Db = doc.Database;
+                var DicED = nod.LoadED(dicName);
+                return DicED;
+            }
         }
 
         /// <summary>
         /// Сохранение списка значений в словарь NOD чертежа
         /// </summary>
         /// <param name="doc">Документ в который сохранять</param>
-        /// <param name="values">Список значений для сохранения</param>
-        /// <param name="recName">Ключ имя записи в словаре Xrecord</param>
-        public static void SaveToNod (Document doc, List<TypedValue> values, string recName)
+        /// <param name="DicED">Список значений для сохранения</param>        
+        public static void SaveToNod (Document doc, DicED DicED)
         {
             using (doc.LockDocument())
             {
                 var nod = new AcadLib.DictNOD(plugin, true);
-                nod.Save(values, recName);
+                nod.Db = doc.Database;
+                nod.Save(DicED);
             }
         }             
     }

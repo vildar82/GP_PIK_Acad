@@ -53,12 +53,7 @@ namespace PIK_GP_Acad.Insolation.UI
             if (await uiVisualizerService.ShowDialogAsync(regionViewModel) == true)
             {
                 Model.Options.Region = regionViewModel.InsRegion;
-                // Если регион изменился настолько, что поменялся расчетный сервис, то обноаление всех расчетов
-                if (Model.DefineCalcService())
-                {
-                    // Обновление расчета
-                    Model.Tree.Update();
-                }
+                Model.Update();                
             }
         }
 

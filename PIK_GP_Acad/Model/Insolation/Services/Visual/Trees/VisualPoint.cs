@@ -64,6 +64,11 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             // Перерисовать точку
             Autodesk.AutoCAD.ApplicationServices.Application.UpdateScreen();
-        }        
+        }
+
+        public void VisualsDelete ()
+        {
+            // ??? overrule - думаю не нужно удалять            
+        }
     }
 }
