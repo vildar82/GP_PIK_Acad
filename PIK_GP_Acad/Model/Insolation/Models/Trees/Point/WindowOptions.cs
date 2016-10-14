@@ -3,27 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Настройки расчетной точки
-    /// </summary>
-    [Serializable]
-    public class WindowOptions : ModelBase
+    /// </summary>    
+    public class WindowOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
-        public WindowOptions (double width, double quarter, bool isCustomAngle,
-            double shadowAngle, WindowConstruction constr)
-        {
-            // ??? Отключить события Property Changed на время инициализации свойств. Сейчас, при изменении любого свойства срабатывает событие OnPropertyChanged
-            Width = width == 0? 1.5: width;
-            Quarter = quarter == 0? 0.07:quarter;
-            IsCustomAngle = isCustomAngle;
-            ShadowAngle = shadowAngle;
-            Construction = constr?? WindowConstruction.WindowConstructions[0];              
-        }
+        public WindowOptions () { }
 
         /// <summary>
         /// Ширина окна, м
@@ -31,8 +26,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public double Width { get; set; }
         /// <summary>
         /// Тип конструкции
-        /// </summary>
-        [IncludeInSerialization]
+        /// </summary>        
         public WindowConstruction Construction { get; set; }
         /// <summary>
         /// Глубина четверти
@@ -56,20 +50,68 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Construction == null) return 0;                    
             double b = Math.Atan2(Construction.Depth + Quarter, Width + 0.065);
             return b;
-        }
-
-        public static WindowOptions Default()
-        {
-            return new WindowOptions(1.5, 0.07, false, 0, WindowConstruction.WindowConstructions[0]);
-        }
+        }       
 
         protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)
         {            
             if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
             {
                 ShadowAngle = CalcShadowAngle();
+            }            
+        }
+
+        public static WindowOptions Default ()
+        {
+            return new WindowOptions {
+                Width = 1.5,
+                Quarter = 0.07,                                
+                Construction = WindowConstruction.WindowConstructions[0] };
+        }
+
+        public DicED GetExtDic (Document doc)
+        {
+            DicED dicWinOpt = new DicED();
+            dicWinOpt.AddRec("WindowOptionsRec", GetDataValues(doc));
+            dicWinOpt.AddRec("WindowConstruction", Construction.GetDataValues(doc));
+            return dicWinOpt;
+        }
+
+        public void SetExtDic (DicED dic, Document doc)
+        {            
+            SetDataValues(dic.GetRec("WindowOptionsRec")?.Values, doc);
+            Construction = new WindowConstruction();
+            Construction.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(Width),
+                TypedValueExt.GetTvExtData(Quarter),
+                TypedValueExt.GetTvExtData(ShadowAngle),
+                TypedValueExt.GetTvExtData(IsCustomAngle),
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values == null || values.Count != 4)
+            {
+                // default
+                var defWin = Default();
+                Width = defWin.Width;
+                Quarter = defWin.Quarter;
+                ShadowAngle = defWin.ShadowAngle;
+                IsCustomAngle = defWin.IsCustomAngle;
             }
-            base.OnPropertyChanged(e);
+            else
+            {
+                int index = 0;
+                Width = values[index++].GetTvValue<double>();
+                Quarter = values[index++].GetTvValue<double>();
+                ShadowAngle = values[index++].GetTvValue<double>();
+                IsCustomAngle = values[index++].GetTvValue<bool>();
+            }
         }
     }
 }

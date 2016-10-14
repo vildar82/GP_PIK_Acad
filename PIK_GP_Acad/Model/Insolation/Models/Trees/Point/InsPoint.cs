@@ -17,6 +17,7 @@ using System.Xml.Serialization;
 using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
+using AcadLib.XData;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -26,11 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
     [Serializable]
     public class InsPoint : InsPointBase, IInsPoint
     {
-        public const string DataRec = "InsPoint";        
-
-        public bool IsVisualIllumsOn { get; set; }
-        [ExcludeFromSerialization]
-        private VisualPointIllums VisualIllums { get; set; }        
+        private VisualPointIllums visualIllums;
 
         public InsPoint () { }
 
@@ -42,12 +39,18 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Создание расчетной точки из словарных записей объекта
         /// </summary>        
-        public InsPoint (List<TypedValue> values, DBPoint dbPt, InsModel model) : base(dbPt, model)
-        {
-            SetDataValues(values, Model.Doc);            
+        public InsPoint (DBPoint dbPt, InsModel model) : base(dbPt, model)
+        {            
         }
 
+        public TaskCommand EditPoint { get; private set; }
+        public TaskCommand DeletePoint { get; private set; }
+
+        public bool IsVisualIllumsOn { get; set; }
+        
+
         /// <summary>
+        /// Пока не используется
         /// ??? подумать над использованием !!! - обновление точки
         /// </summary>        
         public override void Initialize (TreeModel treeModel)
@@ -60,12 +63,7 @@ namespace PIK_GP_Acad.Insolation.Models
             base.OnInitialized();
             EditPoint = new TaskCommand(OnEditPointExecute, OnEditPointCanExecute);
             DeletePoint = new TaskCommand(OnDeletePointExecute);
-        }        
-
-        public TaskCommand EditPoint { get; private set; }
-        public TaskCommand DeletePoint { get; private set; }
-
-        public override string DataRecName { get { return DataRec; } }
+        }                  
 
         /// <summary>
         /// Расчет точки - зон освещенности и времени
@@ -116,9 +114,12 @@ namespace PIK_GP_Acad.Insolation.Models
                 Model.Tree.UpdateVisualTree(this);
 
                 // Сохранение точки в словарь
-                InsExtDataHelper.Save(this, Model.Doc);
+                SaveIns();                
             }
         }
+
+        
+
         private bool OnEditPointCanExecute ()
         {
             return Building != null;
@@ -135,7 +136,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void Delete ()
         {
             Model.Tree.DeletePoint(this);
-            VisualIllums.VisualIsOn = false;
+            visualIllums.VisualIsOn = false;
             //VisualPoint.VisualIsOn = false; - удалится вместе с точкой на чертеже (т.к. это overrule точки)
             base.Delete();
         }
@@ -143,9 +144,9 @@ namespace PIK_GP_Acad.Insolation.Models
         private void OnIsVisualIllumsOnChanged ()
         {
             // Включение/выключение визуализации инсоляционных зон точки
-            if (VisualIllums != null)
+            if (visualIllums != null)
             {
-                VisualIllums.VisualIsOn = IsVisualIllumsOn;
+                visualIllums.VisualIsOn = IsVisualIllumsOn;
             }
         }
 
@@ -184,7 +185,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Изменение состояние на заданное                    
             if (saveState)
             {
-                VisualIllums.VisualIsOn = onOff ? IsVisualIllumsOn : false;
+                visualIllums.VisualIsOn = onOff ? IsVisualIllumsOn : false;
             }
             else
             {
@@ -212,8 +213,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public override void Clear ()
         {
-            VisualIllums.VisualsDelete();            
+            visualIllums.VisualsDelete();            
             base.Clear();
+        }
+
+        public void SaveIns ()
+        {
+            InsExtDataHelper.Save(this, Model.Doc);
         }
 
         /// <summary>
@@ -223,8 +229,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки
-            if (VisualIllums == null)
-                VisualIllums = new VisualPointIllums(this);
+            if (visualIllums == null)
+                visualIllums = new VisualPointIllums(this);
             // Визуализация описания точки
             if (VisualPoint == null)
                 VisualPoint = new VisualPoint(this);
@@ -232,7 +238,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Зоны освещ.
             if (IsVisualIllumsOn)
-                VisualIllums.VisualUpdate();
+                visualIllums.VisualUpdate();
             // Описание точки
             VisualPoint.VisualIsOn = true;
 
@@ -260,17 +266,29 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public override void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values.Count == 7)
+            if (values == null ||                values.Count != 1)
             {
-                int index = 0;
-                Height = values[index++].GetTvValue<int>();
-                Window = new WindowOptions(
-                        values[index++].GetTvValue<double>(),
-                        values[index++].GetTvValue<double>(),
-                        values[index++].GetTvValue<int>() == 0 ? false : true,
-                        values[index++].GetTvValue<double>(),
-                        WindowConstruction.Find(values[index++].GetTvValue<string>()));
+                // Default
             }
-        }        
+            else
+            {
+                Height = values[0].GetTvValue<int>();                
+            }
+        }
+
+        public override DicED GetExtDic (Document doc)
+        {
+            DicED dicInsPt = new DicED("InsPoint");
+            dicInsPt.AddRec("InsPointRec", GetDataValues(doc));
+            dicInsPt.AddInner("Window", Window.GetExtDic(doc));
+            return dicInsPt;
+        }
+
+        public override void SetExtDic (DicED dic, Document doc)
+        {
+            SetDataValues(dic.GetRec("InsPointRec")?.Values, doc);
+            Window = new WindowOptions();
+            Window.SetExtDic(dic.GetInner("Window"), doc);
+        }
     }
 }

@@ -16,24 +16,22 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Загрузка словаря из объекта - всех записей Xrecord
         /// </summary>                
-        public static Dictionary<string, List<TypedValue>> Load (DBObject dbo, Document doc)
+        public static DicED Load (DBObject dbo, Document doc)
         {
-            Dictionary<string, List<TypedValue>> res = null;
-            using (doc.LockDocument())
-            using (var t = doc.TransactionManager.StartTransaction())
-            using (EntDictExt dic = new EntDictExt(dbo, plugin))
-            {
-                res = dic.LoadAllXRecords();
-                t.Commit();
-            }
+            DicED res = null;
+            EntDictExt ede = new EntDictExt(dbo, plugin);
+            res = ede.Load();
             return res;
         }
 
         /// <summary>
         /// Сохранение объекта в словарь
         /// </summary>        
-        public static void Save (IExtDataSave obj, Document doc)
+        public static void Save (IDboDataSave obj, Document doc)
         {
+            var dicEd = obj.GetExtDic(doc);
+            if (dicEd == null) return;
+
             using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {
@@ -41,9 +39,10 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (!idDbo.IsNull)
                 {
                     var dbo = idDbo.GetObject(OpenMode.ForWrite);
-                    using (EntDictExt dic = new EntDictExt(dbo, plugin))
+                    if (dbo != null)
                     {
-                        dic.Save(obj.GetDataValues(doc), obj.DataRecName);                        
+                        EntDictExt ede = new EntDictExt(dbo, plugin);
+                        ede.Save(dicEd);
                     }
                 }
                 t.Commit();

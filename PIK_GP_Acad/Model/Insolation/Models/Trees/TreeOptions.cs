@@ -16,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Настройки елочек
     /// </summary>
-    public class TreeOptions : ModelBase, INodDataSave
+    public class TreeOptions : ModelBase, IExtDataSave
     {
         /// <summary>
         /// Список высотностей для елочек
@@ -39,15 +39,13 @@ namespace PIK_GP_Acad.Insolation.Models
         public DicED GetExtDic (Document doc)
         {
             DicED dicTreeOpt = new DicED();
-
             // Записи виз настроек - для каждой высоты своя запись XRecord в словаре
             foreach (var item in TreeVisualOptions)
             {
                 var values = item.GetDataValues(doc);
                 string name = item.Height.ToString();
-                dicTreeOpt.AddRec(new RecXD(name, values));
+                dicTreeOpt.AddRec(name, values);
             }
-
             return dicTreeOpt;
         }
 
@@ -56,6 +54,13 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void SetExtDic (DicED dicTreeOpt, Document doc)
         {
+            if (dicTreeOpt == null)
+            {
+                // Default
+                TreeVisualOptions = new ObservableCollection<TreeVisualOption>(TreeVisualOption.DefaultTreeVisualOptions());
+                return;
+            }
+
             // Список настроек визуалных высот
             var treeVisOpts = new List<TreeVisualOption>();
             foreach (var item in dicTreeOpt.Recs)

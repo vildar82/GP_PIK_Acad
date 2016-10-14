@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Модель инсоляции в привязке к документу
     /// </summary>
-    public class InsModel : ModelBase
+    public class InsModel : ModelBase, ITypedDataValues
     {
         /// <summary>
         /// Для восстановление сохраненного расчета инсоляции
@@ -152,25 +152,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Словарь InsModel
             var DicED = new DicED("InsModel");
-
-            // Список значений самого расчета InsModelRec            
-            var values = GetDataValues();
-            if (values != null)
-            {
-                var recXd = new RecXD("InsModelRec", values);
-                DicED.AddRec(recXd);
-            }
-
-            // Словарь настроек InsOptions
-            var dicOpt = Options.GetExtDic(Doc);
-            dicOpt.Name = "InsOptions";
-            DicED.AddInner(dicOpt);
-
-            // Словарь расчета елочек TreeModel
-            var dicTree = Tree.GetExtDic(Doc);
-            dicTree.Name = "TreeModel";
-            DicED.AddInner(dicTree);
-
+            // Список значений самого расчета InsModelRec                        
+            DicED.AddRec("InsModelRec", GetDataValues(Doc));   
+            // Словарь настроек InsOptions            
+            DicED.AddInner("InsOptions", Options.GetExtDic(Doc));
+            // Словарь расчета елочек TreeModel            
+            DicED.AddInner("TreeModel", Tree.GetExtDic(Doc));
             // Сохранение словаря InsModel в NOD чертежа
             InsExtDataHelper.SaveToNod(Doc, DicED);
 
@@ -198,31 +185,19 @@ namespace PIK_GP_Acad.Insolation.Models
             var dicModel = InsExtDataHelper.LoadFromNod(doc, "InsModel");
             if (dicModel == null) return model;
 
-            // список значений самой модели
+            // список значений самой модели            
             var recModel = dicModel.GetRec("InsModelRec");
-
             // Настройки
-            InsOptions opt = null;
-            var dicOpt = dicModel.GetInner("InsOptions");
-            if (dicOpt != null)
-            {
-                opt = new InsOptions();
-                opt.SetExtDic(dicOpt, doc);
-            }
-
+            InsOptions opt = new InsOptions();
+            opt.SetExtDic(dicModel.GetInner("InsOptions"), doc);
             // Расчет елочек
-            TreeModel tree = null;
-            var dicTree = dicModel.GetInner("TreeModel");
-            if (dicTree != null)
-            {
-                tree = new TreeModel();
-                tree.SetExtDic(dicTree, doc);
-            }
+            TreeModel tree = new TreeModel();
+            tree.SetExtDic(dicModel.GetInner("TreeModel"), doc);            
 
             model = new InsModel();
+            model.SetDataValues(recModel?.Values, doc);
             model.Options = opt;
-            model.Tree = tree;
-            model.Tree.Initialize(model);
+            model.Tree = tree;            
             model.Initialize(doc);
 
             //try
@@ -288,13 +263,13 @@ namespace PIK_GP_Acad.Insolation.Models
             UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
         }
 
-        private List<TypedValue> GetDataValues ()
+        public List<TypedValue> GetDataValues (Document doc)
         {
             // Пока нет значений для сохранения
             return null;
         }
 
-        private void SetDataValues (List<TypedValue> values)
+        public void SetDataValues (List<TypedValue> values, Document doc)
         {            
         }
     }

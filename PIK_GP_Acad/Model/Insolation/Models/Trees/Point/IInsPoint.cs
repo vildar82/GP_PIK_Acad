@@ -4,7 +4,7 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public interface IInsPoint : IExtDataSave
+    public interface IInsPoint : IDboDataSave
     {
         double AngleEndOnPlane { get; set; }
         double AngleStartOnPlane { get; set; }

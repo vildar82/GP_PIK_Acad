@@ -14,7 +14,7 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
-    public class InsOptions : ModelBase, INodDataSave, ITypedDataValues
+    public class InsOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
         public InsOptions ()
         {            
@@ -50,33 +50,31 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public DicED GetExtDic (Document doc)
         {
-            DicED dicOpt = new DicED();
-            var recOpt = new RecXD("InsOptions", GetDataValues(doc));
-            dicOpt.AddRec(recOpt);
-
-            // Регион
-            var dicRegion = Region.GetExtDic(doc);
-            dicRegion.Name = "InsRegion";
-            dicOpt.AddInner(dicRegion);
-
+            DicED dicOpt = new DicED();            
+            dicOpt.AddRec("InsOptionsRec", GetDataValues(doc));            
+            dicOpt.AddInner("InsRegion", Region.GetExtDic(doc));
             return dicOpt;
         }
 
         public void SetExtDic (DicED dicOpt, Document doc)
         {
-            var recOpt = dicOpt.GetRec("InsOptions");
-            SetDataValues(recOpt?.Values, doc);            
-
-            // Регион
-            var dicRegion = dicOpt.GetInner("InsRegion");
-            var regionload = new InsRegion();
-            regionload.SetExtDic(dicRegion, doc);
-            // Определить регион из существующих
-            Region = InsService.Settings.Regions.FirstOrDefault(r => r == regionload);
-            if (Region == null)
+            if (dicOpt== null)
             {
-                Region = InsService.Settings.Regions[0];
+                // Default
+                var defOpt = Default();
+                Transparence = defOpt.Transparence;
+                TileSize = defOpt.TileSize;
+                Region = defOpt.Region;
+                ShadowDegreeStep = defOpt.ShadowDegreeStep;
+                SunCalcAngleStart = defOpt.SunCalcAngleStart;
+                SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
+                return;
             }
+            var recOpt = dicOpt.GetRec("InsOptionsRec");
+            SetDataValues(recOpt?.Values, doc);
+            // Регион            
+            Region = new InsRegion();
+            Region.SetExtDic(dicOpt.GetInner("InsRegion"), doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)

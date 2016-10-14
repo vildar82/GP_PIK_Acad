@@ -5,12 +5,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using AcadLib.WPF;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
-{    
-    [Serializable]
-    public class WindowConstruction
+{   
+    public class WindowConstruction : ITypedDataValues
     {
         /// <summary>
         /// Тип конструкции 
@@ -22,7 +25,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public double Depth { get; set; }
 
-        public static ObservableCollection<WindowConstruction> WindowConstructions { get; set; } = new ObservableCollection<WindowConstruction>() {
+        public static List<WindowConstruction> WindowConstructions { get; set; } = new List<WindowConstruction>() {
             new WindowConstruction() { Name ="Одинарный оконный блок с одним стеклом", Depth = 0.06 },
             new WindowConstruction() { Name ="Одинарный оконный блок с однокамерным стеклопакетом", Depth = 0.09 },
             new WindowConstruction() { Name ="Одинарный оконный блок с двухкамерным стеклопакетом", Depth = 0.095 },
@@ -41,6 +44,30 @@ namespace PIK_GP_Acad.Insolation.Models
             if (constr == null)
                 constr = WindowConstructions[0];
             return constr;
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(Name),
+                TypedValueExt.GetTvExtData(Depth)
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values == null || values.Count != 2)
+            {
+                // Default
+                var constr = WindowConstructions[0];
+                Name = constr.Name;
+                Depth = constr.Depth;
+            }
+            else
+            {                
+                Name = values[0].GetTvValue<string>();
+                Depth = values[1].GetTvValue<double>();
+            }
         }
     }
 }

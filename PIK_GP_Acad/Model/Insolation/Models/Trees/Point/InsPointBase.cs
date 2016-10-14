@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
@@ -81,17 +82,15 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsValue InsValue { get; set; }
         [ExcludeFromSerialization]
         public int Number { get; set; }
-        public WindowOptions Window { get; set; }
-        /// <summary>
-        /// Назнание для сохранения в словарь расширенных данных
-        /// </summary>
-        public abstract string DataRecName { get;  }
+        public WindowOptions Window { get; set; }       
         /// <summary>
         /// Список значений для сохранения в словарь
         /// </summary>
         /// <returns></returns>
         public abstract List<TypedValue> GetDataValues (Document doc);
         public abstract void SetDataValues (List<TypedValue> values, Document doc);
+        public abstract DicED GetExtDic (Document doc);
+        public abstract void SetExtDic (DicED DicED, Document doc);
 
         /// <summary>
         /// Создание точки на чертеже
@@ -265,5 +264,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             return res;
         }
+
+        
     }
 }

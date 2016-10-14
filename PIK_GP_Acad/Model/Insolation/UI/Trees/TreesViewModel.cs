@@ -53,7 +53,7 @@ namespace PIK_GP_Acad.Insolation.UI
             // Включение зон инсоляции точки
             p.IsVisualIllumsOn = true;
             // Сохранение точки
-            InsExtDataHelper.Save(p, TreeModel.Model.Doc);
+            p.SaveIns();            
         }        
 
         private bool OnAddPointCanExecute ()

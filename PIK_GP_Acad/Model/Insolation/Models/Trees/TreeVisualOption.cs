@@ -94,7 +94,7 @@ namespace PIK_GP_Acad.Insolation.Models
             treeVisOpts.Sort((t1, t2) => t1.Height.CompareTo(t2.Height));
             
             // Группировка по высоте с расхождением в 1м
-            var groupsByH = treeVisOpts.GroupBy(g => g.Height, intComparer).ToList();            
+            var groupsByH = treeVisOpts.GroupBy(g => g.Height, intComparer).Where(w=>w.Skip(1).Any()).ToList();            
             foreach (var groupH in groupsByH)
             {
                 // Удалить лишнюю высоту

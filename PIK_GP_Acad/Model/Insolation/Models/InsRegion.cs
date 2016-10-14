@@ -15,7 +15,7 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
-    public class InsRegion : ModelBase, IEquatable<InsRegion>, INodDataSave, ITypedDataValues
+    public class InsRegion : ModelBase, IEquatable<InsRegion>, IExtDataSave, ITypedDataValues
     {        
         private static string FileRegions = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder, 
             @"ГП\Insolation\Regions.xml");
@@ -52,16 +52,14 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public DicED GetExtDic (Document doc)
         {
-            DicED dicReg = new DicED();
-            var recReg = new RecXD("InsRegion", GetDataValues(doc));
-            dicReg.AddRec(recReg);
+            DicED dicReg = new DicED();            
+            dicReg.AddRec("InsRegionRec", GetDataValues(doc));
             return dicReg;
         }
 
         public void SetExtDic (DicED dicReg, Document doc)
-        {
-            var recReg = dicReg.GetRec("InsRegion");
-            SetDataValues(recReg?.Values, doc);
+        {            
+            SetDataValues(dicReg.GetRec("InsRegionRec")?.Values, doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)

@@ -20,9 +20,8 @@ namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Расчет елочек
-    /// </summary>
-    [Serializable]
-    public class TreeModel : ModelBase, INodDataSave, ITypedDataValues
+    /// </summary>    
+    public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues
     {
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
 
@@ -54,17 +53,8 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             VisualTrees = new VisualTree(insModel);
 
-            // Расчетные точки
-            if (Points == null)
-            {
-                Points = new ObservableCollection<InsPoint>();
-                VisualTrees.Points = Points;
-            }
-            else
-            {
-                // Очистка точек и новая загрузка
-                LoadPoints();
-            }
+            // Расчетные точки                            
+            LoadPoints();
             
             if (TreeOptions == null)
                 TreeOptions = TreeOptions.Default();
@@ -308,14 +298,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void SetExtDic (DicED dicTree, Document doc)
         {
-            // Собственные значения рассчета елочек
-            var recTree = dicTree.GetRec("TreeModelRec");            
-            SetDataValues(recTree.Values, doc);
-
-            // настроки елочек            
-            var dicTreeOpt = dicTree.GetInner("TreeOptions");
+            if (dicTree == null)
+            {
+                // Default
+                TreeOptions = TreeOptions.Default();
+                return;
+            }
+            // Собственные значения рассчета елочек            
+            SetDataValues(dicTree.GetRec("TreeModelRec")?.Values, doc);
+            // настроки елочек                        
             TreeOptions = new TreeOptions();
-            TreeOptions.SetExtDic(dicTreeOpt, doc);
+            TreeOptions.SetExtDic(dicTree.GetInner("TreeOptions"), doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)
@@ -350,7 +343,15 @@ namespace PIK_GP_Acad.Insolation.Models
             var doc = Model?.Doc;
             if (doc == null) return;
 
-            Points.Clear();
+            if (Points == null)
+            {
+                Points = new ObservableCollection<InsPoint>();
+                VisualTrees.Points = Points;
+            }
+            else
+            {
+                Points.Clear();
+            }
 
             var idPoints = Model.Map.InsPoints;
             if (idPoints == null || idPoints.Count ==0)            
@@ -368,15 +369,17 @@ namespace PIK_GP_Acad.Insolation.Models
                     InsPoint insPoint = null;
 
                     // Загрузка из словаря всех записей
-                    var records = InsExtDataHelper.Load(dbPt, doc);
+                    var dicEd = InsExtDataHelper.Load(dbPt, doc);
 
-                    List<TypedValue> values;
                     // Если это инсоляционная точка елочек
-                    if (records.TryGetValue(InsPoint.DataRec, out values))
+                    var dicInsPt = dicEd.GetInner("InsPoint");
+                    if (dicInsPt != null)
                     {
-                        insPoint = new InsPoint(values, dbPt, Model);
+                        insPoint = new InsPoint(dbPt, Model);
+                        insPoint.SetExtDic(dicInsPt, doc);
                         // Добавление точки в расчет елочек
                         AddPoint(insPoint);
+
                     }
                 }
                 t.Commit();
