@@ -72,6 +72,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="DicED">Список значений для сохранения</param>        
         public static void SaveToNod (Document doc, DicED DicED)
         {
+            if (doc == null || doc.IsDisposed) return;
             using (doc.LockDocument())
             {
                 var nod = new AcadLib.DictNOD(plugin, true);

@@ -14,7 +14,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public WindowOptionsViewModel (WindowOptions windowOption) : base()
         {
             WindowOptions = windowOption;
-            WindowConstructions = WindowConstruction.WindowConstructions;
+            WindowConstructions = new ObservableCollection<WindowConstruction> ( WindowConstruction.WindowConstructions);
             Quarters = new ObservableCollection<double> { 0.07, 0.13, 0.26 };            
         }        
 

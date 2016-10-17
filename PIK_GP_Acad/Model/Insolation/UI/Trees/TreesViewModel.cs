@@ -42,6 +42,8 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public TaskCommand AddPoint { get; private set; }
         public TaskCommand ShowPoint { get; private set; }
+        public TaskCommand EditPoint { get; private set; }
+        public TaskCommand DeletePoint { get; private set; }
 
         private async Task OnAddPointExecute ()
         {
@@ -53,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.UI
             // Включение зон инсоляции точки
             p.IsVisualIllumsOn = true;
             // Сохранение точки
-            p.SaveIns();            
+            p.SaveInsPoint();            
         }        
 
         private bool OnAddPointCanExecute ()

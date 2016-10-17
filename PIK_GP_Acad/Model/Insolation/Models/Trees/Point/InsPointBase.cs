@@ -52,25 +52,16 @@ namespace PIK_GP_Acad.Insolation.Models
         public TaskCommand EditPoint { get; }
 
         [ExcludeFromSerialization]
-        public InsModel Model { get; set; }
-
-        [ExcludeFromSerialization]
-        public Point3d Point { get; set; }        
-        public double[] PointAsXYZ {
-            get { return new double[] { Point.X, Point.Y, Point.Z }; }
-            set { Point = new Point3d(value); }
-        }
-
-        [ExcludeFromSerialization]
+        public InsModel Model { get; set; }        
+        public Point3d Point { get; set; }                        
         public ObjectId DBPointId { get; set; }
         /// <summary>
         /// Визуализирует точку
-        /// </summary>        
+        /// </summary>            
         [ExcludeFromSerialization]
         public IVisualService VisualPoint { get; set; }
         public double AngleEndOnPlane { get; set; }
-        public double AngleStartOnPlane { get; set; }
-        [ExcludeFromSerialization]
+        public double AngleStartOnPlane { get; set; }        
         public InsBuilding Building { get; set; }
         
         public int Height { get; set; }
@@ -160,7 +151,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Point = dbPt.Position;
                 // Определение здания
-                DefineBuilding();
+                DefineBuilding(true);
                 // Обновление точки                
                 Update();
             }            
@@ -198,14 +189,14 @@ namespace PIK_GP_Acad.Insolation.Models
             VisualPoint?.VisualUpdate();
         }
 
-        public void DefineBuilding ()
+        public void DefineBuilding (bool isAlreadyAddedPoint)
         {
             var pt = Point;
             var building = DefineBuilding(ref pt, Model);
             if (building != null)
             {
                 // Проверка не дублируется ли эта точка
-                if (Model.Tree.HasPoint(pt, true))
+                if (Model.Tree.HasPoint(pt, isAlreadyAddedPoint))
                 {
                     building = null;
                 }

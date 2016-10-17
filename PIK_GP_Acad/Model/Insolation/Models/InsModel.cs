@@ -85,6 +85,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 Tree = new TreeModel();                
             }
             Tree.Initialize(this);
+
+            doc.Database.BeginSave += Database_BeginSave;
         }        
 
         /// <summary>
@@ -174,6 +176,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         /// <summary>
         /// Загрузка расчета из документа (если он был там сохранен)
+        /// Без инициализации!!!
         /// </summary>
         /// <param name="doc">Документ</param>
         /// <returns>Расчет инсоляции или null</returns>
@@ -198,7 +201,7 @@ namespace PIK_GP_Acad.Insolation.Models
             model.SetDataValues(recModel?.Values, doc);
             model.Options = opt;
             model.Tree = tree;            
-            model.Initialize(doc);
+            //model.Initialize(doc);
 
             //try
             //{

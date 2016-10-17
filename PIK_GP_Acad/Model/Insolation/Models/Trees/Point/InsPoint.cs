@@ -23,11 +23,10 @@ namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Расчетная точка
-    /// </summary>
-    [Serializable]
+    /// </summary>    
     public class InsPoint : InsPointBase, IInsPoint
     {
-        private VisualPointIllums visualIllums;
+        public VisualPointIllums VisualIllums { get; set; }
 
         public InsPoint () { }
 
@@ -46,8 +45,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public TaskCommand EditPoint { get; private set; }
         public TaskCommand DeletePoint { get; private set; }
 
-        public bool IsVisualIllumsOn { get; set; }
-        
+        public bool IsVisualIllumsOn { get; set; }        
 
         /// <summary>
         /// Пока не используется
@@ -114,11 +112,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 Model.Tree.UpdateVisualTree(this);
 
                 // Сохранение точки в словарь
-                SaveIns();                
+                SaveInsPoint();                
             }
-        }
-
-        
+        }        
 
         private bool OnEditPointCanExecute ()
         {
@@ -136,7 +132,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void Delete ()
         {
             Model.Tree.DeletePoint(this);
-            visualIllums.VisualIsOn = false;
+            VisualIllums.VisualIsOn = false;
             //VisualPoint.VisualIsOn = false; - удалится вместе с точкой на чертеже (т.к. это overrule точки)
             base.Delete();
         }
@@ -144,9 +140,9 @@ namespace PIK_GP_Acad.Insolation.Models
         private void OnIsVisualIllumsOnChanged ()
         {
             // Включение/выключение визуализации инсоляционных зон точки
-            if (visualIllums != null)
+            if (VisualIllums != null)
             {
-                visualIllums.VisualIsOn = IsVisualIllumsOn;
+                VisualIllums.VisualIsOn = IsVisualIllumsOn;
             }
         }
 
@@ -185,7 +181,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Изменение состояние на заданное                    
             if (saveState)
             {
-                visualIllums.VisualIsOn = onOff ? IsVisualIllumsOn : false;
+                VisualIllums.VisualIsOn = onOff ? IsVisualIllumsOn : false;
             }
             else
             {
@@ -213,11 +209,11 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public override void Clear ()
         {
-            visualIllums.VisualsDelete();            
+            VisualIllums.VisualsDelete();            
             base.Clear();
         }
 
-        public void SaveIns ()
+        public void SaveInsPoint ()
         {
             InsExtDataHelper.Save(this, Model.Doc);
         }
@@ -229,8 +225,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки
-            if (visualIllums == null)
-                visualIllums = new VisualPointIllums(this);
+            if (VisualIllums == null)
+                VisualIllums = new VisualPointIllums(this);
             // Визуализация описания точки
             if (VisualPoint == null)
                 VisualPoint = new VisualPoint(this);
@@ -238,7 +234,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Зоны освещ.
             if (IsVisualIllumsOn)
-                visualIllums.VisualUpdate();
+            {
+                VisualIllums.VisualIsOn = true;
+                //visualIllums.VisualUpdate();
+            }
             // Описание точки
             VisualPoint.VisualIsOn = true;
 
@@ -253,26 +252,24 @@ namespace PIK_GP_Acad.Insolation.Models
         public override List<TypedValue> GetDataValues (Document doc)
         {
             List<TypedValue> values = new List<TypedValue>() {
-                new TypedValue((int)DxfCode.ExtendedDataInteger32, Height),
-                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Width),
-                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Quarter),
-                new TypedValue((int)DxfCode.ExtendedDataInteger16, Window.IsCustomAngle? 1:0),
-                new TypedValue((int)DxfCode.ExtendedDataReal, Window.ShadowAngle),
-                new TypedValue((int)DxfCode.ExtendedDataAsciiString, Window.Construction.Name),
-                new TypedValue((int)DxfCode.ExtendedDataReal, Window.Construction.Depth),
+                TypedValueExt.GetTvExtData( Height),                
+                TypedValueExt.GetTvExtData(IsVisualIllumsOn)
             };
             return values;
         }
 
         public override void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null ||                values.Count != 1)
+            if (values == null || values.Count != 2)
             {
-                // Default
+                // Default 
+                // Height = 0
+                IsVisualIllumsOn = true;
             }
             else
             {
-                Height = values[0].GetTvValue<int>();                
+                Height = values[0].GetTvValue<int>();
+                IsVisualIllumsOn = values[1].GetTvValue<bool>();
             }
         }
 

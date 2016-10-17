@@ -84,7 +84,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             foreach (var item in Points)
             {
-                item.DefineBuilding();
+                item.DefineBuilding(true);
                 item.Update();
             }
             UpdateVisualTree(null);
@@ -107,10 +107,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (p != null)
             {
                 // определение здания, если еще не определено
-                if (p.Building == null)
-                {
-                    p.DefineBuilding();
-                }
+                if (p.Building == null) p.DefineBuilding(false);
                 p.CreatePoint();
                 Points.Add(p);       
                 // Обновление - Расчет и визуализация точки         
@@ -350,7 +347,12 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
-                Points.Clear();
+                // Очистка визуализации точек
+                foreach (var item in Points)
+                {
+                    item.VisualIllums?.VisualsDelete();
+                }
+                Points.Clear();                
             }
 
             var idPoints = Model.Map.InsPoints;

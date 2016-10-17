@@ -71,12 +71,12 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public static void Start (Document doc)
         {
-            if (doc == null) return;
+            if (doc == null || doc.IsDisposed) return;
             if (insModels == null)
                 insModels = new Dictionary<Document, InsModel>();
 
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);
+            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);            
 
             InsPointDrawOverrule.Start();
 
@@ -90,14 +90,16 @@ namespace PIK_GP_Acad.Insolation.Services
             palette.Visible = true;
 
             ChangeDocument(doc);               
-        }        
+        }
+
+        
 
         public static void Stop ()
         {
             // TODO: Сохранение всех расчетов
 
             Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
+            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);            
             //Settings.Save();
             //palette.Visible = false;
             palette = null;
@@ -165,9 +167,6 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void CloseDocument (Document doc)
         {
             if (doc == null) return;
-
-            // Сохранить инсоляцию если она активирована для этого чертежа
-
             // Очистка объекта
             insModels.Remove(doc);
         }
@@ -192,8 +191,8 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (e.LogEvent == Catel.Logging.LogEvent.Error)
                 Logger.Log.Debug(e.Message);
-        }        
-        
+        }
+
         /// <summary>
         /// Включение отключение расчета для текущего документа
         /// </summary>
@@ -201,7 +200,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void ActivateIns (bool onOff)
         {
             var doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
+            if (doc == null || doc.IsDisposed) return;
 
             var insModel = GetInsModel(doc);            
 
@@ -210,6 +209,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 insViewModel.SaveViewModelAsync();
                 insViewModel.Model.SaveIns();
+                
             }
 
             // Включение расчета для текущего документа
