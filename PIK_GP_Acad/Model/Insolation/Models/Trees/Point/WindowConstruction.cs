@@ -9,12 +9,15 @@ using AcadLib;
 using AcadLib.WPF;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Catel.Data;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {   
-    public class WindowConstruction : ITypedDataValues
+    [Serializable]
+    public class WindowConstruction : ITypedDataValues, IEquatable<WindowConstruction>
     {
+        public WindowConstruction () { }
         /// <summary>
         /// Тип конструкции 
         /// </summary>
@@ -68,6 +71,26 @@ namespace PIK_GP_Acad.Insolation.Models
                 Name = values[0].GetTvValue<string>();
                 Depth = values[1].GetTvValue<double>();
             }
+        }
+
+        public static WindowConstruction GetStandart (WindowConstruction constr)
+        {
+            var standConstr = WindowConstruction.WindowConstructions.FirstOrDefault(w => w.Equals(constr));
+            if (standConstr == null)
+                standConstr = constr;
+            return standConstr;
+        }
+
+        public bool Equals (WindowConstruction other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Depth == other.Depth && Name == other.Name;
+        }
+
+        public override int GetHashCode ()
+        {
+            return Name.GetHashCode();
         }
     }
 }

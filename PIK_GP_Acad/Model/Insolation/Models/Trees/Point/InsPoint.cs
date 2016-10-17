@@ -26,6 +26,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>    
     public class InsPoint : InsPointBase, IInsPoint
     {
+        [ExcludeFromSerialization]
         public VisualPointIllums VisualIllums { get; set; }
 
         public InsPoint () { }
@@ -40,10 +41,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public InsPoint (DBPoint dbPt, InsModel model) : base(dbPt, model)
         {            
-        }
-
-        public TaskCommand EditPoint { get; private set; }
-        public TaskCommand DeletePoint { get; private set; }
+        }       
 
         public bool IsVisualIllumsOn { get; set; }        
 
@@ -58,9 +56,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         protected override void OnInitialized ()
         {
-            base.OnInitialized();
-            EditPoint = new TaskCommand(OnEditPointExecute, OnEditPointCanExecute);
-            DeletePoint = new TaskCommand(OnDeletePointExecute);
+            base.OnInitialized();            
         }                  
 
         /// <summary>
@@ -79,52 +75,6 @@ namespace PIK_GP_Acad.Insolation.Models
             Illums = Model.CalcService.TreesCalc.CalcPoint(this);            
             InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building.BuildingType);
         }  
-
-        private async Task OnEditPointExecute ()
-        {
-            var building = Building;
-            if (building == null) return;
-            var oldBuildingType = building.BuildingType;
-
-            var insPointVM = new InsPointViewModel(this);
-            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-            if (await uiVisualizerService.ShowDialogAsync(insPointVM) == true)
-            {
-                // Обновление расчета точки
-                Update();
-
-                if (oldBuildingType != building.BuildingType)
-                {
-                    // Учет изменения типа здания для всех точек на этом здании
-                    var insReq = Model.CalcService.DefineInsRequirement(InsValue.MaxContinuosTime, InsValue.TotalTime, building.BuildingType);
-                    var pointsInBuilding = Model.Tree.GetPointsInBuilding(building);
-                    foreach (var item in pointsInBuilding)
-                    {
-                        if (item != this)
-                        {
-                            item.InsValue.Requirement = insReq;
-                            item.UpdateVisual();
-                        }
-                    }
-                }
-
-                // Обновление елочек
-                Model.Tree.UpdateVisualTree(this);
-
-                // Сохранение точки в словарь
-                SaveInsPoint();                
-            }
-        }        
-
-        private bool OnEditPointCanExecute ()
-        {
-            return Building != null;
-        }
-
-        private async Task OnDeletePointExecute ()
-        {
-            Delete();
-        }
 
         /// <summary>
         /// Удаление - из расчета, отключение визуализации
@@ -221,7 +171,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Обноаление визуализации точки (зон инсоляции и описания точки)
         /// </summary>
-        private void UpdateVisual ()
+        public void UpdateVisual ()
         {
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки

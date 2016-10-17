@@ -83,7 +83,7 @@
                                     Height="{StaticResource ImageButtonHeight}"
                                     Margin="1"
                                     Background="Transparent"
-                                    Command="{Binding EditPoint}"
+                                    Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
                                     ToolTip="Редактирование параметров точки">
                                     <Image Source="{StaticResource options}" />
                                 </Button>
@@ -92,7 +92,7 @@
                                     Height="{StaticResource ImageButtonHeight}"
                                     Margin="1"
                                     Background="Transparent"
-                                    Command="{Binding DeletePoint}"
+                                    Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
                                     ToolTip="Удаление выделенной точки в списке">
                                     <Image Source="{StaticResource Close}" />
                                 </Button>

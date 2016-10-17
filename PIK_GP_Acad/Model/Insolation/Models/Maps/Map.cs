@@ -58,6 +58,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Добавлена расчетная точка
         /// </summary>
         public event EventHandler<ObjectId> InsPointAdded;
+        public event EventHandler<InsBuilding> BuildingChangeType;
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>

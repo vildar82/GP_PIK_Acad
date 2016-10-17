@@ -79,8 +79,11 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetExtDic (DicED dic, Document doc)
         {            
             SetDataValues(dic.GetRec("WindowOptionsRec")?.Values, doc);
-            Construction = new WindowConstruction();
-            Construction.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);
+            var constr = new WindowConstruction();
+            constr.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);
+            
+            Construction = WindowConstruction.GetStandart(constr);
+            
         }
 
         public List<TypedValue> GetDataValues (Document doc)

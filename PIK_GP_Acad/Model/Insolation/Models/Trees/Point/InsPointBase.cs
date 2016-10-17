@@ -48,12 +48,9 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDbo(dbPt);
         }
 
-        public TaskCommand DeletePoint { get; }
-        public TaskCommand EditPoint { get; }
-
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }        
-        public Point3d Point { get; set; }                        
+        public Point3d Point { get; set; }                                
         public ObjectId DBPointId { get; set; }
         /// <summary>
         /// Визуализирует точку
@@ -70,8 +67,7 @@ namespace PIK_GP_Acad.Insolation.Models
         [ExcludeFromSerialization]
         public string Info { get; set; }
         [ExcludeFromSerialization]
-        public InsValue InsValue { get; set; }
-        [ExcludeFromSerialization]
+        public InsValue InsValue { get; set; }        
         public int Number { get; set; }
         public WindowOptions Window { get; set; }       
         /// <summary>

@@ -21,14 +21,14 @@ using Catel.Services;
 namespace PIK_GP_Acad.Insolation.UI
 {
     public class TreesViewModel : ViewModelBase
-    {
-        public TreesViewModel () : this(null)
-        { }
+    {        
         public TreesViewModel (TreeModel treeModel)
         {
             TreeModel = treeModel;
             AddPoint = new TaskCommand(OnAddPointExecute, OnAddPointCanExecute);
             ShowPoint = new TaskCommand(OnShowPointExecute);
+            EditPoint = new TaskCommand(OnEditPointExecute, OnEditPointCanExecute);
+            DeletePoint = new TaskCommand(OnDeletePointExecute);            
         }        
 
         [Model]        
@@ -77,6 +77,49 @@ namespace PIK_GP_Acad.Insolation.UI
         private async Task OnShowPointExecute ()
         {
             TreeModel.ShowPoint(SelectedPoint);
+        }
+
+        private async Task OnEditPointExecute ()
+        {
+            var insPoint = SelectedPoint;
+            if (insPoint == null) return;
+
+            var building = insPoint.Building;
+            if (building == null) return;
+
+            var oldBuildingType = building.BuildingType;            
+
+            var insPointVM = new InsPointViewModel(insPoint);
+            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            if (await uiVisualizerService.ShowDialogAsync(insPointVM) == true)
+            {
+                // Если измениля тип здания - то пересчет всех точек на этом здании
+                if (oldBuildingType != building.BuildingType)
+                {
+                    //// Учет изменения типа здания для всех точек на этом здании                    
+                    TreeModel.Model.ChangeBuildingType(building);                    
+                }
+                else
+                {
+                    // Обновление только этой точки
+                    insPoint.Update();
+                }
+
+                // Обновление елочек
+                TreeModel.UpdateVisualTree(insPoint);
+
+                // Сохранение точки в словарь
+                insPoint.SaveInsPoint();
+            }             
+        }
+        private bool OnEditPointCanExecute ()
+        {
+            return SelectedPoint?.Building != null;
+        }
+
+        private async Task OnDeletePointExecute ()
+        {
+            SelectedPoint?.Delete();
         }
     }
 }

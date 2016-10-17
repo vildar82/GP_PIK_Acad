@@ -75,9 +75,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 Map.InsPointAdded += Map_InsPointAdded;
             }
 
-            // Сервис расчета
-            if (CalcService == null)
-                DefineCalcService();
+            // Сервис расчета            
+            DefineCalcService();
 
             // Создание расчета
             if (Tree == null)
@@ -118,6 +117,19 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // При сохранении чертежа - сохранение расчета инсоляции
             SaveIns();
+        }
+
+        /// <summary>
+        /// Изменение 
+        /// </summary>
+        /// <param name="building"></param>
+        public void ChangeBuildingType (InsBuilding building)
+        {            
+            var pointsInBuilding = Tree.GetPointsInBuilding(building);
+            foreach (var item in pointsInBuilding)
+            {
+                item.Update();
+            }
         }
 
         /// <summary>

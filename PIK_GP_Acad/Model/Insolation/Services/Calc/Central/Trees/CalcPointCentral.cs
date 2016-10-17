@@ -37,6 +37,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             this.map = insPt.Model.Map;
             buildingOwner = insPt.Building;
+            buildingOwner.InitContour();
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();

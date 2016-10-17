@@ -15,10 +15,12 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsPointViewModel : ViewModelBase
     {
+        private IBuilding ibuild;
         public InsPointViewModel (InsPoint insPoint): base()
         {
             BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
-            InsPoint = insPoint;                                    
+            InsPoint = insPoint;
+            ibuild = insPoint.Building.Building;                                   
         }        
 
         [Model]
@@ -39,10 +41,14 @@ namespace PIK_GP_Acad.Insolation.UI
         }        
 
         protected override async Task CloseAsync ()
-        {
+        {            
             // TODO: unsubscribe from events here            
 
             await base.CloseAsync();
-        }       
+            if (InsPoint.Building.Building == null)
+            {
+                InsPoint.Building.Building = ibuild;
+            }
+        }        
     }
 }
