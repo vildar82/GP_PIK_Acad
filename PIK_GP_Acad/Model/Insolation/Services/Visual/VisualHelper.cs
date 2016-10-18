@@ -47,8 +47,10 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public static Hatch CreateHatch (List<Point2d> points, VisualOption opt)
         {
-            // Штриховка
-            var ptCol = new Point2dCollection(points.ToArray());
+            //  Отсеивание одинаковых точек
+            var pts = points.Distinct(new AcadLib.Comparers.Point2dEqualityComparer()).ToArray();
+            // Штриховка            
+            var ptCol = new Point2dCollection(pts);
             ptCol.Add(points[0]);
             var dCol = new DoubleCollection(new double[points.Count]);            
 

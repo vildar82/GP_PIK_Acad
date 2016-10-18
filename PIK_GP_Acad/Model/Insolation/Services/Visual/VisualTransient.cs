@@ -8,13 +8,16 @@ using Autodesk.AutoCAD.GraphicsInterface;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public abstract class VisualServiceBase : IVisualService
+    /// <summary>
+    /// Визуализация графики - через TransientManager
+    /// </summary>
+    public abstract class VisualTransient : IVisualService
     {
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
         private bool isOn;
         private List<Drawable> draws;
 
-        public abstract List<Drawable> CreateVisual ();
+        public abstract List<Entity> CreateVisual ();
 
         public bool VisualIsOn {
             get { return isOn; }
@@ -65,7 +68,6 @@ namespace PIK_GP_Acad.Insolation.Services
             draws = new List<Drawable>();
             var ds = CreateVisual();
             draws.AddRange(ds);
-
         }
 
         public void VisualsDelete ()

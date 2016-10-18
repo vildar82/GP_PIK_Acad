@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation.Models;
@@ -14,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация клочек
     /// </summary>
-    public class VisualTree : VisualServiceBase
+    public class VisualTree : VisualTransient
     {
         public VisualTree (InsModel model)
         {
@@ -31,9 +32,9 @@ namespace PIK_GP_Acad.Insolation.Services
             }
         }
 
-        public override List<Drawable> CreateVisual ()
+        public override List<Entity> CreateVisual ()
         {
-            List<Drawable> drawsAllPointsTrees = new List<Drawable>();
+            List<Entity> drawsAllPointsTrees = new List<Entity>();
             foreach (var item in Points)
             {
                 var drawsPointTrees = GetTreeDraws(item);
@@ -42,9 +43,9 @@ namespace PIK_GP_Acad.Insolation.Services
             return drawsAllPointsTrees;
         }
 
-        private List<Drawable> GetTreeDraws (InsPoint insPoint)
+        private List<Entity> GetTreeDraws (InsPoint insPoint)
         {
-            List<Drawable> drawsInsPointTrees = new List<Drawable>();
+            List<Entity> drawsInsPointTrees = new List<Entity>();
 
             Point2d p1 = insPoint.Point.Convert2d();
             Point2d p2= p1;
@@ -55,6 +56,8 @@ namespace PIK_GP_Acad.Insolation.Services
             foreach (var treeVisOpt in treeVisOptions)
             {
                 var draws = GetDrawsByOption(insPoint, treeVisOpt, p1, p2, out p3, out p4);
+                p1 = p4;
+                p2 = p3;
                 drawsInsPointTrees.AddRange(draws);
             }
             return drawsInsPointTrees;
@@ -70,10 +73,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="p3">Нижний правый угол елочки (возвращается)</param>
         /// <param name="p4">Нижений левый угол елочки (возвращается)</param>
         /// <returns></returns>
-        private List<Drawable> GetDrawsByOption (InsPoint insPoint, TreeVisualOption treeOpt, 
+        private List<Entity> GetDrawsByOption (InsPoint insPoint, TreeVisualOption treeOpt, 
             Point2d p1, Point2d p2, out Point2d p3, out Point2d p4)
         {
-            List<Drawable> draws = new List<Drawable>();
+            List<Entity> draws = new List<Entity>();
 
             var ptOrig = insPoint.Point.Convert2d();
             var calcValues = Model.CalcService.CalcValues;

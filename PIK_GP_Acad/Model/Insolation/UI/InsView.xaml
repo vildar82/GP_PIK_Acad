@@ -12,7 +12,6 @@
     d:DataContext="{d:DesignInstance local:InsViewModel,
                                      IsDesignTimeCreatable=False}"
     mc:Ignorable="d">
-
     <catel:UserControl.Resources>
         <!--<ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

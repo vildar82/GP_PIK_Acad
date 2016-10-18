@@ -60,9 +60,9 @@ namespace PIK_GP_Acad.Insolation.Services
             return merged;
         }
 
-        public List<Drawable> CreateVisual ()
+        public List<Entity> CreateVisual ()
         {
-            List<Drawable> draws = new List<Drawable>();
+            List<Entity> draws = new List<Entity>();
 
             // Штриховка
             var visOpt = new VisualOption(System.Drawing.Color.Red, Point3d.Origin, 60);

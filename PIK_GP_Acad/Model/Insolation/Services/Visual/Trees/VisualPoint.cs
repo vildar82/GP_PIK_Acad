@@ -37,9 +37,9 @@ namespace PIK_GP_Acad.Insolation.Services
             InsPoint = insPoint;
         }
 
-        public List<Drawable> CreateVisual ()
+        public List<Entity> CreateVisual ()
         {
-            List<Drawable> draws = new List<Drawable>();
+            List<Entity> draws = new List<Entity>();
 
             //// Кружок (положение точки)
             //var optCircle = new VisualOption(System.Drawing.Color.Yellow, InsPoint.Point);

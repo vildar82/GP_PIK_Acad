@@ -209,7 +209,8 @@
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualTree.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
-    <Compile Include="Model\Insolation\Services\Visual\VisualServiceBase.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualTransient.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualDatabase.cs" />
     <Compile Include="Model\Insolation\UI\InsRegionView.xaml.cs">
       <DependentUpon>InsRegionView.xaml</DependentUpon>
     </Compile>

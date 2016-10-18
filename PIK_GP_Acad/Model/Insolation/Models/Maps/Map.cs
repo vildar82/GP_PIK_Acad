@@ -176,11 +176,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (ent == null) return;
             try
             {
-                using (var t = ent.Database.TransactionManager.StartTransaction())
-                {
-                    DefineEnt(ent);
-                    t.Commit();
-                }
+                DefineEnt(ent);
             }
             catch { }
         }

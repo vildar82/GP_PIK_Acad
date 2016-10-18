@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation.Models;
 
@@ -12,7 +13,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Инсоляционные зоны точки
     /// </summary>
-    public class VisualPointIllums : VisualServiceBase
+    public class VisualPointIllums : VisualTransient
     {
         public InsPoint InsPoint { get; set; }
 
@@ -21,9 +22,9 @@ namespace PIK_GP_Acad.Insolation.Services
             InsPoint = insPoint;
         }
 
-        public override List<Drawable> CreateVisual ()
+        public override List<Entity> CreateVisual ()
         {
-            List<Drawable> draws = new List<Drawable>();
+            List<Entity> draws = new List<Entity>();
 
             if (InsPoint.Illums != null)
             {

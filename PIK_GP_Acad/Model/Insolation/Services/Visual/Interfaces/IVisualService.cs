@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 
 namespace PIK_GP_Acad.Insolation.Services
@@ -18,7 +19,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Обновление визуализации
         /// </summary>
         void VisualUpdate ();
-        List<Drawable> CreateVisual ();
+        List<Entity> CreateVisual ();
         /// <summary>
         /// Удаление визуализации
         /// </summary>
