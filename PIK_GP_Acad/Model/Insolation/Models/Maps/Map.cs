@@ -102,9 +102,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 var r = GetBuildingRectangle(insBuild);
                 treeBuildings.Add(r, insBuild);
 
-                // Подписывание на изменения объекта
-                ent.Modified -= Building_Modified;
-                ent.Erased -= Building_Erased;
+                // Подписывание на изменения объекта                
                 ent.Modified += Building_Modified;
                 ent.Erased += Building_Erased;
 
@@ -174,13 +172,13 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         private void Database_ObjectAppended (object sender, ObjectEventArgs e)
         {
-            var ent = e.DBObject as Entity;
-            if (ent == null) return;
-            try
-            {
-                DefineEnt(ent);
-            }
-            catch { }
+            //var ent = e.DBObject as Entity;
+            //if (ent == null) return;
+            //try
+            //{
+            //    DefineEnt(ent);
+            //}
+            //catch { }
         }
 
         /// <summary>
@@ -209,29 +207,31 @@ namespace PIK_GP_Acad.Insolation.Models
             var ent = sender as Entity;
             if (ent == null) return;           
 
-            // Поиск старого здания
-            var buildingOld = FindBuildingByEnt(ent.Id);
-            if (buildingOld == null) return;
-            // удаление старого здания из списка и создание нового
-            Buildings.Remove(buildingOld);
-            treeBuildings.Delete(GetBuildingRectangle(buildingOld), buildingOld);
+            //// Поиск старого здания
+            //var buildingOld = FindBuildingByEnt(ent.Id);
+            //if (buildingOld == null) return;
+            //// удаление старого здания из списка и создание нового
+            //Buildings.Remove(buildingOld);
+            //treeBuildings.Delete(GetBuildingRectangle(buildingOld), buildingOld);
 
-            IBuilding buildingNew;
-            using (var t = ent.Database.TransactionManager.StartTransaction())
-            {
-                buildingNew = ElementFactory.Create<IBuilding>(ent);
-                t.Commit();
-            }            
-            if (buildingNew != null)
-            {
-                var insBuildNew = new InsBuilding(buildingNew);
-                Buildings.Add(insBuildNew);
-                var r = GetBuildingRectangle(insBuildNew);
-                treeBuildings.Add(r, insBuildNew);                
+            //IBuilding buildingNew;
+            //using (var t = ent.Database.TransactionManager.StartTransaction())
+            //{
+            //    buildingNew = ElementFactory.Create<IBuilding>(ent);
+            //    t.Commit();
+            //}            
+            //if (buildingNew != null)
+            //{
+            //    var insBuildNew = new InsBuilding(buildingNew);
+            //    Buildings.Add(insBuildNew);
+            //    var r = GetBuildingRectangle(insBuildNew);
+            //    treeBuildings.Add(r, insBuildNew);                
 
-                if (IsEventsOn)
-                    BuildingModified?.Invoke(this, buildingOld);
-            }            
+            //    if (IsEventsOn)
+            //        BuildingModified?.Invoke(this, buildingOld);
+            //}
+            if (IsEventsOn)
+                BuildingModified?.Invoke(this, null);
         }
 
         /// <summary>
@@ -243,11 +243,15 @@ namespace PIK_GP_Acad.Insolation.Models
             // отписатся от всех событий
             // Удалить всю визуализацию (пока нет)
             Doc.Database.ObjectAppended -= Database_ObjectAppended;
-            foreach (var item in Buildings)
+            using (var t = db.TransactionManager.StartTransaction())
             {
-                var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-                dbo.Modified -= Building_Modified;
-                dbo.Erased -= Building_Erased;
+                foreach (var item in Buildings)
+                {
+                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+                    dbo.Modified -= Building_Modified;
+                    dbo.Erased -= Building_Erased;
+                }
+                t.Commit();
             }
         }
     }

@@ -64,16 +64,15 @@ namespace PIK_GP_Acad.Insolation.Models
             // Загрузка карты
             if (Map != null)
             {
-                // ??? пока ничего
+                // ??? пока ничего                
+                Map.Clear();
+                Map = null;
             }
-            else
-            {
-                Map = new Map(this);
-                Map.BuildingAdded += Map_BuildingAdded;
-                Map.BuildingErased += Map_BuildingErased;
-                Map.BuildingModified += Map_BuildingModified;
-                Map.InsPointAdded += Map_InsPointAdded;
-            }
+            Map = new Map(this);
+            Map.BuildingAdded += Map_BuildingAdded;
+            Map.BuildingErased += Map_BuildingErased;
+            Map.BuildingModified += Map_BuildingModified;
+            Map.InsPointAdded += Map_InsPointAdded;
 
             // Сервис расчета            
             DefineCalcService();
@@ -317,47 +316,41 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Clear ()
         {
-            //using (Doc.LockDocument())
-            using (var t = Doc.TransactionManager.StartTransaction())
-            {
-                Map.Clear();
-                Tree.Clear();
-
-                t.Commit();
-            }
+            Map.Clear();
+            Tree.Clear();
         }
 
         private void Map_BuildingModified (object sender, InsBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
-            //IsUpdateRequired = true;
-            //UpdateInfo = "Требуется обновление - изменено здание.";            
-            Update();
+            IsUpdateRequired = true;
+            UpdateInfo = "Требуется обновление - изменено здание.";            
+            //Update();
         }        
 
         private void Map_BuildingErased (object sender, InsBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
-            //IsUpdateRequired = true;
-            //UpdateInfo = "Требуется обновление - удалено здание.";
-            Update();
+            IsUpdateRequired = true;
+            UpdateInfo = "Требуется обновление - удалено здание.";
+            //Update();
         }
 
         private void Map_BuildingAdded (object sender, InsBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к.изменились здания на чертеже
-            //IsUpdateRequired = true;
-            //UpdateInfo = "Требуется обновление - добавлено здание.";
-            Update();
+            IsUpdateRequired = true;
+            UpdateInfo = "Требуется обновление - добавлено здание.";
+            //Update();
         }
 
         private void Map_InsPointAdded (object sender, ObjectId e)
         {
-            //IsUpdateRequired = true;
-            //UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
+            IsUpdateRequired = true;
+            UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
 
             // Определение типа точки и добавление в соответствующий расчет
-            LoadPoint(e);
+            //LoadPoint(e);
         }        
     }
 }

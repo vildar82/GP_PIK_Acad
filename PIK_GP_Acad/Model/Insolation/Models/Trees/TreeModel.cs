@@ -327,10 +327,14 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Clear ()
         {
-            VisualTrees.VisualsDelete();            
-            foreach (var item in Points)
+            VisualTrees.VisualsDelete();
+            using (var t = Model.Doc.TransactionManager.StartTransaction())
             {
-                item.Clear();
+                foreach (var item in Points)
+                {
+                    item.Clear();
+                }
+                t.Commit();
             }
         }
 
