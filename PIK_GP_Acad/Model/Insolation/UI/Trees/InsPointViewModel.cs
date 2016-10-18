@@ -19,17 +19,17 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsPointViewModel (InsPoint insPoint): base()
         {
             BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
-            InsPoint = insPoint;
+            InsPointModel = insPoint;
             ibuild = insPoint.Building.Building;                                   
         }        
 
         [Model]
-        [Expose("Number")]        
-        [Expose("Height")]  
-        [Expose("Window")]   
-        [Expose("InsValue")]
-        [Expose("Building")]
-        public InsPoint InsPoint { get; set; }
+        [Expose(nameof(InsPoint.Number))]        
+        [Expose(nameof(InsPoint.Height))]  
+        [Expose(nameof(InsPoint.Window))]   
+        [Expose(nameof(InsPoint.InsValue))]
+        [Expose(nameof(InsPoint.Building))]
+        public InsPoint InsPointModel { get; set; }
 
         public ObservableCollection<BuildingTypeEnum> BuildingTypes { get; set; }        
 
@@ -45,9 +45,9 @@ namespace PIK_GP_Acad.Insolation.UI
             // TODO: unsubscribe from events here            
 
             await base.CloseAsync();
-            if (InsPoint.Building.Building == null)
+            if (InsPointModel.Building.Building == null)
             {
-                InsPoint.Building.Building = ibuild;
+                InsPointModel.Building.Building = ibuild;
             }
         }        
     }

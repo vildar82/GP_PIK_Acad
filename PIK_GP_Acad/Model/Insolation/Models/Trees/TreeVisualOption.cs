@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -24,7 +25,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Color = color;
             Height = height;
-        }
+        }        
 
         public static List<TreeVisualOption> DefaultTreeVisualOptions ()
         {
@@ -45,6 +46,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 TypedValueExt.GetTvExtData(Color.G),
                 TypedValueExt.GetTvExtData(Color.B),
             };
+        }
+
+        public static Color GetNextColor (Color color)
+        {
+            return ControlPaint.Dark(color);
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)

@@ -217,6 +217,10 @@
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
     <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Trees\ObjectToDisplayNameConverter.cs" />
+    <Compile Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml.cs">
+      <DependentUpon>TreeOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Trees\TreeOptionsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml.cs">
       <DependentUpon>WindowOptionsView.xaml</DependentUpon>
     </Compile>
@@ -438,6 +442,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Model\Insolation\UI\Trees\WindowOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
