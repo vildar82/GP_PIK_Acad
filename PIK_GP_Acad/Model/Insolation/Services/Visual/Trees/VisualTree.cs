@@ -16,12 +16,19 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualTree : VisualServiceBase
     {
-        public ObservableCollection<InsPoint> Points { get; set; }
-                
-        public InsModel Model { get; set; }
-        public VisualTree(InsModel model)
-        {            
-            Model = model;            
+        public VisualTree (InsModel model)
+        {
+            Model = model;
+        }
+
+        public InsModel Model { get; set; }       
+
+        public List<InsPoint> Points {
+            get {
+                var res = Model.Tree.Points?.ToList();
+                if (res == null) return new List<InsPoint>();
+                return res;
+            }
         }
 
         public override List<Drawable> CreateVisual ()

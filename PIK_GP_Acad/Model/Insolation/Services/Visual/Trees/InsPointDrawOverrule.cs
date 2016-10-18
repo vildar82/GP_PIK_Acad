@@ -73,13 +73,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     item.WorldDraw(wd);
                     item.Dispose();
-                }
-                return true;
+                }                
             }
-            else
-            {
-                return base.WorldDraw(drawable, wd);
-            }
+            return base.WorldDraw(drawable, wd);                        
         }
     }
 }

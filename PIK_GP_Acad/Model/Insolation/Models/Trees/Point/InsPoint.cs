@@ -93,8 +93,11 @@ namespace PIK_GP_Acad.Insolation.Models
             if (VisualIllums != null)
             {
                 VisualIllums.VisualIsOn = IsVisualIllumsOn;
+                SaveInsPoint();
             }
         }
+
+        
 
         /// <summary>
         /// Описание точки
@@ -138,7 +141,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 IsVisualIllumsOn = onOff;
             }
 
-            VisualPoint.VisualIsOn = onOff;
+            //VisualPoint.VisualIsOn = onOff;
         }
 
         /// <summary>
@@ -176,7 +179,13 @@ namespace PIK_GP_Acad.Insolation.Models
             // Подготовка визуальных объектов
             // Визуализация зон инсоляции точки
             if (VisualIllums == null)
+            {
                 VisualIllums = new VisualPointIllums(this);
+            }
+            else
+            {
+                VisualIllums.VisualsDelete();
+            }
             // Визуализация описания точки
             if (VisualPoint == null)
                 VisualPoint = new VisualPoint(this);
@@ -185,11 +194,10 @@ namespace PIK_GP_Acad.Insolation.Models
             // Зоны освещ.
             if (IsVisualIllumsOn)
             {
-                VisualIllums.VisualIsOn = true;
-                //visualIllums.VisualUpdate();
+                VisualIllums.VisualIsOn = true;                
             }
             // Описание точки
-            VisualPoint.VisualIsOn = true;
+            //VisualPoint.VisualIsOn = true;
 
 
             Info = GetInfo();

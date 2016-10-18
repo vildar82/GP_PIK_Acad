@@ -48,6 +48,8 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDbo(dbPt);
         }
 
+
+
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }        
         public Point3d Point { get; set; }                                
@@ -78,6 +80,9 @@ namespace PIK_GP_Acad.Insolation.Models
         public abstract void SetDataValues (List<TypedValue> values, Document doc);
         public abstract DicED GetExtDic (Document doc);
         public abstract void SetExtDic (DicED DicED, Document doc);
+        public abstract void Initialize (TreeModel treeModel);
+        public abstract void Update ();
+        public abstract void VisualOnOff (bool onOff, bool saveState);
 
         /// <summary>
         /// Создание точки на чертеже
@@ -96,6 +101,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     dbPoint = new DBPoint(Point);
                     var cs = doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                     DBPointId = cs.AppendEntity(dbPoint);
+                    SubscribeDbo(dbPoint);
                     t.AddNewlyCreatedDBObject(dbPoint, true);
                     InsPointHelper.SetInsPoint(dbPoint);
                 }
@@ -103,10 +109,16 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     dbPoint = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
                 }
-                SubscribeDbo(dbPoint);                
-
                 t.Commit();
             }
+        }
+
+        /// <summary>
+        /// Перерисовка описания точки
+        /// </summary>
+        public void Redrawable ()
+        {
+            //???            
         }
 
         private void SubscribeDbo (DBPoint dbPoint)
@@ -162,9 +174,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        public abstract void Initialize (TreeModel treeModel);
-        public abstract void Update ();
-        public abstract void VisualOnOff (bool onOff, bool saveState);
+        
 
         public virtual void Delete ()
         {

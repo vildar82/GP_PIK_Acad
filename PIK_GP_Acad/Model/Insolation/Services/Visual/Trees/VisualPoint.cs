@@ -41,9 +41,9 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             List<Drawable> draws = new List<Drawable>();
 
-            // Кружок (положение точки)
-            var optCircle = new VisualOption(System.Drawing.Color.Yellow, InsPoint.Point);
-            draws.Add(CreateCircle(0.5, optCircle));
+            //// Кружок (положение точки)
+            //var optCircle = new VisualOption(System.Drawing.Color.Yellow, InsPoint.Point);
+            //draws.Add(CreateCircle(0.5, optCircle));
 
             // Подпись
             // Макимальная непрерывная инсоляция            
@@ -63,7 +63,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public void VisualUpdate ()
         {
             // Перерисовать точку
-            Autodesk.AutoCAD.ApplicationServices.Application.UpdateScreen();
+            //Autodesk.AutoCAD.ApplicationServices.Application.UpdateScreen();
         }
 
         public void VisualsDelete ()

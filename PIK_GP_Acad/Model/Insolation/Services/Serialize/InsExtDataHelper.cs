@@ -29,6 +29,8 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>        
         public static void Save (IDboDataSave obj, Document doc)
         {
+            if (doc == null || doc.IsDisposed) return;
+                    
             var dicEd = obj.GetExtDic(doc);
             if (dicEd == null) return;
 

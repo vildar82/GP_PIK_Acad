@@ -224,10 +224,9 @@ namespace PIK_GP_Acad.Insolation.Services
                         // Создание нового расчета
                         insModel = new InsModel();
                     }
-                    // Инициализация расчета
-                    insModel.Initialize(doc);                                               
-
                     insModels.Add(doc, insModel);
+                    // Инициализация расчета
+                    insModel.Initialize(doc);                                                                   
                 }                
             }
             // Отключение расчета для текущего документа

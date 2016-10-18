@@ -81,12 +81,23 @@ namespace PIK_GP_Acad.Insolation.Models
             // Создание расчета
             if (Tree == null)
             {
-                Tree = new TreeModel();                
+                Tree = new TreeModel();
             }
             Tree.Initialize(this);
 
+            // Загрузка точек всех типов и добавление в расчеты
+            LoadPoints();
+
+            Tree.UpdateVisualTree();
+
             doc.Database.BeginSave += Database_BeginSave;
-        }        
+            Redrawable();
+        }
+
+        public void Redrawable ()
+        {
+            // ????
+        }
 
         /// <summary>
         /// Флаг - требуется обновление расчета
@@ -142,6 +153,9 @@ namespace PIK_GP_Acad.Insolation.Models
 
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
+
+            // Перерисовка точек
+            Redrawable();
         }             
 
         /// <summary>
@@ -174,6 +188,9 @@ namespace PIK_GP_Acad.Insolation.Models
             DicED.AddInner("TreeModel", Tree.GetExtDic(Doc));
             // Сохранение словаря InsModel в NOD чертежа
             InsExtDataHelper.SaveToNod(Doc, DicED);
+
+            // Сохранение всех точек
+            Tree.SavePoints();
 
             //try
             //{
@@ -227,6 +244,16 @@ namespace PIK_GP_Acad.Insolation.Models
             return model;
         }
 
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            // Пока нет значений для сохранения
+            return null;
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+        }
+
         /// <summary>
         /// Поис инс точки среди всех точк расчета
         /// </summary>        
@@ -234,20 +261,55 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var res = Tree.Points.FirstOrDefault(p => p.Point == pt);
             return res;
-        }       
-
-        private void Map_BuildingModified (object sender, InsBuilding e)
-        {
-            // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
-            IsUpdateRequired = true;
-            UpdateInfo = "Требуется обновление - изменено здание.";
         }
 
-        private void Map_BuildingErased (object sender, InsBuilding e)
+        /// <summary>
+        /// Загрузка точек. Определение точек найденных на карте
+        /// </summary>        
+        private void LoadPoints ()
         {
-            // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
-            IsUpdateRequired = true;
-            UpdateInfo = "Требуется обновление - удалено здание.";
+            var doc = Doc;
+            if (doc == null) return;
+
+            var idPoints = Map.InsPoints;
+            if (idPoints == null || idPoints.Count == 0)
+                return;
+
+            using (doc.LockDocument())
+            using (var t = doc.TransactionManager.StartTransaction())
+            {                
+                foreach (var idPt in idPoints)
+                {
+                    DefinePoint(idPt);
+                }
+                t.Commit();
+            }
+        }
+
+        private void LoadPoint (ObjectId idPt)
+        {
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
+            {
+                DefinePoint(idPt);
+                t.Commit();
+            }
+        }
+
+        private void DefinePoint(ObjectId idPt)
+        {
+            var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
+            if (dbPt == null) return;
+
+            // Загрузка из словаря всех записей
+            var dicEd = InsExtDataHelper.Load(dbPt, Doc);
+
+            // Если это инсоляционная точка елочек
+            var dicInsPt = dicEd.GetInner("InsPoint");
+            if (dicInsPt != null)
+            {
+                Tree.AddPoint(dicInsPt, idPt);
+            }
         }
 
         /// <summary>
@@ -265,27 +327,37 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
+        private void Map_BuildingModified (object sender, InsBuilding e)
+        {
+            // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
+            //IsUpdateRequired = true;
+            //UpdateInfo = "Требуется обновление - изменено здание.";            
+            Update();
+        }        
+
+        private void Map_BuildingErased (object sender, InsBuilding e)
+        {
+            // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
+            //IsUpdateRequired = true;
+            //UpdateInfo = "Требуется обновление - удалено здание.";
+            Update();
+        }
+
         private void Map_BuildingAdded (object sender, InsBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к.изменились здания на чертеже
-            IsUpdateRequired = true;
-            UpdateInfo = "Требуется обновление - добавлено здание.";
+            //IsUpdateRequired = true;
+            //UpdateInfo = "Требуется обновление - добавлено здание.";
+            Update();
         }
 
         private void Map_InsPointAdded (object sender, ObjectId e)
         {
-            IsUpdateRequired = true;
-            UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
-        }
+            //IsUpdateRequired = true;
+            //UpdateInfo = "Требуется обновление - добавлена расчетная точка.";
 
-        public List<TypedValue> GetDataValues (Document doc)
-        {
-            // Пока нет значений для сохранения
-            return null;
-        }
-
-        public void SetDataValues (List<TypedValue> values, Document doc)
-        {            
-        }
+            // Определение типа точки и добавление в соответствующий расчет
+            LoadPoint(e);
+        }        
     }
 }
