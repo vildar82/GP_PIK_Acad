@@ -34,7 +34,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var dicEd = obj.GetExtDic(doc);
             if (dicEd == null) return;
 
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {
                 var idDbo = obj.GetDBObject();
@@ -58,7 +58,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="dicName">Имя словаря объекта</param>
         public static DicED LoadFromNod (Document doc, string dicName)
         {
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             {
                 var nod = new AcadLib.DictNOD(plugin, true);
                 nod.Db = doc.Database;
@@ -75,7 +75,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public static void SaveToNod (Document doc, DicED DicED)
         {
             if (doc == null || doc.IsDisposed) return;
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             {
                 var nod = new AcadLib.DictNOD(plugin, true);
                 nod.Db = doc.Database;

@@ -39,7 +39,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public void VisualUpdate ()
         {
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {
                 EraseDraws();

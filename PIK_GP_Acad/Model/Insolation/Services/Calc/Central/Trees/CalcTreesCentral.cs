@@ -32,7 +32,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             var doc = insPoint.Model.Doc;
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             using (var t = doc.Database.TransactionManager.StartTransaction())
             {
                 var calcPt = new CalcPointCentral(insPoint, insService);

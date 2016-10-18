@@ -95,9 +95,10 @@ namespace PIK_GP_Acad.Insolation.Models
             using (var t = doc.TransactionManager.StartTransaction())
             {
                 DBPoint dbPoint;
-                // Если точка уже не была добавлена в чертеж
+                // Если точка уже не была добавлена в чертеж                
                 if (DBPointId.IsNull)
                 {
+                    Model.Map.IsEventsOn = false;
                     dbPoint = new DBPoint(Point);
                     var cs = doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                     DBPointId = cs.AppendEntity(dbPoint);
@@ -110,6 +111,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     dbPoint = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
                 }
                 t.Commit();
+                Model.Map.IsEventsOn = true;
             }
         }
 
@@ -123,8 +125,9 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void SubscribeDbo (DBPoint dbPoint)
         {
-            dbPoint.Erased += DbPoint_Erased;
-            //dbPoint.Copied += DbPoint_Copied; Создание нового объекта отслеживается картой Map
+            dbPoint.Erased -= DbPoint_Erased;
+            dbPoint.Modified -= DbPoint_Modified;
+            dbPoint.Erased += DbPoint_Erased;            
             dbPoint.Modified += DbPoint_Modified;
         }
         private void UnSubscribeDbo (DBPoint dbPoint)
@@ -174,15 +177,13 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        
-
         public virtual void Delete ()
         {
             // Удаление точки с чертежа
             if (DBPointId.IsNull) return;
             var doc = Model.Doc;
             using (doc.LockDocument())
-                using (var t = doc.TransactionManager.StartTransaction())
+            using (var t = doc.TransactionManager.StartTransaction())
             {
                 var dbPt = DBPointId.GetObject(OpenMode.ForWrite);
                 dbPt.Erase();

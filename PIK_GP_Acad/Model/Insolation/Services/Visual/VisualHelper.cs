@@ -20,7 +20,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var db = doc.Database;
             ObjectId res = db.Textstyle;
 
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             using (var t = db.TransactionManager.StartTransaction())
             {
                 var textStyleTable = db.TextStyleTableId.GetObject(OpenMode.ForRead) as TextStyleTable;

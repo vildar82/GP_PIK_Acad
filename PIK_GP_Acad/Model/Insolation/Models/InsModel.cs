@@ -275,7 +275,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (idPoints == null || idPoints.Count == 0)
                 return;
 
-            using (doc.LockDocument())
+            //using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {                
                 foreach (var idPt in idPoints)
@@ -288,7 +288,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void LoadPoint (ObjectId idPt)
         {
-            using (Doc.LockDocument())
+            //using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 DefinePoint(idPt);
@@ -317,7 +317,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Clear ()
         {
-            using (Doc.LockDocument())
+            //using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 Map.Clear();

@@ -29,7 +29,8 @@ namespace PIK_GP_Acad.Insolation.Models
             this.Doc = model.Doc;
             this.db = Doc.Database;
             LoadMap();
-            // TODO: подписаться на события изменения объектов чертежа - чтобы отслеживать изменения карты
+            
+            Doc.Database.ObjectAppended -= Database_ObjectAppended; // перестраховка
             Doc.Database.ObjectAppended += Database_ObjectAppended;
         }
         public bool IsEventsOn { get; set; }
@@ -57,8 +58,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Добавлена расчетная точка
         /// </summary>
-        public event EventHandler<ObjectId> InsPointAdded;
-        public event EventHandler<InsBuilding> BuildingChangeType;
+        public event EventHandler<ObjectId> InsPointAdded;        
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
@@ -103,6 +103,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 treeBuildings.Add(r, insBuild);
 
                 // Подписывание на изменения объекта
+                ent.Modified -= Building_Modified;
+                ent.Erased -= Building_Erased;
                 ent.Modified += Building_Modified;
                 ent.Erased += Building_Erased;
 

@@ -14,6 +14,6 @@ namespace PIK_GP_Acad.Elements
     public interface IElement
     {
         ObjectId IdEnt { get; }
-        Error Error { get; }
+        Error Error { get; }        
     }
 }

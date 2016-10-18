@@ -21,6 +21,7 @@
         <Image x:Key="TreesImage" Source="/PIK_GP_Acad;component/Resources/trees.png" ToolTip="Елочки" />
         <!--<Image x:Key="update" Source="/PIK_GP_Acad;component/Resources/update.png" />-->
         <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
+        <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -85,8 +86,12 @@
                 ToolTip="Широта °" />
             <Button
                 Margin="2"
+                Height="20"
                 Command="{Binding SelectRegion}"
-                Content="..." ToolTip="Выбор региорна" />
+                ToolTip="Выбор региорна"
+                Background="Transparent">                
+                <Image Source="{StaticResource options}" />
+            </Button>
         </StackPanel>
         <!--  Выбор расчета  -->
         <TabControl
