@@ -124,9 +124,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         private void SubscribeDbo (DBPoint dbPoint)
-        {
-            dbPoint.Erased -= DbPoint_Erased;
-            dbPoint.Modified -= DbPoint_Modified;
+        {            
             dbPoint.Erased += DbPoint_Erased;            
             dbPoint.Modified += DbPoint_Modified;
         }
@@ -263,7 +261,5 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             return res;
         }
-
-        
     }
 }

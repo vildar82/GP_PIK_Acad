@@ -58,13 +58,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="dicName">Имя словаря объекта</param>
         public static DicED LoadFromNod (Document doc, string dicName)
         {
-            //using (doc.LockDocument())
-            {
-                var nod = new AcadLib.DictNOD(plugin, true);
-                nod.Db = doc.Database;
-                var DicED = nod.LoadED(dicName);
-                return DicED;
-            }
+            var nod = new AcadLib.DictNOD(plugin, true);
+            nod.Db = doc.Database;
+            var DicED = nod.LoadED(dicName);
+            return DicED;
         }
 
         /// <summary>
@@ -75,7 +72,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public static void SaveToNod (Document doc, DicED DicED)
         {
             if (doc == null || doc.IsDisposed) return;
-            //using (doc.LockDocument())
+            using (doc.LockDocument())
             {
                 var nod = new AcadLib.DictNOD(plugin, true);
                 nod.Db = doc.Database;

@@ -132,7 +132,7 @@
                 Grid.Column="1"
                 Height="{StaticResource TreeButtonsHeight}"                
                 Command="{Binding AddPoint}"                
-                ToolTip="{Binding AddpointInfo}" 
+                ToolTip="Добавление точки" 
                 Background="Transparent">
                 <Image Source="{StaticResource Add}" />
             </Button>

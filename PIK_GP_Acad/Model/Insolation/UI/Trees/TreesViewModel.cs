@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             this.uiService = uiService;
             Tree = treeModel;
-            AddPoint = new TaskCommand(OnAddPointExecute, OnAddPointCanExecute);
+            AddPoint = new TaskCommand(OnAddPointExecute);
             ShowPoint = new TaskCommand(OnShowPointExecute);
             EditPoint = new TaskCommand<InsPoint>(OnEditPointExecute);
             DeletePoint = new TaskCommand<InsPoint>(OnDeletePointExecute);
@@ -40,8 +40,7 @@ namespace PIK_GP_Acad.Insolation.UI
         [Expose(nameof(TreeModel.IsVisualTreeOn))]        
         public TreeModel Tree { get; set; }  
 
-        public InsPoint SelectedPoint { get; set; }
-        public string AddpointInfo { get; set; }
+        public InsPoint SelectedPoint { get; set; }        
 
         public TaskCommand AddPoint { get; private set; }
         public TaskCommand ShowPoint { get; private set; }
@@ -61,23 +60,7 @@ namespace PIK_GP_Acad.Insolation.UI
             // Сохранение точки
             p.SaveInsPoint();            
         }        
-
-        private bool OnAddPointCanExecute ()
-        {
-            bool res;
-            if (Tree?.Model?.Map?.Buildings.Count > 0)
-            {
-                AddpointInfo = "Выбор расчетной точки на контуре здания";
-                res = true;
-            }
-            else
-            {
-                res = false;
-                AddpointInfo = "В чертеже нет зданий";                
-            }            
-            return res;
-        }
-
+        
         private async Task OnShowPointExecute ()
         {
             Tree.ShowPoint(SelectedPoint);
