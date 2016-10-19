@@ -29,10 +29,16 @@ namespace PIK_GP_Acad.Insolation.Models
             this.Doc = model.Doc;
             this.db = Doc.Database;
             LoadMap();
-            
-            Doc.Database.ObjectAppended -= Database_ObjectAppended; // перестраховка
-            Doc.Database.ObjectAppended += Database_ObjectAppended;
+
+            SubscribeDB();
         }
+
+        private void SubscribeDB ()
+        {
+            db.ObjectAppended -= Database_ObjectAppended; // перестраховка
+            db.ObjectAppended += Database_ObjectAppended;
+        }
+
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
         public int MaxBuildingHeight { get { return GetMaxBuildingHeight(); } }
@@ -80,6 +86,13 @@ namespace PIK_GP_Acad.Insolation.Models
                 t.Commit();
             }            
             IsEventsOn = true;
+        }
+
+        public void Update ()
+        {
+            Clear();            
+            LoadMap();
+            SubscribeDB();
         }
 
         private int GetMaxBuildingHeight ()

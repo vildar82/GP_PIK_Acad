@@ -36,8 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public CalcPointCentral (InsPoint insPt, InsCalcServiceCentral insCalcService)
         {
             this.map = insPt.Model.Map;
-            buildingOwner = insPt.Building;
-            buildingOwner.InitContour();
+            buildingOwner = insPt.Building;            
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
@@ -57,18 +56,20 @@ namespace PIK_GP_Acad.Insolation.Services
                 // расчетные граници (по заданным расчетным углам)
                 var ext = GetCalcExtents(map.MaxBuildingHeight);
                 // кусок карты
-                var scope = map.GetScope(ext);
-                // исключение из списка домов собственно расчетного дома
-                scope.Buildings.Remove(buildingOwner);
-
-                // Расчет зон теней
-                // группировка домов по высоте
-                var heights = scope.Buildings.GroupBy(g => g.Height);
-                foreach (var bHeight in heights)
+                using (var scope = map.GetScope(ext))
                 {
-                    // зоны тени для домов этой высоты
-                    var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key-insPt.Height);
-                    resAreas.AddRange(illumsByHeight);
+                    // исключение из списка домов собственно расчетного дома
+                    scope.Buildings.Remove(buildingOwner);
+
+                    // Расчет зон теней
+                    // группировка домов по высоте
+                    var heights = scope.Buildings.GroupBy(g => g.Height);
+                    foreach (var bHeight in heights)
+                    {
+                        // зоны тени для домов этой высоты
+                        var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key - insPt.Height);
+                        resAreas.AddRange(illumsByHeight);
+                    }
                 }
                 resAreas = IllumAreaBase.Merge(resAreas);
 
@@ -90,31 +91,33 @@ namespace PIK_GP_Acad.Insolation.Services
             // Линия тени
             var xRayToStart = values.GetXRay(yShadowLen, AngleStartOnPlane);
             var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
-            Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
-                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
-            //#if DEBUG
-            //            var cs = map.Doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-            //            var t = cs.Database.TransactionManager.TopTransaction;
-            //            cs.AppendEntity(lineShadow);
-            //            t.AddNewlyCreatedDBObject(lineShadow, true);
-            //#endif
-            // перебор домов одной высоты
-            foreach (var build in buildings)
+            using (Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
+                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0)))
             {
-                // Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
-                if (build.YMin > yShadow)
+                //#if DEBUG
+                //            var cs = map.Doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+                //            var t = cs.Database.TransactionManager.TopTransaction;
+                //            cs.AppendEntity(lineShadow);
+                //            t.AddNewlyCreatedDBObject(lineShadow, true);
+                //#endif
+                // перебор домов одной высоты
+                foreach (var build in buildings)
                 {
-                    // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                    var ilumShadow = GetIllumShadow(build.Contour.GetPoints());
-                    if (ilumShadow != null)
+                    // Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
+                    if (build.YMin > yShadow)
                     {
-                        illumShadows.Add(ilumShadow);
+                        // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
+                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints());
+                        if (ilumShadow != null)
+                        {
+                            illumShadows.Add(ilumShadow);
+                        }
                     }
-                }
-                else if (build.YMax > yShadow)
-                {
-                    var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
-                    illumShadows.AddRange(ilumsBoundary);
+                    else if (build.YMax > yShadow)
+                    {
+                        var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
+                        illumShadows.AddRange(ilumsBoundary);
+                    }
                 }
             }
             // Объединение совпадающих зон теней
@@ -341,12 +344,14 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private Vector2d GetVecPerpWindToSouth (Point3d pt, Polyline contour, Vector2d vecWinPerpend)
         {
-            var linePerp = new Line(pt, pt + new Vector3d(new Plane(), vecWinPerpend));
-            var ptsIntersect = new Point3dCollection();
-            contour.IntersectWith(linePerp, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-            var ptInner = ptsIntersect.Cast<Point3d>().Where(p => !p.IsEqualTo(pt)).
-                GroupBy(p => (p - pt).Length).OrderBy(o => o.Key).First().First().Convert2d();
-            return pt.Convert2d()- ptInner;
+            using (var linePerp = new Line(pt, pt + new Vector3d(new Plane(), vecWinPerpend)))
+            {
+                var ptsIntersect = new Point3dCollection();
+                contour.IntersectWith(linePerp, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                var ptInner = ptsIntersect.Cast<Point3d>().Where(p => !p.IsEqualTo(pt)).
+                    GroupBy(p => (p - pt).Length).OrderBy(o => o.Key).First().First().Convert2d();
+                return pt.Convert2d() - ptInner;
+            }
         }
 
         /// <summary>
@@ -360,6 +365,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private void DefineWindowSegmentAngles (out double windowStartAngle, out double windowEndAngle,
             out Vector2d vecWindowOutPerp, out Vector2d vecWinToEast, out Vector2d vecWinToWest)
         {
+            buildingOwner.InitContour();
             var contour = buildingOwner.Contour;
             var segStartIndex = (int)contour.GetParameterAtPoint(ptCalc);
             var segOwner = contour.GetLineSegment2dAt(segStartIndex);

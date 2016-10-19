@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
     xmlns:service="clr-namespace:PIK_GP_Acad.Insolation.Services"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{DynamicResource DarkThemeBackgroundBrush}"
     d:DataContext="{d:DesignInstance local:InsViewModel,
@@ -22,6 +23,7 @@
         <!--<Image x:Key="update" Source="/PIK_GP_Acad;component/Resources/update.png" />-->
         <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
         <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
+        <sys:Double x:Key="ButtonsHeight">23</sys:Double>
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,6 +34,7 @@
             <ToggleButton
                 x:Name="chkBoxInsActivated"
                 Grid.Row="0"
+                Height="{StaticResource ButtonsHeight}"
                 Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
                 Style="{StaticResource ToggleButtonOnOff}"
                 BorderThickness="1"
@@ -39,7 +42,7 @@
                 ToolTip="Включение/отключение инсоляции для документа." />
             <Button
                 Grid.Row="0"
-                Height="20"
+                Height="{StaticResource ButtonsHeight}"
                 Margin="2"
                 Background="Transparent"
                 Command="{Binding Update}"                
@@ -86,7 +89,7 @@
                 ToolTip="Широта °" />
             <Button
                 Margin="2"
-                Height="20"
+                Height="{StaticResource ButtonsHeight}"
                 Command="{Binding SelectRegion}"
                 ToolTip="Выбор региорна"
                 Background="Transparent">                
@@ -99,7 +102,7 @@
             Background="Transparent"
             IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}">
             <!--  Вкладка - Елочки  -->
-            <TabItem Width="25" Background="Transparent" Header="{StaticResource TreesImage}">
+            <TabItem Height="{StaticResource ButtonsHeight}" Background="Transparent" Header="{StaticResource TreesImage}">
                 <TabItem.Content>
                     <local:TreesView DataContext="{Binding Tree}" />
                 </TabItem.Content>

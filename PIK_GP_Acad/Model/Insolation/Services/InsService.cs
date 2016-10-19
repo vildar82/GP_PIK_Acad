@@ -208,8 +208,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (insViewModel.Model!= null)
             {
                 insViewModel.SaveViewModelAsync();
-                insViewModel.Model.SaveIns();
-                
+                insViewModel.Model.SaveIns();                
             }
 
             // Включение расчета для текущего документа

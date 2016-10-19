@@ -65,14 +65,16 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Map != null)
             {
                 // ??? пока ничего                
-                Map.Clear();
-                Map = null;
+                Map.Update();
             }
-            Map = new Map(this);
-            Map.BuildingAdded += Map_BuildingAdded;
-            Map.BuildingErased += Map_BuildingErased;
-            Map.BuildingModified += Map_BuildingModified;
-            Map.InsPointAdded += Map_InsPointAdded;
+            else
+            {
+                Map = new Map(this);
+                Map.BuildingAdded += Map_BuildingAdded;
+                Map.BuildingErased += Map_BuildingErased;
+                Map.BuildingModified += Map_BuildingModified;
+                Map.InsPointAdded += Map_InsPointAdded;
+            }
 
             // Сервис расчета            
             DefineCalcService();

@@ -11,26 +11,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="166" d:DesignWidth="156"
+    d:DesignHeight="259" d:DesignWidth="126"
     mc:Ignorable="d">
     <catel:UserControl.Resources>
         <BitmapImage x:Key="tree" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png" />
         <BitmapImage x:Key="ilums" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
         <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
         <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
+        <BitmapImage x:Key="Add" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
 
         <!--<Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
         <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
         <Image x:Key="options" Source="/PIK_GP_Acad;component/Resources/options.png" />
         <Image x:Key="Close" Source="/PIK_GP_Acad;component/Resources/Close.png" />-->
-        <sys:Double x:Key="ImageButtonHeight">22</sys:Double>
+        <sys:Double x:Key="PointButtonsHeight">20</sys:Double>
+        <sys:Double x:Key="TreeButtonsHeight">23</sys:Double>
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <!--  Точки  -->
+            <!--  Список точек  -->
             <RowDefinition />
-            <RowDefinition Height="Auto" />
-            <!--  Визуализация высот  -->
+            <!--  Кнопки  -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
@@ -49,97 +50,103 @@
             </i:Interaction.Triggers>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid
-                        Margin="2" HorizontalAlignment="Stretch"
-                        Background="{Binding InsValue.Requirement.Color, Converter={myconverters:ColorToBrushConverter}}"
-                        ToolTip="{Binding Info}">
+                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={myconverters:ColorToBrushConverter}}" ToolTip="{Binding Info}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Column="0"
-                            Margin="3"
+                            Margin="3" VerticalAlignment="Center"
                             FontSize="20" FontWeight="Bold"
                             Text="{Binding Number}" />
-                        <WrapPanel Grid.Column="1">
-                            <!--  Инфо  -->
-                            <StackPanel Margin="5" Orientation="Horizontal">
-                                <TextBlock
-                                    Margin="1" VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Text="{Binding InsValue.Requirement.Name}" />
-                                <TextBlock Margin="1" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего:{0}\,}" />
-                                <TextBlock Margin="1" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс:{0}}" />
-                            </StackPanel>
-                            <!--  Кнопки  -->
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <!--  Вкл/выкл зон инсоляции точки  -->
-                                <ToggleButton
-                                    Height="{StaticResource ImageButtonHeight}"
-                                    Margin="1"
-                                    Background="Transparent"
-                                    IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
-                                    ToolTip="Визуализация зон инсоляции точки.">
-                                    <Image Source="{StaticResource ilums}" />
-                                </ToggleButton>
-                                <!--  Редактирование параметров точки  -->
-                                <Button
-                                    Height="{StaticResource ImageButtonHeight}"
-                                    Margin="1"
-                                    Background="Transparent"                                    
-                                    Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
-                                    CommandParameter="{Binding}"
-                                    ToolTip="Редактирование параметров точки">
-                                    <Image Source="{StaticResource options}" />
-                                </Button>
-                                <!--  Удаление точки  -->
-                                <Button
-                                    Height="{StaticResource ImageButtonHeight}"
-                                    Margin="1"
-                                    Background="Transparent"                                    
-                                    Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
-                                    CommandParameter="{Binding}"
-                                    ToolTip="Удаление выделенной точки в списке">
-                                    <Image Source="{StaticResource Close}" />
-                                </Button>
-                            </StackPanel>
+                        <!--  Инфо  -->
+                        <WrapPanel Grid.Column="1" Margin="1" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}\,}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}}" />
                         </WrapPanel>
+                        <!--  Кнопки  -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
+                            <!--  Вкл/выкл зон инсоляции точки  -->
+                            <ToggleButton
+                                Height="{StaticResource PointButtonsHeight}"
+                                Margin="0"
+                                Background="Transparent"
+                                IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
+                                ToolTip="Визуализация зон инсоляции точки.">
+                                <Image Source="{StaticResource ilums}" />
+                            </ToggleButton>
+                            <!--  Редактирование параметров точки  -->
+                            <Button
+                                Height="{StaticResource PointButtonsHeight}"
+                                Margin="0"
+                                Background="Transparent"
+                                Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
+                                CommandParameter="{Binding}"
+                                ToolTip="Редактирование параметров точки">
+                                <Image Source="{StaticResource options}" />
+                            </Button>
+                            <!--  Удаление точки  -->
+                            <Button
+                                Width="{StaticResource PointButtonsHeight}"
+                                Height="{StaticResource PointButtonsHeight}"
+                                Margin="0" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Background="Transparent"
+                                Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
+                                CommandParameter="{Binding}"
+                                ToolTip="Удаление выделенной точки в списке">
+                                <Image Source="{StaticResource Close}" />
+                            </Button>
+                        </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Command="{Binding AddPoint}" Content="Добавить точку" ToolTip="{Binding AddpointInfo}" />
-        </StackPanel>
-        <!--  Управление елочками  -->
-        <WrapPanel Grid.Row="2" Margin="2">
-            <ToggleButton
-                Height="{StaticResource ImageButtonHeight}"
-                Margin="1"
+        <!--  Кнопки управление елочками  -->
+        <Grid Grid.Row="1" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition MinWidth="20"/>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <ToggleButton
+                    Height="{StaticResource TreeButtonsHeight}"
+                    Background="Transparent"
+                    IsChecked="{Binding IsVisualIllumsOn}"
+                    ToolTip="Включение/выключение визуализации зон инсоляции всех точек">
+                    <Image Source="{StaticResource ilums}" />
+                </ToggleButton>
+                <ToggleButton
+                    Height="{StaticResource TreeButtonsHeight}"
+                    Background="Transparent"
+                    IsChecked="{Binding IsVisualTreeOn}"
+                    ToolTip="Включение/выключение визуализации елочек">
+                    <Image Source="{StaticResource tree}" />
+                </ToggleButton>
+            </StackPanel>
+            <!--  Кнопка добавление точки  -->
+            <Button
+                Grid.Column="1"
+                Height="{StaticResource TreeButtonsHeight}"                
+                Command="{Binding AddPoint}"                
+                ToolTip="{Binding AddpointInfo}" 
+                Background="Transparent">
+                <Image Source="{StaticResource Add}" />
+            </Button>
+            <Button
+                Grid.Column="2"
+                Height="{StaticResource TreeButtonsHeight}"
+                HorizontalAlignment="Right"
                 Background="Transparent"
-                IsChecked="{Binding IsVisualIllumsOn}"
-                ToolTip="Включение/выключение визуализации зон инсоляции всех точек">
-                <Image Source="{StaticResource ilums}" />
-            </ToggleButton>
-            <ToggleButton
-                Height="{StaticResource ImageButtonHeight}"
-                Margin="1"
-                Background="Transparent"
-                IsChecked="{Binding IsVisualTreeOn}"
-                ToolTip="Включение/выключение визуализации елочек">
-                <Image Source="{StaticResource tree}" />
-            </ToggleButton>
-        </WrapPanel>
-        <Button
-            Grid.Row="2"
-            Height="{StaticResource ImageButtonHeight}"
-            Margin="2" HorizontalAlignment="Right"
-            Command="{Binding EditTreeOptions}"
-            Background="Transparent"
-            ToolTip="Настройки елочек">
-            <Image Source="{StaticResource options}" />
-        </Button>
+                Command="{Binding EditTreeOptions}"
+                ToolTip="Настройки елочек">
+                <Image Source="{StaticResource options}" />
+            </Button>
+        </Grid>
+
         <!--  Настройки высот для визуализации  -->
         <!--<StackPanel Grid.Row="1">
             <ListBox

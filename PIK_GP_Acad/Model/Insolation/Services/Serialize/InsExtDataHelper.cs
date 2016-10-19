@@ -34,7 +34,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var dicEd = obj.GetExtDic(doc);
             if (dicEd == null) return;
 
-            //using (doc.LockDocument())
+            using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
             {
                 var idDbo = obj.GetDBObject();

@@ -12,7 +12,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Расчетная область
     /// </summary>
-    public class Scope
+    public class Scope : IDisposable
     {
         Extents3d ext;
         public List<InsBuilding> Buildings { get; set; }        
@@ -21,6 +21,15 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             this.ext = ext;
             Buildings = items;
+        }
+
+        public void Dispose ()
+        {
+            foreach (var item in Buildings)
+            {
+                if (item.Contour != null || !item.Contour.IsDisposed)
+                    item.Contour.Dispose();
+            }
         }
     }
 }

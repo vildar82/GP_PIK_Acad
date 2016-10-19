@@ -246,6 +246,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 building.InitContour();
                 correctPt = building.Contour.GetClosestPointTo(pt, true);
+                building.Contour.Dispose();
                 t.Commit();
             }
 
