@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// карта - чертеж с объектами расчета инсоляции
     /// </summary>
-    public class Map
+    public class Map : IDisposable
     {        
         InsModel model;        
         Database db;
@@ -266,6 +266,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
                 t.Commit();
             }
+        }
+
+        public void Dispose ()
+        {
+            Clear();
         }
     }
 }

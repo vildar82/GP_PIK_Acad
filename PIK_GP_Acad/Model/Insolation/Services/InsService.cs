@@ -99,9 +99,13 @@ namespace PIK_GP_Acad.Insolation.Services
             // TODO: Сохранение всех расчетов
 
             Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);            
+            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
             //Settings.Save();
             //palette.Visible = false;
+            foreach (var item in insModels)
+            {
+                item.Value.Dispose();
+            }
             palette = null;
             insModels = null;
             insViewModel = null;
@@ -173,7 +177,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void ChangeDocument (Document doc)
         {
-            if (doc == null) return;
+            if (doc == null || doc.IsDisposed) return;
             var insModel = GetInsModel(doc);
             InsActivate = insModel != null;
         }

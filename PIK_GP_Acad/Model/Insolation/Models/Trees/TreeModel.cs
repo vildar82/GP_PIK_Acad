@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Расчет елочек
     /// </summary>    
-    public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues
+    public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
         private bool isVisualTreeOnOffForLoad;
@@ -327,14 +327,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Clear ()
         {
-            VisualTrees.VisualsDelete();
-            using (var t = Model.Doc.TransactionManager.StartTransaction())
+            VisualTrees?.VisualsDelete();
+            if (Points != null && Points.Count > 0)
             {
-                foreach (var item in Points)
+                using (var t = Model.Doc.TransactionManager.StartTransaction())
                 {
-                    item.Clear();
+                    foreach (var item in Points)
+                    {
+                        item.Clear();
+                    }
+                    t.Commit();
                 }
-                t.Commit();
             }
         }
 
@@ -403,6 +406,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 IsVisualTreeOn = values[index++].GetTvValue<bool>();
                 isVisualTreeOnOffForLoad = values[index++].GetTvValue<bool>();
             }
+        }
+
+        public void Dispose ()
+        {
+            Clear();
         }
     }
 }

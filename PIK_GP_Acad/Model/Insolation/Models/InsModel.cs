@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Модель инсоляции в привязке к документу
     /// </summary>
-    public class InsModel : ModelBase, ITypedDataValues
+    public class InsModel : ModelBase, ITypedDataValues, IDisposable
     {
         /// <summary>
         /// Для восстановление сохраненного расчета инсоляции
@@ -353,6 +353,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Определение типа точки и добавление в соответствующий расчет
             //LoadPoint(e);
-        }        
+        }
+
+        public void Dispose ()
+        {
+            if (Doc == null || Doc.IsDisposed) return;
+            Tree.Dispose();
+            Map.Dispose();
+        }
     }
 }
