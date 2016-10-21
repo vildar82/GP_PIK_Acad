@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualTree : VisualTransient
     {
-        public VisualTree (InsModel model)// : base (model.Doc)
+        public VisualTree (InsModel model) //: base (model.Doc)
         {
             Model = model;
         }
@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public override List<Entity> CreateVisual ()
         {
             var points = Points;
-            if (points == null || points.Count == 0 || points[0].Illums == null) return null;
+            if (points == null || points.Count == 0 || points.All(p=>p.Illums== null)) return null;
 
             List<Entity> draws = new List<Entity>();
             List<List<Polyline>> plsAllTrees = new List<List<Polyline>>();
@@ -51,9 +51,10 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             var db = Model.Doc.Database;
+            db.DisableUndoRecording(true);
             using (Model.Doc.LockDocument())
             using (var t = db.TransactionManager.StartTransaction())
-            {
+            {   
                 var ms = SymbolUtilityServices.GetBlockModelSpaceId(db).GetObject(OpenMode.ForWrite) as BlockTableRecord;
                 // Получение полилиний елочек от всех точек (у каждой высоты визуализации - свой список полилиний)
                 foreach (var item in Points)
@@ -67,7 +68,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         t.AddNewlyCreatedDBObject(pl, true);
                         idsPlsAllTrees[i].Add(pl.Id);
                         pl.DowngradeOpen();
-                    }
+                    }                    
                 }
                 t.Commit();
             }
@@ -91,8 +92,8 @@ namespace PIK_GP_Acad.Insolation.Services
                     var pls = plsAllTrees[i];
                     try
                     {
-                        var region = pls.Union((Region)overReg?.Clone());                        
-                        var plsByLoop = region.GetPolylines();
+                        var region = pls.Union((Region)overReg?.Clone());
+                        var plsByLoop = region.GetPoint2dCollections();
 
                         if (overReg == null)
                         {
@@ -103,8 +104,11 @@ namespace PIK_GP_Acad.Insolation.Services
                             overReg.BooleanOperation(BooleanOperationType.BoolUnite, region);
                         }
                         
-                        var hatchs = GetHatchs(plsByLoop, visOpt);                        
-                        draws.AddRange(hatchs);
+                        var hatch = GetHatch(plsByLoop, visOpt);                        
+                        if (hatch != null)
+                        {
+                            draws.Add(hatch);
+                        }                        
                     }
                     catch { }
                     foreach (var item in pls)
@@ -113,8 +117,9 @@ namespace PIK_GP_Acad.Insolation.Services
                         item.Erase();
                     }
                 }
-                t.Commit();
-            }        
+                t.Commit();                
+            }
+            db.DisableUndoRecording(false);
             return draws;
         }        
 
@@ -171,20 +176,39 @@ namespace PIK_GP_Acad.Insolation.Services
             return pl;
         }
 
-        private List<Hatch> GetHatchs (List<KeyValuePair<Polyline, BrepLoopType>> plsByLoop, VisualOption visOpt)
+        private Hatch GetHatch (List<KeyValuePair<Point2dCollection, BrepLoopType>> plsByLoop, VisualOption visOpt)
         {
-            List<Hatch> resHatchs = new List<Hatch>();            
-            foreach (var item in plsByLoop)
+            var externalLoops = plsByLoop.Where(p => p.Value != BrepLoopType.LoopInterior).ToList();
+            var interiorLoops = plsByLoop.Where(p => p.Value == BrepLoopType.LoopInterior).ToList();
+
+            if (!externalLoops.Any())
             {
-                var h = item.Key.CreateHatch();
-                SetEntityOpt(h, visOpt);
-                resHatchs.Add(h);
-                if (item.Value != BrepLoopType.LoopExterior)
+                return null;
+            }
+
+            var h = new Hatch();
+            h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
+            SetEntityOpt(h, visOpt);
+
+            foreach (var item in externalLoops)
+            {
+                var pts2dCol = item.Key;
+                pts2dCol.Add(item.Key[0]);
+                h.AppendLoop(HatchLoopTypes.External, pts2dCol, new DoubleCollection(new double[externalLoops.Count+1]));
+            }
+
+            if (interiorLoops.Any())
+            {
+                foreach (var item in interiorLoops)
                 {
-                    Logger.Log.Error("Внутренняя область в объединенном регионе елочек!!! Атас. Штриховка неправильно построится?!?!");
+                    var pts2dCol = item.Key;
+                    pts2dCol.Add(item.Key[0]);
+                    h.AppendLoop(HatchLoopTypes.SelfIntersecting, pts2dCol, new DoubleCollection(new double[interiorLoops.Count + 1]));
                 }
             }
-            return resHatchs;
+
+            h.EvaluateHatch(true);                                
+            return h;
         }
     }
 }

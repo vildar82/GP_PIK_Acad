@@ -42,10 +42,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public int TotalTime { get; set; }
 
         public string TotalTimeString {
-            get { return TotalTime.ToHours() + "ч."; }
+            get { return TotalTime.ToHours(); }
         }
         public string MaxContinuosTimeString {
-            get { return MaxContinuosTime.ToHours() + "ч."; }
+            get { return MaxContinuosTime.ToHours(); }
         }
 
         private static InsValue empty;

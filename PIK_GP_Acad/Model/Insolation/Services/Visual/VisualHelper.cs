@@ -82,7 +82,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var doc = Application.DocumentManager.MdiActiveDocument;
             var db = doc.Database;
             DBText dbText = new DBText();
-            dbText.SetDatabaseDefaults(db);
+            //dbText.SetDatabaseDefaults(db);
 
             SetEntityOpt(dbText, opt);
             dbText.TextStyleId = GetTextStyleId(doc);

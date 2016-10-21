@@ -38,12 +38,13 @@ namespace PIK_GP_Acad.Insolation.Services
 
         static InsService()
         {
-#if DEBUG
+//#if DEBUG
             Catel.Logging.LogManager.AddDebugListener();
             Catel.Logging.LogManager.LogMessage += LogManager_LogMessage;
-#endif
+//#endif
             // Performance
             ModelBase.DefaultDisableEventSubscriptionsOfChildValuesValue = false;
+            Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
 
             // Регистрация валидатора Catel.Extensions.FluentValidation
             ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
@@ -206,8 +207,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void LogManager_LogMessage (object sender, Catel.Logging.LogMessageEventArgs e)
         {
-            if (e.LogEvent == Catel.Logging.LogEvent.Error)
-                Logger.Log.Debug(e.Message);
+            if (e.LogEvent == Catel.Logging.LogEvent.Error || e.LogEvent == Catel.Logging.LogEvent.Warning)
+                Logger.Log.Error(e.Message);
         }
 
         /// <summary>
