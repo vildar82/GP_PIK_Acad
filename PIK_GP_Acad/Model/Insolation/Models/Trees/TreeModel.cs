@@ -72,6 +72,10 @@ namespace PIK_GP_Acad.Insolation.Models
                 DeletePointsVisualIllums();
                 Points.Clear();
             }
+            else
+            {
+                Points = new ObservableCollection<InsPoint>();
+            }
         }
     
         /// <summary>
@@ -134,7 +138,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 p.CreatePoint();
                 Points.Add(p);       
                 // Обновление - Расчет и визуализация точки         
-                p.Update();                
+                p.Update();
+                VisualTrees.VisualUpdate();        
             }
         }        
 
@@ -142,18 +147,15 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             if (dicInsPt == null || idPt.IsNull) return;
 
-            var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
-            if (dbPt == null) return;
-
-            if (Points == null)
+            using (var dbPt = idPt.Open(OpenMode.ForRead) as DBPoint)
             {
-                Points = new ObservableCollection<InsPoint>();                
-            }            
-            InsPoint insPoint = null;
-            insPoint = new InsPoint(dbPt, Model);
-            insPoint.SetExtDic(dicInsPt, Model.Doc);
-            // Добавление точки в расчет елочек
-            AddPoint(insPoint);
+                if (dbPt == null) return;                         
+                InsPoint insPoint = null;
+                insPoint = new InsPoint(dbPt, Model);
+                insPoint.SetExtDic(dicInsPt, Model.Doc);
+                // Добавление точки в расчет елочек
+                AddPoint(insPoint);
+            }
         }
 
         private void DeletePointsVisualIllums ()
@@ -207,6 +209,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void SavePoints ()
         {
+            if (Points == null) return;
             foreach (var item in Points)
             {
                 item.SaveInsPoint();
@@ -289,7 +292,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         /// <param name="dubl">Дублируется ли эта точка - т.е. если такая точка только одна, то ок, а две и больше - дубликаты</param>
         public bool HasPoint (Point3d pt, bool dubl = false)
-        {            
+        {
+            if (Points == null || Points.Count == 0) return false;
             if (dubl)
             {
                 return Points.Where(p => p.Point.IsEqualTo(pt, tolerancePoints)).Skip(1).Any();
@@ -305,6 +309,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public bool HasPoint (ObjectId idPoint)
         {
+            if (Points == null || Points.Count == 0) return false;
             return Points.Any(p => p.DBPointId == idPoint);
         }
 

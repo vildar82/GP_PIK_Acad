@@ -106,6 +106,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private async Task OnEditTreeOptionsExecute ()
         {
+            if (Application.DocumentManager.MdiActiveDocument == null) return;
             var treeOptionsVM = new TreeOptionsViewModel(Tree.TreeOptions);
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (await uiService.ShowDialogAsync(treeOptionsVM) == true)

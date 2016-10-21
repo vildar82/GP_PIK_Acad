@@ -80,10 +80,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             SetDataValues(dic.GetRec("WindowOptionsRec")?.Values, doc);
             var constr = new WindowConstruction();
-            constr.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);
-            
-            Construction = WindowConstruction.GetStandart(constr);
-            
+            constr.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);            
+            Construction = WindowConstruction.GetStandart(constr);            
         }
 
         public List<TypedValue> GetDataValues (Document doc)

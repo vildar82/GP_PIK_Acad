@@ -48,8 +48,6 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDbo(dbPt);
         }
 
-
-
         [ExcludeFromSerialization]
         public InsModel Model { get; set; }        
         public Point3d Point { get; set; }                                
@@ -91,28 +89,23 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             var doc = Model.Doc;
             // Создать точку на чертеже и записать в нее xdata и dictionary
-            using (doc.LockDocument())
-            using (var t = doc.TransactionManager.StartTransaction())
+            if (DBPointId.IsNull)
             {
-                DBPoint dbPoint;
-                // Если точка уже не была добавлена в чертеж                
-                if (DBPointId.IsNull)
+                using (doc.LockDocument())
+                using (var t = doc.TransactionManager.StartTransaction())
                 {
+                    // Если точка уже не была добавлена в чертеж                
                     Model.Map.IsEventsOn = false;
-                    dbPoint = new DBPoint(Point);
+                    var dbPoint = new DBPoint(Point);
                     var cs = doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
                     DBPointId = cs.AppendEntity(dbPoint);
                     SubscribeDbo(dbPoint);
                     t.AddNewlyCreatedDBObject(dbPoint, true);
                     InsPointHelper.SetInsPoint(dbPoint);
+                    t.Commit();                    
                 }
-                else
-                {
-                    dbPoint = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
-                }
-                t.Commit();
                 Model.Map.IsEventsOn = true;
-            }
+            }         
         }
 
         /// <summary>

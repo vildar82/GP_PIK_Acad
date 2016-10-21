@@ -93,6 +93,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
             doc.Database.BeginSave += Database_BeginSave;
             Redrawable();
+
+            IsCleared = false;
         }
 
         public void Redrawable ()
@@ -124,6 +126,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public TreeModel Tree { get; set; }
         [ExcludeFromSerialization]
         public string UpdateInfo { get; set; } = "Обновление расчета";
+        public bool IsCleared { get; private set; }
 
         private void Database_BeginSave (object sender, Autodesk.AutoCAD.DatabaseServices.DatabaseIOEventArgs e)
         {
@@ -157,6 +160,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Перерисовка точек
             Redrawable();
+
+            IsCleared = false;
         }             
 
         /// <summary>
@@ -179,6 +184,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void SaveIns ()
         {
+            if (Doc == null || Doc.IsDisposed) return;
             // Словарь InsModel
             var DicED = new DicED("InsModel");
             // Список значений самого расчета InsModelRec                        
@@ -260,7 +266,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public IInsPoint FindInsPoint (Point3d pt)
         {
-            var res = Tree.Points.FirstOrDefault(p => p.Point == pt);
+            var res = Tree.Points?.FirstOrDefault(p => p.Point == pt);
             return res;
         }
 
@@ -276,37 +282,27 @@ namespace PIK_GP_Acad.Insolation.Models
             if (idPoints == null || idPoints.Count == 0)
                 return;
 
-            //using (doc.LockDocument())
-            using (var t = doc.TransactionManager.StartTransaction())
-            {                
-                foreach (var idPt in idPoints)
-                {
-                    DefinePoint(idPt);
-                }
-                t.Commit();
-            }
-        }
-
-        private void LoadPoint (ObjectId idPt)
-        {
-            //using (Doc.LockDocument())
-            using (var t = Doc.TransactionManager.StartTransaction())
+            foreach (var idPt in idPoints)
             {
                 DefinePoint(idPt);
-                t.Commit();
             }
         }
 
-        private void DefinePoint(ObjectId idPt)
+        private void DefinePoint (ObjectId idPt)
         {
-            var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
-            if (dbPt == null) return;
+            DicED dicPt;
+            using (var t = Doc.TransactionManager.StartTransaction())
+            {
+                var dbPt = idPt.GetObject(OpenMode.ForRead) as DBPoint;
+                if (dbPt == null) return;
 
-            // Загрузка из словаря всех записей
-            var dicEd = InsExtDataHelper.Load(dbPt, Doc);
+                // Загрузка из словаря всех записей
+                dicPt = InsExtDataHelper.Load(dbPt, Doc);
+                t.Commit();
+            }
 
             // Если это инсоляционная точка елочек
-            var dicInsPt = dicEd.GetInner("InsPoint");
+            var dicInsPt = dicPt.GetInner("InsPoint");
             if (dicInsPt != null)
             {
                 Tree.AddPoint(dicInsPt, idPt);
@@ -320,6 +316,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Map.Clear();
             Tree.Clear();
+            IsCleared = true;
         }
 
         private void Map_BuildingModified (object sender, InsBuilding e)

@@ -38,41 +38,54 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
         public void VisualUpdate ()
-        {
-            //using (doc.LockDocument())
-            using (var t = doc.TransactionManager.StartTransaction())
+        {            
+            EraseDraws();
+            // Включение визуализации на чертеже
+            if (isOn)
             {
-                EraseDraws();
-                // Включение визуализации на чертеже
-                if (isOn)
+                draws = new List<ObjectId>();
+                var ds = CreateVisual();
+                if (ds != null && ds.Count != 0)
                 {
-                    var ds = CreateVisual();
+                    using (doc.LockDocument())
+                    using (var t = doc.TransactionManager.StartTransaction())
+                    {
+                        var db = doc.Database;
+                        var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
+                        var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
 
-                    var db = doc.Database;
-                    var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
-                    var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-
-                    foreach (var d in ds)
-                    {   
-                        ms.AppendEntity(d);
-                        t.AddNewlyCreatedDBObject(d, true);
+                        foreach (var d in ds)
+                        {
+                            if (d.Id.IsNull)
+                            {
+                                ms.AppendEntity(d);
+                                t.AddNewlyCreatedDBObject(d, true);
+                            }
+                            draws.Add(d.Id);
+                        }
+                        t.Commit();
                     }
                 }
-                t.Commit();
             }
         }
 
         private void EraseDraws ()
         {
             if (draws != null)
-            {                
-                foreach (var item in draws)
+            {
+                using (doc.LockDocument())
+                using (var t = doc.TransactionManager.StartTransaction())
                 {
-                    var ent = item.GetObject(OpenMode.ForWrite, false, true);
-                    ent.Erase();                                                 
+                    foreach (var item in draws)
+                    {
+                        if (item.IsNull || item.IsErased) continue;
+                        var ent = item.GetObject(OpenMode.ForWrite, false, true);
+                        ent.Erase();
+                    }
+                    t.Commit();
                 }
             }
-        }       
+        }              
 
         public void VisualsDelete ()
         {

@@ -23,7 +23,7 @@
         <!--<Image x:Key="update" Source="/PIK_GP_Acad;component/Resources/update.png" />-->
         <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
         <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
-        <sys:Double x:Key="ButtonsHeight">23</sys:Double>
+        <sys:Double x:Key="ButtonsHeight">25</sys:Double>
     </catel:UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -34,10 +34,11 @@
             <ToggleButton
                 x:Name="chkBoxInsActivated"
                 Grid.Row="0"
+                BorderThickness="0"                
                 Height="{StaticResource ButtonsHeight}"
-                Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-                Style="{StaticResource ToggleButtonOnOff}"
-                BorderThickness="1"
+                Width="{StaticResource ButtonsHeight}"
+                Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"
+                Style="{StaticResource ToggleButtonOnOff}"                
                 IsChecked="{Binding Path=(service:InsService.InsActivate)}"
                 ToolTip="Включение/отключение инсоляции для документа." />
             <Button
@@ -46,7 +47,7 @@
                 Margin="2"
                 Background="Transparent"
                 Command="{Binding Update}"                
-                IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}"
+                Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={catel:BooleanToHidingVisibilityConverter}}"                
                 ToolTip="{Binding UpdateInfo}">
                 <Image Source="{StaticResource update}"/>
                 <Button.Style>
@@ -76,7 +77,7 @@
         <StackPanel
             Grid.Row="0"
             Margin="1" HorizontalAlignment="Right"
-            IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}"
+            Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={catel:BooleanToHidingVisibilityConverter}}"                            
             Orientation="Horizontal">
             <TextBlock Margin="2" VerticalAlignment="Center" Text="Регион:" />
             <TextBlock
@@ -100,7 +101,7 @@
         <TabControl
             Grid.Row="1" Grid.Column="0"
             Background="Transparent"
-            IsEnabled="{Binding ElementName=chkBoxInsActivated, Path=IsChecked}">
+            Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={catel:BooleanToHidingVisibilityConverter}}">
             <!--  Вкладка - Елочки  -->
             <TabItem Height="{StaticResource ButtonsHeight}" Background="Transparent" Header="{StaticResource TreesImage}">
                 <TabItem.Content>

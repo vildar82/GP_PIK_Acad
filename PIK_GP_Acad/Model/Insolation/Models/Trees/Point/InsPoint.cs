@@ -97,8 +97,6 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        
-
         /// <summary>
         /// Описание точки
         /// </summary>        

@@ -40,8 +40,10 @@ namespace PIK_GP_Acad.Insolation.Services
         {
 #if DEBUG
             Catel.Logging.LogManager.AddDebugListener();
-#endif
             Catel.Logging.LogManager.LogMessage += LogManager_LogMessage;
+#endif
+            // Performance
+            ModelBase.DefaultDisableEventSubscriptionsOfChildValuesValue = false;
 
             // Регистрация валидатора Catel.Extensions.FluentValidation
             ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
@@ -57,7 +59,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Установка значение - включает/отключает расчет
         /// </summary>
         public static bool InsActivate {
-            get { return GetInsModel(null) != null; }
+            get {
+                var insModel = GetInsModel(Application.DocumentManager.MdiActiveDocument);
+                return insModel != null && !insModel.IsCleared;
+            }
             set {
                 ActivateIns(value);
                 RaiseStaticPropertyChanged(nameof(InsActivate));
@@ -76,7 +81,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 insModels = new Dictionary<Document, InsModel>();
 
             Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);            
+            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);
+            //Application.DocumentWindowCollection.DocumentWindowActivated += DocumentWindowCollection_DocumentWindowActivated;
+            
 
             InsPointDrawOverrule.Start();
 
@@ -92,14 +99,21 @@ namespace PIK_GP_Acad.Insolation.Services
             ChangeDocument(doc);               
         }
 
-        
+        //private static void DocumentWindowCollection_DocumentWindowActivated (object sender, DocumentWindowActivatedEventArgs e)
+        //{
+        //    if ((e.DocumentWindow.Title.ToUpper().CompareTo("START") == 0 ||
+        //         e.DocumentWindow.Title.ToUpper().CompareTo("НАЧАЛО") == 0)
+        //         && e.DocumentWindow.Document == null)
+        //    {
+        //        InsActivate = false;
+        //    }
+        //}
 
         public static void Stop ()
         {
-            // TODO: Сохранение всех расчетов
-
-            Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);
+            // TODO: Сохранение всех расчетов            
+            Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);            
+            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);            
             //Settings.Save();
             //palette.Visible = false;
             foreach (var item in insModels)
@@ -176,10 +190,9 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         private static void ChangeDocument (Document doc)
-        {
-            if (doc == null || doc.IsDisposed) return;
-            var insModel = GetInsModel(doc);
-            InsActivate = insModel != null;
+        {            
+            var insModel = GetInsModel(doc);            
+            InsActivate = (insModel != null && !insModel.IsCleared);
         }
 
         private static void Palette_StateChanged (object sender, Autodesk.AutoCAD.Windows.PaletteSetStateEventArgs e)
@@ -203,17 +216,22 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="onOff">Включение или выключение расчета</param>
         private static void ActivateIns (bool onOff)
         {
-            var doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null || doc.IsDisposed) return;
-
-            var insModel = GetInsModel(doc);            
+            var doc = Application.DocumentManager.MdiActiveDocument;                                    
 
             // Сохранение текущей модели (состояние контролов - особенность Catel)            
             if (insViewModel.Model!= null)
             {
                 insViewModel.SaveViewModelAsync();
-                insViewModel.Model.SaveIns();                
+                //insViewModel.Model.SaveIns();                
             }
+
+            if (doc == null || doc.IsDisposed)
+            {
+                insViewModel.Model = null;
+                return;
+            }
+
+            var insModel = GetInsModel(doc);
 
             // Включение расчета для текущего документа
             if (onOff)
@@ -230,7 +248,11 @@ namespace PIK_GP_Acad.Insolation.Services
                     insModels.Add(doc, insModel);
                     // Инициализация расчета
                     insModel.Initialize(doc);                                                                   
-                }                
+                }
+                else
+                {
+                    insModel.Update();
+                }           
             }
             // Отключение расчета для текущего документа
             else
@@ -240,9 +262,9 @@ namespace PIK_GP_Acad.Insolation.Services
                     // Сохранение расчета
                     //insModel.SaveIns();
                     insModel.Clear();
-                    // Удаление
-                    insModels.Remove(doc);
-                    insModel = null;
+                    //// Удаление
+                    //insModels.Remove(doc);
+                    //insModel = null;
                 }
             }
             // Переключение на модель (или на null)                
@@ -256,12 +278,8 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <returns></returns>
         private static InsModel GetInsModel (Document doc)
         {
-            InsModel res = null;
-            if (doc == null)
-            {
-                doc = Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument;
-                if (doc == null) return res;
-            }
+            if (doc == null || doc.IsDisposed) return null;
+            InsModel res = null;            
             insModels.TryGetValue(doc, out res);
             return res;
         }

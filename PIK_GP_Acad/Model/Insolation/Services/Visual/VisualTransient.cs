@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
         private bool isOn;
-        private List<Drawable> draws;
+        private List<Entity> draws;
 
         public abstract List<Entity> CreateVisual ();
 
@@ -31,15 +31,18 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
         public void VisualUpdate ()
-        {
-            var tm = TransientManager.CurrentTransientManager;
+        {                       
             // Включение визуализации на чертеже
             if (isOn)
             {
                 UpdateDraws();
-                foreach (var d in draws)
+                if (draws != null)
                 {
-                    tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
+                    var tm = TransientManager.CurrentTransientManager;
+                    foreach (var d in draws)
+                    {
+                        tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
+                    }
                 }
             }
             // Выключение
@@ -51,23 +54,20 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private void EraseDraws ()
         {
-            if (draws != null)
+            if (draws == null || draws.Count == 0) return;
+            var tm = TransientManager.CurrentTransientManager;
+            foreach (var item in draws)
             {
-                var tm = TransientManager.CurrentTransientManager;
-                foreach (var item in draws)
-                {
-                    tm.EraseTransient(item, vps);
-                    item.Dispose();
-                }
+                tm.EraseTransient(item, vps);
+                item.Dispose();
             }
+            draws = null;
         }
 
         private void UpdateDraws ()
         {
             EraseDraws();
-            draws = new List<Drawable>();
-            var ds = CreateVisual();
-            draws.AddRange(ds);
+            draws = CreateVisual();            
         }
 
         public void VisualsDelete ()

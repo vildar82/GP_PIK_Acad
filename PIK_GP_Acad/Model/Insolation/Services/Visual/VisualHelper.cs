@@ -43,22 +43,38 @@ namespace PIK_GP_Acad.Insolation.Services
             return res;
         }
 
-        
+        public static Autodesk.AutoCAD.DatabaseServices.Polyline CreatePolyline (List<Point2d> points, VisualOption opt)
+        {
+            Point2d[] pts = DistincPoints(points);
+            var pl = new Autodesk.AutoCAD.DatabaseServices.Polyline();
+            for (int i = 0; i < pts.Length; i++)
+            {
+                pl.AddVertexAt(i, pts[i], 0, 0, 0);
+            }
+            pl.Closed = true;
+            SetEntityOpt(pl, opt);
+            return pl;
+        }
 
         public static Hatch CreateHatch (List<Point2d> points, VisualOption opt)
         {
-            //  Отсеивание одинаковых точек
-            var pts = points.Distinct(new AcadLib.Comparers.Point2dEqualityComparer()).ToArray();
+            Point2d[] pts = DistincPoints(points);
             // Штриховка            
             var ptCol = new Point2dCollection(pts);
             ptCol.Add(points[0]);
-            var dCol = new DoubleCollection(new double[points.Count]);            
+            var dCol = new DoubleCollection(new double[points.Count]);
 
             var h = new Hatch();
             h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
-            SetEntityOpt(h, opt);            
+            SetEntityOpt(h, opt);
             h.AppendLoop(HatchLoopTypes.Default, ptCol, dCol);
             return h;
+        }
+
+        private static Point2d[] DistincPoints (List<Point2d> points)
+        {
+            //  Отсеивание одинаковых точек
+            return points.Distinct(new AcadLib.Comparers.Point2dEqualityComparer()).ToArray();
         }
 
         public static DBText CreateText (string text, VisualOption opt, double height, AttachmentPoint justify)
@@ -86,7 +102,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return c;
         }
 
-        private static void SetEntityOpt(Entity ent, VisualOption opt)
+        public static void SetEntityOpt(Entity ent, VisualOption opt)
         {
             if (opt.Color != null)
                 ent.Color = opt.Color;
