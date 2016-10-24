@@ -93,13 +93,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
             using (Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
                               new Point3d(ptCalc.X + xRayToEnd, yShadow, 0)))
-            {
-                //#if DEBUG
-                //            var cs = map.Doc.Database.CurrentSpaceId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-                //            var t = cs.Database.TransactionManager.TopTransaction;
-                //            cs.AppendEntity(lineShadow);
-                //            t.AddNewlyCreatedDBObject(lineShadow, true);
-                //#endif
+            {                
                 // перебор домов одной высоты
                 foreach (var build in buildings)
                 {
@@ -178,7 +172,6 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool DefineStartAnglesByOwnerBuilding ()
         {
-            bool res = true;
             double windowStartAngle;
             double windowEndAngle;
             Vector2d vecWindowOutPerp;
@@ -189,103 +182,41 @@ namespace PIK_GP_Acad.Insolation.Services
                 out vecWindowOutPerp, out vecWinToEast, out vecWinToWest);
 
             // Угол восточной плоскости окна больше стартового угла
-            if (windowStartAngle > AngleStartOnPlane)
-            {
-                if (windowStartAngle< AngleEndOnPlane)
-                {
-                    AngleStartOnPlane = windowStartAngle;
-                }
-                else
-                {
-                    if (windowEndAngle <= AngleStartOnPlane || windowEndAngle >= AngleEndOnPlane)
-                    {
-                        AngleStartOnPlane = windowStartAngle;
-                    }
-                }                                
-            }   
-            if (windowEndAngle < AngleEndOnPlane)
-            {
-                AngleEndOnPlane = windowEndAngle;
-            }
+            CorrectStartAnglesByOwnerSegment(windowStartAngle, windowEndAngle);
 
             // Если стартовый угол больше конечного - то освещения вообще нет
-            if (AngleStartOnPlane >= AngleEndOnPlane)
+            if (IsAllShadow()) return false;
+
+            // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
+            double cShadow;
+            double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height - insPt.Height, out cShadow);
+            double windowOutPerpendAngle = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle);
+
+            // Проверка ограничения от самого здания с восточной стороны
+            CorrectStartAnglesByOwnerZeroLineIntersects();
+
+            if (windowOutPerpendAngle > AngleStartOnPlane)
             {
-                res = false;
+                DefineRestrictionAngleInSide(vecWinToEast, yShadowLen, true);
             }
-            else
-            {                
-                // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
-                double cShadow;
-                double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height-insPt.Height, out cShadow);                
 
-                double windowOutPerpendAngle = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle);
+            if (IsAllShadow()) return false;
 
-                // Проверка ограничения от самого здания с восточной стороны
-                if (windowOutPerpendAngle > AngleStartOnPlane)
-                {
-                    DefineRestrictionAngleInSide(vecWinToEast, yShadowLen, true);
-                }
-
-                if (AngleStartOnPlane >= AngleEndOnPlane)
-                {
-                    res = false;
-                }
-                else
-                {
-                    // Проверка ограничения от самого здания с западной стороны
-                    if (windowOutPerpendAngle < AngleEndOnPlane)
-                    {
-                        DefineRestrictionAngleInSide(vecWinToWest, yShadowLen, false);
-                    }
-                }
-
-                if (res)
-                {
-                    // Окончательная проверка углов
-                    // Стартовый угол не может быть больше конечного
-                    if (AngleStartOnPlane >= AngleEndOnPlane)
-                    {
-                        res = false;
-                    }
-                    else
-                    {
-                        // Конечный угол не может быть больше Pi
-                        if (AngleEndOnPlane >= Math.PI)
-                        {
-                            throw new Exception("Ошибка расчета ограничивающих углов.");
-                        }
-                    }
-                }
-
-
-
-                //    // Линия сечения здания проходящая через расчетную точку (горизонтально)
-                //    Line lineEast = new Line(new Point3d(ptCalc.X, ptCalc.Y, 0),
-                //                        new Point3d(buildingOwner.ExtentsInModel.MaxPoint.X, ptCalc.Y, 0));
-                //var ilumsEastBoundary = GetBuildingLineShadowBoundary(buildingOwner, lineEast, false, Intersect.OnBothOperands);
-                //if (ilumsEastBoundary.Count > 0)
-                //{
-                //    var ilum = ilumsEastBoundary[0];
-                //    if (ilum.AngleEndOnPlane > angleStartOnPlane)
-                //    {
-                //        angleStartOnPlane = ilum.AngleEndOnPlane;
-                //    }
-                //}
-
-                //Line lineWest = new Line(new Point3d(buildingOwner.ExtentsInModel.MinPoint.X, ptCalc.Y, 0),
-                //                        new Point3d(ptCalc.X, ptCalc.Y, 0));
-                //var ilumsWestBoundary = GetBuildingLineShadowBoundary(buildingOwner, lineWest, false, Intersect.OnBothOperands);
-                //if (ilumsWestBoundary.Count > 0)
-                //{
-                //    var ilum = ilumsWestBoundary[0];
-                //    if (ilum.AngleStartOnPlane < angleEndOnPlane)
-                //    {
-                //        angleEndOnPlane = ilum.AngleStartOnPlane;
-                //    }
-                //}
+            // Проверка ограничения от самого здания с западной стороны
+            if (windowOutPerpendAngle < AngleEndOnPlane)
+            {
+                DefineRestrictionAngleInSide(vecWinToWest, yShadowLen, false);
             }
-            return res;
+
+            // Окончательная проверка углов
+            // Стартовый угол не может быть больше конечного
+            if (IsAllShadow()) return false;
+            // Конечный угол не может быть больше Pi
+            if (AngleEndOnPlane >= Math.PI)
+            {
+                throw new Exception("Ошибка расчета ограничивающих углов.");
+            }
+            return true;
         }
 
         /// <summary>
@@ -518,6 +449,50 @@ namespace PIK_GP_Acad.Insolation.Services
 
             if (angleLimitByOwnerBuilding != 0)
                 AngleEndOnPlane = angleLimitByOwnerBuilding;
+        }
+
+        private void CorrectStartAnglesByOwnerSegment (double windowStartAngle, double windowEndAngle)
+        {
+            if (windowStartAngle > AngleStartOnPlane)
+            {
+                if (windowStartAngle < AngleEndOnPlane)
+                {
+                    AngleStartOnPlane = windowStartAngle;
+                }
+                else if (windowEndAngle <= AngleStartOnPlane || windowEndAngle >= AngleEndOnPlane)
+                {
+                    AngleStartOnPlane = windowStartAngle;
+                }
+            }
+            if (windowEndAngle < AngleEndOnPlane)
+            {
+                AngleEndOnPlane = windowEndAngle;
+            }
+        }
+
+        private bool IsAllShadow ()
+        {
+            return AngleStartOnPlane >= AngleEndOnPlane;
+        }
+
+        private void CorrectStartAnglesByOwnerZeroLineIntersects ()
+        {
+            // Линия через точку ноль.
+            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 50, ptCalc.Y, 0)))
+            {
+                buildingOwner.InitContour();
+                using (var contour = buildingOwner.Contour)
+                {
+                    var ptsIntersect = new Point3dCollection();
+                    contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);                    
+
+                    // Если стартовой точки нет среди точек пересечения - то дом паралельно оси X. Нужно проверить направление окна, если на север, то дом не освещен полностью.
+
+
+                    // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.
+                    // GetLoopPointsAbove - переписать!
+                }
+            }
         }
     }
 }

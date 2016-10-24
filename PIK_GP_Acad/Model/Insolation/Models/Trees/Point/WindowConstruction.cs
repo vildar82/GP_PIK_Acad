@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AcadLib;
 using AcadLib.WPF;
+using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Catel.Data;

@@ -162,14 +162,12 @@
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
     <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
-    <Compile Include="Model\Insolation\Services\Serialize\IExtDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
-    <Compile Include="Model\Insolation\Services\Serialize\ITypedDataValues.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDrawOverrule.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />

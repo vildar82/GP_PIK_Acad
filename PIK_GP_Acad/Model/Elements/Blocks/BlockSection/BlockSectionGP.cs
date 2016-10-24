@@ -52,7 +52,12 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         {
             var res = AreaLive * (Floors - 1);
             if (Floors >= 30)
-                res *= 0.92;
+            {
+                if (Name != "Б-13")
+                {
+                    res *= 0.92;
+                }
+            }
             return res;
         }
     }

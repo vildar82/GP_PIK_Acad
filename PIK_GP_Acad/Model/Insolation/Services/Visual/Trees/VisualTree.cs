@@ -93,7 +93,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     try
                     {
                         var region = pls.Union((Region)overReg?.Clone());
-                        var plsByLoop = region.GetPoint2dCollections();
+                        var plsByLoop = region.GetPoints2dByLoopType();
 
                         if (overReg == null)
                         {
