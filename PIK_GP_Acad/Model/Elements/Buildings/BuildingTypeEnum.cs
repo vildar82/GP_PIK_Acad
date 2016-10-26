@@ -15,20 +15,17 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// <summary>
         /// Жилое
         /// </summary>
-        [Description("Жилое")]
-        [Catel.ComponentModel.DisplayName("Жилое")]
+        [Description("Жилое")]        
         Living,
         /// <summary>
         /// Социальное
         /// </summary>
-        [Description("Социальное")]
-        [Catel.ComponentModel.DisplayName("Социальное")]
+        [Description("Социальное")]        
         Social,
         /// <summary>
         /// Гараж
         /// </summary>
-        [Description("Гараж")]
-        [Catel.ComponentModel.DisplayName("Гараж")]
+        [Description("Гараж")]        
         Garage,
     }
 }

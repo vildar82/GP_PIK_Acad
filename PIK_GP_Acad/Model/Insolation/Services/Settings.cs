@@ -6,12 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Catel.Data;
 using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class Settings : SavableModelBase<Settings>, ISettings
+    public class Settings : ISettings
     {
         private static string fileSettings = AcadLib.IO.Path.GetSharedFile("Insolation", "Settings.xml");
         private static Settings settings;
@@ -24,18 +23,8 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         public void Load ()
-        {   
-            if (!File.Exists(fileSettings))
-            {
-                settings = Default();
-            }
-            else
-            {
-                using (var fileStream = File.Open(fileSettings, FileMode.Open))
-                {
-                    settings = Load(fileStream, SerializationMode.Xml,new Catel.Runtime.Serialization.SerializationConfiguration());                                        
-                }
-            }            
+        {
+            settings = Default();            
             Regions = settings.Regions==null? DefaultRegions(): settings.Regions;            
             InsRequirements = settings.InsRequirements == null ? DefaultInsRequirements() : settings.InsRequirements;            
         }
@@ -69,8 +58,6 @@ namespace PIK_GP_Acad.Insolation.Services
             }            
             return regions;
         }
-
-        
 
         public static ObservableCollection<InsRequirement> DefaultInsRequirements ()
         {

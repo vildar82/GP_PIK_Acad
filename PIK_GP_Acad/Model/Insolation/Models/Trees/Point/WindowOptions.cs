@@ -7,8 +7,6 @@ using AcadLib;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Catel.Data;
-using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -52,13 +50,13 @@ namespace PIK_GP_Acad.Insolation.Models
             return b;
         }       
 
-        protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)
-        {            
-            if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
-            {
-                ShadowAngle = CalcShadowAngle();
-            }            
-        }
+        //protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)
+        //{            
+        //    if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
+        //    {
+        //        ShadowAngle = CalcShadowAngle();
+        //    }            
+        //}
 
         public static WindowOptions Default ()
         {

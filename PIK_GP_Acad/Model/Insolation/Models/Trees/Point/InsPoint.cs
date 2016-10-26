@@ -4,11 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Geometry;
-using Catel.Data;
-using Catel.IoC;
-using Catel.MVVM;
-using Catel.Runtime.Serialization;
-using Catel.Services;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
@@ -25,8 +20,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчетная точка
     /// </summary>    
     public class InsPoint : InsPointBase, IInsPoint
-    {
-        [ExcludeFromSerialization]
+    {        
         public VisualPointIllums VisualIllums { get; set; }
 
         public InsPoint () { }
@@ -52,12 +46,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void Initialize (TreeModel treeModel)
         {
             Model = treeModel.Model;
-        }
-
-        protected override void OnInitialized ()
-        {
-            base.OnInitialized();            
-        }                  
+        }              
 
         /// <summary>
         /// Расчет точки - зон освещенности и времени

@@ -1,6 +1,4 @@
-﻿using Catel.Windows;
-
-namespace PIK_GP_Acad.Insolation.UI
+﻿namespace PIK_GP_Acad.Insolation.UI
 {
     public partial class InsPointView
     {   
@@ -9,10 +7,10 @@ namespace PIK_GP_Acad.Insolation.UI
 
         }
 
-        public InsPointView (InsPointViewModel viewModel)
-            : base(viewModel)
+        public InsPointView (InsPointViewModel vm)            
         {            
             InitializeComponent ();
+            DataContext = vm;
         }
     }
 }

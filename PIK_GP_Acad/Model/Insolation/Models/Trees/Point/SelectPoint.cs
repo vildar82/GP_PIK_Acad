@@ -8,8 +8,6 @@ using AcadLib.Exceptions;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
-using Catel.IoC;
-using Catel.Services;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 
@@ -41,9 +39,8 @@ namespace PIK_GP_Acad.Insolation.Models
             var p = new InsPoint(model, pt);
             p.Building = building;           
             // Окно настроек расчетной точки (парметры окна, здания, высота точки)
-            var pViewModel = new InsPointViewModel(p);
-            var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-            if (uiVisualizerService.ShowDialog(pViewModel) == true)
+            var vm = new InsPointViewModel(p);            
+            if (InsService.ShowDialog(vm) == true)
             {
                 return p;
             }

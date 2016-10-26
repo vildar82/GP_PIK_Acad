@@ -9,9 +9,6 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
-using Catel.Data;
-using Catel.MVVM;
-using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -47,26 +44,21 @@ namespace PIK_GP_Acad.Insolation.Models
             DBPointId = dbPt.Id;
             SubscribeDbo(dbPt);
         }
-
-        [ExcludeFromSerialization]
+        
         public InsModel Model { get; set; }        
         public Point3d Point { get; set; }                                
         public ObjectId DBPointId { get; set; }
         /// <summary>
         /// Визуализирует точку
-        /// </summary>            
-        [ExcludeFromSerialization]
+        /// </summary>                    
         public IVisualService VisualPoint { get; set; }
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }        
         public InsBuilding Building { get; set; }
         
-        public int Height { get; set; }
-        [ExcludeFromSerialization]
-        public List<IIlluminationArea> Illums { get; set; }
-        [ExcludeFromSerialization]
-        public string Info { get; set; }
-        [ExcludeFromSerialization]
+        public int Height { get; set; }        
+        public List<IIlluminationArea> Illums { get; set; }        
+        public string Info { get; set; }        
         public InsValue InsValue { get; set; }        
         public int Number { get; set; }
         public WindowOptions Window { get; set; }       

@@ -9,14 +9,6 @@ using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using Catel;
-using Catel.ApiCop;
-using Catel.ApiCop.Listeners;
-using Catel.Data;
-using Catel.ExceptionHandling;
-using Catel.IoC;
-using Catel.Services;
-using Catel.Windows;
 using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.UI;
@@ -28,6 +20,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public static class InsService
     {
+        static Dictionary<Type, Type> views;
         static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;        
         static Dictionary<Document, InsModel> insModels;
         static InsServicePallete palette;
@@ -38,20 +31,10 @@ namespace PIK_GP_Acad.Insolation.Services
 
         static InsService()
         {
-//#if DEBUG
-            Catel.Logging.LogManager.AddDebugListener();
-            Catel.Logging.LogManager.LogMessage += LogManager_LogMessage;
-//#endif
-            // Performance
-            ModelBase.DefaultDisableEventSubscriptionsOfChildValuesValue = false;
-            Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
-
-            // Регистрация валидатора Catel.Extensions.FluentValidation
-            ServiceLocator.Default.RegisterType<IValidatorProvider, FluentValidatorProvider>();
-
             Settings = new Settings();
             Settings.Load();
-            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);           
+            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
+            views = GetViews();
         }
 
         /// <summary>
@@ -69,6 +52,19 @@ namespace PIK_GP_Acad.Insolation.Services
                 RaiseStaticPropertyChanged(nameof(InsActivate));
             }
         }
+
+        public static bool? ShowDialog (ViewModelBase viewModel)
+        {
+            Type view;
+            if (views.TryGetValue(viewModel.GetType(), out view))
+            {
+                var win = (System.Windows.Window)Activator.CreateInstance(view);
+                win.DataContext = viewModel;
+                return Autodesk.AutoCAD.ApplicationServices.Core.Application.ShowModalWindow(win);
+            }
+            throw new Exception("Окно не определено - тип = " + viewModel.GetType());            
+        }
+
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
         public static void RaiseStaticPropertyChanged (string propName)
         {
@@ -100,16 +96,6 @@ namespace PIK_GP_Acad.Insolation.Services
             ChangeDocument(doc);               
         }
 
-        //private static void DocumentWindowCollection_DocumentWindowActivated (object sender, DocumentWindowActivatedEventArgs e)
-        //{
-        //    if ((e.DocumentWindow.Title.ToUpper().CompareTo("START") == 0 ||
-        //         e.DocumentWindow.Title.ToUpper().CompareTo("НАЧАЛО") == 0)
-        //         && e.DocumentWindow.Document == null)
-        //    {
-        //        InsActivate = false;
-        //    }
-        //}
-
         public static void Stop ()
         {
             // TODO: Сохранение всех расчетов            
@@ -126,12 +112,6 @@ namespace PIK_GP_Acad.Insolation.Services
             insViewModel = null;
 
             InsPointDrawOverrule.Stop();
-
-#if DEBUG
-            var apiCopFilelistener = new TextFileApiCopListener("apiCopInsolationListener.txt");
-            ApiCopManager.AddListener(apiCopFilelistener);
-            ApiCopManager.WriteResults();
-#endif
         }
 
         public static IInsCalcService GetCalcService (InsOptions options)
@@ -144,25 +124,8 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var req = dictInsReq[type];
             return req;
-        }
-
-        /// <summary>
-        /// Возвращает значение атрибута Catel.ComponentModel.DisplayName навешенного на этот объект
-        /// </summary>        
-        public static string GetDisplayName (object obj)
-        {
-            var converter = new Catel.MVVM.ObjectToDisplayNameConverter();
-            return (string)converter.Convert(obj, typeof(string), null, null);
-        }
-
-        public static void ShowMessage (string msg, MessageImage img)
-        {
-            ServiceLocator.Default.ResolveType<IMessageService>().ShowAsync(msg, "Инсоляция", MessageButton.OK, img);
-        }
-        public static void ShowMessage (Exception ex, string msg)
-        {
-            ShowMessage($"{msg} \n\r {ex.Message}", MessageImage.Error);
-        }
+        }                
+        
 
         /// <summary>
         /// Поиск модели точки по инсоляционной точке на чертеже
@@ -204,13 +167,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 Stop();
             }
         }
-
-        private static void LogManager_LogMessage (object sender, Catel.Logging.LogMessageEventArgs e)
-        {
-            if (e.LogEvent == Catel.Logging.LogEvent.Error || e.LogEvent == Catel.Logging.LogEvent.Warning)
-                Logger.Log.Error(e.Message);
-        }
-
+        
         /// <summary>
         /// Включение отключение расчета для текущего документа
         /// </summary>
@@ -222,7 +179,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Сохранение текущей модели (состояние контролов - особенность Catel)            
             if (insViewModel.Model!= null)
             {
-                insViewModel.SaveViewModelAsync();
+                //insViewModel.SaveViewModelAsync();
                 //insViewModel.Model.SaveIns();                
             }
 
@@ -283,6 +240,13 @@ namespace PIK_GP_Acad.Insolation.Services
             InsModel res = null;            
             insModels.TryGetValue(doc, out res);
             return res;
+        }
+
+        private static Dictionary<Type, Type> GetViews ()
+        {
+            return new Dictionary<Type, Type> {
+                { typeof(InsRegionViewModel),  typeof(InsRegionView)}
+            };
         }
     }
 }

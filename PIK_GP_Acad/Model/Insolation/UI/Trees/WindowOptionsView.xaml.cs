@@ -2,9 +2,14 @@
 {
     public partial class WindowOptionsView
     {
-        public WindowOptionsView ()
+        public WindowOptionsView() : this(null)
+        {
+
+        }
+        public WindowOptionsView (WindowOptionsViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
         }
     }
 }

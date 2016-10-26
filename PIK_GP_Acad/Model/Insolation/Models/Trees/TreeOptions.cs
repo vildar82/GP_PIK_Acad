@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Catel.Data;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib;
 using AcadLib.XData;

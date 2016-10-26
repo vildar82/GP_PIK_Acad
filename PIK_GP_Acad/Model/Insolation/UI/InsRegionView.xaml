@@ -1,10 +1,11 @@
-﻿<catel:DataWindow
+﻿<Window
     x:Class="PIK_GP_Acad.Insolation.UI.InsRegionView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"    
     xmlns:catel="http://catel.codeplex.com"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+    Title="Регион"
     d:DesignHeight="140" d:DesignWidth="260"
     mc:Ignorable="d"
     ResizeMode="CanResizeWithGrip"
@@ -31,4 +32,4 @@
             <TextBox Text="{Binding SelectedRegion.Latitude}" VerticalAlignment="Center" IsEnabled="False" />
         </StackPanel>
     </Grid>
-</catel:DataWindow>
+</Window>

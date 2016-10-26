@@ -11,44 +11,39 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Catel.MVVM;
-using Catel.Fody;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
-using Catel.IoC;
-using Catel.Services;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
     public class TreesViewModel : ViewModelBase
-    {
-        private IUIVisualizerService uiService;
-        public TreesViewModel (TreeModel treeModel, IUIVisualizerService uiService)
-        {
-            this.uiService = uiService;
+    {        
+        public TreesViewModel (TreeModel treeModel)
+        {            
             Tree = treeModel;
-            AddPoint = new TaskCommand(OnAddPointExecute);
-            ShowPoint = new TaskCommand(OnShowPointExecute);
-            EditPoint = new TaskCommand<InsPoint>(OnEditPointExecute);
-            DeletePoint = new TaskCommand<InsPoint>(OnDeletePointExecute);
-            EditTreeOptions = new TaskCommand(OnEditTreeOptionsExecute);
+            AddPoint = new RelayCommand(OnAddPointExecute);
+            ShowPoint = new RelayCommand(OnShowPointExecute);
+            EditPoint = new RelayCommand<InsPoint>(OnEditPointExecute);
+            DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);
+            EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
         }
 
-        [Model]        
-        [Expose(nameof(TreeModel.Points))]
-        [Expose(nameof(TreeModel.IsVisualIllumsOn))]
-        [Expose(nameof(TreeModel.IsVisualTreeOn))]        
+        //[Model]        
+        //[Expose(nameof(TreeModel.Points))]
+        //[Expose(nameof(TreeModel.IsVisualIllumsOn))]
+        //[Expose(nameof(TreeModel.IsVisualTreeOn))]        
         public TreeModel Tree { get; set; }  
 
         public InsPoint SelectedPoint { get; set; }        
 
-        public TaskCommand AddPoint { get; private set; }
-        public TaskCommand ShowPoint { get; private set; }
-        public TaskCommand<InsPoint> EditPoint { get; private set; }
-        public TaskCommand<InsPoint> DeletePoint { get; private set; }
-        public TaskCommand EditTreeOptions { get; private set; }
+        public RelayCommand AddPoint { get; private set; }
+        public RelayCommand ShowPoint { get; private set; }
+        public RelayCommand<InsPoint> EditPoint { get; private set; }
+        public RelayCommand<InsPoint> DeletePoint { get; private set; }
+        public RelayCommand EditTreeOptions { get; private set; }
 
-        private async Task OnAddPointExecute ()
+        private void OnAddPointExecute ()
         {
             // Выбор точки на чертеже и задание параметров окна
             SelectPoint selPt = new SelectPoint();
@@ -61,12 +56,12 @@ namespace PIK_GP_Acad.Insolation.UI
             p.SaveInsPoint();            
         }        
         
-        private async Task OnShowPointExecute ()
+        private void OnShowPointExecute ()
         {
             Tree.ShowPoint(SelectedPoint);
         }
 
-        private async Task OnEditPointExecute (InsPoint insPoint)
+        private void OnEditPointExecute (InsPoint insPoint)
         {            
             if (insPoint == null) return;
 
@@ -77,7 +72,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
             var insPointVM = new InsPointViewModel(insPoint);
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-            if (await uiService.ShowDialogAsync(insPointVM) == true)
+            if (InsService.ShowDialog(insPointVM)== true)
             {
                 // Если измениля тип здания - то пересчет всех точек на этом здании
                 if (oldBuildingType != building.BuildingType)
@@ -99,17 +94,15 @@ namespace PIK_GP_Acad.Insolation.UI
             }             
         }
 
-        private async Task OnDeletePointExecute (InsPoint insPoint)
+        private void OnDeletePointExecute (InsPoint insPoint)
         {
             insPoint.Delete();            
         }
 
-        private async Task OnEditTreeOptionsExecute ()
-        {
-            if (Application.DocumentManager.MdiActiveDocument == null) return;
-            var treeOptionsVM = new TreeOptionsViewModel(Tree.TreeOptions);
-            //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-            if (await uiService.ShowDialogAsync(treeOptionsVM) == true)
+        private void OnEditTreeOptionsExecute ()
+        {            
+            var treeOptionsVM = new TreeOptionsViewModel(Tree.TreeOptions);            
+            if (InsService.ShowDialog(treeOptionsVM) == true)
             {
                 // Обновление расчета елочек
                 Tree.Update();

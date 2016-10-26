@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Catel.MVVM;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models

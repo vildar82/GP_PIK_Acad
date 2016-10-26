@@ -24,9 +24,10 @@ namespace PIK_GP_Acad.Insolation.UI
 
         }
 
-        public InsView (InsViewModel viewModel) : base(viewModel)
+        public InsView (InsViewModel vm)
         {
-            InitializeComponent();            
+            InitializeComponent();
+            DataContext = vm;
         }        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,6 @@ using AcadLib;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Catel.Data;
-using Catel.Fody;
-using Catel.IO;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -32,7 +30,7 @@ namespace PIK_GP_Acad.Insolation.Models
             RegionPart = regPart;
             RegionName = regName;
             City = city;
-            Latitude = latitude;
+            Latitude = latitude;            
         }
 
         public bool Equals (InsRegion other)

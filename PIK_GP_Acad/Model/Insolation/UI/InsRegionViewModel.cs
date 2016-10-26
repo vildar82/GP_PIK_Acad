@@ -1,5 +1,4 @@
-﻿using Catel.MVVM;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -31,16 +30,10 @@ namespace PIK_GP_Acad.Insolation.UI
             SelectedRegionName = InsRegion.RegionName;
             SelectedRegion = region;
         }
-
-        [Model]
+        
         public InsRegion InsRegion { get; set; }
-
-        public override string Title { get { return "Регион"; } }
-
         public ObservableCollection<string> RegionNames { get; set; }
-
         public string SelectedRegionName { get; set; }
-
         public ObservableCollection<InsRegion> Cities { get; set; }
         public InsRegion SelectedRegion { get; set; }
 
@@ -71,21 +64,6 @@ namespace PIK_GP_Acad.Insolation.UI
                 Cities = dictRegions[SelectedRegionName];
                 SelectedRegion = Cities[0];
             }                
-        }
-
-        protected override async Task InitializeAsync ()
-        {
-            await base.InitializeAsync();
-
-            // TODO: subscribe to events here  
-            
-        }
-
-        protected override async Task CloseAsync ()
-        {
-            // TODO: unsubscribe from events here
-
-            await base.CloseAsync();
         }
     }
 }

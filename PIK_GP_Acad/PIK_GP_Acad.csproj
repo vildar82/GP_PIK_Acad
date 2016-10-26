@@ -62,29 +62,8 @@
       <HintPath>..\..\..\AutoCAD_PIK_Manager\AutoCAD_PIK_Manager\bin\Release\AutoCAD_PIK_Manager.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Catel.Core, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.4.5.3\lib\net45\Catel.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Catel.Extensions.Controls, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.Controls.4.5.3\lib\net45\Catel.Extensions.Controls.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Catel.Extensions.FluentValidation, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.FluentValidation.4.5.3\lib\net45\Catel.Extensions.FluentValidation.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Catel.Fody.Attributes, Version=2.14.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Fody.2.14.0\lib\portable-net4+sl4+wp7+win8+wpa81+MonoAndroid14+MonoTouch40\Catel.Fody.Attributes.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Catel.MVVM, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.MVVM.4.5.3\lib\net45\Catel.MVVM.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MicroMvvm">
+      <HintPath>..\..\..\Package\MVVM\MicroMvvm.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -94,9 +73,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -215,7 +192,7 @@
     <Compile Include="Model\Insolation\UI\InsRegionViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
     <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
-    <Compile Include="Model\Insolation\UI\Trees\ObjectToDisplayNameConverter.cs" />
+    <Compile Include="Model\MVVM\ModelBase.cs" />
     <Compile Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml.cs">
       <DependentUpon>TreeOptionsView.xaml</DependentUpon>
     </Compile>
@@ -266,6 +243,7 @@
     <Compile Include="Model\Elements\Blocks\Social\KindergartenBlock.cs" />
     <Compile Include="Model\Elements\Blocks\Social\SocialBuilding.cs" />
     <Compile Include="Model\Elements\Blocks\Parkings\Parking.cs" />
+    <Compile Include="Model\MVVM\ViewModelBase.cs" />
     <Compile Include="Model\OD\DataType.cs" />
     <Compile Include="Model\OD\IODRecord.cs" />
     <Compile Include="Model\OD\Records\BuildingType.cs" />
@@ -489,14 +467,10 @@
   <ItemGroup>
     <Resource Include="Resources\On.png" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\dotnet\Fody.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

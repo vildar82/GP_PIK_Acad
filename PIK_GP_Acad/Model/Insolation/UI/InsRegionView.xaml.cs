@@ -1,14 +1,13 @@
-﻿using Catel.Windows;
-
-namespace PIK_GP_Acad.Insolation.UI
+﻿namespace PIK_GP_Acad.Insolation.UI
 {
     public partial class InsRegionView
     {
         public InsRegionView () : this(null) { }
 
-        public InsRegionView (InsRegionViewModel viewModel) : base(viewModel)
+        public InsRegionView (InsRegionViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
         }
     }
 }

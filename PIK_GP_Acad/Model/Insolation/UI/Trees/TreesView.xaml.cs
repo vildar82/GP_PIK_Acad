@@ -21,9 +21,14 @@ namespace PIK_GP_Acad.Insolation.UI
     /// </summary>
     public partial class TreesView
     {
-        public TreesView ()
+        public TreesView () : this(null)
+        {
+
+        }
+        public TreesView (TreesViewModel vm)
         {            
-            InitializeComponent();            
+            InitializeComponent();
+            DataContext = vm;    
         }
     }
 }

@@ -10,10 +10,6 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using Catel.Data;
-using Catel.IoC;
-using Catel.MVVM;
-using Catel.Runtime.Serialization;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 
@@ -104,17 +100,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
         /// <summary>
         /// Флаг - требуется обновление расчета
-        /// </summary>
-        [ExcludeFromSerialization]
-        public bool IsUpdateRequired { get; set; }
-
-        [ExcludeFromSerialization]
-        public Document Doc { get; set; }
-
-        [ExcludeFromSerialization]
-        public Map Map { get; set; }
-
-        [ExcludeFromSerialization]        
+        /// </summary>        
+        public bool IsUpdateRequired { get; set; }        
+        public Document Doc { get; set; }        
+        public Map Map { get; set; }        
         public IInsCalcService CalcService { get; set; }
         /// <summary>
         /// Настройки инсоляции
@@ -123,8 +112,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Расчет елочек
         /// </summary>
-        public TreeModel Tree { get; set; }
-        [ExcludeFromSerialization]
+        public TreeModel Tree { get; set; }        
         public string UpdateInfo { get; set; } = "Обновление расчета";
         public bool IsCleared { get; private set; }
 

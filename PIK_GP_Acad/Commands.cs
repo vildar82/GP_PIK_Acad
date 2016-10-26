@@ -74,7 +74,7 @@ namespace PIK_GP_Acad
                 new PaletteCommand("Контур Блок-Секций",Resources.GP_BlockSectionContour, nameof(GP_BlockSectionContour), "Создание полилинии контура вокруг блоков Блок-Секций", GroupBS),
                 // Концепция
                 new PaletteCommand("Блок блок-секции",Resources.GP_KP_BlockSectionInsert, nameof(KP_BlockSectionInsert), "Вставка блока блок-секции из списка. Раздел концепции.", GroupKP),
-                new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Расчет ТЭП для неутвержденной стадии.", GroupKP),
+                //new PaletteCommand("Спецификация блок-секций",Resources.GP_KP_BlockSectionTable, nameof(KP_BlockSectionTable), "Расчет ТЭП для неутвержденной стадии.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций (новая)",Resources.GP_KP_BlockSectionTableNew, nameof(KP_BlockSectionTableNew), "Расчет ТЭП для неутвержденной стадии (новый).", GroupKP),
                 new PaletteCommand("Заливка блок-секций",Resources.GP_KP_BlockSectionFill, nameof(KP_BlockSectionFill), "Заливка контуров блок-секций сплошной штриховкой.", GroupKP),
                 new PaletteCommand("Спецификация блок-секций PIK1",Resources.GP_BlockSectionTable, nameof(KP_BlockSectionTableFromGP), "Таблица подсчета блок-секции PIK1.", GroupKP),                
@@ -480,37 +480,7 @@ namespace PIK_GP_Acad
 
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
-            LoadDll(fileCivilDll);
-
-            // Загрузка ресурсов WPF
-            try
-            {
-                // загрузка Catel
-                LoadService.LoadCatel();                
-
-                if (System.Windows.Application.Current == null)
-                {
-                    new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-                }
-                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                new Uri("PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml", UriKind.Relative)) as ResourceDictionary);
-                System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                new Uri("Catel.Extensions.Controls;component/themes/generic.xaml", UriKind.Relative)) as ResourceDictionary);                
-                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                //new Uri("MahApps.Metro;component/Styles/Controls.xaml", UriKind.Relative)) as ResourceDictionary);
-                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                //new Uri("MahApps.Metro;component/Styles/Fonts.xaml", UriKind.Relative)) as ResourceDictionary);
-                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                //new Uri("MahApps.Metro;component/Styles/Colors.xaml", UriKind.Relative)) as ResourceDictionary);
-                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                //new Uri("MahApps.Metro;component/Styles/Accents/Blue.xaml", UriKind.Relative)) as ResourceDictionary);
-                //System.Windows.Application.Current.Resources.MergedDictionaries.Add(System.Windows.Application.LoadComponent(
-                //new Uri("MahApps.Metro;component/Styles/Accents/BaseLight.xaml", UriKind.Relative)) as ResourceDictionary);
-            }
-            catch (System.Exception ex)
-            {
-                Logger.Log.Error(ex, "Загрузка ресурсов WPF");
-            }
+            LoadDll(fileCivilDll);            
         }
 
         private static void LoadDll (string  file)
@@ -526,8 +496,7 @@ namespace PIK_GP_Acad
         }
 
         public void Terminate()
-        {
-            //System.Windows.Application.Current.Shutdown();
+        {            
         }
     }        
 }

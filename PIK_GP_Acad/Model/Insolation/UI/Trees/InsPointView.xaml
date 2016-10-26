@@ -1,13 +1,14 @@
-﻿<catel:DataWindow
+﻿<Window
     x:Class="PIK_GP_Acad.Insolation.UI.InsPointView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:catel="http://catel.codeplex.com"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"    
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Параметры расчетной точки"
-    d:DesignHeight="200.333" d:DesignWidth="296" ResizeMode="CanResizeWithGrip"
+    d:DesignHeight="200.333" 
+    d:DesignWidth="296" ResizeMode="CanResizeWithGrip"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
@@ -22,7 +23,7 @@
                 <ComboBox ItemsSource="{Binding BuildingTypes}" SelectedItem="{Binding Building.BuildingType}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={catel:ObjectToDisplayNameConverter}}"/>
+                            <TextBlock Text="{Binding Converter={converters:EnumBindingSource}}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
@@ -35,4 +36,4 @@
         </WrapPanel>
         <local:WindowOptionsView Grid.Row="1" DataContext="{Binding Window}" />
     </Grid>
-</catel:DataWindow>
+</Window>

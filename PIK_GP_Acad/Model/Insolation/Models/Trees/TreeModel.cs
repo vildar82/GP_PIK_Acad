@@ -8,10 +8,7 @@ using AcadLib;
 using Autodesk.AutoCAD.EditorInput;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Catel.Data;
 using PIK_GP_Acad.Insolation.Services;
-using System.ComponentModel;
-using Catel.Runtime.Serialization;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using AcadLib.XData;
@@ -26,18 +23,15 @@ namespace PIK_GP_Acad.Insolation.Models
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
         private bool isVisualTreeOnOffForLoad;
 
-        [ExcludeFromSerialization]
-        public InsModel Model { get; set; }
-
-        [ExcludeFromSerialization]
-        private VisualTree VisualTrees { get; set; }
-
         /// <summary>
         /// Для загрузки расчета
         /// </summary>
         public TreeModel ()
         {    
-        }        
+        }
+
+        public InsModel Model { get; set; }
+        private VisualTree VisualTrees { get; set; }
 
         /// <summary>
         /// Инициализация расчета елочек - новая или обновление старого
@@ -80,8 +74,7 @@ namespace PIK_GP_Acad.Insolation.Models
     
         /// <summary>
         /// Расчетные точки
-        /// </summary>
-        [ExcludeFromSerialization]
+        /// </summary>        
         public ObservableCollection<InsPoint> Points { get; private set; }
                 
         /// <summary>

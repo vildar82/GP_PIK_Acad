@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib;
-using Catel.Data;
-using Catel.Fody;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -52,8 +50,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Пустой расчет точки - когда не определено здание для точки
         /// Не изменять этот объект!!!
-        /// </summary>
-        [NoWeaving]
+        /// </summary>        
         public static InsValue Empty {
             get {
                 if (empty == null)
