@@ -82,8 +82,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void Delete ()
         {
             Model.Tree.DeletePoint(this);
-            VisualIllums.VisualIsOn = false;
-            //VisualPoint.VisualIsOn = false; - удалится вместе с точкой на чертеже (т.к. это overrule точки)
+            if (VisualIllums != null)
+                VisualIllums.VisualIsOn = false;            
             base.Delete();
         }
 
@@ -147,20 +147,13 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public override void Update ()
         {
-            try
-            {
-                Calc();
-                UpdateVisual();                
-            }
-            catch (Exception ex)
-            {
-                InsService.ShowMessage(ex, "Ошибка обноаления точки.");
-            }
+            Calc();
+            UpdateVisual();
         }
 
         public override void Clear ()
         {
-            VisualIllums.VisualsDelete();            
+            VisualIllums?.VisualsDelete();            
             base.Clear();
         }
 

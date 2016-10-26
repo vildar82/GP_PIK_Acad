@@ -302,7 +302,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
 
             // Если это инсоляционная точка елочек
-            var dicInsPt = dicPt.GetInner("InsPoint");
+            var dicInsPt = dicPt?.GetInner("InsPoint");
             if (dicInsPt != null)
             {
                 Tree.AddPoint(dicInsPt, idPt);

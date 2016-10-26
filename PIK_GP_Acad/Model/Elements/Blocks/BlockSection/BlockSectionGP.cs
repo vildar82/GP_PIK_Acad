@@ -15,7 +15,9 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     // Блок-секция
     public class BlockSectionGP : BlockSectionBase
     {
-        public const string BlockNameMatch = "ГП_Блок-секция";        
+        public const string BlockNameMatch = "ГП_Блок-секция";
+
+        private List<string> ReductionFactorIgnoringNamesBS = new List<string> { "Б-13", "Б-14" };
         
         // Общая площадь квартир
         public double AreaApartTotal { get; private set; }
@@ -51,14 +53,16 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         private double CalcAreaApartTotal ()
         {
             var res = AreaLive * (Floors - 1);
-            if (Floors >= 30)
+            if (Floors >= 30 && !IsIgnoreReductionFactor(Name))
             {
-                if (Name != "Б-13")
-                {
-                    res *= 0.92;
-                }
+                res *= 0.92;
             }
             return res;
+        }
+
+        private bool IsIgnoreReductionFactor (string name)
+        {
+            return ReductionFactorIgnoringNamesBS.Contains(name, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

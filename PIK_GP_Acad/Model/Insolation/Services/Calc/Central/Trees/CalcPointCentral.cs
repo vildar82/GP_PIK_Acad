@@ -128,30 +128,72 @@ namespace PIK_GP_Acad.Insolation.Services
             Point3dCollection ptsIntersects = new Point3dCollection();
             lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
             // Точки выше найденного пересецения
-            bool isOdd = true;
-            Point2d pt1 = Point2d.Origin;
-            Point3d[] ptsIntersectsSorted = new Point3d[ptsIntersects.Count];
-            ptsIntersects.CopyTo(ptsIntersectsSorted, 0);
-            ptsIntersectsSorted = ptsIntersectsSorted.OrderBy(o => o.X).ToArray();
-            for (int i = 0; i < ptsIntersectsSorted.Length; i++)
+            var ptsContour = build.Contour.GetPoints();
+            var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.X).ToList();
+            foreach (Point3d item in ptsIntersects)
             {
-                isOdd = !isOdd;
-                var pt = ptsIntersectsSorted[i].Convert2d();
-                if (isOdd)
-                {
-                    // Найти точки полилинии выше точек пересечения
-                    var points = GetLoopPointsAbove(build.Contour, pt1, pt);
-
-                    var ilumShadow = GetIllumShadow(points);
-
-                    if (ilumShadow != null)
-                    {
-                        resIlumsShadows.Add(ilumShadow);
-                    }
-                }
-                pt1 = pt;
+                ptsAboveLine.Add(item.Convert2d());
             }
+            var ilumShadow = GetIllumShadow(ptsAboveLine);
+            if (ilumShadow != null)
+            {
+                resIlumsShadows.Add(ilumShadow);
+            }            
             return resIlumsShadows;
+        }
+
+        /// <summary>
+        /// Определение граничных точек задающих тень по отношению к расчетной точке, среди всех точек
+        /// </summary>        
+        private IIlluminationArea GetIllumShadow (List<Point2d> points)
+        {
+            IIlluminationArea ilum = null;
+            // список точек и их углов к расчетной точке
+            List<Tuple<Point2d, double>> angles = new List<Tuple<Point2d, double>>();
+            foreach (var iPt in points)
+            {
+                // угол к расчетной точке (от 0 по часовой стрелке)
+                if (!ptCalc2d.IsEqualTo(iPt))
+                {
+                    var angle = values.GetInsAngleFromAcad((iPt - ptCalc2d).Angle);
+                    angles.Add(new Tuple<Point2d, double>(iPt, angle));
+                }
+            }
+            if (angles.Count > 1)
+            {
+                angles.Sort((p1, p2) => p1.Item2.CompareTo(p2.Item2));
+
+                ilum = CreateIllumShadow(angles[0], angles[angles.Count - 1]);
+            }
+            return ilum;
+        }
+
+        private IIlluminationArea CreateIllumShadow (Tuple<Point2d, double> angleStart, Tuple<Point2d, double> angleEnd)
+        {
+            if (angleEnd.Item2 - angleStart.Item2 > Math.PI)
+            {
+                // Переворот начального и конечного угла
+                var t1 = angleEnd;
+                angleEnd = angleStart;
+                angleStart = t1;
+            }
+
+            // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
+            if (angleEnd.Item2 < AngleStartOnPlane || angleStart.Item2 > AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
+                return null;
+
+            if (angleStart.Item2 < AngleStartOnPlane)
+            {
+                var ptStart = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
+                angleStart = new Tuple<Point2d, double>(ptStart, AngleStartOnPlane);
+            }
+            if (angleEnd.Item2 > AngleEndOnPlane)
+            {
+                var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
+                angleEnd = new Tuple<Point2d, double>(ptEnd, AngleEndOnPlane);
+            }
+            var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
+            return ilum;
         }
 
         /// <summary>
@@ -172,43 +214,27 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool DefineStartAnglesByOwnerBuilding ()
         {
-            double windowStartAngle;
-            double windowEndAngle;
-            Vector2d vecWindowOutPerp;
-            Vector2d vecWinToEast;
-            Vector2d vecWinToWest;
-            // Углы плоскости окна
-            DefineWindowSegmentAngles(out windowStartAngle, out windowEndAngle,
-                out vecWindowOutPerp, out vecWinToEast, out vecWinToWest);
-
-            // Угол восточной плоскости окна больше стартового угла
-            CorrectStartAnglesByOwnerSegment(windowStartAngle, windowEndAngle);
-
-            // Если стартовый угол больше конечного - то освещения вообще нет
-            if (IsAllShadow()) return false;
-
-            // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
-            double cShadow;
-            double yShadowLen = values.YShadowLineByHeight(buildingOwner.Height - insPt.Height, out cShadow);
-            double windowOutPerpendAngle = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle);
-
-            // Проверка ограничения от самого здания с восточной стороны
-            CorrectStartAnglesByOwnerZeroLineIntersects();
-
-            if (windowOutPerpendAngle > AngleStartOnPlane)
+            buildingOwner.InitContour();
+            using (var contour = buildingOwner.Contour)
             {
-                DefineRestrictionAngleInSide(vecWinToEast, yShadowLen, true);
+                // Если полилиния дома полностью выше или равна расчетной точке - то точка полность освещен (сам себя не загораживает никак)
+                if (buildingOwner.ExtentsInModel.MinPoint.Y >= ptCalc.Y)
+                {
+                    return true;
+                }
+                // Если дом полностью нижке расчетной точки - то дом полностью загожен сам собой
+                if (buildingOwner.ExtentsInModel.MaxPoint.Y <= ptCalc.Y)
+                {
+                    return false;
+                }
+
+                // Проверка ограничения от самого здания с восточной стороны
+                CorrectStartAnglesByOwnerZeroLineIntersects(contour);
+
+                // Ограничения от окна
+                CorrectStartAnglesByWindow(contour);
             }
 
-            if (IsAllShadow()) return false;
-
-            // Проверка ограничения от самого здания с западной стороны
-            if (windowOutPerpendAngle < AngleEndOnPlane)
-            {
-                DefineRestrictionAngleInSide(vecWinToWest, yShadowLen, false);
-            }
-
-            // Окончательная проверка углов
             // Стартовый угол не может быть больше конечного
             if (IsAllShadow()) return false;
             // Конечный угол не может быть больше Pi
@@ -217,282 +243,133 @@ namespace PIK_GP_Acad.Insolation.Services
                 throw new Exception("Ошибка расчета ограничивающих углов.");
             }
             return true;
-        }
-
-        /// <summary>
-        /// Определение граничных точек задающих тень по отношению к расчетной точке, среди всех точек объекта
-        /// </summary>        
-        private IIlluminationArea GetIllumShadow (List<Point2d> points)
-        {
-            IIlluminationArea ilum = null;
-            // список точек и их углов к расчетной точке
-            List<Tuple<Point2d, double>> angles = new List<Tuple<Point2d, double>>();
-            foreach (var iPt in points)
-            {
-                // угол к расчетной точке (от 0 по часовой стрелке)
-                if (!ptCalc2d.IsEqualTo(iPt))
-                {
-                    var angle = values.GetInsAngleFromAcad((iPt -ptCalc2d).Angle);                    
-                    angles.Add(new Tuple<Point2d, double>(iPt, angle));
-                }
-            }
-            if (angles.Count > 1)
-            {
-                angles.Sort((p1, p2) => p1.Item2.CompareTo(p2.Item2));
-                
-                ilum = CreateIllumShadow(angles[0], angles[angles.Count - 1]);
-            }
-            return ilum;
-        }
-
-        private IIlluminationArea CreateIllumShadow (Tuple<Point2d, double> angleStart, Tuple<Point2d, double> angleEnd)
-        {
-            if (angleEnd.Item2 -angleStart.Item2 > Math.PI)
-            {
-                // Переворот начального и конечного угла
-                var t1 = angleEnd;
-                angleEnd = angleStart;
-                angleStart = t1;
-            }
-
-            // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
-            if (angleEnd.Item2 < AngleStartOnPlane || angleStart.Item2 > AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
-                return null;            
-            
-            if (angleStart.Item2 < AngleStartOnPlane)
-            {
-                var ptStart = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
-                angleStart = new Tuple<Point2d, double>(ptStart, AngleStartOnPlane);
-            }
-            if (angleEnd.Item2 > AngleEndOnPlane)
-            {
-                var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
-                angleEnd = new Tuple<Point2d, double>(ptEnd, AngleEndOnPlane);
-            }
-            var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
-            return ilum;
-        }
-
-        private Vector2d GetVecPerpWindToSouth (Point3d pt, Polyline contour, Vector2d vecWinPerpend)
-        {
-            using (var linePerp = new Line(pt, pt + new Vector3d(new Plane(), vecWinPerpend)))
-            {
-                var ptsIntersect = new Point3dCollection();
-                contour.IntersectWith(linePerp, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                var ptInner = ptsIntersect.Cast<Point3d>().Where(p => !p.IsEqualTo(pt)).
-                    GroupBy(p => (p - pt).Length).OrderBy(o => o.Key).First().First().Convert2d();
-                return pt.Convert2d() - ptInner;
-            }
-        }
+        }                
 
         /// <summary>
         /// Определение стартовых углов от собственной плоскости окна с учетом отступа
-        /// </summary>
-        /// <param name="windowStartAngle">Стартовый угол (Восток)</param>
-        /// <param name="windowEndAngle">Конечный угол (Запад)</param>        
-        /// <param name="vecWindowOutPerp">Вектор перпендикуляр от окна наружу от здания</param>
-        /// <param name="vecWinToEast">Вектор в плоскости окна в сторону восточной вершины сегмента окна</param>
-        /// <param name="vecWinToWest">Вектр в плоскости окна в сторону западной вершины сегмена окна</param>
-        private void DefineWindowSegmentAngles (out double windowStartAngle, out double windowEndAngle,
-            out Vector2d vecWindowOutPerp, out Vector2d vecWinToEast, out Vector2d vecWinToWest)
+        /// </summary>        
+        private void CorrectStartAnglesByWindow (Polyline contour)
         {
-            buildingOwner.InitContour();
-            var contour = buildingOwner.Contour;
             var segStartIndex = (int)contour.GetParameterAtPoint(ptCalc);
             var segOwner = contour.GetLineSegment2dAt(segStartIndex);
-            // линия перпендикулярно точке
-            var vecPerpend = segOwner.Direction.GetPerpendicularVector();
-            vecWindowOutPerp = GetVecPerpWindToSouth(ptCalc, contour, vecPerpend);
-            var angleToEast = values.GetInsAngleFromAcad(vecWindowOutPerp.Angle + MathExt.PIHalf);
 
-            var vecSegStart = segOwner.StartPoint - ptCalc2d;
-            var vecSegEnd = segOwner.EndPoint - ptCalc2d;            
-
-            if (Math.Abs(values.GetInsAngleFromAcad(vecSegStart.Angle) - angleToEast) < 0.1)
+            // Вектор перпендикуляроно выходящий из окна во вне дома
+            var vecWindPerp = GetWindowPerpVector(segOwner, contour);
+            // Восточный угол = повороту перп вектороа окна на 90 (по автокадовски)
+            var eastVec = vecWindPerp.RotateBy(MathExt.PIHalf);
+            var eastAngle = values.GetInsAngleFromAcad(eastVec.Angle);
+            // Учет теневого угла окна
+            eastAngle += insPt.Window.ShadowAngle;
+            if (eastAngle > AngleStartOnPlane && eastAngle < Math.PI)
             {
-                // стартовая точка оконного сегмента - направлена на восток                
-                vecWinToEast = vecSegStart;
-                vecWinToWest = vecSegEnd;
+                AngleStartOnPlane = eastAngle;
             }
-            else
+            // Западный угол            
+            var westAngle = values.GetInsAngleFromAcad(eastVec.Angle + Math.PI);
+            westAngle -= insPt.Window.ShadowAngle;
+            if (westAngle < AngleEndOnPlane)
             {
-                // стартовая точка оконного сегмента - направлена на запад
-                vecWinToEast = vecSegEnd;
-                vecWinToWest = vecSegStart;
+                AngleEndOnPlane = westAngle;
             }
-            windowStartAngle = values.GetInsAngleFromAcad(vecWinToEast.Angle);
-            windowEndAngle = values.GetInsAngleFromAcad(vecWinToWest.Angle);
-
-            // Корректировка с учетом отступа (учет конструкции окна)
-            windowStartAngle += insPt.Window.ShadowAngle;
-            windowEndAngle -= insPt.Window.ShadowAngle;
         }
 
-        /// <summary>
-        /// Найти точки петли полилинии выше точек сечения
-        /// </summary>
-        /// <param name="contour">Исходная Полилиния</param>
-        /// <param name="pt1">Первая точка петли (пересечения)</param>
-        /// <param name="pt2">Вторая точка петли (пересечения)</param>
-        /// <returns>Список точек петли выше пересечения (включая точки пересечения)</returns>
-        private List<Point2d> GetLoopPointsAbove (Polyline contour, Point2d pt1, Point2d pt2)
+        private Vector2d GetWindowPerpVector (LineSegment2d segOwner, Polyline contour)
         {
-            Tolerance tolerance = new Tolerance(0.001, 0.1);
-            List<Point2d> pointsLoopAbove = new List<Point2d>();
-
-            pointsLoopAbove.Add(pt1);
-            int numVertex = contour.NumberOfVertices;
-
-            var param = contour.GetParameterAtPoint(pt1.Convert3d());
-            int indexMin = (int)param;
-            int indexMax = (int)Math.Ceiling(param);
-            var seg = contour.GetLineSegmentAt(indexMin);
-            int dir = 1;
-            int index = indexMax;
-            if (seg.StartPoint.Y > seg.EndPoint.Y)
+            var vecSegPerp = segOwner.Direction.GetPerpendicularVector().GetNormal();
+            var pt = ptCalc2d + vecSegPerp;
+            if (contour.IsPointInsidePolygon(pt.Convert3d()))
             {
-                index = indexMin;
-                dir = -1;
+                vecSegPerp = vecSegPerp.Negate();
             }
-
-            bool isContinue = true;
-            int countWhile = 0;
-            do
-            {
-                if (index == -1)
-                {
-                    index = numVertex - 1;
-                }
-                else if (index == numVertex)
-                {
-                    index = 0;
-                }
-                var pt = contour.GetPoint2dAt(index);
-                isContinue =pt.Y > pt2.Y;
-                if (isContinue)
-                {
-                    if (!pt.IsEqualTo(pointsLoopAbove[pointsLoopAbove.Count - 1], tolerance))
-                    {
-                        pointsLoopAbove.Add(pt);
-                    }
-                    index += dir;
-                }
-                countWhile++;
-            } while (isContinue && countWhile <= numVertex);
-            pointsLoopAbove.Add(pt2);
-            return pointsLoopAbove;
-        }
-
-        /// <summary>
-        /// Вершины полилинии с указанной стороны от заданной точки
-        /// </summary>
-        /// <param name="contour">Исходная Полилиния</param>
-        /// <param name="ptOrig">Первая точка (пересечения)</param>        
-        /// <param name="vecPerpendSide">Вектор укзывающий сторону от начальной точки (перпендикуляр к линии стороны)</param>
-        /// <returns>Список точек с указанной стороны</returns>
-        private List<Point2d> GetVertexInSide (Polyline contour, Point2d ptOrig, Vector2d vecPerpendSide,
-            Func<Point2d, bool> additionalCond = null)
-        {
-            List<Point2d> vertexes = new List<Point2d>();
-
-            int numVertex = contour.NumberOfVertices;
-
-            for (int i = 0; i < numVertex; i++)
-            {
-                var vertex = contour.GetPoint2dAt(i);
-                if (additionalCond == null || additionalCond(vertex))
-                {
-                    if (Math.Abs((vertex - ptOrig).Angle - vecPerpendSide.Angle) < MathExt.PIHalf)
-                    {
-                        vertexes.Add(vertex);
-                    }
-                }
-            }
-            return vertexes;
-        }
-
-        private double GetMaxRestrictionAngle (List<Point2d> vertexesSide, Func<double, bool> conditionAngle)
-        {
-            var res = vertexesSide.GroupBy(g => values.GetInsAngleFromAcad((g - ptCalc2d).Angle)).
-                Where(a => conditionAngle(a.Key)).Select(s => s.Key).DefaultIfEmpty().Max();
-            return res;
-        }
-        private double GetMinRestrictionAngle (List<Point2d> vertexesSide, Func<double, bool> conditionAngle)
-        {
-            var res = vertexesSide.GroupBy(g => values.GetInsAngleFromAcad((g - ptCalc2d).Angle)).
-                Where(a => conditionAngle(a.Key)).Select(s => s.Key).DefaultIfEmpty().Min();
-            return res;
-        }
-
-        private void DefineRestrictionAngleInSide (Vector2d vecWinToSide, double yShadow, bool isEast)
-        {
-            // Точки со стороны восточной стороны от окна (только в заданной теневой высоте)
-            var vertexesSide = GetVertexInSide(buildingOwner.Contour, ptCalc2d, vecWinToSide,
-                (p) =>
-                {
-                    var yV = ptCalc2d.Y - p.Y;
-                    return yV > 0 && yV <= yShadow;
-                });
-
-            // Найти ограничивающий угол - минимальный в пределах Pi (по инс измерению)
-            double angleLimitByOwnerBuilding;
-            if (isEast)
-            {
-                angleLimitByOwnerBuilding = GetMaxRestrictionAngle(vertexesSide,
-                d => d < AngleEndOnPlane && d > AngleStartOnPlane);
-            }
-            else
-            {
-                angleLimitByOwnerBuilding = GetMinRestrictionAngle(vertexesSide,
-                d => d> AngleStartOnPlane && d < AngleEndOnPlane);
-            }            
-
-            if (angleLimitByOwnerBuilding != 0)
-                AngleEndOnPlane = angleLimitByOwnerBuilding;
-        }
-
-        private void CorrectStartAnglesByOwnerSegment (double windowStartAngle, double windowEndAngle)
-        {
-            if (windowStartAngle > AngleStartOnPlane)
-            {
-                if (windowStartAngle < AngleEndOnPlane)
-                {
-                    AngleStartOnPlane = windowStartAngle;
-                }
-                else if (windowEndAngle <= AngleStartOnPlane || windowEndAngle >= AngleEndOnPlane)
-                {
-                    AngleStartOnPlane = windowStartAngle;
-                }
-            }
-            if (windowEndAngle < AngleEndOnPlane)
-            {
-                AngleEndOnPlane = windowEndAngle;
-            }
-        }
+            return vecSegPerp;
+        }        
 
         private bool IsAllShadow ()
         {
             return AngleStartOnPlane >= AngleEndOnPlane;
         }
 
-        private void CorrectStartAnglesByOwnerZeroLineIntersects ()
+        private void CorrectStartAnglesByOwnerZeroLineIntersects (Polyline contour)
         {
             // Линия через точку ноль.
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 50, ptCalc.Y, 0)))
-            {
-                buildingOwner.InitContour();
-                using (var contour = buildingOwner.Contour)
+            {        
+                var ptsIntersectCol = new Point3dCollection();
+                contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersectCol, IntPtr.Zero, IntPtr.Zero);
+                var ptsIntersectSort = ptsIntersectCol.Cast<Point3d>().OrderBy(o => o.X).ToList();
+                // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.                    
+                var westAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, false);
+                if (westAngle < AngleEndOnPlane)
                 {
-                    var ptsIntersect = new Point3dCollection();
-                    contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);                    
-
-                    // Если стартовой точки нет среди точек пересечения - то дом паралельно оси X. Нужно проверить направление окна, если на север, то дом не освещен полностью.
-
-
-                    // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.
-                    // GetLoopPointsAbove - переписать!
+                    AngleEndOnPlane = westAngle;
+                }
+                var eastAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, true);
+                if (eastAngle > AngleStartOnPlane)
+                {
+                    AngleStartOnPlane = eastAngle;
                 }
             }
+        }
+
+        /// <summary>
+        /// Корректировка стартового угла ограницения от дома - по точкам пересечения полилинии с горизонталью
+        /// </summary>
+        /// <param name="contour">Контур</param>
+        /// <param name="ptsIntersectSortByX">все точки пересечения, отсортированные по X</param>
+        /// <param name="isEastSide">Сторона восток - запад</param>
+        private double GetStartAngleBySideIntersects (Polyline contour, List<Point3d> ptsIntersectSortByX, bool isEastSide)
+        {
+            if (ptsIntersectSortByX.Count == 0) return 0;
+            double angleRes = 0;
+
+            List<Point3d> ptsIntersectSide;
+            bool maxOrMinAngle;
+            if (isEastSide)
+            {
+                ptsIntersectSide = ptsIntersectSortByX.Where(p => p.X >= ptCalc.X).ToList();
+                maxOrMinAngle = true;
+            }
+            else
+            {
+                ptsIntersectSide = ptsIntersectSortByX.Where(p => p.X <= ptCalc.X).ToList();
+                maxOrMinAngle = false;
+                angleRes = Math.PI;
+            }
+
+            var ptPrew = ptsIntersectSide[0];
+            foreach (var pt in ptsIntersectSide.Skip(1))
+            {
+                // средняя точка должна быть внутри полилинии                
+                var ptCentre = ptPrew + (pt- ptPrew)/2;                
+                if (contour.IsPointInsidePolygon(ptCentre) && !contour.IsPointOnPolyline(ptCentre))
+                {
+                    var ptsLoopBelow = contour.GetLoopSideBetweenHorizontalIntersectPoints(ptPrew, pt, false, false);
+                    // Определение угла для каждой точки
+                    foreach (var ptLoop in ptsLoopBelow)
+                    {
+                        var angleInsPt = GetInsAngleFromPoint(ptLoop);
+                        if ((maxOrMinAngle && (angleInsPt > angleRes)) ||
+                            (!maxOrMinAngle && (angleInsPt < angleRes)))
+                        {
+                            angleRes = angleInsPt;
+                        }
+                    }
+                }
+                ptPrew = pt;
+            }        
+            return angleRes;
+        }
+
+        /// <summary>
+        /// Угол точки - угол солнца на плочкости
+        /// </summary>
+        /// <param name="ptLoop">Точка</param>
+        /// <returns>Угол инс в радианах</returns>
+        private double GetInsAngleFromPoint (Point2d ptLoop)
+        {
+            var angleAcad = (ptLoop - ptCalc2d).Angle;
+            var angleIns = values.GetInsAngleFromAcad(angleAcad);
+            return angleIns;
         }
     }
 }
