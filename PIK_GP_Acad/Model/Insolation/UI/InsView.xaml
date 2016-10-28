@@ -8,20 +8,19 @@
     xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
     xmlns:service="clr-namespace:PIK_GP_Acad.Insolation.Services"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Background="{DynamicResource DarkThemeBackgroundBrush}"    
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    Background="{DynamicResource DarkThemeBackgroundBrush}"
+    mc:Ignorable="d" d:DesignWidth="208" d:DesignHeight="182">
     <UserControl.Resources>
-        <!--<ResourceDictionary>
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>-->
-        <Image x:Key="TreesImage" Source="/PIK_GP_Acad;component/Resources/trees.png" ToolTip="Елочки" />
-        <!--<Image x:Key="update" Source="/PIK_GP_Acad;component/Resources/update.png" />-->
-        <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
-        <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
-        <sys:Double x:Key="ButtonsHeight">25</sys:Double>
+            <BitmapImage x:Key="trees" UriSource="/PIK_GP_Acad;component/Resources/trees.png"/>            
+            <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
+            <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
+            <sys:Double x:Key="ButtonsHeight">25</sys:Double>
+        </ResourceDictionary>        
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -80,11 +79,11 @@
             <TextBlock Margin="2" VerticalAlignment="Center" Text="Регион:" />
             <TextBlock
                 Margin="2" VerticalAlignment="Center"
-                Text="{Binding Options.Region.City}"
+                Text="{Binding City, UpdateSourceTrigger=PropertyChanged}"
                 ToolTip="Город" />
             <TextBlock
                 Margin="2" VerticalAlignment="Center"
-                Text="{Binding Options.Region.Latitude}"
+                Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged}"
                 ToolTip="Широта °" />
             <Button
                 Margin="2"
@@ -101,9 +100,12 @@
             Background="Transparent"
             Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}">
             <!--  Вкладка - Елочки  -->
-            <TabItem Height="{StaticResource ButtonsHeight}" Background="Transparent" Header="{StaticResource TreesImage}">
+            <TabItem Height="{StaticResource ButtonsHeight}" Background="Transparent">
+                <TabItem.Header>
+                    <Image Source="{StaticResource trees}" />
+                </TabItem.Header>
                 <TabItem.Content>
-                    <local:TreesView DataContext="{Binding Tree}" />
+                    <local:TreesView DataContext="{Binding TreeVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </TabItem.Content>
             </TabItem>
         </TabControl>

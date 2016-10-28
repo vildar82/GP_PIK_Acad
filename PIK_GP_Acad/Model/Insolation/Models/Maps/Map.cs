@@ -35,13 +35,39 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void SubscribeDB ()
         {
-            db.ObjectAppended -= Database_ObjectAppended; // перестраховка
-            db.ObjectAppended += Database_ObjectAppended;
+            try
+            {
+                db.ObjectAppended -= Database_ObjectAppended; // перестраховка
+                db.ObjectAppended += Database_ObjectAppended;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void Unsubscribe()
+        {
+            db.ObjectAppended -= Database_ObjectAppended;
+            using (var t = db.TransactionManager.StartTransaction())
+            {
+                foreach (var item in Buildings)
+                {
+                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+                    try
+                    {
+                        dbo.Modified -= Building_Modified;
+                        dbo.Erased -= Building_Erased;
+                    }
+                    catch { }
+                }
+                t.Commit();
+            }
         }
 
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
-        public int MaxBuildingHeight { get { return GetMaxBuildingHeight(); } }
+        public int MaxBuildingHeight => GetMaxBuildingHeight();
         public List<InsBuilding> Buildings { get; private set; }       
         /// <summary>
         /// Найденные точки инсоляции
@@ -255,26 +281,14 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // отписатся от всех событий
             // Удалить всю визуализацию (пока нет)
-            Doc.Database.ObjectAppended -= Database_ObjectAppended;
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                foreach (var item in Buildings)
-                {
-                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-                    try
-                    {
-                        dbo.Modified -= Building_Modified;
-                        dbo.Erased -= Building_Erased;
-                    }
-                    catch { }
-                }
-                t.Commit();
-            }
+            Unsubscribe();
+            
         }
 
         public void Dispose ()
         {
-            Clear();
+            if (db == null || db.IsDisposed) return;
+            Unsubscribe();
         }
     }
 }

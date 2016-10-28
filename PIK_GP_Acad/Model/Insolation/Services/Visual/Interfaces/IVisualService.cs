@@ -8,7 +8,7 @@ using Autodesk.AutoCAD.GraphicsInterface;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public interface IVisualService
+    public interface IVisualService : IDisposable
     {
         /// <summary>
         /// Включение/выключение визуализации

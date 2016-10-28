@@ -16,8 +16,10 @@ namespace PIK_GP_Acad.Insolation.Models
 {
     public class TreeVisualOption : ModelBase, ITypedDataValues
     {
-        public Color Color { get; set; }
-        public int Height { get; set; }
+        Color color;
+        int height;
+        public Color Color { get { return color; } set { color = value; RaisePropertyChanged(); } }
+        public int Height { get { return height; } set { height = value; RaisePropertyChanged(); } }
 
         public TreeVisualOption () { }
 

@@ -12,6 +12,8 @@ using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.UI;
+using static Autodesk.AutoCAD.ApplicationServices.Application;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -20,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public static class InsService
     {
-        static Dictionary<Type, Type> views;
+        static Dictionary<Type, Type> dictVmViews;
         static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;        
         static Dictionary<Document, InsModel> insModels;
         static InsServicePallete palette;
@@ -34,7 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings = new Settings();
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
-            views = GetViews();
+            dictVmViews = GetViews();
         }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public static bool InsActivate {
             get {
-                var insModel = GetInsModel(Application.DocumentManager.MdiActiveDocument);
+                var insModel = GetInsModel(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument);
                 return insModel != null && !insModel.IsCleared;
             }
             set {
@@ -56,7 +58,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public static bool? ShowDialog (ViewModelBase viewModel)
         {
             Type view;
-            if (views.TryGetValue(viewModel.GetType(), out view))
+            if (dictVmViews.TryGetValue(viewModel.GetType(), out view))
             {
                 var win = (System.Windows.Window)Activator.CreateInstance(view);
                 win.DataContext = viewModel;
@@ -77,10 +79,9 @@ namespace PIK_GP_Acad.Insolation.Services
             if (insModels == null)
                 insModels = new Dictionary<Document, InsModel>();
 
-            Application.DocumentManager.DocumentActivated += (o, e) => ChangeDocument(e.Document);
-            Application.DocumentManager.DocumentToBeDestroyed += (o, e) => CloseDocument(e.Document);
-            //Application.DocumentWindowCollection.DocumentWindowActivated += DocumentWindowCollection_DocumentWindowActivated;
-            
+            Application.DocumentManager.DocumentToBeDeactivated += DocumentManager_DocumentToBeDeactivated;
+            Application.DocumentManager.DocumentActivated += DocumentManager_DocumentActivated;
+            Application.DocumentManager.DocumentToBeDestroyed += DocumentManager_DocumentToBeDestroyed;
 
             InsPointDrawOverrule.Start();
 
@@ -96,22 +97,56 @@ namespace PIK_GP_Acad.Insolation.Services
             ChangeDocument(doc);               
         }
 
+        private static void DocumentManager_DocumentToBeDestroyed (object sender, DocumentCollectionEventArgs e)
+        {
+            CloseDocument(e?.Document);
+        }
+
+        private static void DocumentManager_DocumentActivated (object sender, DocumentCollectionEventArgs e)
+        {
+            ChangeDocument(e?.Document);
+        }
+
         public static void Stop ()
         {
-            // TODO: Сохранение всех расчетов            
-            Application.DocumentManager.DocumentActivated -= (o, e) => ChangeDocument(e.Document);            
-            Application.DocumentManager.DocumentToBeDestroyed -= (o, e) => CloseDocument(e.Document);            
+            // TODO: Сохранение всех расчетов      
+            try
+            {
+                Application.DocumentManager.DocumentToBeDeactivated -= DocumentManager_DocumentToBeDeactivated;
+                Application.DocumentManager.DocumentActivated -= DocumentManager_DocumentActivated;
+                Application.DocumentManager.DocumentToBeDestroyed -= DocumentManager_DocumentToBeDestroyed;
+            }
+            catch
+            {
+                // ignored
+            }
+
             //Settings.Save();
             //palette.Visible = false;
             foreach (var item in insModels)
             {
-                item.Value.Dispose();
+                try
+                {
+                    item.Value.Dispose();
+                }
+                catch
+                {
+                    // ignored
+                }
             }
             palette = null;
             insModels = null;
             insViewModel = null;
-
+            insView = null;
             InsPointDrawOverrule.Stop();
+
+            GC.Collect();
+        }
+
+        private static void DocumentManager_DocumentToBeDeactivated (object sender, DocumentCollectionEventArgs e)
+        {
+            var insModel = GetInsModel(e?.Document);
+            insModel?.Tree?.VisualsOnOff(false);
         }
 
         public static IInsCalcService GetCalcService (InsOptions options)
@@ -150,7 +185,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (doc == null) return;
             // Очистка объекта
-            insModels.Remove(doc);
+            insModels?.Remove(doc);
         }
 
         private static void ChangeDocument (Document doc)
@@ -175,12 +210,10 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void ActivateIns (bool onOff)
         {
             var doc = Application.DocumentManager.MdiActiveDocument;                                    
-
-            // Сохранение текущей модели (состояние контролов - особенность Catel)            
-            if (insViewModel.Model!= null)
+                        
+            if (insViewModel == null)
             {
-                //insViewModel.SaveViewModelAsync();
-                //insViewModel.Model.SaveIns();                
+                return;
             }
 
             if (doc == null || doc.IsDisposed)
@@ -215,15 +248,12 @@ namespace PIK_GP_Acad.Insolation.Services
             // Отключение расчета для текущего документа
             else
             {
-                if (insModel != null)
-                {
-                    // Сохранение расчета
-                    //insModel.SaveIns();
-                    insModel.Clear();
-                    //// Удаление
-                    //insModels.Remove(doc);
-                    //insModel = null;
-                }
+                // Сохранение расчета
+                //insModel.SaveIns();
+                insModel?.Clear();
+                //// Удаление
+                //insModels.Remove(doc);
+                //insModel = null;
             }
             // Переключение на модель (или на null)                
             insViewModel.Model = insModel;
@@ -238,14 +268,16 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (doc == null || doc.IsDisposed) return null;
             InsModel res = null;            
-            insModels.TryGetValue(doc, out res);
+            insModels?.TryGetValue(doc, out res);
             return res;
         }
 
         private static Dictionary<Type, Type> GetViews ()
         {
             return new Dictionary<Type, Type> {
-                { typeof(InsRegionViewModel),  typeof(InsRegionView)}
+                { typeof(InsRegionViewModel),  typeof(InsRegionView)},
+                { typeof (TreeOptionsViewModel), typeof(TreeOptionsView) },
+                {  typeof (InsPointViewModel), typeof(InsPointView)}
             };
         }
     }

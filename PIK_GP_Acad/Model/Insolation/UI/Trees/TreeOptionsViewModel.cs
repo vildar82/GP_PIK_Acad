@@ -9,50 +9,37 @@ using MicroMvvm;
 namespace PIK_GP_Acad.Insolation.UI
 {
     public class TreeOptionsViewModel : ViewModelBase
-    {        
+    {
+        public TreeOptionsViewModel()
+        {
+        }
+
         public TreeOptionsViewModel (TreeOptions treeOptions)
         {
             TreeOptionsModel = treeOptions;
             TreeVisualOptions = treeOptions.TreeVisualOptions;
+            foreach (var item in TreeVisualOptions)
+            {
+                item.PropertyChanged += VisualTree_PropertyChanged;
+            }
 
             AddVisualTree = new RelayCommand (OnAddVisualTreeExecute, OnAddVisualTreeCanExecute);
             DeleteVisualTree = new RelayCommand<TreeVisualOption>(OnDeleteVisualTreeExecute, OnDeleteVisualTreeCanExecute);
-            SelectColor = new RelayCommand(OnSelectColorExecute);
+            SelectColor = new RelayCommand<TreeVisualOption>(OnSelectColorExecute);
         }
         
+        /// <summary>
+        /// Модель
+        /// </summary>
         TreeOptions TreeOptionsModel { get; set; }
 
         public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
 
         public TreeVisualOption SelectedVisualTree { get; set; }
-
+        
         public RelayCommand AddVisualTree { get; set; }
-        public RelayCommand SelectColor { get; set; }
-        public RelayCommand<TreeVisualOption> DeleteVisualTree { get; set; }
-
-        //protected override Task InitializeAsync ()
-        //{
-        //    foreach (var item in TreeVisualOptions)
-        //    {
-        //        item.PropertyChanged += VisualTree_PropertyChanged;
-        //    }
-        //    return base.InitializeAsync();
-        //}
-
-        //protected override Task<bool> SaveAsync ()
-        //{
-        //    //TreeOptionsModel.TreeVisualOptions = TreeVisualOptions;
-        //    return base.SaveAsync();
-        //}
-
-        //protected override Task CloseAsync ()
-        //{
-        //    foreach (var item in TreeVisualOptions)
-        //    {
-        //        item.PropertyChanged -= VisualTree_PropertyChanged;
-        //    }
-        //    return base.CloseAsync();
-        //}
+        public RelayCommand<TreeVisualOption> SelectColor { get; set; }
+        public RelayCommand<TreeVisualOption> DeleteVisualTree { get; set; }        
 
         private void VisualTree_PropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -71,7 +58,7 @@ namespace PIK_GP_Acad.Insolation.UI
             foreach (var item in treeVisOpts)
             {
                 TreeVisualOptions.Add(item);
-                //item.PropertyChanged += VisualTree_PropertyChanged;
+                item.PropertyChanged += VisualTree_PropertyChanged;
             }
         }
 
@@ -81,7 +68,7 @@ namespace PIK_GP_Acad.Insolation.UI
             var c = TreeVisualOption.GetNextColor(lastVisOpt.Color);
             var visTree = new TreeVisualOption(c, lastVisOpt.Height+10);
             TreeVisualOptions.Add(visTree);
-            //visTree.PropertyChanged += VisualTree_PropertyChanged;
+            visTree.PropertyChanged += VisualTree_PropertyChanged;
         }
 
         private bool OnAddVisualTreeCanExecute ()
@@ -99,9 +86,9 @@ namespace PIK_GP_Acad.Insolation.UI
             TreeVisualOptions.Remove(arg);
         }
 
-        private void OnSelectColorExecute ()
+        private void OnSelectColorExecute (TreeVisualOption treeVisOpt)
         {
-            SelectedVisualTree.Color = ColorPicker(SelectedVisualTree.Color);
+            treeVisOpt.Color = ColorPicker(treeVisOpt.Color);
         }
 
         private Color ColorPicker (Color current)
@@ -119,10 +106,8 @@ namespace PIK_GP_Acad.Insolation.UI
         }
     }
 
-    public class DesignTreeOptionsViewModel
+    public class DesignTreeOptionsViewModel : TreeOptionsViewModel
     {
-        public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
-
         public DesignTreeOptionsViewModel()
         {
             TreeVisualOptions = new ObservableCollection<TreeVisualOption>(TreeVisualOption.DefaultTreeVisualOptions());

@@ -210,5 +210,7 @@ namespace PIK_GP_Acad.Insolation.Services
             h.EvaluateHatch(true);                                
             return h;
         }
+
+        
     }
 }

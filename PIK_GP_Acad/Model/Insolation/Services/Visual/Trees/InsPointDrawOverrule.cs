@@ -35,7 +35,6 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (_overrule != null)
             {
-                _overrule = new InsPointDrawOverrule();
                 RemoveOverrule(rxDbPoint, _overrule);
                 _overrule = null;
                 Overruling = false;

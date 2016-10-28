@@ -36,14 +36,24 @@ namespace PIK_GP_Acad.Insolation.Models
             Doc = doc;            
         }
 
-        ///// <summary>
-        ///// Создание нового расчета инсоляции для документа
-        ///// </summary>        
-        //public InsModel (Document doc): base()
-        //{
-        //    Doc = doc;
-
-        //}
+        /// <summary>
+        /// Флаг - требуется обновление расчета
+        /// </summary>        
+        public bool IsUpdateRequired { get; set; }        
+        public Document Doc { get; set; }        
+        public Map Map { get; set; }        
+        public IInsCalcService CalcService { get; set; }
+        /// <summary>
+        /// Настройки инсоляции
+        /// </summary>
+        public InsOptions Options { get; set; }
+        /// <summary>
+        /// Расчет елочек
+        /// </summary>
+        public TreeModel Tree { get { return tree; } set { tree = value; RaisePropertyChanged(); } }
+        TreeModel tree;    
+        public string UpdateInfo { get; set; } = "Обновление расчета";
+        public bool IsCleared { get; private set; }
 
         /// <summary>
         /// Общие действия и при создании нового расчета и при загрузке существующего
@@ -98,28 +108,17 @@ namespace PIK_GP_Acad.Insolation.Models
             // ????
         }
 
-        /// <summary>
-        /// Флаг - требуется обновление расчета
-        /// </summary>        
-        public bool IsUpdateRequired { get; set; }        
-        public Document Doc { get; set; }        
-        public Map Map { get; set; }        
-        public IInsCalcService CalcService { get; set; }
-        /// <summary>
-        /// Настройки инсоляции
-        /// </summary>
-        public InsOptions Options { get; set; }
-        /// <summary>
-        /// Расчет елочек
-        /// </summary>
-        public TreeModel Tree { get; set; }        
-        public string UpdateInfo { get; set; } = "Обновление расчета";
-        public bool IsCleared { get; private set; }
-
         private void Database_BeginSave (object sender, Autodesk.AutoCAD.DatabaseServices.DatabaseIOEventArgs e)
         {
             // При сохранении чертежа - сохранение расчета инсоляции
-            SaveIns();
+            try
+            {
+                SaveIns();
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         /// <summary>
@@ -343,8 +342,13 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Dispose ()
         {
             if (Doc == null || Doc.IsDisposed) return;
-            Tree.Dispose();
-            Map.Dispose();
+            using (Doc.LockDocument())
+            {
+                Tree.Dispose();
+                Map.Dispose();
+                Doc.Database.BeginSave -= Database_BeginSave;
+            }
+            Doc = null;
         }
     }
 }

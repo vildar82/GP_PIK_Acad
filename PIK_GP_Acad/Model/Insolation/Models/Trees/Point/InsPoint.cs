@@ -37,7 +37,9 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
         }       
 
-        public bool IsVisualIllumsOn { get; set; }        
+        public bool IsVisualIllumsOn { get { return isVisualIllumsOn; }
+            set { isVisualIllumsOn = value; RaisePropertyChanged(); OnIsVisualIllumsOnChanged(); } }
+        bool isVisualIllumsOn;
 
         /// <summary>
         /// Пока не используется
@@ -143,7 +145,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void Clear ()
         {
             VisualIllums?.VisualsDelete();            
-            base.Clear();
+            //base.Clear();
         }
 
         public void SaveInsPoint ()
@@ -177,8 +179,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualIllums.VisualIsOn = true;                
             }
             // Описание точки
-            //VisualPoint.VisualIsOn = true;
-
+            //VisualPoint.VisualIsOn = true;                 
 
             Info = GetInfo();
         }
@@ -224,6 +225,11 @@ namespace PIK_GP_Acad.Insolation.Models
             SetDataValues(dic.GetRec("InsPointRec")?.Values, doc);
             Window = new WindowOptions();
             Window.SetExtDic(dic.GetInner("Window"), doc);
+        }
+
+        public override void Dispose ()
+        {
+            VisualIllums?.Dispose();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
 
@@ -37,7 +38,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 UpdateDraws();
                 if (draws != null)
-                {
+                {                    
                     var tm = TransientManager.CurrentTransientManager;
                     foreach (var d in draws)
                     {
@@ -73,6 +74,15 @@ namespace PIK_GP_Acad.Insolation.Services
         public void VisualsDelete ()
         {
             EraseDraws();
+        }
+
+        public void Dispose ()
+        {
+            if (draws != null)
+            {
+                EraseDraws();
+                draws = null;
+            }
         }
     }
 }

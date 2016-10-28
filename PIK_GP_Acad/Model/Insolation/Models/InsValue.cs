@@ -33,11 +33,13 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Макимальная продолжительность непрерывной инсоляции, [мин]
         /// </summary>
-        public int MaxContinuosTime { get; set; }
+        public int MaxContinuosTime { get { return maxContinuosTime; } set { maxContinuosTime = value; RaisePropertyChanged(); } }
+        int maxContinuosTime;
         /// <summary>
         /// Суммарная инсоляция, [мин]
         /// </summary>
-        public int TotalTime { get; set; }
+        public int TotalTime { get { return totalTime; } set { totalTime = value; RaisePropertyChanged(); } }
+        int totalTime;
 
         public string TotalTimeString {
             get { return TotalTime.ToHours(); }

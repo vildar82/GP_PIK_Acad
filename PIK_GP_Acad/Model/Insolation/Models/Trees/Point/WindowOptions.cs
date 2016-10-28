@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,29 +17,37 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>    
     public class WindowOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
-        public WindowOptions () { }
+        public WindowOptions ()
+        {            
+        }
 
         /// <summary>
         /// Ширина окна, м
         /// </summary>
-        public double Width { get; set; }
+        public double Width { get { return width; } set { width = value; RaisePropertyChanged(); } }
+        double width;
         /// <summary>
         /// Тип конструкции
         /// </summary>        
-        public WindowConstruction Construction { get; set; }
+        public WindowConstruction Construction { get { return construction; } set { construction = value; RaisePropertyChanged(); } }
+        WindowConstruction construction;
+
         /// <summary>
         /// Глубина четверти
         /// </summary>
-        public double Quarter { get; set; } 
+        public double Quarter { get { return quarter; } set { quarter = value; RaisePropertyChanged(); } }
+        double quarter;
         /// <summary>
         /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор) 
         /// [рад]
         /// </summary>
-        public double ShadowAngle { get; set; }    
+        public double ShadowAngle { get { return shadowAngle; } set { shadowAngle = value; RaisePropertyChanged(); } }
+        double shadowAngle;
         /// <summary>
         /// Если значение угла введено пользователем
         /// </summary>
-        public bool IsCustomAngle { get; set; }              
+        public bool IsCustomAngle { get { return isCustomAngle; } set { isCustomAngle = value; RaisePropertyChanged(); } }
+        bool isCustomAngle;
 
         /// <summary>
         /// Определение теневого угла - по введенным значениям
@@ -48,15 +57,20 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Construction == null) return 0;                    
             double b = Math.Atan2(Construction.Depth + Quarter, Width + 0.065);
             return b;
-        }       
+        }
 
-        //protected override void OnPropertyChanged (AdvancedPropertyChangedEventArgs e)
-        //{            
-        //    if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
-        //    {
-        //        ShadowAngle = CalcShadowAngle();
-        //    }            
-        //}
+        protected override void OnPropertyChanged (PropertyChangedEventArgs e)
+        {
+            if (!IsCustomAngle && e.PropertyName != nameof(ShadowAngle))
+            {
+                ShadowAngle = CalcShadowAngle();
+            }
+        }
+
+        public WindowOptions Copy ()
+        {
+            return (WindowOptions)MemberwiseClone();
+        }
 
         public static WindowOptions Default ()
         {

@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Models
     public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
         private static Tolerance tolerancePoints = new Tolerance(1, 1);
-        private bool isVisualTreeOnOffForLoad;
+        private bool isVisualTreeOnOffForLoad;        
 
         /// <summary>
         /// Для загрузки расчета
@@ -32,6 +32,36 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public InsModel Model { get; set; }
         private VisualTree VisualTrees { get; set; }
+        /// <summary>
+        /// Расчетные точки
+        /// </summary>        
+        public ObservableCollection<InsPoint> Points {
+            get { return points; }
+            private set {
+                points = value;
+                RaisePropertyChanged();
+                OnPointsChanged();
+            }
+        }
+        ObservableCollection<InsPoint> points;
+        /// <summary>
+        /// Настройки елочек
+        /// </summary>
+        public TreeOptions TreeOptions { get; set; }            
+        /// <summary>
+        /// Включение/выключение зон инсоляции для всех точек
+        /// </summary>
+        public bool IsVisualIllumsOn {
+            get { return isVisualIllumsOn; }
+            set { isVisualIllumsOn = value; RaisePropertyChanged(); OnIsVisualIllumsOnChanged(); }
+        }
+        bool isVisualIllumsOn;
+
+        public bool IsVisualTreeOn {
+            get { return isVisualTreeOn; }
+            set { isVisualTreeOn = value; RaisePropertyChanged(); OnIsVisualTreeOnChanged(); }
+        }
+        bool isVisualTreeOn;
 
         /// <summary>
         /// Инициализация расчета елочек - новая или обновление старого
@@ -71,22 +101,6 @@ namespace PIK_GP_Acad.Insolation.Models
                 Points = new ObservableCollection<InsPoint>();
             }
         }
-    
-        /// <summary>
-        /// Расчетные точки
-        /// </summary>        
-        public ObservableCollection<InsPoint> Points { get; private set; }
-                
-        /// <summary>
-        /// Настройки елочек
-        /// </summary>
-        public TreeOptions TreeOptions { get; set; }             
-
-        /// <summary>
-        /// Включение/выключение зон инсоляции для всех точек
-        /// </summary>
-        public bool IsVisualIllumsOn { get; set; }
-        public bool IsVisualTreeOn { get; set; }
 
         public void Redrawable ()
         {
@@ -115,7 +129,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void UpdateVisualTree (InsPoint insPoint = null)
         {
-            VisualTrees.VisualUpdate();
+            VisualTrees.VisualIsOn = IsVisualTreeOn;
         }
 
         /// <summary>
@@ -263,7 +277,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // Елочки
             if (saveState)
-            {
+            {                
                 VisualTrees.VisualIsOn = onOff ? IsVisualTreeOn : false;
             }
             else
@@ -408,7 +422,14 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Dispose ()
         {
-            Clear();
+            VisualTrees?.Dispose();
+            if (Points != null)
+            {
+                foreach (var item in Points)
+                {
+                    item.Dispose();
+                }
+            }
         }
     }
 }

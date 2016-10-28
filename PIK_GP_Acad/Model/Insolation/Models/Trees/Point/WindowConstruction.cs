@@ -13,20 +13,21 @@ using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
-{   
-    [Serializable]
-    public class WindowConstruction : ITypedDataValues, IEquatable<WindowConstruction>
+{       
+    public class WindowConstruction : ModelBase, ITypedDataValues, IEquatable<WindowConstruction>
     {
         public WindowConstruction () { }
         /// <summary>
         /// Тип конструкции 
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
+        string name;
 
         /// <summary>
         /// расстояние от наружной поверхности стены со светопроемом до внутренней поверхности переплета [м]
         /// </summary>
-        public double Depth { get; set; }
+        public double Depth { get { return depth; } set { depth = value; RaisePropertyChanged(); } }
+        double depth;
 
         public static List<WindowConstruction> WindowConstructions { get; set; } = new List<WindowConstruction>() {
             new WindowConstruction() { Name ="Одинарный оконный блок с одним стеклом", Depth = 0.06 },

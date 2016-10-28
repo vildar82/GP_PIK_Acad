@@ -70,5 +70,10 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             // ??? overrule - думаю не нужно удалять            
         }
+
+        public void Dispose ()
+        {
+            
+        }
     }
 }

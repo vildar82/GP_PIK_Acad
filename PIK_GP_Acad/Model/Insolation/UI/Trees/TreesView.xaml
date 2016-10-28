@@ -1,13 +1,15 @@
 ﻿<UserControl
     x:Class="PIK_GP_Acad.Insolation.UI.TreesView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"    
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    d:DataContext="{d:DesignInstance local:TreesViewModel,
+                                     IsDesignTimeCreatable=True}"
     d:DesignHeight="259" d:DesignWidth="126"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -16,11 +18,6 @@
         <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
         <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
         <BitmapImage x:Key="Add" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
-
-        <!--<Image x:Key="InsTrees" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png"/>
-        <Image x:Key="InsIllums" Source="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
-        <Image x:Key="options" Source="/PIK_GP_Acad;component/Resources/options.png" />
-        <Image x:Key="Close" Source="/PIK_GP_Acad;component/Resources/Close.png" />-->
         <sys:Double x:Key="PointButtonsHeight">20</sys:Double>
         <sys:Double x:Key="TreeButtonsHeight">23</sys:Double>
     </UserControl.Resources>
@@ -37,33 +34,37 @@
             Grid.Row="0"
             HorizontalContentAlignment="Stretch"
             Background="Transparent" BorderThickness="0"
-            ItemsSource="{Binding Points}"
+            ItemsSource="{Binding Tree.Points, UpdateSourceTrigger=PropertyChanged}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             SelectedItem="{Binding SelectedPoint}">
-            <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <catel:EventToCommand Command="{Binding ShowPoint}" DisableAssociatedObjectOnCannotExecute="False" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}}" 
-                          ToolTip="{Binding Info}">
+                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, 
+                        Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" 
+                          ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <Grid.InputBindings>
+                            <MouseBinding Command="{Binding ElementName=lbPoints, Path=DataContext.ShowPoint}" Gesture="LeftDoubleClick" />
+                        </Grid.InputBindings>
                         <TextBlock
                             Grid.Column="0"
                             Margin="3" VerticalAlignment="Center"
                             FontSize="20" FontWeight="Bold"
-                            Text="{Binding Number}" />
+                            Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                         <!--  Инфо  -->
                         <WrapPanel Grid.Column="1" Margin="1" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}\,}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}}" />
+                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" 
+                                       Text="{Binding InsValue.Requirement.Name, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" 
+                                       Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}, 
+                                UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" 
+                                       Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, 
+                                UpdateSourceTrigger=PropertyChanged}" />
                         </WrapPanel>
                         <!--  Кнопки  -->
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
@@ -72,7 +73,7 @@
                                 Height="{StaticResource PointButtonsHeight}"
                                 Margin="0"
                                 Background="Transparent"
-                                IsChecked="{Binding IsVisualIllumsOn, Mode=TwoWay}"
+                                IsChecked="{Binding IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ToolTip="Визуализация зон инсоляции точки.">
                                 <Image Source="{StaticResource ilums}" />
                             </ToggleButton>
@@ -106,21 +107,21 @@
         <Grid Grid.Row="1" Margin="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition MinWidth="20"/>
+                <ColumnDefinition MinWidth="20" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <ToggleButton
                     Height="{StaticResource TreeButtonsHeight}"
                     Background="Transparent"
-                    IsChecked="{Binding IsVisualIllumsOn}"
+                    IsChecked="{Binding Tree.IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     ToolTip="Включение/выключение визуализации зон инсоляции всех точек">
                     <Image Source="{StaticResource ilums}" />
                 </ToggleButton>
                 <ToggleButton
                     Height="{StaticResource TreeButtonsHeight}"
                     Background="Transparent"
-                    IsChecked="{Binding IsVisualTreeOn}"
+                    IsChecked="{Binding Tree.IsVisualTreeOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     ToolTip="Включение/выключение визуализации елочек">
                     <Image Source="{StaticResource tree}" />
                 </ToggleButton>
@@ -128,10 +129,10 @@
             <!--  Кнопка добавление точки  -->
             <Button
                 Grid.Column="1"
-                Height="{StaticResource TreeButtonsHeight}"                
-                Command="{Binding AddPoint}"                
-                ToolTip="Добавление точки" 
-                Background="Transparent">
+                Height="{StaticResource TreeButtonsHeight}"
+                Background="Transparent"
+                Command="{Binding AddPoint}"
+                ToolTip="Добавление точки">
                 <Image Source="{StaticResource Add}" />
             </Button>
             <Button
@@ -143,6 +144,6 @@
                 ToolTip="Настройки елочек">
                 <Image Source="{StaticResource options}" />
             </Button>
-        </Grid>        
+        </Grid>
     </Grid>
 </UserControl>

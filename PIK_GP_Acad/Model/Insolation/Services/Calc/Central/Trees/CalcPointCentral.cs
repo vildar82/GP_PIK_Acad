@@ -129,7 +129,7 @@ namespace PIK_GP_Acad.Insolation.Services
             lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
             // Точки выше найденного пересецения
             var ptsContour = build.Contour.GetPoints();
-            var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.X).ToList();
+            var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.Y).ToList();
             foreach (Point3d item in ptsIntersects)
             {
                 ptsAboveLine.Add(item.Convert2d());

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public interface IInsPoint : IDboDataSave
+    public interface IInsPoint : IDboDataSave, IDisposable
     {
         double AngleEndOnPlane { get; set; }
         double AngleStartOnPlane { get; set; }

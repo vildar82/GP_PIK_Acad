@@ -13,19 +13,21 @@
     </UserControl.Resources>-->
     <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2">
         <StackPanel HorizontalAlignment="Center" Margin="2">
-            <WrapPanel HorizontalAlignment="Center" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={converters:BooleanToOppositeBooleanConverter}}">
+            <WrapPanel HorizontalAlignment="Center" 
+                       IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={converters:BooleanToOppositeBooleanConverter}}">
                 <StackPanel Margin="3" HorizontalAlignment="Center">
                     <TextBlock Text="Ширина окна, м" HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding Width}" HorizontalContentAlignment="Center"/>
+                    <TextBox Text="{Binding Window.Width, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" HorizontalContentAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Margin="3">
                     <TextBlock Text="Тип конструкции" />
-                    <ComboBox ItemsSource="{Binding WindowConstructions}" SelectedItem="{Binding Construction}">
+                    <ComboBox ItemsSource="{Binding WindowConstructions}" 
+                              SelectedItem="{Binding Window.Construction, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}"  Margin="1"/>
-                                    <TextBlock Text="{Binding Depth}" Margin="1" />
+                                    <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"  Margin="1"/>
+                                    <TextBlock Text="{Binding Depthm, UpdateSourceTrigger=PropertyChanged}" Margin="1" />
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -33,7 +35,8 @@
                 </StackPanel>
                 <StackPanel Margin="3">
                     <TextBlock Text="Глубина четверти" />
-                    <ComboBox ItemsSource="{Binding Quarters}" SelectedItem="{Binding Quarter}" />
+                    <ComboBox ItemsSource="{Binding Quarters, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                              SelectedItem="{Binding Window.Quarter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </WrapPanel>
             <StackPanel Margin="3">
@@ -42,9 +45,9 @@
                     HorizontalContentAlignment="Center"
                     MaxWidth="100"
                     IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked}"
-                    Text="{Binding ShadowAngle, Converter={converters:RadiansToDegreeConverter}}" />
+                    Text="{Binding Window.ShadowAngle, Converter={converters:RadiansToDegreeConverter}}" />
                 <StackPanel Margin="2" HorizontalAlignment="Center" Orientation="Horizontal">
-                    <CheckBox x:Name="chkBoxCustom" IsChecked="{Binding IsCustomAngle}" />
+                    <CheckBox x:Name="chkBoxCustom" IsChecked="{Binding Window.IsCustomAngle}" />
                     <TextBlock Text="Пользовательский" />
                 </StackPanel>
             </StackPanel>

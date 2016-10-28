@@ -71,7 +71,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private void EraseDraws ()
         {
-            if (draws != null)
+            if (draws != null && doc != null && !doc.IsDisposed)
             {
                 using (doc.LockDocument())
                 using (var t = doc.TransactionManager.StartTransaction())
@@ -88,6 +88,11 @@ namespace PIK_GP_Acad.Insolation.Services
         }              
 
         public void VisualsDelete ()
+        {
+            EraseDraws();
+        }
+
+        public void Dispose ()
         {
             EraseDraws();
         }

@@ -29,13 +29,10 @@ namespace PIK_GP_Acad.Insolation.UI
             EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
         }
 
-        //[Model]        
-        //[Expose(nameof(TreeModel.Points))]
-        //[Expose(nameof(TreeModel.IsVisualIllumsOn))]
-        //[Expose(nameof(TreeModel.IsVisualTreeOn))]        
-        public TreeModel Tree { get; set; }  
-
-        public InsPoint SelectedPoint { get; set; }        
+        /// <summary>
+        /// Модель
+        /// </summary>                       
+        public TreeModel Tree { get; set; }          
 
         public RelayCommand AddPoint { get; private set; }
         public RelayCommand ShowPoint { get; private set; }
@@ -43,17 +40,22 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<InsPoint> DeletePoint { get; private set; }
         public RelayCommand EditTreeOptions { get; private set; }
 
+        public InsPoint SelectedPoint { get; set; }
+
         private void OnAddPointExecute ()
         {
             // Выбор точки на чертеже и задание параметров окна
             SelectPoint selPt = new SelectPoint();
             InsPoint p = selPt.SelectNewPoint(Tree.Model);
-            // Расчет и добавление точки
-            Tree.AddPoint(p);
-            // Включение зон инсоляции точки
-            p.IsVisualIllumsOn = true;
-            // Сохранение точки
-            p.SaveInsPoint();            
+            if (p != null)
+            {
+                // Расчет и добавление точки
+                Tree.AddPoint(p);
+                // Включение зон инсоляции точки
+                p.IsVisualIllumsOn = true;
+                // Сохранение точки
+                p.SaveInsPoint();
+            }
         }        
         
         private void OnShowPointExecute ()
@@ -62,36 +64,32 @@ namespace PIK_GP_Acad.Insolation.UI
         }
 
         private void OnEditPointExecute (InsPoint insPoint)
-        {            
-            if (insPoint == null) return;
-
-            var building = insPoint.Building;
+        {
+            var building = insPoint?.Building;
             if (building == null) return;
 
             var oldBuildingType = building.BuildingType;            
 
             var insPointVM = new InsPointViewModel(insPoint);
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
-            if (InsService.ShowDialog(insPointVM)== true)
+            if (InsService.ShowDialog(insPointVM) != true) return;
+            // Если измениля тип здания - то пересчет всех точек на этом здании
+            if (oldBuildingType != building.BuildingType)
             {
-                // Если измениля тип здания - то пересчет всех точек на этом здании
-                if (oldBuildingType != building.BuildingType)
-                {
-                    //// Учет изменения типа здания для всех точек на этом здании                    
-                    Tree.Model.ChangeBuildingType(building);                    
-                }
-                else
-                {
-                    // Обновление только этой точки
-                    insPoint.Update();
-                }
+                //// Учет изменения типа здания для всех точек на этом здании                    
+                Tree.Model.ChangeBuildingType(building);                    
+            }
+            else
+            {
+                // Обновление только этой точки
+                insPoint.Update();
+            }
 
-                // Обновление елочек
-                Tree.UpdateVisualTree(insPoint);
+            // Обновление елочек
+            Tree.UpdateVisualTree(insPoint);
 
-                // Сохранение точки в словарь
-                insPoint.SaveInsPoint();
-            }             
+            // Сохранение точки в словарь
+            insPoint.SaveInsPoint();
         }
 
         private void OnDeletePointExecute (InsPoint insPoint)
@@ -104,9 +102,10 @@ namespace PIK_GP_Acad.Insolation.UI
             var treeOptionsVM = new TreeOptionsViewModel(Tree.TreeOptions);            
             if (InsService.ShowDialog(treeOptionsVM) == true)
             {
-                // Обновление расчета елочек
-                Tree.Update();
+                
             }
+            // Обновление расчета елочек
+            Tree.Update();
         }
     }
 }

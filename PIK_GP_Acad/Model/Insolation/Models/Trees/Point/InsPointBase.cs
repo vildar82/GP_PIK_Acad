@@ -54,13 +54,15 @@ namespace PIK_GP_Acad.Insolation.Models
         public IVisualService VisualPoint { get; set; }
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }        
-        public InsBuilding Building { get; set; }
-        
-        public int Height { get; set; }        
+        public InsBuilding Building { get; set; }        
+        public int Height { get; set; }  
         public List<IIlluminationArea> Illums { get; set; }        
-        public string Info { get; set; }        
-        public InsValue InsValue { get; set; }        
-        public int Number { get; set; }
+        public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }
+        string info;
+        public InsValue InsValue { get { return insValue; } set { insValue = value; RaisePropertyChanged(); } }
+        InsValue insValue;     
+        public int Number { get { return number; } set { number = value; RaisePropertyChanged(); } }
+        int number;
         public WindowOptions Window { get; set; }       
         /// <summary>
         /// Список значений для сохранения в словарь
@@ -71,7 +73,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public abstract DicED GetExtDic (Document doc);
         public abstract void SetExtDic (DicED DicED, Document doc);
         public abstract void Initialize (TreeModel treeModel);
-        public abstract void Update ();
+        
         public abstract void VisualOnOff (bool onOff, bool saveState);
 
         /// <summary>
@@ -106,6 +108,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Redrawable ()
         {
             //???            
+        }
+
+        public virtual void Update() {
+                        
         }
 
         private void SubscribeDbo (DBPoint dbPoint)
@@ -245,6 +251,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 res = false;
             }
             return res;
+        }
+
+        public virtual void Dispose ()
+        {
+            
         }
     }
 }

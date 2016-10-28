@@ -9,5 +9,10 @@
             InitializeComponent();
             DataContext = vm;
         }
+
+        private void OkButtonClick (object sender, System.Windows.RoutedEventArgs e)
+        {
+            DialogResult = true;
+        }
     }
 }

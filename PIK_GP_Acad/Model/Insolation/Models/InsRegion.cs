@@ -18,10 +18,14 @@ namespace PIK_GP_Acad.Insolation.Models
         private static string FileRegions = Path.Combine(AutoCAD_PIK_Manager.Settings.PikSettings.ServerShareSettingsFolder, 
             @"ГП\Insolation\Regions.xml");
         
-        public RegionEnum RegionPart { get; set; }
-        public string RegionName { get; set; }
-        public string City { get; set; }
-        public double Latitude { get; set; }
+        public RegionEnum RegionPart { get { return regionPart; } set { regionPart = value; RaisePropertyChanged(); } }
+        RegionEnum regionPart;
+        public string RegionName { get { return regionName; } set { regionName = value; RaisePropertyChanged(); } }
+        string regionName;
+        public string City { get { return city; } set { city = value; RaisePropertyChanged(); } }
+        string city;
+        public double Latitude { get { return latitude; } set { latitude = value; RaisePropertyChanged(); } }
+        double latitude;
 
         public InsRegion () : base() { }
 
