@@ -27,7 +27,10 @@ namespace PIK_GP_Acad.Insolation.UI
             EditPoint = new RelayCommand<InsPoint>(OnEditPointExecute);
             DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);
             EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
+            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
         }
+
+        
 
         /// <summary>
         /// Модель
@@ -39,6 +42,8 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<InsPoint> EditPoint { get; private set; }
         public RelayCommand<InsPoint> DeletePoint { get; private set; }
         public RelayCommand EditTreeOptions { get; private set; }
+        public RelayCommand DrawVisuals { get; private set; }
+        
 
         public InsPoint SelectedPoint { get; set; }
 
@@ -106,6 +111,14 @@ namespace PIK_GP_Acad.Insolation.UI
             }
             // Обновление расчета елочек
             Tree.Update();
+        }
+
+        /// <summary>
+        /// Рисование визуализации в чертеже
+        /// </summary>
+        private void OnDrawVisualsExecute ()
+        {
+            Tree.DrawVisuals();
         }
     }
 }

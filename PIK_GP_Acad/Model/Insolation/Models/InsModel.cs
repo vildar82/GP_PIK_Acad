@@ -52,6 +52,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public TreeModel Tree { get { return tree; } set { tree = value; RaisePropertyChanged(); } }
         TreeModel tree;    
+        /// <summary>
+        /// Расчет фронтонов
+        /// </summary>
+        public FrontModel Front { get { return front; } set { front = value; RaisePropertyChanged(); } }
+        FrontModel front;
+
         public string UpdateInfo { get; set; } = "Обновление расчета";
         public bool IsCleared { get; private set; }
 
@@ -75,7 +81,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
-                Map = new Map(this);
+                Map = new Map(Doc.Database);
                 Map.BuildingAdded += Map_BuildingAdded;
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;
@@ -125,7 +131,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Изменение 
         /// </summary>
         /// <param name="building"></param>
-        public void ChangeBuildingType (InsBuilding building)
+        public void ChangeBuildingType (MapBuilding building)
         {            
             var pointsInBuilding = Tree.GetPointsInBuilding(building);
             foreach (var item in pointsInBuilding)
@@ -306,7 +312,7 @@ namespace PIK_GP_Acad.Insolation.Models
             IsCleared = true;
         }
 
-        private void Map_BuildingModified (object sender, InsBuilding e)
+        private void Map_BuildingModified (object sender, MapBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
             IsUpdateRequired = true;
@@ -314,7 +320,7 @@ namespace PIK_GP_Acad.Insolation.Models
             //Update();
         }        
 
-        private void Map_BuildingErased (object sender, InsBuilding e)
+        private void Map_BuildingErased (object sender, MapBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к. изменились здания на чертеже
             IsUpdateRequired = true;
@@ -322,7 +328,7 @@ namespace PIK_GP_Acad.Insolation.Models
             //Update();
         }
 
-        private void Map_BuildingAdded (object sender, InsBuilding e)
+        private void Map_BuildingAdded (object sender, MapBuilding e)
         {
             // Флаг что расчет требуется обновить - т.к.изменились здания на чертеже
             IsUpdateRequired = true;

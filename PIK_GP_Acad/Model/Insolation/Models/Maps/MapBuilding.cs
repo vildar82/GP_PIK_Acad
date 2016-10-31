@@ -9,7 +9,7 @@ using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class InsBuilding : ModelBase
+    public class MapBuilding : ModelBase
     {        
         public IBuilding Building { get; set; }        
         public Polyline Contour { get; private set; }
@@ -20,9 +20,9 @@ namespace PIK_GP_Acad.Insolation.Models
         public BuildingTypeEnum BuildingType { get; set; }        
         public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
 
-        public InsBuilding () { }
+        public MapBuilding () { }
 
-        public InsBuilding(IBuilding building)
+        public MapBuilding(IBuilding building)
         {
             Building = building;            
             Height = building.Height;            

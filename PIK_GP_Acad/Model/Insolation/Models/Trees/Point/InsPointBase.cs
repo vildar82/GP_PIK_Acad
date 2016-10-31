@@ -54,7 +54,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public IVisualService VisualPoint { get; set; }
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }        
-        public InsBuilding Building { get; set; }        
+        public MapBuilding Building { get; set; }        
         public int Height { get; set; }  
         public List<IIlluminationArea> Illums { get; set; }        
         public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }
@@ -207,7 +207,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение здания которому принадлежит эта точка
         /// </summary>
-        public static InsBuilding DefineBuilding (ref Point3d point, InsModel model)
+        public static MapBuilding DefineBuilding (ref Point3d point, InsModel model)
         {
             var pt = point;
             var building = model.Map.GetBuildingInPoint(pt);
@@ -226,7 +226,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return building;
         }
 
-        public static bool CorrectCalcPoint (ref Point3d pt, InsBuilding building, Database db)
+        public static bool CorrectCalcPoint (ref Point3d pt, MapBuilding building, Database db)
         {
             bool res;
             // Корректировка точки

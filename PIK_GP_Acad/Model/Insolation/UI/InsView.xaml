@@ -105,7 +105,15 @@
                     <Image Source="{StaticResource trees}" />
                 </TabItem.Header>
                 <TabItem.Content>
-                    <local:TreesView DataContext="{Binding TreeVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <local:TreesView DataContext="{Binding TreeVM, UpdateSourceTrigger=PropertyChanged}" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Background="Transparent">
+                <TabItem.Header>
+                    <TextBlock Text="Фронтоны" Background="Transparent"/>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}"/>
                 </TabItem.Content>
             </TabItem>
         </TabControl>

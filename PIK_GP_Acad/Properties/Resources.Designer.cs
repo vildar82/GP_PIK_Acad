@@ -93,6 +93,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap draw_visuals {
+            get {
+                object obj = ResourceManager.GetObject("draw_visuals", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap enla {
             get {
                 object obj = ResourceManager.GetObject("enla", resourceCulture);
@@ -416,6 +426,16 @@ namespace PIK_GP_Acad.Properties {
         internal static System.Drawing.Bitmap On {
             get {
                 object obj = ResourceManager.GetObject("On", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap option_dots {
+            get {
+                object obj = ResourceManager.GetObject("option_dots", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

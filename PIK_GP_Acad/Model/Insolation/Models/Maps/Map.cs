@@ -16,27 +16,23 @@ namespace PIK_GP_Acad.Insolation.Models
     /// карта - чертеж с объектами расчета инсоляции
     /// </summary>
     public class Map : IDisposable
-    {        
-        InsModel model;        
+    {   
         Database db;
-        RTree<InsBuilding> treeBuildings;
+        RTree<MapBuilding> treeBuildings;
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
-        public Map (InsModel model)
-        {
-            this.model = model;
-            this.Doc = model.Doc;
-            this.db = Doc.Database;
+        public Map (Database db)
+        {   
+            this.db = db;
             LoadMap();
-
             SubscribeDB();
         }
 
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
         public int MaxBuildingHeight => GetMaxBuildingHeight();
-        public List<InsBuilding> Buildings { get; private set; }       
+        public List<MapBuilding> Buildings { get; private set; }       
         /// <summary>
         /// Найденные точки инсоляции
         /// </summary>
@@ -44,17 +40,16 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Добавлено здание
         /// </summary>
-        public event EventHandler<InsBuilding> BuildingAdded;
+        public event EventHandler<MapBuilding> BuildingAdded;
         /// <summary>
         /// Здание удалено
         /// </summary>
-        public event EventHandler<InsBuilding> BuildingErased;
+        public event EventHandler<MapBuilding> BuildingErased;
         /// <summary>
         /// Здание изменилось (удалено и создаено новое)
         /// Передается старое здание
         /// </summary>
-        public event EventHandler<InsBuilding> BuildingModified;        
-
+        public event EventHandler<MapBuilding> BuildingModified;     
         /// <summary>
         /// Добавлена расчетная точка
         /// </summary>
@@ -67,9 +62,9 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             IsEventsOn = false;
             FCS.FCService.Init(db);
-            Buildings = new List<InsBuilding>();
+            Buildings = new List<MapBuilding>();
             InsPoints = new List<ObjectId>();
-            treeBuildings = new RTree<InsBuilding>();
+            treeBuildings = new RTree<MapBuilding>();
             using (var t = db.TransactionManager.StartTransaction())
             {
                 var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
@@ -137,7 +132,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var building = ElementFactory.Create<IBuilding>(ent);
             if (building != null)
             {
-                var insBuild = new InsBuilding(building);
+                var insBuild = new MapBuilding(building);
                 Buildings.Add(insBuild);
                 var r = GetBuildingRectangle(insBuild);
                 treeBuildings.Add(r, insBuild);
@@ -165,7 +160,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        private Rectangle GetBuildingRectangle (InsBuilding building)
+        private Rectangle GetBuildingRectangle (MapBuilding building)
         {
             return new Rectangle(building.ExtentsInModel);
         }
@@ -182,7 +177,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return scope;
         }
 
-        public void InitContour (List<InsBuilding> buildings)
+        public void InitContour (List<MapBuilding> buildings)
         {
             foreach (var item in buildings)
             {
@@ -190,9 +185,9 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        public InsBuilding GetBuildingInPoint (Point3d pt)
+        public MapBuilding GetBuildingInPoint (Point3d pt)
         {
-            InsBuilding building = null;
+            MapBuilding building = null;
             Point p = new Point(pt.X, pt.Y, 0);
             var nearest = treeBuildings.Nearest(p, 5);            
             if (nearest.Count ==1)
@@ -202,7 +197,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return building;
         }
 
-        private InsBuilding FindBuildingByEnt (ObjectId id)
+        private MapBuilding FindBuildingByEnt (ObjectId id)
         {
             return Buildings.Find(b => b.Building.IdEnt == id);
         }
@@ -227,7 +222,7 @@ namespace PIK_GP_Acad.Insolation.Models
         private void Building_Erased (object sender, ObjectErasedEventArgs e)
         {
             // Определение удаленного здания
-            InsBuilding building = FindBuildingByEnt(e.DBObject.Id);
+            MapBuilding building = FindBuildingByEnt(e.DBObject.Id);
             if (building != null)
             {                
                 Buildings.Remove(building);

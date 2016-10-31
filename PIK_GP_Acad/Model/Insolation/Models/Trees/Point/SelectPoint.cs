@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.Insolation.Models
             map = model.Map;
 
             // Запрос точки            
-            InsBuilding building;
+            MapBuilding building;
             var pt = PromptSelectPointOnScreen(out building);
 
             var p = new InsPoint(model, pt);
@@ -50,7 +50,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private Point3d PromptSelectPointOnScreen (out InsBuilding building)
+        private Point3d PromptSelectPointOnScreen (out MapBuilding building)
         {
             var pt = ed.GetPointWCS("\nВыбор расчетной точки (на внешней стене здания):");
             // Проверка точки

@@ -15,9 +15,9 @@ namespace PIK_GP_Acad.Insolation.Models
     public class Scope : IDisposable
     {
         Extents3d ext;
-        public List<InsBuilding> Buildings { get; set; }        
+        public List<MapBuilding> Buildings { get; set; }        
 
-        public Scope (Extents3d ext, List<InsBuilding> items)
+        public Scope (Extents3d ext, List<MapBuilding> items)
         {            
             this.ext = ext;
             Buildings = items;

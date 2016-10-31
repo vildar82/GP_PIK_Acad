@@ -18,6 +18,8 @@
         <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
         <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
         <BitmapImage x:Key="Add" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
+        <BitmapImage x:Key="option_dots" UriSource="/PIK_GP_Acad;component/Resources/option_dots.png" />
+        <BitmapImage x:Key="draw_visuals" UriSource="/PIK_GP_Acad;component/Resources/draw_visuals.png" />
         <sys:Double x:Key="PointButtonsHeight">20</sys:Double>
         <sys:Double x:Key="TreeButtonsHeight">23</sys:Double>
     </UserControl.Resources>
@@ -39,9 +41,7 @@
             SelectedItem="{Binding SelectedPoint}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, 
-                        Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" 
-                          ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -57,14 +57,9 @@
                             Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
                         <!--  Инфо  -->
                         <WrapPanel Grid.Column="1" Margin="1" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" 
-                                       Text="{Binding InsValue.Requirement.Name, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" 
-                                       Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}, 
-                                UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" 
-                                       Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, 
-                                UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, UpdateSourceTrigger=PropertyChanged}" />
                         </WrapPanel>
                         <!--  Кнопки  -->
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
@@ -134,15 +129,31 @@
                 Command="{Binding AddPoint}"
                 ToolTip="Добавление точки">
                 <Image Source="{StaticResource Add}" />
-            </Button>
+            </Button>            
             <Button
+                x:Name="btnDots"
                 Grid.Column="2"
-                Height="{StaticResource TreeButtonsHeight}"
-                HorizontalAlignment="Right"
                 Background="Transparent"
-                Command="{Binding EditTreeOptions}"
-                ToolTip="Настройки елочек">
-                <Image Source="{StaticResource options}" />
+                Click="btnDots_Click" ContextMenuService.IsEnabled="False"
+                Height="{StaticResource TreeButtonsHeight}"
+                Width="{StaticResource TreeButtonsHeight}">
+                <Image Height="{StaticResource TreeButtonsHeight}" Source="{StaticResource option_dots}" />
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="cmDots">
+                        <MenuItem Command="{Binding EditTreeOptions}" Header="Настройки высот елочек">
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource options}"
+                                       Height="{StaticResource TreeButtonsHeight}" Width="{StaticResource TreeButtonsHeight}"/>                                
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource draw_visuals}" 
+                                       Height="{StaticResource TreeButtonsHeight}" Width="{StaticResource TreeButtonsHeight}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
             </Button>
         </Grid>
     </Grid>

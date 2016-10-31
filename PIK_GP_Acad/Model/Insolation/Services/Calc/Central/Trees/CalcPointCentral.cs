@@ -17,7 +17,7 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         Plane plane = new Plane();
         InsPoint insPt;
-        InsBuilding buildingOwner;
+        MapBuilding buildingOwner;
         Map map;
         Point3d ptCalc;
         Point2d ptCalc2d;
@@ -79,7 +79,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return resAreas;
         }
 
-        private List<IIlluminationArea> CalcIllumsByHeight (List<InsBuilding> buildings, int height)
+        private List<IIlluminationArea> CalcIllumsByHeight (List<MapBuilding> buildings, int height)
         {
             List<IIlluminationArea> illumShadows = new List<IIlluminationArea>();           
             
@@ -110,7 +110,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return illumShadows;
         }        
 
-        private List<IIlluminationArea> GetBuildingLineShadowBoundary (InsBuilding build, Line lineShadow,
+        private List<IIlluminationArea> GetBuildingLineShadowBoundary (MapBuilding build, Line lineShadow,
             Intersect intersectMode)
         {
             List<IIlluminationArea> resIlumsShadows = new List<IIlluminationArea>();

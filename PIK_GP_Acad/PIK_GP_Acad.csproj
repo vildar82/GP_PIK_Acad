@@ -138,6 +138,7 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\FrontModel.cs" />
     <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
@@ -167,7 +168,7 @@
     <Compile Include="Model\Insolation\Services\Interfaces\IInsCalcService.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\IllumAreaCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\InsCalcServiceCentral.cs" />
-    <Compile Include="Model\Insolation\Models\Maps\InsBuilding.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\MapBuilding.cs" />
     <Compile Include="Model\Insolation\Services\Calc\InsCalcServiceFactory.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirementEnum.cs" />
     <Compile Include="Model\Insolation\Models\Maps\Map.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\WindowOptions.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\SelectPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualDatabaseAny.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointIllums.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPoint.cs" />
@@ -186,6 +188,10 @@
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualTransient.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualDatabase.cs" />
+    <Compile Include="Model\Insolation\UI\Fronts\FrontView.xaml.cs">
+      <DependentUpon>FrontView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Fronts\FrontViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsRegionView.xaml.cs">
       <DependentUpon>InsRegionView.xaml</DependentUpon>
     </Compile>
@@ -383,6 +389,10 @@
     <None Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Model\Insolation\UI\Fronts\FrontView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Model\Insolation\UI\InsRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -469,6 +479,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\option_dots.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\draw_visuals.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

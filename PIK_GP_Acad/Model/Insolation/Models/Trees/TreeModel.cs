@@ -132,6 +132,8 @@ namespace PIK_GP_Acad.Insolation.Models
             VisualTrees.VisualIsOn = IsVisualTreeOn;
         }
 
+        
+
         /// <summary>
         /// Расчет и добавление точки
         /// </summary>        
@@ -206,7 +208,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Точки принадлежащие зданию
         /// </summary>        
-        public List<InsPoint> GetPointsInBuilding (InsBuilding building)
+        public List<InsPoint> GetPointsInBuilding (MapBuilding building)
         {
             return Points.Where(p => p.Building == building).ToList();
         }
@@ -356,7 +358,24 @@ namespace PIK_GP_Acad.Insolation.Models
         private void CheckPoints ()
         {
             // Проверка точек   
-        }        
+        }
+
+        /// <summary>
+        /// Рисование визуализации на чертеже
+        /// </summary>
+        public void DrawVisuals ()
+        {
+            VisualDatabaseAny visDbAny = new VisualDatabaseAny(Model.Doc);
+            visDbAny.AddVisual(VisualTrees);
+            if (Points != null)
+            {
+                foreach (var item in Points)
+                {
+                    visDbAny.AddVisual(item.VisualIllums);
+                }
+            }
+            visDbAny.Draw();
+        }
 
         public DicED GetExtDic (Document doc)
         {

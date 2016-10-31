@@ -28,7 +28,14 @@ namespace PIK_GP_Acad.Insolation.UI
         public TreesView (TreesViewModel vm)
         {            
             InitializeComponent();
-            DataContext = vm;    
+            DataContext = vm;            
+        }
+
+        private void btnDots_Click (object sender, RoutedEventArgs e)
+        {
+            cmDots.DataContext = DataContext;
+            cmDots.Visibility = Visibility.Visible;
+            cmDots.IsOpen = true;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public abstract class  VisualDatabase : IVisualService
     {
+        private const string LayerVisual = "sapr_ins_visuals";
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();
         private bool isOn;
         private List<ObjectId> draws;
@@ -54,10 +55,14 @@ namespace PIK_GP_Acad.Insolation.Services
                         var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
                         var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
 
+                        // Слой для визуализации
+                        var idLayerVisual = GetLayerForVisual(db);
+
                         foreach (var d in ds)
                         {
                             if (d.Id.IsNull)
                             {
+                                d.LayerId = idLayerVisual;                
                                 ms.AppendEntity(d);
                                 t.AddNewlyCreatedDBObject(d, true);
                             }
@@ -90,6 +95,23 @@ namespace PIK_GP_Acad.Insolation.Services
         public void VisualsDelete ()
         {
             EraseDraws();
+        }
+
+        private ObjectId GetLayerForVisual (Database db)
+        {
+            var lt = db.LayerTableId.GetObject(OpenMode.ForRead) as LayerTable;
+            ObjectId res;
+            if (!lt.Has(LayerVisual))
+            {
+                var lv = new LayerTableRecord();
+                lv.Name = LayerVisual;
+                lt.UpgradeOpen();
+                res = lt.Add(lv);
+                db.TransactionManager.TopTransaction.AddNewlyCreatedDBObject(lv, true);
+            }
+            else
+                res = lt[LayerVisual];
+            return res;
         }
 
         public void Dispose ()

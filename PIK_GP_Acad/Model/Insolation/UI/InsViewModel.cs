@@ -35,6 +35,9 @@ namespace PIK_GP_Acad.Insolation.UI
         public TreesViewModel TreeVM { get { return treeVM; } set { treeVM = value; RaisePropertyChanged(); } }
         TreesViewModel treeVM;
 
+        public FrontViewModel FrontVM { get { return frontVM; } set { frontVM = value; RaisePropertyChanged(); } }
+        FrontViewModel frontVM;
+
         public string UpdateInfo {
             get { return Model?.UpdateInfo; }
             set { Model.UpdateInfo = value;
@@ -81,6 +84,7 @@ namespace PIK_GP_Acad.Insolation.UI
                 City = Model.Options.Region.City;
                 Latitude = Model.Options.Region.Latitude;
                 TreeVM = new TreesViewModel(Model.Tree);
+                FrontVM = new FrontViewModel(Model.Front);
             }
         }        
     }
