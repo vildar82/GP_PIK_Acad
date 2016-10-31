@@ -33,38 +33,6 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDB();
         }
 
-        private void SubscribeDB ()
-        {
-            try
-            {
-                db.ObjectAppended -= Database_ObjectAppended; // перестраховка
-                db.ObjectAppended += Database_ObjectAppended;
-            }
-            catch
-            {
-                // ignored
-            }
-        }
-
-        private void Unsubscribe()
-        {
-            db.ObjectAppended -= Database_ObjectAppended;
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                foreach (var item in Buildings)
-                {
-                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-                    try
-                    {
-                        dbo.Modified -= Building_Modified;
-                        dbo.Erased -= Building_Erased;
-                    }
-                    catch { }
-                }
-                t.Commit();
-            }
-        }
-
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
         public int MaxBuildingHeight => GetMaxBuildingHeight();
@@ -90,7 +58,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Добавлена расчетная точка
         /// </summary>
-        public event EventHandler<ObjectId> InsPointAdded;        
+        public event EventHandler<ObjectId> InsPointAdded;     
+           
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
@@ -129,6 +98,38 @@ namespace PIK_GP_Acad.Insolation.Models
                 res = Buildings.Max(b => b.Height);
             }
             return res;
+        }
+
+        private void SubscribeDB ()
+        {
+            try
+            {
+                db.ObjectAppended -= Database_ObjectAppended; // перестраховка
+                db.ObjectAppended += Database_ObjectAppended;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private void Unsubscribe ()
+        {
+            db.ObjectAppended -= Database_ObjectAppended;
+            using (var t = db.TransactionManager.StartTransaction())
+            {
+                foreach (var item in Buildings)
+                {
+                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+                    try
+                    {
+                        dbo.Modified -= Building_Modified;
+                        dbo.Erased -= Building_Erased;
+                    }
+                    catch { }
+                }
+                t.Commit();
+            }
         }
 
         private void DefineEnt (Entity ent)

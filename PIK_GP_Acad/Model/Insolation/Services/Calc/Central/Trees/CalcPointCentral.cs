@@ -81,24 +81,15 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private List<IIlluminationArea> CalcIllumsByHeight (List<InsBuilding> buildings, int height)
         {
-            List<IIlluminationArea> illumShadows = new List<IIlluminationArea>();
-
-            // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
-            double cShadow;
-            double yShadowLen = values.YShadowLineByHeight(height, out cShadow);
-            double yShadow = ptCalc2d.Y - yShadowLen;
-
-            // Линия тени
-            var xRayToStart = values.GetXRay(yShadowLen, AngleStartOnPlane);
-            var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
-            using (Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
-                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0)))
+            List<IIlluminationArea> illumShadows = new List<IIlluminationArea>();           
+            
+            using (Line lineShadow = GetLineShadow(height))
             {                
                 // перебор домов одной высоты
                 foreach (var build in buildings)
                 {
                     // Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
-                    if (build.YMin > yShadow)
+                    if (build.YMin > lineShadow.StartPoint.Y)
                     {
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
                         var ilumShadow = GetIllumShadow(build.Contour.GetPoints());
@@ -107,7 +98,7 @@ namespace PIK_GP_Acad.Insolation.Services
                             illumShadows.Add(ilumShadow);
                         }
                     }
-                    else if (build.YMax > yShadow)
+                    else if (build.YMax > lineShadow.StartPoint.Y)
                     {
                         var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
                         illumShadows.AddRange(ilumsBoundary);
@@ -117,7 +108,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Объединение совпадающих зон теней
             illumShadows = IllumAreaBase.Merge(illumShadows);
             return illumShadows;
-        }
+        }        
 
         private List<IIlluminationArea> GetBuildingLineShadowBoundary (InsBuilding build, Line lineShadow,
             Intersect intersectMode)
@@ -294,16 +285,26 @@ namespace PIK_GP_Acad.Insolation.Services
             // Линия через точку ноль.
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 50, ptCalc.Y, 0)))
             {        
-                var ptsIntersectCol = new Point3dCollection();
-                contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersectCol, IntPtr.Zero, IntPtr.Zero);
-                var ptsIntersectSort = ptsIntersectCol.Cast<Point3d>().OrderBy(o => o.X).ToList();
+                var ptsIntersectZero = new Point3dCollection();
+                contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersectZero, IntPtr.Zero, IntPtr.Zero);
+                var ptsIntersectSort = ptsIntersectZero.Cast<Point3d>().OrderBy(o => o.X).ToList();
+
+                // Линия тени - пересечение собственного дрма сней?
+                var ptsIntersectShadow = new List<Point3d>();
+                using (var lineShadow = GetLineShadow(buildingOwner.Height))
+                {
+                    var ptsIntersectShadowCol = new Point3dCollection();
+                    contour.IntersectWith(lineShadow, Intersect.OnBothOperands, new Plane(), ptsIntersectShadowCol, IntPtr.Zero, IntPtr.Zero);
+                    ptsIntersectShadow = ptsIntersectShadowCol.Cast<Point3d>().ToList();
+                }
+
                 // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.                    
-                var westAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, false);
+                var westAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, ptsIntersectShadow, false);
                 if (westAngle < AngleEndOnPlane)
                 {
                     AngleEndOnPlane = westAngle;
                 }
-                var eastAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, true);
+                var eastAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, ptsIntersectShadow, true);
                 if (eastAngle > AngleStartOnPlane)
                 {
                     AngleStartOnPlane = eastAngle;
@@ -316,8 +317,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="contour">Контур</param>
         /// <param name="ptsIntersectSortByX">все точки пересечения, отсортированные по X</param>
+        /// <param name="ptsIntersectShadow">Точки пересечения дома с линией тени</param>
         /// <param name="isEastSide">Сторона восток - запад</param>
-        private double GetStartAngleBySideIntersects (Polyline contour, List<Point3d> ptsIntersectSortByX, bool isEastSide)
+        private double GetStartAngleBySideIntersects (Polyline contour, List<Point3d> ptsIntersectSortByX,
+            List<Point3d> ptsIntersectShadow, bool isEastSide)
         {
             if (ptsIntersectSortByX.Count == 0) return 0;
             double angleRes = 0;
@@ -343,15 +346,35 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ptCentre = ptPrew + (pt- ptPrew)/2;                
                 if (contour.IsPointInsidePolygon(ptCentre) && !contour.IsPointOnPolyline(ptCentre))
                 {
-                    var ptsLoopBelow = contour.GetLoopSideBetweenHorizontalIntersectPoints(ptPrew, pt, false, false);
+                    // Петля полилинии ниже заданных точек
+                    var ptsLoopBelow = contour.GetLoopSideBetweenHorizontalIntersectPoints(ptPrew, pt, false, true);
+                    if (ptsIntersectShadow.Count > 0 && ptsLoopBelow.Count > 0)
+                    {
+                        // Проверка точек пересечения с линией тени - добавление этих точек
+                        var y = ptsIntersectShadow[0].Y;   
+                        using (var plLoop = ptsLoopBelow.CreatePolyline())
+                        {
+                            ptsLoopBelow = ptsLoopBelow.Where(p => p.Y >= y).ToList();
+                            foreach (Point3d ptLSh in ptsIntersectShadow)
+                            {
+                                if (plLoop.IsPointOnPolyline(ptLSh))
+                                {
+                                    ptsLoopBelow.Add(ptLSh.Convert2d());
+                                }
+                            }
+                        }
+                    }
                     // Определение угла для каждой точки
                     foreach (var ptLoop in ptsLoopBelow)
                     {
-                        var angleInsPt = GetInsAngleFromPoint(ptLoop);
-                        if ((maxOrMinAngle && (angleInsPt > angleRes)) ||
-                            (!maxOrMinAngle && (angleInsPt < angleRes)))
+                        if (ptLoop.Y < ptCalc.Y)
                         {
-                            angleRes = angleInsPt;
+                            var angleInsPt = GetInsAngleFromPoint(ptLoop);
+                            if ((maxOrMinAngle && (angleInsPt > angleRes)) ||
+                                (!maxOrMinAngle && (angleInsPt < angleRes)))
+                            {
+                                angleRes = angleInsPt;
+                            }
                         }
                     }
                 }
@@ -370,6 +393,21 @@ namespace PIK_GP_Acad.Insolation.Services
             var angleAcad = (ptLoop - ptCalc2d).Angle;
             var angleIns = values.GetInsAngleFromAcad(angleAcad);
             return angleIns;
+        }
+
+        private Line GetLineShadow (int height)
+        {
+            // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
+            double cShadow;
+            double yShadowLen = values.YShadowLineByHeight(height, out cShadow);
+            double yShadow = ptCalc2d.Y - yShadowLen;
+
+            // Линия тени
+            var xRayToStart = values.GetXRay(yShadowLen, AngleStartOnPlane);
+            var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
+            Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
+                              new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
+            return lineShadow;
         }
     }
 }
