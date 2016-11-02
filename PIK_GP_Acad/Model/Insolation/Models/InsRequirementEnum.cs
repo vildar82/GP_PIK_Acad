@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
         [Description("Непрерывная")]        
         C,
         /// <summary>
-        /// не больше 1,5 часа инсоляции (непрерывной)
+        /// Больше или равно 1,5 часа инсоляции (непрерывной)
         /// </summary>        
         [Description("Промежуточная")]        
         B,

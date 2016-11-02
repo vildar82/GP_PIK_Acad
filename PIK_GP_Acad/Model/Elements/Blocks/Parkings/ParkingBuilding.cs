@@ -38,6 +38,8 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Garage;
 
+        public string HouseName { get; set; }
+
         public ParkingBuilding (BlockReference blRef, string blName) : base(blRef, blName)
         {
             IdEnt = blRef.Id;

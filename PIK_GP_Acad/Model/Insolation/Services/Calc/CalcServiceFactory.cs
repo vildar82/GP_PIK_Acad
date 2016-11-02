@@ -9,14 +9,14 @@ using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public static class InsCalcServiceFactory
+    public static class CalcServiceFactory
     {
-        public static IInsCalcService Create (InsOptions options)
+        public static ICalcService Create (InsOptions options)
         {
-            IInsCalcService insService = null;
+            ICalcService insService = null;
             if (options.Region.RegionPart == RegionEnum.Central)
             {
-                insService = new InsCalcServiceCentral(options);
+                insService = new CalcServiceCentral(options);
             }
             else
             {

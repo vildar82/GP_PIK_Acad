@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Model\ArcGIS\ArcGisService.cs" />
     <Compile Include="Model\BlockSection\BlockSectionContours.cs" />
     <Compile Include="Model\BlockSection\ClassTypeService.cs" />
@@ -139,7 +138,14 @@
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\FrontModel.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\FrontGroup.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\FrontOptions.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\House.cs" />
     <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\Front\CalcFrontCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\ICalcFront.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirement.cs" />
@@ -165,11 +171,11 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPoint.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Trees\CalcTreesCentral.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\IIlluminationArea.cs" />
-    <Compile Include="Model\Insolation\Services\Interfaces\IInsCalcService.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\ICalcService.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\IllumAreaCentral.cs" />
-    <Compile Include="Model\Insolation\Services\Calc\Central\InsCalcServiceCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\CalcServiceCentral.cs" />
     <Compile Include="Model\Insolation\Models\Maps\MapBuilding.cs" />
-    <Compile Include="Model\Insolation\Services\Calc\InsCalcServiceFactory.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\CalcServiceFactory.cs" />
     <Compile Include="Model\Insolation\Models\InsRequirementEnum.cs" />
     <Compile Include="Model\Insolation\Models\Maps\Map.cs" />
     <Compile Include="Model\Insolation\Models\Options\InsOptions.cs" />
@@ -401,34 +407,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\BureauBlack.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\BureauBlue.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\ExpressionDark.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\ExpressionLight.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\ShinyBlue.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\ShinyRed.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="Model\Insolation\UI\Resources\Themes\WhistlerBlue.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
     <Page Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -452,9 +430,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\trees.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\GP_Ins_Illums.png" />
@@ -485,6 +460,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\draw_visuals.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\Insolation\Services\Visual\Fronts\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,6 +20,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public BuildingTypeEnum BuildingType { get; set; }        
         public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
 
+        
+
         public MapBuilding () { }
 
         public MapBuilding(IBuilding building)

@@ -18,20 +18,22 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Расчет инсоляции в центральном регионе - лучевой конус это плоскость, в день равноденствия
     /// </summary>
-    public class InsCalcServiceCentral : IInsCalcService
+    public class CalcServiceCentral : ICalcService
     {
-        public InsCalcServiceCentral(InsOptions options)
+        public CalcServiceCentral(InsOptions options)
         {
             //Options = options;
             Region = options.Region;
             CalcValues = new CalcValuesCentral(options);
-            TreesCalc = new CalcTreesCentral(this);
+            CalcTrees = new CalcTreesCentral(this);
+            CalcFront = new CalcFrontCentral(this);
         }
 
-        public ICalcTrees TreesCalc { get; set; }
+        public ICalcTrees CalcTrees { get; set; }
+        public ICalcFront CalcFront { get; set; }
         public ICalcValues CalcValues { get; set; }
         //public InsOptions Options { get; set; }
-        public InsRegion Region { get; set; }
+        public InsRegion Region { get; set; }        
 
         /// <summary>
         /// Определение требования освещенности

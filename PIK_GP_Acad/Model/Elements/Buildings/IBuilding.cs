@@ -18,5 +18,9 @@ namespace PIK_GP_Acad.Elements.Buildings
         int Height { get; }        
         Polyline GetContourInModel ();
         BuildingTypeEnum BuildingType { get; set; }
+        /// <summary>
+        /// Имя дома - объекта
+        /// </summary>
+        string HouseName { get; set; }
     }
 }

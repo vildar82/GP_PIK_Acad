@@ -16,20 +16,41 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         Extents3d ext;
         public List<MapBuilding> Buildings { get; set; }        
+        public Map Map { get; set; }
 
-        public Scope (Extents3d ext, List<MapBuilding> items)
+        public Scope (Extents3d ext, List<MapBuilding> items, Map map)
         {            
             this.ext = ext;
+            Map = map;
             Buildings = items;
+        }
+
+        public void InitContour ()
+        {
+            foreach (var item in Buildings)
+            {
+                // Если есть старый контур - удаление и создание нового
+                DisposeBuildingContour(item);
+                item.InitContour();
+            }
+        }
+
+        private static void DisposeBuildingContour (MapBuilding item)
+        {
+            if (item.Contour != null && !item.Contour.IsDisposed)
+            {
+                item.Contour.Dispose();
+            }
         }
 
         public void Dispose ()
         {
+            if (Buildings == null) return;
             foreach (var item in Buildings)
             {
-                if (item.Contour != null || !item.Contour.IsDisposed)
-                    item.Contour.Dispose();
+                DisposeBuildingContour(item);                
             }
+            Buildings = null;
         }
     }
 }

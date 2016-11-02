@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Services
         Map map;
         Point3d ptCalc;
         Point2d ptCalc2d;
-        InsCalcServiceCentral calc;
+        CalcServiceCentral calc;
         ICalcValues values;
         /// <summary>
         /// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public double AngleEndOnPlane { get; private set; }        
 
-        public CalcPointCentral (InsPoint insPt, InsCalcServiceCentral insCalcService)
+        public CalcPointCentral (InsPoint insPt, CalcServiceCentral insCalcService)
         {
             this.map = insPt.Model.Map;
             buildingOwner = insPt.Building;            
@@ -219,7 +219,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     return false;
                 }
 
-                // Проверка ограничения от самого здания с восточной стороны
+                // Проверка ограничения от самого здания
                 CorrectStartAnglesByOwnerZeroLineIntersects(contour);
 
                 // Ограничения от окна
@@ -241,6 +241,8 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>        
         private void CorrectStartAnglesByWindow (Polyline contour)
         {
+            if (insPt.Window == null) return;
+
             var segStartIndex = (int)contour.GetParameterAtPoint(ptCalc);
             var segOwner = contour.GetLineSegment2dAt(segStartIndex);
 

@@ -41,6 +41,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         }
 
         public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Living;
+        public string HouseName { get; set; }
 
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {

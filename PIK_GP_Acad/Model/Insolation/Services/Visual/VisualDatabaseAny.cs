@@ -25,7 +25,10 @@ namespace PIK_GP_Acad.Insolation.Services
             if (visual != null)
             {
                 var ds = visual.CreateVisual();
-                draws.AddRange(ds);
+                if (ds!= null && ds.Any())
+                {
+                    draws.AddRange(ds);
+                }                
             }
         }
 

@@ -50,7 +50,7 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnAddPointExecute ()
         {
             // Выбор точки на чертеже и задание параметров окна
-            SelectPoint selPt = new SelectPoint();
+            var selPt = new SelectPoint();
             InsPoint p = selPt.SelectNewPoint(Tree.Model);
             if (p != null)
             {

@@ -12,9 +12,9 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class CalcTreesCentral : ICalcTrees
     {
-        private InsCalcServiceCentral insService;
+        private CalcServiceCentral insService;
 
-        public CalcTreesCentral (InsCalcServiceCentral centralInsService)
+        public CalcTreesCentral (CalcServiceCentral centralInsService)
         {
             insService = centralInsService;
         }        

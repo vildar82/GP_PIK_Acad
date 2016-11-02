@@ -4,9 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+             d:DataContext="{d:DesignInstance local:FrontViewModel,
+                                     IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
+        <Grid.RowDefinitions>
+            <!--Список групп - областей расчета фронтов--> 
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="lbGroups" Grid.Row="0"
+                 Background="Transparent"
+                 ItemsSource="{Binding Front.Groups}">
             
+        </ListBox>
+        <Grid Grid.Row="1">
+            <Button Content="fgh"/>
+        </Grid>
     </Grid>
 </UserControl>

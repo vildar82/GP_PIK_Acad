@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -38,6 +39,8 @@ namespace PIK_GP_Acad.Insolation.Services
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
             dictVmViews = GetViews();
         }
+
+        
 
         /// <summary>
         /// Переключатель активации расчета
@@ -149,9 +152,9 @@ namespace PIK_GP_Acad.Insolation.Services
             insModel?.Tree?.VisualsOnOff(false);
         }
 
-        public static IInsCalcService GetCalcService (InsOptions options)
+        public static ICalcService GetCalcService (InsOptions options)
         {
-            var insCalc = InsCalcServiceFactory.Create(options);
+            var insCalc = CalcServiceFactory.Create(options);
             return insCalc;
         }
 
@@ -279,6 +282,16 @@ namespace PIK_GP_Acad.Insolation.Services
                 { typeof (TreeOptionsViewModel), typeof(TreeOptionsView) },
                 {  typeof (InsPointViewModel), typeof(InsPointView)}
             };
+        }
+
+        public static void ShowMessage (Exception ex, string msg)
+        {
+            ShowMessage($"{msg}\n\r{ex.Message}", MessageBoxImage.Error);
+        }
+
+        public static void ShowMessage (string msg, MessageBoxImage icon)
+        {
+            MessageBox.Show(msg, "Инсоляция", MessageBoxButton.OK, icon, MessageBoxResult.OK);
         }
     }
 }

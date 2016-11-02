@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public bool IsUpdateRequired { get; set; }        
         public Document Doc { get; set; }        
         public Map Map { get; set; }        
-        public IInsCalcService CalcService { get; set; }
+        public ICalcService CalcService { get; set; }
         /// <summary>
         /// Настройки инсоляции
         /// </summary>

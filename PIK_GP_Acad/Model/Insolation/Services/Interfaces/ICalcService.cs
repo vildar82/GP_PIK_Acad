@@ -9,11 +9,12 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Сервир расчета инсоляции чертежа
     /// </summary>
-    public interface IInsCalcService
+    public interface ICalcService
     {
         //InsOptions Options { get; set; }
         ICalcValues CalcValues { get; set; }
-        ICalcTrees TreesCalc { get; set; }        
+        ICalcTrees CalcTrees { get; set; }
+        ICalcFront CalcFront { get; set; }
         void CreateShadowMap ();
         InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums, BuildingTypeEnum buildingType);
 

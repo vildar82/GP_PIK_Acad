@@ -41,6 +41,8 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
 
         public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Social;
 
+        public string HouseName { get; set; }
+
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {
             IdEnt = blRef.Id;

@@ -25,8 +25,8 @@ namespace PIK_GP_Acad.Elements.Buildings
         public int Height { get; set; }  
         public Error Error { get; set; }        
         public ClassType ClassType { get; set; }
-
         public BuildingTypeEnum BuildingType { get; set; }
+        public string HouseName { get; set; }
 
         public Building (Entity ent, int height, List<FCProperty> props, ClassType classType)
         {

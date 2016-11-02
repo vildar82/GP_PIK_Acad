@@ -25,7 +25,7 @@ namespace PIK_GP_Acad.Insolation.Services
         }
 
         /// <summary>
-        /// Сохранение объекта в словарь
+        /// Сохранение в словарь объекта DBObject (ExtensionDictionary)
         /// </summary>        
         public static void Save (IDboDataSave obj, Document doc)
         {

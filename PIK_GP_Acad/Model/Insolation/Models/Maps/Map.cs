@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using AcadLib.RTree.SpatialIndex;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -70,8 +71,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;
                 foreach (var idEnt in ms)
                 {
-                    var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
-                    DefineEnt(ent);
+                    if (idEnt.IsValidEx())
+                    {
+                        var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+                        DefineEnt(ent);
+                    }
                 }
                 t.Commit();
             }            
@@ -170,31 +174,28 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public Scope GetScope (Extents3d ext)
         {            
-            Rectangle rectScope = new Rectangle(ext);
+            var rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
-            Scope scope = new Scope(ext, items);
-            InitContour(scope.Buildings);
+            var scope = new Scope(ext, items, this);
+            scope.InitContour();
             return scope;
         }
 
-        public void InitContour (List<MapBuilding> buildings)
-        {
-            foreach (var item in buildings)
-            {
-                item.InitContour();
-            }
-        }
-
-        public MapBuilding GetBuildingInPoint (Point3d pt)
+        public MapBuilding GetBuildingInPoint (Point2d pt)
         {
             MapBuilding building = null;
             Point p = new Point(pt.X, pt.Y, 0);
-            var nearest = treeBuildings.Nearest(p, 5);            
-            if (nearest.Count ==1)
+            var nearest = treeBuildings.Nearest(p, 2);
+            if (nearest.Count > 0)
             {
                 building = nearest[0];
             }
             return building;
+        }
+
+        public MapBuilding GetBuildingInPoint (Point3d pt)
+        {
+            return GetBuildingInPoint(pt.Convert2d());            
         }
 
         private MapBuilding FindBuildingByEnt (ObjectId id)
