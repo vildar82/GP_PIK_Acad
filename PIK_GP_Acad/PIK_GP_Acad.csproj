@@ -152,6 +152,7 @@
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Fronts\VisualFront.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDrawOverrule.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
@@ -403,7 +404,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Resource Include="Model\Insolation\UI\Resources\ControlStyles.xaml">
+    <Resource Include="Model\Insolation\UI\Resources\InsPaletteStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
@@ -461,9 +462,7 @@
   <ItemGroup>
     <Resource Include="Resources\draw_visuals.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\Insolation\Services\Visual\Fronts\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

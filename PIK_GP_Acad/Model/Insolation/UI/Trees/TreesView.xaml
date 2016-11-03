@@ -10,18 +10,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=True}"
-    d:DesignHeight="259" d:DesignWidth="126"
+    d:DesignHeight="213" d:DesignWidth="257"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <BitmapImage x:Key="tree" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png" />
-        <BitmapImage x:Key="ilums" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
-        <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
-        <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
-        <BitmapImage x:Key="Add" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
-        <BitmapImage x:Key="option_dots" UriSource="/PIK_GP_Acad;component/Resources/option_dots.png" />
-        <BitmapImage x:Key="draw_visuals" UriSource="/PIK_GP_Acad;component/Resources/draw_visuals.png" />
-        <sys:Double x:Key="PointButtonsHeight">20</sys:Double>
-        <sys:Double x:Key="TreeButtonsHeight">23</sys:Double>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -65,18 +61,16 @@
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
                             <!--  Вкл/выкл зон инсоляции точки  -->
                             <ToggleButton
-                                Height="{StaticResource PointButtonsHeight}"
-                                Margin="0"
-                                Background="Transparent"
+                                Height="{StaticResource SmallButtonsHeight}"
+                                Margin="0"                                
                                 IsChecked="{Binding IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ToolTip="Визуализация зон инсоляции точки.">
                                 <Image Source="{StaticResource ilums}" />
                             </ToggleButton>
                             <!--  Редактирование параметров точки  -->
                             <Button
-                                Height="{StaticResource PointButtonsHeight}"
-                                Margin="0"
-                                Background="Transparent"
+                                Height="{StaticResource SmallButtonsHeight}"
+                                Margin="0"                                
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
                                 CommandParameter="{Binding}"
                                 ToolTip="Редактирование параметров точки">
@@ -84,15 +78,15 @@
                             </Button>
                             <!--  Удаление точки  -->
                             <Button
-                                Width="{StaticResource PointButtonsHeight}"
-                                Height="{StaticResource PointButtonsHeight}"
-                                Margin="0" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Background="Transparent"
+                                Width="{StaticResource SmallButtonsHeight}"
+                                Height="{StaticResource SmallButtonsHeight}"
+                                Margin="0"                                 
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
                                 CommandParameter="{Binding}"
                                 ToolTip="Удаление выделенной точки в списке">
                                 <Image Source="{StaticResource Close}" />
                             </Button>
+                            <Button Content="{StaticResource delete}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
@@ -107,15 +101,13 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <ToggleButton
-                    Height="{StaticResource TreeButtonsHeight}"
-                    Background="Transparent"
+                    Height="{StaticResource NormalButtonsHeight}"                    
                     IsChecked="{Binding Tree.IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     ToolTip="Включение/выключение визуализации зон инсоляции всех точек">
                     <Image Source="{StaticResource ilums}" />
                 </ToggleButton>
                 <ToggleButton
-                    Height="{StaticResource TreeButtonsHeight}"
-                    Background="Transparent"
+                    Height="{StaticResource NormalButtonsHeight}"                    
                     IsChecked="{Binding Tree.IsVisualTreeOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     ToolTip="Включение/выключение визуализации елочек">
                     <Image Source="{StaticResource tree}" />
@@ -124,32 +116,30 @@
             <!--  Кнопка добавление точки  -->
             <Button
                 Grid.Column="1"
-                Height="{StaticResource TreeButtonsHeight}"
-                Background="Transparent"
+                Height="{StaticResource NormalButtonsHeight}"                
                 Command="{Binding AddPoint}"
                 ToolTip="Добавление точки">
                 <Image Source="{StaticResource Add}" />
-            </Button>            
+            </Button>
             <Button
                 x:Name="btnDots"
-                Grid.Column="2"
-                Background="Transparent"
+                Grid.Column="2"                
                 Click="btnDots_Click" ContextMenuService.IsEnabled="False"
-                Height="{StaticResource TreeButtonsHeight}"
-                Width="{StaticResource TreeButtonsHeight}">
-                <Image Height="{StaticResource TreeButtonsHeight}" Source="{StaticResource option_dots}" />
+                Height="{StaticResource NormalButtonsHeight}"
+                Width="{StaticResource NormalButtonsHeight}">
+                <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource option_dots}" />
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
                         <MenuItem Command="{Binding EditTreeOptions}" Header="Настройки высот елочек">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource options}"
-                                       Height="{StaticResource TreeButtonsHeight}" Width="{StaticResource TreeButtonsHeight}"/>                                
+                                       Height="{StaticResource NormalButtonsHeight}" Width="{StaticResource NormalButtonsHeight}"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource draw_visuals}" 
-                                       Height="{StaticResource TreeButtonsHeight}" Width="{StaticResource TreeButtonsHeight}" />
+                                       Height="{StaticResource NormalButtonsHeight}" Width="{StaticResource NormalButtonsHeight}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>

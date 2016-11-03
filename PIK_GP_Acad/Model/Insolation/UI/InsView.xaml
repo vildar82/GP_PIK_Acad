@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BitmapImage x:Key="trees" UriSource="/PIK_GP_Acad;component/Resources/trees.png"/>            
             <BitmapImage x:Key="update" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>

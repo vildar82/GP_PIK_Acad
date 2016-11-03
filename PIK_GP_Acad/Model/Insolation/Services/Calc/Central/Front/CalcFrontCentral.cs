@@ -20,6 +20,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private FrontOptions frontOpt;
         private Map map;
         private InsModel model;
+        private double delta;
 
         public CalcFrontCentral (CalcServiceCentral calcService)
         {
@@ -42,6 +43,7 @@ namespace PIK_GP_Acad.Insolation.Services
             frontOpt = front.Options;
             model = front.Model;
             map = model.Map;
+            delta = frontOpt.StepCalcPointInFront;
 
             var houseContour = house.Contour;
             // Расчет фронтов на каждом сегменте контура дома
@@ -54,13 +56,13 @@ namespace PIK_GP_Acad.Insolation.Services
                     resFronts.AddRange(segFronts);
                 }                
             }
-
             return resFronts;
         }
 
         private List<FrontValue> CalcSegment (LineSegment2d seg)
         {
-            var delta = frontOpt.StepCalcPointInFront;
+            if (seg == null) return null;
+            List<FrontValue> resFrontLines = new List<FrontValue>();            
 
             // Расчитанные точки сегмента
             var calcPoints = GetFrontCalcPoints(seg, delta);
@@ -80,21 +82,28 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         // Создание фронта
                         var frontLine = CreateFrontLine(fPtStart, fPtPrew, item);
+                        if (frontLine != null)
+                        {
+                            resFrontLines.Add(frontLine);
+                        }
                     }
                 }
             }
+            return resFrontLines;
         }
 
         private FrontValue CreateFrontLine (FrontCalcPoint fPtStart, FrontCalcPoint fPtEnd, FrontCalcPoint fPtNext)
         {
+            FrontValue frontLine = null;
             if (fPtStart != fPtEnd)
             {
                 // Участок фронта - из 1 точки - половина расст до начала след фронтана
             }
             else
             {
-                var frontLine = new FrontValue(fPtStart.Point, fPtEnd.Point, fPtStart.InsValue, frontOpt);
+                frontLine = new FrontValue(fPtStart.Point, fPtEnd.Point, fPtStart.InsValue, frontOpt);
             }
+            return frontLine;
         }
 
         /// <summary>

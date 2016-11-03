@@ -21,8 +21,10 @@ namespace PIK_GP_Acad.Insolation.Models
     public class House : ModelBase
     {
         private Document doc = Application.DocumentManager.MdiActiveDocument;
+
         public House ()
-        {            
+        {
+            VisualFront = new VisualFront();
         }   
 
         public FrontGroup FrontGroup { get; set; }
@@ -48,15 +50,34 @@ namespace PIK_GP_Acad.Insolation.Models
         public Polyline Contour { get { return contour; } set { DisposeContour(); contour = value;} }
         Polyline contour;
 
+        public VisualFront VisualFront { get; set; }
+
+        public bool IsVisualFront {
+            get { return isVisualFront; }
+            set { isVisualFront = value; OnIsVisualFrontChanged(); RaisePropertyChanged(); }
+        }
+        bool isVisualFront;
+
         public Error Error  { get { return error; } set { error = value; RaisePropertyChanged(); } }
         Error error;
 
-        private void DisposeContour ()
+        /// <summary>
+        /// Расчет фронтов дома
+        /// </summary>
+        public void Update ()
         {
-            if (Contour != null && !Contour.IsDisposed)
-            {
-                Contour.Dispose();
-            }
+            if (Contour == null) return;
+
+            var calcService = FrontGroup.Front.Model.CalcService;
+            var frontLines = calcService.CalcFront.CalcHouse(this);
+            VisualFront.FrontLines = frontLines;
+            VisualFront.VisualUpdate();
+        }
+
+        private void OnIsVisualFrontChanged ()
+        {
+            VisualFront.VisualIsOn = IsVisualFront;
+            VisualFront.VisualUpdate();
         }
 
         /// <summary>
@@ -69,47 +90,17 @@ namespace PIK_GP_Acad.Insolation.Models
                 doc.Editor.Zoom(GetExtents());
             }
             catch { }
-        }
+        } 
 
         /// <summary>
-        /// Определение домов в выбранной области
+        /// Определение имени дома - по блок-секциям или дефолтное по переданному индексу
         /// </summary>        
-        public static List<House> GetHouses (Scope scope, FrontGroup frontGroup)
-        {
-            var houses = new List<House>();
-            // Определение домов из блок-секций
-            var buildings = scope.Buildings;
-            foreach (var building in buildings)
-            {                
-                if (!FindHouse(ref houses, building))
-                {
-                    var house = new House();
-                    house.Buildings.Add(building);
-                    houses.Add(house);
-                }
-            }
-            // Для каждого дома - создание общей полилинии
-            int countHouse = 1;
-            foreach (var house in houses)
-            {
-                house.FrontGroup = frontGroup;
-                house.DefineContour();
-                // Заполнение оставшихся свойств дома
-                house.DefineNameAuto(countHouse);
-                countHouse++;
-            }
-            return houses;
-        }
-
-        /// <summary>
-        /// Автоматическое определение имени дома
-        /// </summary>
-        /// <param name="countHouse"></param>
-        private void DefineNameAuto (int countHouse)
+        public void DefineName (int countHouse)
         {
             if (!string.IsNullOrEmpty(Name)) return;
             if (Buildings != null)
             {
+                //TODO: FIX: определение имени дома по блок-секциям
                 Name = Buildings[0].Building.HouseName;
             }
             if (string.IsNullOrEmpty(Name))
@@ -132,85 +123,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     // TODO: Сохранить имя дома в расшир.данных объекта здания (IBuilding)                                   
                 }
             }
-        }
-
-        /// <summary>
-        /// Расчет фронтов дома
-        /// </summary>
-        public void CalcFront ()
-        {
-            if (Contour == null) return;
-
-            var calcService = FrontGroup.Front.Model.CalcService;
-            calcService.CalcFront.CalcHouse(this);
-        }
-
-        private void DefineContour ()
-        {
-            var pls = Buildings.Select(s => s.Contour).ToList();
-            using (var reg = pls.Union(null))
-            {
-                var ptsRegByLoopType = reg.GetPoints2dByLoopType();
-                if (ptsRegByLoopType.Count == 1)
-                {
-                    Contour = ptsRegByLoopType[0].Key.Cast<Point2d>().ToList().CreatePolyline();
-                }
-                else
-                {
-                    // Объединение полилиний
-                    var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
-                    try
-                    {
-                        var plMerged = plsLoop.Merge(2);
-                        Contour = plMerged;
-                    }
-                    catch (Exception ex)
-                    {
-                        AddError(ex.Message);
-                    }
-                }
-            }
-        }
-
-        private static bool FindHouse (ref List<House> houses, MapBuilding building)
-        {
-            var offset = building.Contour.Offset(3, OffsetSide.Out).First();
-            var findHouses = new List<House>();
-            foreach (var house in houses)
-            {
-                foreach (var blInHouse in house.Buildings)
-                {
-                    var ptsIntersect = new Point3dCollection();
-                    offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                    if (ptsIntersect.Count > 0)
-                    {
-                        findHouses.Add(house);
-                        break;
-                    }
-                }
-            }
-            if (findHouses.Any())
-            {
-                if (findHouses.Skip(1).Any())
-                {
-                    // Объединение нескольких домов в один общий
-                    var bls = findHouses.SelectMany(s => s.Buildings).ToList();
-                    bls.Add(building);
-                    var house = new House { Buildings = bls };
-                    houses.Add(house);
-                    foreach (var h in findHouses)
-                    {
-                        houses.Remove(h);
-                    }
-                }
-                else
-                {
-                    findHouses[0].Buildings.Add(building);
-                }
-                return true;
-            }
-            return false;
-        }
+        }        
 
         /// <summary>
         /// Добавление ошибки - относящейся к этому дому
@@ -241,6 +154,44 @@ namespace PIK_GP_Acad.Insolation.Models
                 return ext;
             }
             return new Extents3d();
+        }       
+
+        /// <summary>
+        /// Определение полилинии контура дома (объединением полилиний от блок-секций)
+        /// </summary>
+        public void DefineContour ()
+        {
+            var pls = Buildings.Select(s => s.Contour).ToList();
+            using (var reg = pls.Union(null))
+            {
+                var ptsRegByLoopType = reg.GetPoints2dByLoopType();
+                if (ptsRegByLoopType.Count == 1)
+                {
+                    Contour = ptsRegByLoopType[0].Key.Cast<Point2d>().ToList().CreatePolyline();
+                }
+                else
+                {
+                    // Объединение полилиний
+                    var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
+                    try
+                    {
+                        var plMerged = plsLoop.Merge(2);
+                        Contour = plMerged;
+                    }
+                    catch (Exception ex)
+                    {
+                        AddError(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public void DisposeContour ()
+        {
+            if (Contour != null && !Contour.IsDisposed)
+            {
+                Contour.Dispose();
+            }
         }
     }
 }

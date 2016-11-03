@@ -18,9 +18,12 @@ namespace PIK_GP_Acad.Insolation.UI
             AddGroup = new RelayCommand(OnAddGroupExecute);
         }
 
-        public FrontModel Front { get; set; }
+        /// <summary>
+        /// Модель
+        /// </summary>
+        public FrontModel Front { get; set; }        
 
-        public RelayCommand AddGroup { get; set; }
+        public RelayCommand AddGroup { get; set; }        
 
         private void OnAddGroupExecute ()
         {

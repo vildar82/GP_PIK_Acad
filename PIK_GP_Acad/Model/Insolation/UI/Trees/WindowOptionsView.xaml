@@ -8,9 +8,9 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     d:DesignHeight="226.667" d:DesignWidth="141"
     mc:Ignorable="d">
-    <!--<UserControl.Resources>
-        <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
-    </UserControl.Resources>-->
+    <UserControl.Resources>
+        <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
+    </UserControl.Resources>
     <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2">
         <StackPanel HorizontalAlignment="Center" Margin="2">
             <WrapPanel HorizontalAlignment="Center" 
