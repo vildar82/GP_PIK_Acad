@@ -33,15 +33,15 @@ namespace PIK_GP_Acad.Insolation.Services
 
             var doc = insPoint.Model.Doc;
             //using (doc.LockDocument())
-            using (var t = doc.Database.TransactionManager.StartTransaction())
-            {
+            //using (var t = doc.Database.TransactionManager.StartTransaction())
+            //{
                 var calcPt = new CalcPointCentral(insPoint, insService);
                 // Расчет освещенности в точке
                 illumAreas = calcPt.Calc();
                 insPoint.AngleStartOnPlane = calcPt.AngleStartOnPlane;
                 insPoint.AngleEndOnPlane = calcPt.AngleEndOnPlane;
-                t.Commit();
-            }
+                //t.Commit();
+            //}
             return illumAreas;
         }
     }

@@ -41,7 +41,9 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             var pt1 = resPt.Value.Trans(ed, CoordSystem.UCS, CoordSystem.WCS);
             var pt2 = resPt2.Value.Trans(ed, CoordSystem.UCS, CoordSystem.WCS);
-            var ext = new Extents3d(pt1, pt2);
+            var ext = new Extents3d();
+            ext.AddPoint(pt1);
+            ext.AddPoint(pt2);
             return ext;
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -18,7 +19,7 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         public FrontModel ()
         {
-            Groups = new ObservableCollection<FrontGroup>();            
+            Groups = new ObservableCollection<FrontGroup>();
         }
 
         public InsModel Model { get; set; }
@@ -28,7 +29,9 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Группы - выбранные области на чертеже для расчета фронтонов
         /// </summary>
-        public ObservableCollection<FrontGroup> Groups { get; set; } 
+        public ObservableCollection<FrontGroup> Groups { get { return groups; }
+            set { groups = value; RaisePropertyChanged(); } }
+        ObservableCollection<FrontGroup> groups;
 
         public bool IsVisualsFrontOn { get { return isVisualsFrontOn; } set { isVisualsFrontOn = value; RaisePropertyChanged(); } }
         bool isVisualsFrontOn;
@@ -45,9 +48,12 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Options == null)
             {
                 Options = FrontOptions.Default();
-            }
+            }            
         }
 
+        /// <summary>
+        /// Добавление новой группы пользователем
+        /// </summary>        
         public void AddGroup (FrontGroup group)
         {            
             Groups.Add(group);
@@ -55,25 +61,86 @@ namespace PIK_GP_Acad.Insolation.Models
             group.Update();
         }
 
+        /// <summary>
+        /// Добавление группы из словаря
+        /// </summary>        
+        private void AddGroup (DicED dicGroup)
+        {
+            var group = FrontGroup.New(dicGroup);
+            Groups.Add(group);
+            group.Update();
+        }
+
+        public void DeleteGroup (FrontGroup group)
+        {
+            Groups.Remove(group);
+            group.Dispose();
+        }
+
         public List<TypedValue> GetDataValues (Document doc)
         {
-            throw new NotImplementedException();
-        }
+            return new List<TypedValue>() {
+                TypedValueExt.GetTvExtData(IsVisualsFrontOn)                
+            };
+        }       
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            throw new NotImplementedException();
+            if (values == null || values.Count != 1)
+            {
+                // Default
+                IsVisualsFrontOn = true;                
+            }
+            else
+            {
+                int index = 0;
+                IsVisualsFrontOn = values[index++].GetTvValue<bool>();                
+            }
         }
 
         public DicED GetExtDic (Document doc)
         {
-            throw new NotImplementedException();
+            DicED dicFront = new DicED();
+
+            // Список значений расчета елочек                              
+            dicFront.AddRec(new RecXD("FrontModelRec", GetDataValues(doc)));
+
+            // Сохранение настроек            
+            dicFront.AddInner("FrontOptions", Options.GetExtDic(doc));
+
+            // Сохранение групп
+            int groupCount = 0;
+            foreach (var group in Groups)
+            {
+                dicFront.AddInner("Group" + groupCount, group.GetExtDic(doc));
+                groupCount++;
+            }
+
+            return dicFront;
         }
 
-        public void SetExtDic (DicED dicEd, Document doc)
+        public void SetExtDic (DicED dicFront, Document doc)
         {
-            throw new NotImplementedException();
+            if (dicFront == null)
+            {
+                // Default                
+                return;
+            }
+            // Собственные значения рассчета
+            SetDataValues(dicFront.GetRec("FrontModelRec")?.Values, doc);
+            // настроки
+            Options = new FrontOptions();
+            Options.SetExtDic(dicFront.GetInner("FrontOptions"), doc);
+
+            int groupCount = 0;
+            var dicGroup = dicFront.GetInner("Group" + groupCount); 
+            if (dicGroup != null)
+            {
+                AddGroup(dicGroup);
+            }
         }
+
+        
 
         /// <summary>
         /// Подготовление к расчету фронтов
@@ -83,6 +150,30 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Options == null)            
                 Options = FrontOptions.Default();            
             Options.DefineLayer(Model.Doc.Database);
+        }
+
+        public void Update ()
+        {
+            foreach (var item in groups)
+            {
+                item.Update();
+            }
+        }
+
+        public void ClearVisual ()
+        {
+            foreach (var item in Groups)
+            {
+                item.ClearVisual();
+            }
+        }
+
+        public void UpdateVisual ()
+        {
+            foreach (var item in Groups)
+            {
+                item.UpdateVisual();
+            }
         }
     }
 }

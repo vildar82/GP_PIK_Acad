@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public House ()
         {
             VisualFront = new VisualFront();
+            Sections = new ObservableCollection<MapBuilding>();
         }   
 
         public FrontGroup FrontGroup { get; set; }
@@ -45,7 +47,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Блок-секции дома
         /// </summary>
-        public List<MapBuilding> Buildings { get; set; }
+        public ObservableCollection<MapBuilding> Sections { get { return sections; } set { sections = value; RaisePropertyChanged(); } }
+        ObservableCollection<MapBuilding> sections;
 
         public Polyline Contour { get { return contour; } set { DisposeContour(); contour = value;} }
         Polyline contour;
@@ -76,8 +79,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnIsVisualFrontChanged ()
         {
-            VisualFront.VisualIsOn = IsVisualFront;
-            VisualFront.VisualUpdate();
+            VisualFront.VisualIsOn = IsVisualFront;            
         }
 
         /// <summary>
@@ -86,8 +88,11 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Show()
         {
             try
-            {                
-                doc.Editor.Zoom(GetExtents());
+            {
+                using (doc.LockDocument())
+                {
+                    doc.Editor.Zoom(GetExtents());
+                }
             }
             catch { }
         } 
@@ -98,10 +103,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public void DefineName (int countHouse)
         {
             if (!string.IsNullOrEmpty(Name)) return;
-            if (Buildings != null)
+            if (Sections != null)
             {
                 //TODO: FIX: определение имени дома по блок-секциям
-                Name = Buildings[0].Building.HouseName;
+                Name = Sections[0].Building.HouseName;
             }
             if (string.IsNullOrEmpty(Name))
             {
@@ -115,9 +120,9 @@ namespace PIK_GP_Acad.Insolation.Models
         private void SaveHouseNameToSection ()
         {
             if (string.IsNullOrEmpty(Name)) return;
-            if (Buildings!= null)
+            if (Sections!= null)
             {
-                foreach (var item in Buildings)
+                foreach (var item in Sections)
                 {
                     item.Building.HouseName = Name;
                     // TODO: Сохранить имя дома в расшир.данных объекта здания (IBuilding)                                   
@@ -144,10 +149,10 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 return Contour.GeometricExtents;
             }
-            if (Buildings != null)
+            if (Sections != null)
             {
                 var ext = new Extents3d();
-                foreach (var item in Buildings)
+                foreach (var item in Sections)
                 {
                     ext.AddExtents(item.ExtentsInModel);
                 }
@@ -161,7 +166,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void DefineContour ()
         {
-            var pls = Buildings.Select(s => s.Contour).ToList();
+            if (Sections == null) return;
+            var pls = Sections.Select(s => s.Contour).ToList();            
             using (var reg = pls.Union(null))
             {
                 var ptsRegByLoopType = reg.GetPoints2dByLoopType();
@@ -192,6 +198,16 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Contour.Dispose();
             }
+        }
+
+        public void ClearVisual ()
+        {
+            VisualFront?.VisualsDelete();
+        }
+
+        public void UpdateVisual ()
+        {
+            VisualFront?.VisualUpdate();
         }
     }
 }

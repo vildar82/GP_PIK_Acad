@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using AcadLib.Geometry;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -16,7 +17,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Группа выбора - для расчета фронтонов
     /// </summary>
-    public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues
+    public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
         public FrontGroup()
         {
@@ -51,11 +52,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Включение/отключение визуализации расчета фронтонов
         /// </summary>
-        public bool IsVisualFrontOn { get { return isVisualFrontOn; } set { isVisualFrontOn = value; RaisePropertyChanged(); } }
-        bool isVisualFrontOn;
+        public bool IsVisualFrontOn { get { return isVisualFrontOn; }
+            set { isVisualFrontOn = value; OnIsVisualIllumsChanges(); RaisePropertyChanged(); } }        
+        bool isVisualFrontOn;        
+
+        public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }
+        string info;
 
         public bool IsExpanded { get { return isExpanded; } set { isExpanded = value; OnIsExpandedChanged(); RaisePropertyChanged(); } }
-        bool isExpanded;
+        
+
+        bool isExpanded;        
 
         /// <summary>
         /// Новая группа фронтонов
@@ -65,6 +72,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var frontGroup = new FrontGroup(selReg, front);
             return frontGroup;
+        }
+        public static FrontGroup New (DicED dicGroup)
+        {
+            var group = new FrontGroup();
+            group.SetExtDic(dicGroup, null);
+            return group;
         }
 
         /// <summary>
@@ -78,20 +91,30 @@ namespace PIK_GP_Acad.Insolation.Models
             using (var t = db.TransactionManager.StartTransaction())
             {
                 Front.InitToCalc();
-
                 // Определение домов
                 UpdateHouses();
 
                 t.Commit();
             }
-        }
+        }        
 
-        private void OnIsExpandedChanged()
+        private void OnIsExpandedChanged ()
         {
             if (IsExpanded)
             {
                 Show();
             }
+        }
+        
+        private void OnIsVisualIllumsChanges ()
+        {
+            if (houses == null) return;
+            // Включение/выключение визуализации фронтов во всех домах
+            foreach (var item in Houses)
+            {
+                item.IsVisualFront = IsVisualFrontOn;
+            }
+            
         }
 
         /// <summary>
@@ -145,7 +168,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (!FindHouse(ref houses, building))
                 {
                     var house = new House();
-                    house.Buildings.Add(building);
+                    house.Sections.Add(building);
                     houses.Add(house);
                 }
             }
@@ -160,7 +183,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 countHouse++;
             }
             return houses;
-        }
+        }        
 
         private static bool FindHouse (ref List<House> houses, MapBuilding building)
         {
@@ -168,7 +191,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var findHouses = new List<House>();
             foreach (var house in houses)
             {
-                foreach (var blInHouse in house.Buildings)
+                foreach (var blInHouse in house.Sections)
                 {
                     var ptsIntersect = new Point3dCollection();
                     offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
@@ -184,9 +207,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (findHouses.Skip(1).Any())
                 {
                     // Объединение нескольких домов в один общий
-                    var bls = findHouses.SelectMany(s => s.Buildings).ToList();
+                    var bls = findHouses.SelectMany(s => s.Sections).ToList();
                     bls.Add(building);
-                    var house = new House { Buildings = bls };
+                    var house = new House { Sections = new ObservableCollection<MapBuilding>(bls) };
                     houses.Add(house);
                     foreach (var h in findHouses)
                     {
@@ -195,7 +218,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
                 else
                 {
-                    findHouses[0].Buildings.Add(building);
+                    findHouses[0].Sections.Add(building);
                 }
                 return true;
             }
@@ -208,29 +231,104 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 foreach (var item in Houses)
                 {
-                    item.DefineContour();
+                    item.DisposeContour();
                 }
             }
         }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            throw new NotImplementedException();
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(Name),
+                TypedValueExt.GetTvExtData(IsVisualFrontOn)                
+            };
         }
-
-        public DicED GetExtDic (Document doc)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            throw new NotImplementedException();
+            if (values == null || values.Count != 2)
+            {
+                // Default
+                Name = "";
+            }
+            else
+            {
+                int index = 0;
+                Name = values[index++].GetTvValue<string>();
+                IsVisualFrontOn = values[index++].GetTvValue<bool>();                
+            }
+        }
+        public DicED GetExtDic (Document doc)
+        {
+            var dicGroup = new DicED();
+            dicGroup.AddRec("GroupRec", GetDataValues(doc));
+            dicGroup.AddInner("SelectRegion", GetExtDicSelectRegion());
+            return dicGroup;
+        }
+        public void SetExtDic (DicED dicFront, Document doc)
+        {
+            SetDataValues(dicFront.GetRec("GroupRec")?.Values, doc);
+            SelectRegion = GetSelectRegionFromDict(dicFront.GetInner("SelectRegion"));
+        }
+        private DicED GetExtDicSelectRegion ()
+        {
+            var dicSelReg = new DicED();
+            var selRegTVs = new List<TypedValue> {
+                // MinPt
+                TypedValueExt.GetTvExtData(SelectRegion.MinPoint.X),
+                TypedValueExt.GetTvExtData(SelectRegion.MinPoint.Y),
+                // MaxPt
+                TypedValueExt.GetTvExtData(SelectRegion.MaxPoint.X),
+                TypedValueExt.GetTvExtData(SelectRegion.MaxPoint.Y),
+            };
+            dicSelReg.AddRec("SelRegRec", selRegTVs);
+            return dicSelReg;
+        }
+        private Extents3d GetSelectRegionFromDict (DicED dicSelReg)
+        {
+            Extents3d resExt;
+            var recSel = dicSelReg.GetRec("SelRegRec");            
+            if (recSel!= null && recSel.Values!= null && recSel.Values.Count == 4)
+            {
+                int index = 0;
+                var minPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
+                var minPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
+                var maxPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
+                var maxPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
+
+                resExt = new Extents3d(new Point3d(minPtX, minPtY, 0), new Point3d (maxPtX, maxPtY, 0));
+            }
+            else
+            {
+                resExt = new Extents3d();
+            }
+            return resExt;
         }
 
-        public void SetExtDic (DicED dicEd, Document doc)
+        public void ClearVisual ()
         {
-            throw new NotImplementedException();
+            if (Houses != null)
+            {
+                foreach (var item in Houses)
+                {
+                    item.ClearVisual();
+                }
+            }
+        }
+
+        public void UpdateVisual ()
+        {
+            if (Houses != null)
+            {
+                foreach (var item in houses)
+                {
+                    item.UpdateVisual();
+                }
+            }
+        }
+
+        public void Dispose ()
+        {
+            DisposeHouses();
         }
     }
 }

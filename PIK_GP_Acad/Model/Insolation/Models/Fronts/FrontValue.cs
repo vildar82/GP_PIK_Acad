@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
             line.AddVertexAt(1, ptStart, 0, 0, 0);
             line.Color = Color.FromColor(opt.GetFrontColor(InsValue));
             line.ConstantWidth = opt.LineFrontWidth;
-            line.LayerId = opt.FrontLineLayerId;
+            //line.LayerId = opt.FrontLineLayerId;
             return line;
         }
     }

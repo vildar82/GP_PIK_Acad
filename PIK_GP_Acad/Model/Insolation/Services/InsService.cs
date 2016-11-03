@@ -10,10 +10,8 @@ using AcadLib;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.UI;
-using static Autodesk.AutoCAD.ApplicationServices.Application;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace PIK_GP_Acad.Insolation.Services
@@ -38,9 +36,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
             dictVmViews = GetViews();
-        }
-
-        
+        }        
 
         /// <summary>
         /// Переключатель активации расчета
@@ -49,8 +45,8 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public static bool InsActivate {
             get {
-                var insModel = GetInsModel(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.MdiActiveDocument);
-                return insModel != null && !insModel.IsCleared;
+                var insModel = GetInsModel(Application.DocumentManager.MdiActiveDocument);
+                return insModel != null && insModel.IsEnabled;
             }
             set {
                 ActivateIns(value);
@@ -63,9 +59,9 @@ namespace PIK_GP_Acad.Insolation.Services
             Type view;
             if (dictVmViews.TryGetValue(viewModel.GetType(), out view))
             {
-                var win = (System.Windows.Window)Activator.CreateInstance(view);
+                var win = (Window)Activator.CreateInstance(view);
                 win.DataContext = viewModel;
-                return Autodesk.AutoCAD.ApplicationServices.Core.Application.ShowModalWindow(win);
+                return Application.ShowModalWindow(win);
             }
             throw new Exception("Окно не определено - тип = " + viewModel.GetType());            
         }
@@ -149,7 +145,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void DocumentManager_DocumentToBeDeactivated (object sender, DocumentCollectionEventArgs e)
         {
             var insModel = GetInsModel(e?.Document);
-            insModel?.Tree?.VisualsOnOff(false);
+            insModel?.ClearVisual();
         }
 
         public static ICalcService GetCalcService (InsOptions options)
@@ -194,7 +190,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private static void ChangeDocument (Document doc)
         {            
             var insModel = GetInsModel(doc);            
-            InsActivate = (insModel != null && !insModel.IsCleared);
+            InsActivate = insModel != null && insModel.IsEnabled;
         }
 
         private static void Palette_StateChanged (object sender, Autodesk.AutoCAD.Windows.PaletteSetStateEventArgs e)
@@ -232,6 +228,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 if (insModel == null)
                 {
+                    // Новый расчет
                     // Загрузка сохраненного расчета в чертеже (если он есть)
                     insModel = InsModel.LoadIns(doc);
                     if (insModel == null)
@@ -240,20 +237,28 @@ namespace PIK_GP_Acad.Insolation.Services
                         insModel = new InsModel();
                     }
                     insModels.Add(doc, insModel);
-                    // Инициализация расчета
-                    insModel.Initialize(doc);                                                                   
+                    //// Инициализация расчета
+                    //insModel.Initialize(doc);
+                    // Обновление расчетов
+                    insModel.Update();
                 }
+                // Если расчет уже есть - обновить визуализацию
                 else
                 {
-                    insModel.Update();
-                }           
+                    insModel.UpdateVisual();
+                }
+                insModel.IsEnabled = true;
             }
             // Отключение расчета для текущего документа
             else
             {
                 // Сохранение расчета
                 //insModel.SaveIns();
-                insModel?.Clear();
+                if (insModel != null)
+                {
+                    insModel.ClearVisual(); // Очистка визуализаций
+                    insModel.IsEnabled = false;
+                }
                 //// Удаление
                 //insModels.Remove(doc);
                 //insModel = null;

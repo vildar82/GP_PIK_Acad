@@ -82,24 +82,24 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualTrees = new VisualTree(insModel);
                 if (isVisualTreeOnOffForLoad)
                     VisualTrees.VisualIsOn = isVisualTreeOnOffForLoad;
-            }
-
-            // Расчетные точки                            
-            //LoadPoints(); // все точки грузятся из InsModel
+            }            
 
             if (TreeOptions == null)
                 TreeOptions = TreeOptions.Default();
 
-            if (Points != null)
-            {
-                // Очистка точек, с очисткой визуалз
-                DeletePointsVisualIllums();
-                Points.Clear();
-            }
-            else
-            {
+            if (Points == null)
                 Points = new ObservableCollection<InsPoint>();
-            }
+
+            //if (Points != null)
+            //{
+            //    // Очистка точек, с очисткой визуалз
+            //    DeletePointsVisualIllums();
+            //    Points.Clear();
+            //}
+            //else
+            //{
+            //    Points = new ObservableCollection<InsPoint>();
+            //}
         }
 
         public void Redrawable ()
@@ -116,6 +116,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
+            if (Points == null) return;
             foreach (var item in Points)
             {
                 item.DefineBuilding(true);
@@ -130,9 +131,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateVisualTree (InsPoint insPoint = null)
         {
             VisualTrees.VisualIsOn = IsVisualTreeOn;
-        }
-
-        
+        }        
 
         /// <summary>
         /// Расчет и добавление точки
@@ -164,6 +163,18 @@ namespace PIK_GP_Acad.Insolation.Models
                 insPoint.SetExtDic(dicInsPt, Model.Doc);
                 // Добавление точки в расчет елочек
                 AddPoint(insPoint);
+            }
+        }
+
+        /// <summary>
+        /// Обновление визуализации
+        /// </summary>
+        public void UpdateVisual ()
+        {
+            UpdateVisualTree();
+            foreach (var item in Points)
+            {
+                item.UpdateVisual();
             }
         }
 
@@ -339,19 +350,19 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Очистка - отключение расчета
         /// </summary>
-        public void Clear ()
+        public void ClearVisuals ()
         {
             VisualTrees?.VisualsDelete();
             if (Points != null && Points.Count > 0)
             {
-                using (var t = Model.Doc.TransactionManager.StartTransaction())
-                {
+                //using (var t = Model.Doc.TransactionManager.StartTransaction())
+                //{
                     foreach (var item in Points)
                     {
-                        item.Clear();
+                        item.ClearVisual();
                     }
-                    t.Commit();
-                }
+                    //t.Commit();
+                //}
             }
         }
 
@@ -400,9 +411,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetExtDic (DicED dicTree, Document doc)
         {
             if (dicTree == null)
-            {
-                // Default
-                TreeOptions = TreeOptions.Default();
+            {                
                 return;
             }
             // Собственные значения рассчета елочек            

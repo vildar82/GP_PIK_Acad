@@ -7,20 +7,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <SolidColorBrush x:Key="ReadOnlyBackgroundBrush" Color="LightGray" />
     <SolidColorBrush x:Key="DarkThemeBackgroundBrush" Color="#5C5C5C" />
-    <BitmapImage x:Key="On" UriSource="/PIK_GP_Acad;component/Resources/On.png" />
-    <BitmapImage x:Key="Off" UriSource="/PIK_GP_Acad;component/Resources/Off.png" />
-    <BitmapImage x:Key="tree" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png" />
-    <BitmapImage x:Key="ilums" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
-    <BitmapImage x:Key="options" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
-    <BitmapImage x:Key="Close" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
-    <BitmapImage x:Key="Add" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
-    <BitmapImage x:Key="option_dots" UriSource="/PIK_GP_Acad;component/Resources/option_dots.png" />
-    <BitmapImage x:Key="draw_visuals" UriSource="/PIK_GP_Acad;component/Resources/draw_visuals.png" />    
-    <sys:Double x:Key="SmallButtonsHeight">20</sys:Double>
-    <sys:Double x:Key="SmallImageHeight">14</sys:Double>
-    <sys:Double x:Key="NormalButtonsHeight">23</sys:Double>
-    <sys:Double x:Key="NormalImageHeight">21</sys:Double>
-    <Image x:Key="delete" Source="{StaticResource Close}" Width="{StaticResource SmallImageHeight}" Height="{StaticResource SmallImageHeight}" />
+    <BitmapImage x:Key="biSun" UriSource="/PIK_GP_Acad;component/Resources/Sun.png" />
+    <BitmapImage x:Key="biOn" UriSource="/PIK_GP_Acad;component/Resources/On.png" />
+    <BitmapImage x:Key="biOff" UriSource="/PIK_GP_Acad;component/Resources/Off.png" />
+    <BitmapImage x:Key="biTree" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Trees.png" />
+    <BitmapImage x:Key="biIlums" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Illums.png" />
+    <BitmapImage x:Key="biOptions" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
+    <BitmapImage x:Key="biClose" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
+    <BitmapImage x:Key="biAdd" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
+    <BitmapImage x:Key="biOption_dots" UriSource="/PIK_GP_Acad;component/Resources/option_dots.png" />
+    <BitmapImage x:Key="biDraw_visuals" UriSource="/PIK_GP_Acad;component/Resources/draw_visuals.png" />    
+    <BitmapImage x:Key="biUpdate" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
+    <BitmapImage x:Key="biFront" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Front.png"/>
+    <sys:Double x:Key="SmallButtonsHeight">20</sys:Double>    
+    <sys:Double x:Key="NormalButtonsHeight">23</sys:Double>    
+    <Image x:Key="imOn" Source="{StaticResource biOn}"/>
+    <Image x:Key="imOff" Source="{StaticResource biOff}"/>
+    <Image x:Key="imSun" Source="{StaticResource biSun}"/>
+    <Image x:Key="imTree" Source="{StaticResource biTree}"/>
+    <Image x:Key="imIlums" Source="{StaticResource biIlums}"/>
+    <Image x:Key="imOptions" Source="{StaticResource biOptions}"/>
+    <Image x:Key="imDelete" Source="{StaticResource biClose}"/>
+    <Image x:Key="imAdd" Source="{StaticResource biAdd}"/>
+    <Image x:Key="imOption_dots" Source="{StaticResource biOption_dots}"/>
+    <Image x:Key="imDraw_visuals" Source="{StaticResource biDraw_visuals}"/>
+    <Image x:Key="imUpdate" Source="{StaticResource biUpdate}"/>
+    <Image x:Key="imFront" Source="{StaticResource biFront}"/>
     <!--<Style x:Key="ControlBase" TargetType="FrameworkElement">
         <Setter Property="Margin" Value="5"/>
     </Style>
@@ -45,7 +57,27 @@
     <Style TargetType="{x:Type Button}">
         <Setter Property="Background" Value="Transparent"/>
     </Style>
+    <Style x:Key="btnSmall" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="{StaticResource SmallButtonsHeight}"/>
+        <Setter Property="Width" Value="{StaticResource SmallButtonsHeight}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style x:Key="btnNormal" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="{StaticResource NormalButtonsHeight}"/>
+        <Setter Property="Width" Value="{StaticResource NormalButtonsHeight}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
     <Style TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style x:Key="tbtnSmall" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Height" Value="{StaticResource SmallButtonsHeight}"/>
+        <Setter Property="Width" Value="{StaticResource SmallButtonsHeight}"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style x:Key="tbtnNormal" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Height" Value="{StaticResource NormalButtonsHeight}"/>
+        <Setter Property="Width" Value="{StaticResource NormalButtonsHeight}"/>
         <Setter Property="Background" Value="Transparent"/>
     </Style>
     <Style TargetType="{x:Type ListBox}">

@@ -77,10 +77,12 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public Polyline GetContourInModel ()
         {
-            var pl = IdPlContour.GetObject(OpenMode.ForRead) as Polyline;
-            var plCopy = (Polyline)pl.Clone();
-            plCopy.TransformBy(Transform);
-            return plCopy;
+            using (var pl = IdPlContour.Open(OpenMode.ForRead) as Polyline)
+            {
+                var plCopy = (Polyline)pl.Clone();
+                plCopy.TransformBy(Transform);
+                return plCopy;
+            }
         }
 
         public List<IODRecord> GetODRecords ()

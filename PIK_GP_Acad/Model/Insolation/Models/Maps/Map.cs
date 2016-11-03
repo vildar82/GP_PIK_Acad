@@ -84,7 +84,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Update ()
         {
-            Clear();            
+            Unsubscribe();
+            ClearVisual();            
             LoadMap();
             SubscribeDB();
         }
@@ -271,15 +272,13 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         /// <summary>
-        /// Очистка карты - отключение
-        /// Транзация уже запущена
+        /// Очистка визуализаций и отписка от событий
         /// </summary>
-        public void Clear ()
+        public void ClearVisual ()
         {
             // отписатся от всех событий
             // Удалить всю визуализацию (пока нет)
-            Unsubscribe();
-            
+            Unsubscribe();            
         }
 
         public void Dispose ()

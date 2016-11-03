@@ -133,7 +133,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Очистка  - отключение
         /// </summary>
-        public virtual void Clear()
+        public virtual void ClearVisual()
         {            
             var dbPt = DBPointId.GetObject(OpenMode.ForRead) as DBPoint;
             UnSubscribeDbo(dbPt);

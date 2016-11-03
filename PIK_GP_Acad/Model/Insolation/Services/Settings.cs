@@ -62,7 +62,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public static ObservableCollection<InsRequirement> DefaultInsRequirements ()
         {
             var reqs = new ObservableCollection<InsRequirement> {
-                new InsRequirement() { Type = InsRequirementEnum.D, Color = Color.Blue },
+                new InsRequirement() { Type = InsRequirementEnum.D, Color = Color.Aqua },
                 new InsRequirement() { Type = InsRequirementEnum.C, Color = Color.Green },
                 new InsRequirement() { Type = InsRequirementEnum.B, Color = Color.Yellow },
                 new InsRequirement() { Type = InsRequirementEnum.A, Color = Color.Red }

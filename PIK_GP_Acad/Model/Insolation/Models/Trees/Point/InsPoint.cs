@@ -142,7 +142,7 @@ namespace PIK_GP_Acad.Insolation.Models
             UpdateVisual();
         }
 
-        public override void Clear ()
+        public override void ClearVisual ()
         {
             VisualIllums?.VisualsDelete();            
             //base.Clear();
@@ -164,22 +164,12 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 VisualIllums = new VisualPointIllums(this);
             }
-            else
-            {
-                VisualIllums.VisualsDelete();
-            }
+            // Зоны освещ.            
+            VisualIllums.VisualIsOn = IsVisualIllumsOn;
+
             // Визуализация описания точки
             if (VisualPoint == null)
-                VisualPoint = new VisualPoint(this);
-
-
-            // Зоны освещ.
-            if (IsVisualIllumsOn)
-            {
-                VisualIllums.VisualIsOn = true;                
-            }
-            // Описание точки
-            //VisualPoint.VisualIsOn = true;                 
+                VisualPoint = new VisualPoint(this);            
 
             Info = GetInfo();
         }

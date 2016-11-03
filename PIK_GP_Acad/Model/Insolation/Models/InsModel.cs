@@ -59,7 +59,10 @@ namespace PIK_GP_Acad.Insolation.Models
         FrontModel front;
 
         public string UpdateInfo { get; set; } = "Обновление расчета";
-        public bool IsCleared { get; private set; }
+        /// <summary>
+        /// Состояние - включен/отключен расчет
+        /// </summary>
+        public bool IsEnabled { get; set; }
 
         /// <summary>
         /// Общие действия и при создании нового расчета и при загрузке существующего
@@ -86,27 +89,24 @@ namespace PIK_GP_Acad.Insolation.Models
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;
                 Map.InsPointAdded += Map_InsPointAdded;
-            }
+            }            
 
-            // Сервис расчета            
-            DefineCalcService();
-
-            // Создание расчета
+            // Создание расчета елочек
             if (Tree == null)
             {
                 Tree = new TreeModel();
             }
             Tree.Initialize(this);
 
-            // Загрузка точек всех типов и добавление в расчеты
-            LoadPoints();
-
-            Tree.UpdateVisualTree();
+            // Расчет фронтов
+            if (Front== null)
+            {
+                Front = new FrontModel();
+            }
+            Front.Initialize(this);
 
             doc.Database.BeginSave += Database_BeginSave;
-            Redrawable();
-
-            IsCleared = false;
+            Redrawable();            
         }
 
         public void Redrawable ()
@@ -143,19 +143,43 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Обновление всех расчетов
         /// </summary>
-        public void Update()
+        public void Update(Document doc = null)
         {
+            if (doc == null)
+            {
+                Doc = Application.DocumentManager.MdiActiveDocument;
+            }
+            else
+            {
+                Doc = doc;
+            }
+
             // Заново инициализация
             Initialize(Doc);
+
+            // Сервис расчета            
+            DefineCalcService();
+
+            // Загрузка точек всех типов и добавление в расчеты
+            LoadPoints();
+
+            Front.Update();           
 
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
 
             // Перерисовка точек
-            Redrawable();
+            Redrawable();            
+        }
 
-            IsCleared = false;
-        }             
+        /// <summary>
+        /// Обновление визуализаций
+        /// </summary>
+        public void UpdateVisual ()
+        {
+            Tree?.UpdateVisual();
+            Front?.UpdateVisual();
+        }
 
         /// <summary>
         /// Определение расчетного сервиса по Options
@@ -186,21 +210,13 @@ namespace PIK_GP_Acad.Insolation.Models
             DicED.AddInner("InsOptions", Options.GetExtDic(Doc));
             // Словарь расчета елочек TreeModel            
             DicED.AddInner("TreeModel", Tree.GetExtDic(Doc));
+            // Словарь расчета фронтов FrontModel            
+            DicED.AddInner("FrontModel", Front.GetExtDic(Doc));
             // Сохранение словаря InsModel в NOD чертежа
             InsExtDataHelper.SaveToNod(Doc, DicED);
 
             // Сохранение всех точек
-            Tree.SavePoints();
-
-            //try
-            //{
-            //    // серилизация расчета            
-            //    using (var fileStream = File.Create(@"\\picompany.ru\root\dep_ort\8.САПР\проекты\AutoCAD\РГ\ГП\Концепция\Инсоляция\Расчет в точке\insModel.xml"))
-            //    {
-            //        Save(fileStream, SerializationMode.Xml, new SerializationConfiguration());
-            //    }
-            //}
-            //catch { }
+            Tree.SavePoints();            
         }
 
         /// <summary>
@@ -220,26 +236,22 @@ namespace PIK_GP_Acad.Insolation.Models
             // список значений самой модели            
             var recModel = dicModel.GetRec("InsModelRec");
             // Настройки
-            InsOptions opt = new InsOptions();
+            var opt = new InsOptions();
             opt.SetExtDic(dicModel.GetInner("InsOptions"), doc);
             // Расчет елочек
-            TreeModel tree = new TreeModel();
-            tree.SetExtDic(dicModel.GetInner("TreeModel"), doc);            
+            var tree = new TreeModel();
+            tree.SetExtDic(dicModel.GetInner("TreeModel"), doc);
+            // Расчет фронтов
+            var front = new FrontModel();
+            front.SetExtDic(dicModel.GetInner("FrontModel"), doc);
 
             model = new InsModel();
+            model.Doc = doc;
             model.SetDataValues(recModel?.Values, doc);
             model.Options = opt;
-            model.Tree = tree;            
-            //model.Initialize(doc);
-
-            //try
-            //{
-            //    using (var fileStream = File.Open(@"\\picompany.ru\root\dep_ort\8.САПР\проекты\AutoCAD\РГ\ГП\Концепция\Инсоляция\Расчет в точке\insModel.xml", FileMode.Open))
-            //    {
-            //        res = Load<InsModel>(fileStream, SerializationMode.Xml, new SerializationConfiguration());                    
-            //    }                
-            //}
-            //catch { }
+            model.Tree = tree;
+            model.Front = front;         
+            //model.Initialize(doc);           
 
             return model;
         }
@@ -271,6 +283,8 @@ namespace PIK_GP_Acad.Insolation.Models
             var doc = Doc;
             if (doc == null) return;
 
+            Tree.ClearVisuals();
+
             var idPoints = Map.InsPoints;
             if (idPoints == null || idPoints.Count == 0)
                 return;
@@ -279,7 +293,10 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 DefinePoint(idPt);
             }
+
+            Tree.UpdateVisualTree();
         }
+        
 
         private void DefinePoint (ObjectId idPt)
         {
@@ -303,13 +320,13 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         /// <summary>
-        /// Очистка расчета (отключение расчета)
+        /// Очистка визуализаций (перед переключением на другой чертеж)
         /// </summary>
-        public void Clear ()
+        public void ClearVisual ()
         {
-            Map.Clear();
-            Tree.Clear();
-            IsCleared = true;
+            Map.ClearVisual();
+            Tree.ClearVisuals();
+            Front.ClearVisual();            
         }
 
         private void Map_BuildingModified (object sender, MapBuilding e)

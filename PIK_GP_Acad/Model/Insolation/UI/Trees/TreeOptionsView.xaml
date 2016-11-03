@@ -22,7 +22,7 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Высоты визуализации елочек:" />
+        <TextBlock Grid.Row="0" Text="Высоты визуализации елочек:" Margin="3"/>
         <ListBox x:Name="lbVisuals"
             Grid.Row="1"
             HorizontalContentAlignment="Stretch"
@@ -36,7 +36,7 @@
                         Margin="0"
                         Background="{Binding Color, Converter={converters:ColorToBrushConverter}}"
                         BorderBrush="Gray" BorderThickness="1">
-                        <Grid Margin="0" HorizontalAlignment="Stretch">
+                        <Grid Margin="1" HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -58,16 +58,18 @@
                             </TextBox>
                             <Button
                                 Grid.Column="1"
-                                Margin="2" HorizontalAlignment="Right"
+                                Margin="5" HorizontalAlignment="Right"
                                 Command="{Binding ElementName=lbVisuals, Path=DataContext.DeleteVisualTree}"
-                                CommandParameter="{Binding}">
-                                <Image Source="{StaticResource Close}" Height="20"/>
+                                CommandParameter="{Binding}"
+                                Height="20"
+                                Width="20">                                
+                                <Image Source="{StaticResource Close}"/>
                             </Button>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Grid.Row="2" Command="{Binding AddVisualTree}" Content="Добавить" />
+        <Button Grid.Row="2" Command="{Binding AddVisualTree}" Content="Добавить" Margin="2" />
     </Grid>
 </Window>

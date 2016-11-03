@@ -49,12 +49,14 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчет фронтов на каждом сегменте контура дома
             for (int i = 0; i < houseContour.NumberOfVertices; i++)
             {
-                var seg = houseContour.GetLineSegment2dAt(i);
-                var segFronts = CalcSegment(seg);                
-                if (segFronts != null && segFronts.Any())
+                using (var seg = houseContour.GetLineSegment2dAt(i))
                 {
-                    resFronts.AddRange(segFronts);
-                }                
+                    var segFronts = CalcSegment(seg);
+                    if (segFronts != null && segFronts.Any())
+                    {
+                        resFronts.AddRange(segFronts);
+                    }
+                }               
             }
             return resFronts;
         }
@@ -69,7 +71,8 @@ namespace PIK_GP_Acad.Insolation.Services
             // Определение фронтов
             FrontCalcPoint fPtPrew = null;
             FrontCalcPoint fPtStart = null;
-            foreach (var item in calcPoints.Where(p=>p.IsCalulated))
+            var ptsIsCalced = calcPoints.Where(p => p.IsCalulated);
+            foreach (var item in ptsIsCalced)
             {
                 if (fPtPrew == null)
                 {
@@ -81,7 +84,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     if (fPtPrew.InsValue != item.InsValue)
                     {
                         // Создание фронта
-                        var frontLine = CreateFrontLine(fPtStart, fPtPrew, item);
+                        var frontLine = CreateFrontLine(fPtStart, fPtPrew);
                         if (frontLine != null)
                         {
                             resFrontLines.Add(frontLine);
@@ -89,10 +92,16 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                 }
             }
+            // Создание послежнего фронта
+            var frontLineLast = CreateFrontLine(fPtStart, fPtPrew);
+            if (frontLineLast != null)
+            {
+                resFrontLines.Add(frontLineLast);
+            }
             return resFrontLines;
         }
 
-        private FrontValue CreateFrontLine (FrontCalcPoint fPtStart, FrontCalcPoint fPtEnd, FrontCalcPoint fPtNext)
+        private FrontValue CreateFrontLine (FrontCalcPoint fPtStart, FrontCalcPoint fPtEnd)
         {
             FrontValue frontLine = null;
             if (fPtStart != fPtEnd)
@@ -132,14 +141,16 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчетные точки с определенными секциями - только их считать
             calcPts = calcPts.Where(w => w.Section != null).ToList();
 
+            // Расчет в точке - без окна!
+            var insPt = new InsPoint();
+            insPt.Model = model;            
+            insPt.Window = null;
+
             foreach (var calcFrontPt in calcPts)
             {
-                // Расчет в точке - без окна!
-                var insPt = new InsPoint();
-                insPt.Model = model;
                 insPt.Point = calcFrontPt.Point.Convert3d();
-                insPt.Window = null;
                 insPt.Building = calcFrontPt.Section;
+                                
                 try
                 {
                     var illums = calcTrees.CalcPoint(insPt);
@@ -147,7 +158,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     calcFrontPt.InsValue = insValue.Requirement.Type;
                     calcFrontPt.IsCalulated = true;
                 }
-                catch (Exception ex)
+                catch
                 {
                     // На угловых точках - может не рассчитаться пока
                     // Пропустить!?
@@ -245,14 +256,18 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (Section == null)
                 {
                     IsIgnoredPoint = true;
+                    res = false;
+                }
+                else
+                {
+                    res = true;
                 }
             }
             else
             {
                 res = true;
             }
-            return res;
-            
+            return res;            
         }        
     }
 }

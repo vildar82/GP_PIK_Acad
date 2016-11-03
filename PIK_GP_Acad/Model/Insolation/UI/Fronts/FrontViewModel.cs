@@ -15,17 +15,21 @@ namespace PIK_GP_Acad.Insolation.UI
         public FrontViewModel (FrontModel model)
         {
             Front = model;
-            AddGroup = new RelayCommand(OnAddGroupExecute);
-        }
+            Add = new RelayCommand(OnAddExecute);
+            Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
+            ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
+        }        
 
         /// <summary>
         /// Модель
         /// </summary>
         public FrontModel Front { get; set; }        
 
-        public RelayCommand AddGroup { get; set; }        
+        public RelayCommand Add { get; set; }
+        public RelayCommand<FrontGroup> Delete { get; set; }
+        public RelayCommand<House> ShowHouse { get; set; }        
 
-        private void OnAddGroupExecute ()
+        private void OnAddExecute ()
         {
             // Выбор области на чертеже
             var selectGroup = new SelectGroup(Front.Model.Doc);
@@ -49,6 +53,16 @@ namespace PIK_GP_Acad.Insolation.UI
             {
                 InsService.ShowMessage(ex, "Ошибка при создании группы фронтонов.");
             }
+        }
+
+        private void OnDeleteExecute (FrontGroup group)
+        {
+            Front.DeleteGroup(group);
+        }
+
+        private void OnShowHouseExecute (House house)
+        {
+            house.Show();
         }
     }
 }

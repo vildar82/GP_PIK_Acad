@@ -13,7 +13,7 @@
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize" SizeToContent="WidthAndHeight">
     <Window.Resources>
-        <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />
+        <!--<ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />-->
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

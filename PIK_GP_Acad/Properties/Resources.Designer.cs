@@ -153,6 +153,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GP_Ins_Front {
+            get {
+                object obj = ResourceManager.GetObject("GP_Ins_Front", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GP_Ins_Illums {
             get {
                 object obj = ResourceManager.GetObject("GP_Ins_Illums", resourceCulture);
@@ -457,6 +467,16 @@ namespace PIK_GP_Acad.Properties {
             get {
                 object obj = ResourceManager.GetObject("Sun", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Sun1 {
+            get {
+                object obj = ResourceManager.GetObject("Sun1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
