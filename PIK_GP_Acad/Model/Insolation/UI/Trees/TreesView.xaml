@@ -58,30 +58,33 @@
                             <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, UpdateSourceTrigger=PropertyChanged}" />
                         </WrapPanel>
                         <!--  Кнопки  -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="1">
                             <!--  Вкл/выкл зон инсоляции точки  -->
                             <ToggleButton
                                 Height="{StaticResource SmallButtonsHeight}"
-                                Margin="0"
-                                Content="{DynamicResource imIlums}"
+                                Margin="0"                                
                                 IsChecked="{Binding IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                ToolTip="Визуализация зон инсоляции точки." />
+                                ToolTip="Визуализация зон инсоляции точки." >
+                                <Image Source="{StaticResource biIlums}"/>
+                            </ToggleButton>
                             <!--  Редактирование параметров точки  -->
                             <Button
                                 Margin="0"
                                 Style="{StaticResource btnSmall}"
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
-                                CommandParameter="{Binding}"
-                                Content="{StaticResource imOptions}"
-                                ToolTip="Редактирование параметров точки" />
+                                CommandParameter="{Binding}"                                
+                                ToolTip="Редактирование параметров точки">
+                                <Image Source="{StaticResource biOptions}"/>
+                            </Button>
                             <!--  Удаление точки  -->
                             <Button
                                 Margin="0"
                                 Style="{StaticResource btnSmall}"
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
-                                CommandParameter="{Binding}"
-                                Content="{StaticResource imDelete}"
-                                ToolTip="Удаление выделенной точки в списке" />
+                                CommandParameter="{Binding}"                                
+                                ToolTip="Удаление выделенной точки в списке">
+                                <Image Source="{StaticResource biClose}"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
@@ -96,36 +99,45 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <ToggleButton
-                    Style="{StaticResource tbtnNormal}"
-                    Content="{DynamicResource imIlums}"
+                    Style="{StaticResource tbtnNormal}"                    
                     IsChecked="{Binding Tree.IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    ToolTip="Включение/выключение визуализации зон инсоляции всех точек" />
+                    ToolTip="Включение/выключение визуализации зон инсоляции всех точек" >
+                    <Image Source="{StaticResource biIlums}"/>
+                </ToggleButton>
                 <ToggleButton
-                    Style="{StaticResource tbtnNormal}"
-                    Content="{StaticResource imTree}"
+                    Style="{StaticResource tbtnNormal}"                    
                     IsChecked="{Binding Tree.IsVisualTreeOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    ToolTip="Включение/выключение визуализации елочек" />
+                    ToolTip="Включение/выключение визуализации елочек">
+                    <Image Source="{StaticResource biTree}"/>
+                </ToggleButton>
             </StackPanel>
             <!--  Кнопка добавление точки  -->
             <Button Style="{StaticResource btnNormal}"
                 Grid.Column="1"                
                 Width="Auto"
-                Command="{Binding AddPoint}"
-                Content="{StaticResource imAdd}"
-                ToolTip="Добавление точки" />
+                Command="{Binding AddPoint}"                
+                ToolTip="Добавление точки">
+                <Image Source="{StaticResource biAdd}"/>
+            </Button>
             <Button                
                 x:Name="btnDots"
                 Style="{StaticResource btnNormal}"
                 Grid.Column="2"
-                Click="btnDots_Click"
-                Content="{StaticResource imOption_dots}"
+                Click="btnDots_Click"                
                 ContextMenuService.IsEnabled="False">
+                <Image Source="{StaticResource biOption_dots}"/>
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
-                        <MenuItem Command="{Binding EditTreeOptions}" Header="Настройки высот елочек" 
-                                  Icon="{StaticResource imOptions}" Height="22"/>
-                        <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже" 
-                                  Icon="{StaticResource imDraw_visuals}" Height="22" />
+                        <MenuItem Command="{Binding EditTreeOptions}" Header="Настройки высот елочек" Height="22">
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource biOptions}"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже" Height="22" >
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource biDraw_visuals}"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>

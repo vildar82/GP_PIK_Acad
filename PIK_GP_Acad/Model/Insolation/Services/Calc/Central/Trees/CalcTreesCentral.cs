@@ -17,14 +17,14 @@ namespace PIK_GP_Acad.Insolation.Services
         public CalcTreesCentral (CalcServiceCentral centralInsService)
         {
             insService = centralInsService;
-        }        
+        }
 
         /// <summary>
         /// Расчет инсоляции в точке
         /// </summary>
         public List<IIlluminationArea> CalcPoint (InsPoint insPoint)
         {
-            List<IIlluminationArea> illumAreas = new List<IIlluminationArea> ();
+            List<IIlluminationArea> illumAreas = new List<IIlluminationArea>();
 
             if (insPoint.Building == null)
             {
@@ -32,16 +32,11 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             var doc = insPoint.Model.Doc;
-            //using (doc.LockDocument())
-            //using (var t = doc.Database.TransactionManager.StartTransaction())
-            //{
-                var calcPt = new CalcPointCentral(insPoint, insService);
-                // Расчет освещенности в точке
-                illumAreas = calcPt.Calc();
-                insPoint.AngleStartOnPlane = calcPt.AngleStartOnPlane;
-                insPoint.AngleEndOnPlane = calcPt.AngleEndOnPlane;
-                //t.Commit();
-            //}
+            var calcPt = new CalcPointCentral(insPoint, insService);
+            // Расчет освещенности в точке            
+            illumAreas = calcPt.Calc();
+            insPoint.AngleStartOnPlane = calcPt.StartAnglesIllum.AngleStartOnPlane;
+            insPoint.AngleEndOnPlane = calcPt.StartAnglesIllum.AngleEndOnPlane;
             return illumAreas;
         }
     }

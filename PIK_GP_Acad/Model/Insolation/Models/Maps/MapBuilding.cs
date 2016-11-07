@@ -46,6 +46,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void InitContour()
         {
+            if (Contour != null && !Contour.IsDisposed)
+                Contour.Dispose();
             Contour = Building.GetContourInModel();
         }
     }

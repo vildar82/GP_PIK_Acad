@@ -39,15 +39,21 @@ namespace PIK_GP_Acad.Elements.Buildings
         }
         public Polyline GetContourInModel()
         {
-            var ent = IdEnt.GetObject(OpenMode.ForRead) as Entity;
-            if (ent is Polyline)
+            using (var ent = IdEnt.Open(OpenMode.ForRead) as Entity)
             {
-                var plCopy = (Polyline)ent.Clone();
-                return plCopy;
-            }
-            else if (ent is Hatch)
-            {
-                // Найти контур штриховки и перевести его в полилинию.
+                if (ent is Polyline)
+                {
+                    var plCopy = (Polyline)ent.Clone();
+                    if (plCopy.Elevation !=0)
+                    {
+                        plCopy.Elevation = 0;
+                    }
+                    return plCopy;
+                }
+                else if (ent is Hatch)
+                {
+                    // Найти контур штриховки и перевести его в полилинию.
+                }
             }
             return null;
         }

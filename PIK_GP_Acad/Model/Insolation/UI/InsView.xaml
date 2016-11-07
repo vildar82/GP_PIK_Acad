@@ -38,8 +38,8 @@
                 Background="Transparent"
                 Command="{Binding Update}"                
                 Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}"                
-                ToolTip="{Binding UpdateInfo}"
-                Content="{StaticResource imUpdate}">                
+                ToolTip="{Binding UpdateInfo}">
+                <Image Source="{StaticResource biUpdate}"/>
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource btnNormal}">
                         <Style.Triggers>
@@ -83,8 +83,9 @@
                 Margin="2"                
                 Command="{Binding SelectRegion}"
                 ToolTip="Выбор региорна"
-                Background="Transparent"
-                Content="{StaticResource imOptions}"/>
+                Background="Transparent">
+                <Image Source="{StaticResource biOptions}"/>
+            </Button>
         </StackPanel>
         <!--  Выбор расчета  -->
         <TabControl

@@ -11,6 +11,9 @@ using Autodesk.AutoCAD.Geometry;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
+    /// <summary>
+    /// Выбор области на чертеже для группы
+    /// </summary>
     public class SelectGroup
     {
         Document doc;

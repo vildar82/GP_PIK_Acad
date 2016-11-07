@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib.Layers;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
@@ -13,18 +14,19 @@ namespace PIK_GP_Acad.Insolation.Services
     /// Визуализация графики в чертеже (в базе чертежа)
     /// </summary>
     public abstract class  VisualDatabase : IVisualService
-    {
-        private const string LayerVisual = "sapr_ins_visuals";
-        private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();
+    {        
         private bool isOn;
         private List<ObjectId> draws;
-        private Document doc;
+        private LayerInfo lay;
+
+        public Document Doc { get; set; }
+        public string LayerVisual { get; set; } = "sapr_ins_visuals";
 
         public abstract List<Entity> CreateVisual ();
 
         public VisualDatabase (Document doc)
         {
-            this.doc = doc;
+            this.Doc = doc;
         }
 
         public bool VisualIsOn {
@@ -48,10 +50,10 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ds = CreateVisual();
                 if (ds != null && ds.Count != 0)
                 {
-                    using (doc.LockDocument())
-                    using (var t = doc.TransactionManager.StartTransaction())
+                    using (Doc.LockDocument())
+                    using (var t = Doc.TransactionManager.StartTransaction())
                     {
-                        var db = doc.Database;
+                        var db = Doc.Database;
                         var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
                         var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
 
@@ -76,10 +78,10 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private void EraseDraws ()
         {
-            if (draws != null && doc != null && !doc.IsDisposed)
+            if (draws != null && Doc != null && !Doc.IsDisposed)
             {
-                using (doc.LockDocument())
-                using (var t = doc.TransactionManager.StartTransaction())
+                using (Doc.LockDocument())
+                using (var t = Doc.TransactionManager.StartTransaction())
                 {
                     foreach (var item in draws)
                     {
@@ -99,22 +101,14 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private ObjectId GetLayerForVisual (Database db)
         {
-            var lt = db.LayerTableId.GetObject(OpenMode.ForRead) as LayerTable;
-            ObjectId res;
-            if (!lt.Has(LayerVisual))
+            if (lay == null)
             {
-                var lv = new LayerTableRecord();
-                lv.Name = LayerVisual;
-                lt.UpgradeOpen();
-                res = lt.Add(lv);
-                db.TransactionManager.TopTransaction.AddNewlyCreatedDBObject(lv, true);
+                lay = new LayerInfo(LayerVisual);
             }
-            else
-                res = lt[LayerVisual];
-            return res;
+            return lay.CheckLayerState();            
         }
 
-        public void Dispose ()
+        public virtual void Dispose ()
         {
             EraseDraws();
         }

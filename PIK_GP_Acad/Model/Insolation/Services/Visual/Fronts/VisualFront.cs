@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class VisualFront : VisualTransient
+    public class VisualFront : VisualTransient, IDisposable
     {
-        public VisualFront()
+        public VisualFront(Document doc)//: base(doc)
         {
 
         }
@@ -20,7 +21,22 @@ namespace PIK_GP_Acad.Insolation.Services
         public override List<Entity> CreateVisual ()
         {
             if (FrontLines == null) return null;
-            return FrontLines.Select(s => s.Line).Cast<Entity>().ToList();
-        }        
+            return FrontLines.Select(s => (Polyline)s.Line.Clone()).Cast<Entity>().ToList();
+        }
+
+        public override void Dispose ()
+        {
+            if (FrontLines != null)
+            {
+                foreach (var item in FrontLines)
+                {
+                    if (item.Line != null && !item.Line.IsDisposed)
+                    {
+                        item.Line.Dispose();
+                    }
+                }
+            }
+            base.Dispose();
+        }
     }
 }

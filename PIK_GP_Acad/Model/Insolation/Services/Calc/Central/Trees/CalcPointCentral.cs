@@ -23,33 +23,41 @@ namespace PIK_GP_Acad.Insolation.Services
         Point2d ptCalc2d;
         CalcServiceCentral calc;
         ICalcValues values;
-        /// <summary>
-        /// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
-        /// Будут определены для этой расвчетной точки индивидуально
-        /// </summary>
-        public double AngleStartOnPlane { get; private set; }
-        /// <summary>
-        /// Конечный угол в плане (радиан). Начальное значение = 180 - заход
-        /// </summary>
-        public double AngleEndOnPlane { get; private set; }        
+        public IllumAreaBase StartAnglesIllum { get; set; }
+        ///// <summary>
+        ///// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
+        ///// Будут определены для этой расвчетной точки индивидуально
+        ///// </summary>
+        //public double AngleStartOnPlane { get; private set; }
+        ///// <summary>
+        ///// Конечный угол в плане (радиан). Начальное значение = 180 - заход
+        ///// </summary>
+        //public double AngleEndOnPlane { get; private set; }
 
         public CalcPointCentral (InsPoint insPt, CalcServiceCentral insCalcService)
         {
             this.map = insPt.Model.Map;
-            buildingOwner = insPt.Building;            
+            buildingOwner = insPt.Building;
+            buildingOwner.InitContour();        
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
             this.calc = insCalcService;
             values = insCalcService.CalcValues;
 
-            AngleStartOnPlane = values.SunCalcAngleStartOnPlane;
-            AngleEndOnPlane = values.SunCalcAngleEndOnPlane;
+            //AngleStartOnPlane = values.SunCalcAngleStartOnPlane;
+            //AngleEndOnPlane = values.SunCalcAngleEndOnPlane;
+            StartAnglesIllum = new IllumAreaBase(ptCalc2d, values.SunCalcAngleStartOnPlane, values.SunCalcAngleEndOnPlane,
+                Point2d.Origin, Point2d.Origin);
         }
 
         public List<IIlluminationArea> Calc ()
         {
             var resAreas = new List<IIlluminationArea>();
+
+            // Корректировка расчетной точки
+            CorrectCalcPoint();
+
             // Определение ограничений углов (начального и конечного) с учетом плоскости стены расчетного дома
             if (DefineStartAnglesByOwnerBuilding())
             {
@@ -74,9 +82,27 @@ namespace PIK_GP_Acad.Insolation.Services
                 resAreas = IllumAreaBase.Merge(resAreas);
 
                 // Инвертировать зоны теней в зоны освещенностей    
-                resAreas = IllumAreaCentral.Invert(resAreas, AngleStartOnPlane, AngleEndOnPlane, ptCalc2d);
+                resAreas = IllumAreaCentral.Invert(resAreas, StartAnglesIllum, ptCalc2d);                
             }
+            else
+            {
+                StartAnglesIllum.AngleEndOnPlane = 0;
+                StartAnglesIllum.AngleStartOnPlane = 0;
+            }
+            buildingOwner.Contour.Dispose();
             return resAreas;
+        }
+
+        private void CorrectCalcPoint ()
+        {
+            var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
+            if ((correctPt - ptCalc).Length >2)
+            {
+                throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
+            }
+            ptCalc = correctPt;
+            ptCalc2d = correctPt.Convert2d();
+            StartAnglesIllum.PtOrig = ptCalc2d;
         }
 
         private List<IIlluminationArea> CalcIllumsByHeight (List<MapBuilding> buildings, int height)
@@ -170,18 +196,18 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             // если конечный угол меньше начального расчетного или наоборот, то тень вне границ расчета. Или если начальный угол = конечному
-            if (angleEnd.Item2 < AngleStartOnPlane || angleStart.Item2 > AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
+            if (angleEnd.Item2 < StartAnglesIllum.AngleStartOnPlane || angleStart.Item2 > StartAnglesIllum.AngleEndOnPlane || angleStart.Item2.IsEqual(angleEnd.Item2, 0.001))
                 return null;
 
-            if (angleStart.Item2 < AngleStartOnPlane)
+            if (angleStart.Item2 < StartAnglesIllum.AngleStartOnPlane)
             {
-                var ptStart = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleStart.Item1, AngleStartOnPlane);
-                angleStart = new Tuple<Point2d, double>(ptStart, AngleStartOnPlane);
+                var ptStart = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleStart.Item1, StartAnglesIllum.AngleStartOnPlane);
+                angleStart = new Tuple<Point2d, double>(ptStart, StartAnglesIllum.AngleStartOnPlane);
             }
-            if (angleEnd.Item2 > AngleEndOnPlane)
+            if (angleEnd.Item2 > StartAnglesIllum.AngleEndOnPlane)
             {
-                var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, AngleEndOnPlane);
-                angleEnd = new Tuple<Point2d, double>(ptEnd, AngleEndOnPlane);
+                var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, StartAnglesIllum.AngleEndOnPlane);
+                angleEnd = new Tuple<Point2d, double>(ptEnd, StartAnglesIllum.AngleEndOnPlane);
             }
             var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
             return ilum;
@@ -196,8 +222,8 @@ namespace PIK_GP_Acad.Insolation.Services
             double cSunPlane;
             double ySunPlane = values.YShadowLineByHeight(maxHeight, out cSunPlane);
             // растояние до точки пересечения луча и линии тени
-            double xRayToStart = values.GetXRay(ySunPlane, AngleStartOnPlane);
-            double xRayToEnd = values.GetXRay(ySunPlane, AngleEndOnPlane);
+            double xRayToStart = values.GetXRay(ySunPlane, StartAnglesIllum.AngleStartOnPlane);
+            double xRayToEnd = values.GetXRay(ySunPlane, StartAnglesIllum.AngleEndOnPlane);
             Extents3d ext = new Extents3d(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
                                           new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
             return ext;
@@ -205,65 +231,123 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool DefineStartAnglesByOwnerBuilding ()
         {
-            buildingOwner.InitContour();
-            using (var contour = buildingOwner.Contour)
+            // Если полилиния дома полностью выше или равна расчетной точке - то точка полность освещен (сам себя не загораживает никак)
+            if (buildingOwner.ExtentsInModel.MinPoint.Y >= ptCalc.Y)
             {
-                // Если полилиния дома полностью выше или равна расчетной точке - то точка полность освещен (сам себя не загораживает никак)
-                if (buildingOwner.ExtentsInModel.MinPoint.Y >= ptCalc.Y)
-                {
-                    return true;
-                }
-                // Если дом полностью нижке расчетной точки - то дом полностью загожен сам собой
-                if (buildingOwner.ExtentsInModel.MaxPoint.Y <= ptCalc.Y)
-                {
-                    return false;
-                }
+                return true;
+            }
+            // Если дом полностью нижке расчетной точки - то дом полностью загожен сам собой
+            if (buildingOwner.ExtentsInModel.MaxPoint.Y <= ptCalc.Y)
+            {
+                return false;
+            }
 
-                // Проверка ограничения от самого здания
-                CorrectStartAnglesByOwnerZeroLineIntersects(contour);
+            // Ограничения от собственного сегмента и окна
+            CorrectStartAnglesByOwnerSegAndWindow();            
 
-                // Ограничения от окна
-                CorrectStartAnglesByWindow(contour);
+            // Проверка ограничения от самого здания - горизонтальная линия через расчетную точку
+            List<Point3d> ptsIntersectShadow;
+            if (!CorrectStartAnglesByOwnerZeroHorLineIntersects(out ptsIntersectShadow))
+            {
+                // Не все стороны определены от горизоентальной линии - построение вертикальной линии через расчетную точку
+                //CorrectStartAnglesByOwnerZeroVerticLineIntersects(ptsIntersectShadow);
             }
 
             // Стартовый угол не может быть больше конечного
             if (IsAllShadow()) return false;
             // Конечный угол не может быть больше Pi
-            if (AngleEndOnPlane >= Math.PI)
+            if (StartAnglesIllum.AngleEndOnPlane >= Math.PI)
             {
                 throw new Exception("Ошибка расчета ограничивающих углов.");
             }
             return true;
-        }                
+        }        
 
         /// <summary>
         /// Определение стартовых углов от собственной плоскости окна с учетом отступа
         /// </summary>        
-        private void CorrectStartAnglesByWindow (Polyline contour)
+        private void CorrectStartAnglesByOwnerSegAndWindow ()
+        {            
+            var contour = buildingOwner.Contour;
+            var startParam = contour.GetParameterAtPoint(ptCalc);
+
+            // Если параметр близок к целому числу - то это вершина - угол! - окно не учитывается!?
+            if (startParam.IsWholeNumber(0.01))
+            {
+                // Углы не считать!
+                throw new Exception("Угол не считается.");
+                //CorrectStartAnglesByOwnerCorner(Convert.ToInt32(startParam));
+            }
+            else
+            {
+                var segStartIndex = (int)startParam;
+                var segOwner = contour.GetLineSegment2dAt(segStartIndex);
+
+                // Вектор перпендикуляроно выходящий из окна во вне дома
+                var vecWindPerp = GetWindowPerpVector(segOwner, contour);
+                // Восточный угол = повороту перп вектороа окна на 90 (по автокадовски)
+                var eastVec = vecWindPerp.RotateBy(MathExt.PIHalf);
+                var eastAngleAcad = eastVec.Angle;
+                var westAngleAcad = eastVec.Angle + Math.PI;
+
+                // Учет теневого угла окна
+                if (insPt.Window != null)
+                {
+                    eastAngleAcad -= insPt.Window.ShadowAngle;
+                    westAngleAcad += insPt.Window.ShadowAngle;
+                }
+
+                var eastAngle = values.GetInsAngleFromAcad(eastAngleAcad);                
+                var westAngle = values.GetInsAngleFromAcad(westAngleAcad);
+
+                // Корректировка стартовых углов                
+                CorrectEastStartAngle(eastAngle);                
+                CorrectWestStartAngle(westAngle);
+            }            
+        }
+
+        private void CorrectWestStartAngle (double westAngle)
         {
-            if (insPt.Window == null) return;
-
-            var segStartIndex = (int)contour.GetParameterAtPoint(ptCalc);
-            var segOwner = contour.GetLineSegment2dAt(segStartIndex);
-
-            // Вектор перпендикуляроно выходящий из окна во вне дома
-            var vecWindPerp = GetWindowPerpVector(segOwner, contour);
-            // Восточный угол = повороту перп вектороа окна на 90 (по автокадовски)
-            var eastVec = vecWindPerp.RotateBy(MathExt.PIHalf);
-            var eastAngle = values.GetInsAngleFromAcad(eastVec.Angle);
-            // Учет теневого угла окна
-            eastAngle += insPt.Window.ShadowAngle;
-            if (eastAngle > AngleStartOnPlane && eastAngle < Math.PI)
+            if (westAngle < StartAnglesIllum.AngleEndOnPlane)                
             {
-                AngleStartOnPlane = eastAngle;
+                StartAnglesIllum.AngleEndOnPlane = westAngle;
             }
-            // Западный угол            
-            var westAngle = values.GetInsAngleFromAcad(eastVec.Angle + Math.PI);
-            westAngle -= insPt.Window.ShadowAngle;
-            if (westAngle < AngleEndOnPlane)
+        }
+
+        private void CorrectEastStartAngle (double eastAngle)
+        {
+            if (eastAngle > StartAnglesIllum.AngleStartOnPlane &&
+                eastAngle <= StartAnglesIllum.AngleStartOnPlane + Math.PI)
             {
-                AngleEndOnPlane = westAngle;
+                StartAnglesIllum.AngleStartOnPlane = eastAngle;
             }
+        }
+
+        /// <summary>
+        /// Корректировка стартовых углов инсоляции от расчетной точки которая находится на вершине полилинии контура здания
+        /// </summary>
+        /// <param name="vertexIndex">Индекс вершины - расчетной точки</param>
+        private void CorrectStartAnglesByOwnerCorner (int vertexIndex)
+        {
+            var contour = buildingOwner.Contour;
+            var nextIndex = contour.NextVertexIndex(vertexIndex, -1);
+            var seg = contour.GetLineSegment2dAt(vertexIndex);
+            var segNext = contour.GetLineSegment2dAt(nextIndex);
+            // Область освещения от угла контура - от 1 сегмента до 2 (угол вне дома)
+            var cornerIllum = new IllumAreaBase(ptCalc2d, seg.Direction.Angle, segNext.Direction.Negate().Angle, Point2d.Origin, Point2d.Origin);
+
+            // Проверка - если средний вектор внутри здания, то инвертировать область
+            var midVec = cornerIllum.GetMidVector();
+            var ptMid = ptCalc2d + midVec;
+            if (!contour.IsPointInsidePolygon(ptMid.Convert3d()))
+            {
+                // инвертировать область
+                cornerIllum.Invert();
+            }
+
+            var eastAngle = values.GetInsAngleFromAcad(cornerIllum.AngleStartOnPlane);
+            CorrectEastStartAngle(eastAngle);
+            CorrectWestStartAngle(values.GetInsAngleFromAcad(cornerIllum.AngleEndOnPlane));
         }
 
         private Vector2d GetWindowPerpVector (LineSegment2d segOwner, Polyline contour)
@@ -279,37 +363,98 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool IsAllShadow ()
         {
-            return AngleStartOnPlane >= AngleEndOnPlane;
+            return StartAnglesIllum.AngleStartOnPlane >= StartAnglesIllum.AngleEndOnPlane;
         }
 
-        private void CorrectStartAnglesByOwnerZeroLineIntersects (Polyline contour)
+        private bool CorrectStartAnglesByOwnerZeroHorLineIntersects (out List<Point3d> ptsIntersectShadow)
         {
-            // Линия через точку ноль.
-            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 50, ptCalc.Y, 0)))
-            {        
-                var ptsIntersectZero = new Point3dCollection();
-                contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersectZero, IntPtr.Zero, IntPtr.Zero);
-                var ptsIntersectSort = ptsIntersectZero.Cast<Point3d>().OrderBy(o => o.X).ToList();
+            ptsIntersectShadow = new List<Point3d> ();
+            bool isCorrect = true;
+            var contour = buildingOwner.Contour;
+            // Линия через точку ноль - Горизонтально
+            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 1, ptCalc.Y, 0)))
+            {
+                List<Point3d> ptsIntersectZero;
+                using (var ptsIntersect = new Point3dCollection())
+                {
+                    contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                    ptsIntersectZero = ptsIntersect.Cast<Point3d>().OrderBy(o => o.X).ToList();
+                }
 
-                // Линия тени - пересечение собственного дрма сней?
-                var ptsIntersectShadow = new List<Point3d>();
+                // Линия тени - пересечение собственного дрма сней?                
                 using (var lineShadow = GetLineShadow(buildingOwner.Height))
                 {
-                    var ptsIntersectShadowCol = new Point3dCollection();
-                    contour.IntersectWith(lineShadow, Intersect.OnBothOperands, new Plane(), ptsIntersectShadowCol, IntPtr.Zero, IntPtr.Zero);
-                    ptsIntersectShadow = ptsIntersectShadowCol.Cast<Point3d>().ToList();
+                    using (var ptsIntersect = new Point3dCollection())
+                    {
+                        contour.IntersectWith(lineShadow, Intersect.OnBothOperands, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                        ptsIntersectShadow = ptsIntersect.Cast<Point3d>().ToList();
+                    }
                 }
 
                 // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.                    
-                var westAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, ptsIntersectShadow, false);
-                if (westAngle < AngleEndOnPlane)
+                double westAngle;
+                if (GetStartAngleBySideIntersects(contour, ptsIntersectZero, ptsIntersectShadow, false, true, false, out westAngle))
                 {
-                    AngleEndOnPlane = westAngle;
+                    if (westAngle < StartAnglesIllum.AngleEndOnPlane)
+                    {
+                        StartAnglesIllum.AngleEndOnPlane = westAngle;
+                    }
                 }
-                var eastAngle = GetStartAngleBySideIntersects(contour, ptsIntersectSort, ptsIntersectShadow, true);
-                if (eastAngle > AngleStartOnPlane)
+                else
+                    isCorrect = false;
+
+                double eastAngle;
+                if (GetStartAngleBySideIntersects(contour, ptsIntersectZero, ptsIntersectShadow, true, true, false, out eastAngle))
                 {
-                    AngleStartOnPlane = eastAngle;
+                    if (eastAngle > StartAnglesIllum.AngleStartOnPlane)
+                    {
+                        StartAnglesIllum.AngleStartOnPlane = eastAngle;
+                    }
+                }
+                else
+                    isCorrect = false;
+            }
+            return isCorrect;
+        }
+
+        /// <summary>
+        /// Корректировка стартовых углов от собственного дома - построение вертикальной линии сечения из расчетной точки
+        /// </summary>
+        private void CorrectStartAnglesByOwnerZeroVerticLineIntersects (List<Point3d> ptsIntersectShadow)
+        {
+            // Построение вертик линии через расч.точку
+            // Найти точки пересечения ниже расетной точки
+            // Взять петлю слева (Запад) и справа (Восток)
+
+            using (var lineVertic = new Line(ptCalc, new Point3d (ptCalc.X, ptCalc.Y-1, 0)))
+            {
+                var contour = buildingOwner.Contour;
+
+                // Точки пересечения контура с вертик линей - ниже или на уровне с расчетной точкой! Отсортированных по Y сверху - вниз
+                List<Point3d> ptsIntersectVertic;
+                using (var ptsIntersect = new Point3dCollection())
+                {
+                    contour.IntersectWith(lineVertic, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                    ptsIntersectVertic = ptsIntersect.Cast<Point3d>().Where(p=>p.Y<=ptCalc.Y).OrderByDescending(o => o.Y).ToList();
+                }               
+
+                // Найти петли с левой и правой стороны от точек пересечения                
+                double westAngle;
+                if (GetStartAngleBySideIntersects(contour, ptsIntersectVertic, ptsIntersectShadow, false, false, true, out westAngle))
+                {
+                    if (westAngle < StartAnglesIllum.AngleEndOnPlane)
+                    {
+                        StartAnglesIllum.AngleEndOnPlane = westAngle;
+                    }
+                }                
+
+                double eastAngle;
+                if (GetStartAngleBySideIntersects(contour, ptsIntersectVertic, ptsIntersectShadow, true, false, true, out eastAngle))
+                {
+                    if (eastAngle > StartAnglesIllum.AngleStartOnPlane)
+                    {
+                        StartAnglesIllum.AngleStartOnPlane = eastAngle;
+                    }
                 }
             }
         }
@@ -318,27 +463,40 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Корректировка стартового угла ограницения от дома - по точкам пересечения полилинии с горизонталью
         /// </summary>
         /// <param name="contour">Контур</param>
-        /// <param name="ptsIntersectSortByX">все точки пересечения, отсортированные по X</param>
+        /// <param name="ptsIntersect">все точки пересечения, отсортированные по X</param>
         /// <param name="ptsIntersectShadow">Точки пересечения дома с линией тени</param>
         /// <param name="isEastSide">Сторона восток - запад</param>
-        private double GetStartAngleBySideIntersects (Polyline contour, List<Point3d> ptsIntersectSortByX,
-            List<Point3d> ptsIntersectShadow, bool isEastSide)
+        private bool GetStartAngleBySideIntersects (Polyline contour, List<Point3d> ptsIntersect,
+            List<Point3d> ptsIntersectShadow, bool isEastSide, bool isHor, bool onlyFirstLoop, out double resAngle)
         {
-            if (ptsIntersectSortByX.Count == 0) return 0;
-            double angleRes = 0;
-
+            resAngle = 0;            
+            if (ptsIntersect.Count == 0) return false;
+            bool resIsCorrected = false;
             List<Point3d> ptsIntersectSide;
             bool maxOrMinAngle;
-            if (isEastSide)
+            if (isHor)
             {
-                ptsIntersectSide = ptsIntersectSortByX.Where(p => p.X >= ptCalc.X).ToList();
-                maxOrMinAngle = true;
+                if (isEastSide)
+                {
+                    ptsIntersectSide = ptsIntersect.Where(p => p.X >= ptCalc.X).ToList();
+                    maxOrMinAngle = true;
+                }
+                else
+                {
+                    ptsIntersectSide = ptsIntersect.Where(p => p.X <= ptCalc.X).ToList();
+                    maxOrMinAngle = false;
+                    resAngle = Math.PI;
+                }
             }
             else
             {
-                ptsIntersectSide = ptsIntersectSortByX.Where(p => p.X <= ptCalc.X).ToList();
-                maxOrMinAngle = false;
-                angleRes = Math.PI;
+                ptsIntersectSide = ptsIntersect;
+                maxOrMinAngle = isEastSide;
+            }
+
+            if (!ptsIntersectSide.Skip(1).Any())
+            {
+                return false;
             }
 
             var ptPrew = ptsIntersectSide[0];
@@ -348,8 +506,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ptCentre = ptPrew + (pt- ptPrew)/2;                
                 if (contour.IsPointInsidePolygon(ptCentre) && !contour.IsPointOnPolyline(ptCentre))
                 {
-                    // Петля полилинии ниже заданных точек
-                    var ptsLoopBelow = contour.GetLoopSideBetweenHorizontalIntersectPoints(ptPrew, pt, false, true);
+                    // Петля полилинии ниже заданных точек                    
+                    var ptsLoopBelow = isHor? contour.GetLoopSideBetweenHorizontalIntersectPoints(ptPrew, pt, false, true):
+                                              contour.GetLoopSideBetweenVerticalIntersectPoints(ptPrew, pt, false, false);
                     if (ptsIntersectShadow.Count > 0 && ptsLoopBelow.Count > 0)
                     {
                         // Проверка точек пересечения с линией тени - добавление этих точек
@@ -372,17 +531,20 @@ namespace PIK_GP_Acad.Insolation.Services
                         if (ptLoop.Y < ptCalc.Y)
                         {
                             var angleInsPt = GetInsAngleFromPoint(ptLoop);
-                            if ((maxOrMinAngle && (angleInsPt > angleRes)) ||
-                                (!maxOrMinAngle && (angleInsPt < angleRes)))
+                            if ((maxOrMinAngle && (angleInsPt > resAngle)) ||
+                                (!maxOrMinAngle && (angleInsPt < resAngle)))
                             {
-                                angleRes = angleInsPt;
+                                resAngle = angleInsPt;
+                                resIsCorrected = true;
                             }
                         }
                     }
+                    if (onlyFirstLoop)
+                        break;
                 }
                 ptPrew = pt;
             }        
-            return angleRes;
+            return resIsCorrected;
         }
 
         /// <summary>
@@ -405,8 +567,8 @@ namespace PIK_GP_Acad.Insolation.Services
             double yShadow = ptCalc2d.Y - yShadowLen;
 
             // Линия тени
-            var xRayToStart = values.GetXRay(yShadowLen, AngleStartOnPlane);
-            var xRayToEnd = values.GetXRay(yShadowLen, AngleEndOnPlane);
+            var xRayToStart = values.GetXRay(yShadowLen, StartAnglesIllum.AngleStartOnPlane);
+            var xRayToEnd = values.GetXRay(yShadowLen, StartAnglesIllum.AngleEndOnPlane);
             Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
                               new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
             return lineShadow;

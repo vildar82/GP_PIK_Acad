@@ -58,6 +58,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                 }               
             }
+            resFronts = FrontValue.Merge(resFronts);
             return resFronts;
         }
 
@@ -69,31 +70,30 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчитанные точки сегмента
             var calcPoints = GetFrontCalcPoints(seg, delta);
             // Определение фронтов
-            FrontCalcPoint fPtPrew = null;
-            FrontCalcPoint fPtStart = null;
             var ptsIsCalced = calcPoints.Where(p => p.IsCalulated);
-            foreach (var item in ptsIsCalced)
+            FrontCalcPoint fPtPrew = ptsIsCalced.First();
+            fPtPrew.InsValue = ptsIsCalced.Skip(1).First().InsValue;
+            FrontCalcPoint fPtStart = fPtPrew;
+            foreach (var item in ptsIsCalced.Skip(1))
             {
-                if (fPtPrew == null)
+                if (fPtPrew.InsValue != item.InsValue || item.IsCorner)
                 {
-                    fPtPrew = item;
+                    if (item.IsCorner)
+                    {
+                        fPtPrew = item;
+                    }
+                    // Создание фронта
+                    var frontLine = CreateFrontLine(fPtStart, fPtPrew, seg);
+                    if (frontLine != null)
+                    {
+                        resFrontLines.Add(frontLine);
+                    }
                     fPtStart = item;
                 }
-                else
-                {
-                    if (fPtPrew.InsValue != item.InsValue)
-                    {
-                        // Создание фронта
-                        var frontLine = CreateFrontLine(fPtStart, fPtPrew);
-                        if (frontLine != null)
-                        {
-                            resFrontLines.Add(frontLine);
-                        }
-                    }
-                }
+                fPtPrew = item;
             }
             // Создание послежнего фронта
-            var frontLineLast = CreateFrontLine(fPtStart, fPtPrew);
+            var frontLineLast = CreateFrontLine(fPtStart, fPtPrew, seg);
             if (frontLineLast != null)
             {
                 resFrontLines.Add(frontLineLast);
@@ -101,16 +101,35 @@ namespace PIK_GP_Acad.Insolation.Services
             return resFrontLines;
         }
 
-        private FrontValue CreateFrontLine (FrontCalcPoint fPtStart, FrontCalcPoint fPtEnd)
+        private FrontValue CreateFrontLine (FrontCalcPoint fPtStart, FrontCalcPoint fPtEnd, LineSegment2d seg)
         {
             FrontValue frontLine = null;
-            if (fPtStart != fPtEnd)
+            if (fPtStart.Point.IsEqualTo(fPtEnd.Point))
             {
-                // Участок фронта - из 1 точки - половина расст до начала след фронтана
+                if (fPtStart.IsCorner && fPtEnd.IsCorner)
+                {
+                    return null;
+                }
+                // Участок фронта из 1 точки
+                var pt1 = fPtStart.Point - seg.Direction * (delta * 0.5);
+                var pt2 = fPtStart.Point + seg.Direction * (delta * 0.5);
+                frontLine = new FrontValue(pt1, pt2, fPtStart.InsValue, frontOpt);
             }
             else
             {
-                frontLine = new FrontValue(fPtStart.Point, fPtEnd.Point, fPtStart.InsValue, frontOpt);
+                var ptEnd = fPtEnd.Point;
+                var ptStart = fPtStart.Point;
+                if (!fPtEnd.IsCorner)
+                {
+                    // Продлить линию на половину дельты
+                    ptEnd = ptEnd + seg.Direction * (delta * 0.5);
+                }
+                if (!fPtStart.IsCorner)
+                {
+                    ptStart = ptStart - seg.Direction * (delta * 0.5);
+                }
+
+                frontLine = new FrontValue(ptStart, ptEnd, fPtStart.InsValue, frontOpt);
             }
             return frontLine;
         }
@@ -122,24 +141,33 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var calcPts =new List<FrontCalcPoint>();
 
-            calcPts.Add(new FrontCalcPoint(seg.StartPoint));
-            calcPts.Add(new FrontCalcPoint(seg.EndPoint));
+            calcPts.Add(new FrontCalcPoint(seg.StartPoint, true));            
 
             // Добавление остальных точек с заданным шагом от стартовой до конечной
             var countSteps = Convert.ToInt32(seg.Length / delta)-1;
-            var ptPrew = seg.StartPoint;
-            var vecDelta = seg.Direction.GetNormal()*delta;
-            for (int i = 0; i < countSteps; i++)
+            if (countSteps == 0)
             {
-                var ptNext = ptPrew + vecDelta;
-                calcPts.Add(new FrontCalcPoint(ptNext));
-                ptPrew = ptNext;
+                // Добавление средней точки сегмента
+                calcPts.Add(new FrontCalcPoint(seg.MidPoint, false));
             }
+            else
+            {
+                var ptPrew = seg.StartPoint;
+                var vecDelta = seg.Direction * delta;
+                for (int i = 0; i < countSteps; i++)
+                {
+                    var ptNext = ptPrew + vecDelta;
+                    calcPts.Add(new FrontCalcPoint(ptNext, false));
+                    ptPrew = ptNext;
+                }
+            }            
+
+            calcPts.Add(new FrontCalcPoint(seg.EndPoint, true));
 
             // Определение блок-секций для точек
             DefineSectionInRange(ref calcPts, 0, calcPts.Count-1);
             // Расчетные точки с определенными секциями - только их считать
-            calcPts = calcPts.Where(w => w.Section != null).ToList();
+            //calcPts = calcPts.Where(w => w.Section != null).ToList();
 
             // Расчет в точке - без окна!
             var insPt = new InsPoint();
@@ -148,9 +176,15 @@ namespace PIK_GP_Acad.Insolation.Services
 
             foreach (var calcFrontPt in calcPts)
             {
+                if (calcFrontPt.Section == null) continue;
+                if (calcFrontPt.IsCorner)
+                {
+                    calcFrontPt.IsCalulated = true;
+                    continue;
+                }
+
                 insPt.Point = calcFrontPt.Point.Convert3d();
-                insPt.Building = calcFrontPt.Section;
-                                
+                insPt.Building = calcFrontPt.Section;                                
                 try
                 {
                     var illums = calcTrees.CalcPoint(insPt);
@@ -164,7 +198,6 @@ namespace PIK_GP_Acad.Insolation.Services
                     // Пропустить!?
                 }
             }
-
             return calcPts;
         }
 
@@ -230,11 +263,13 @@ namespace PIK_GP_Acad.Insolation.Services
 
     class FrontCalcPoint
     {
-        public FrontCalcPoint (Point2d pt)
+        public FrontCalcPoint (Point2d pt, bool isCorner)
         {
             Point = pt;
+            IsCorner = isCorner;
         }
 
+        public bool IsCorner { get; set; }
         public Point2d Point { get; set; }
         public MapBuilding Section { get; set; }
         /// <summary>
@@ -242,8 +277,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public bool IsIgnoredPoint { get; set; }
         public InsRequirementEnum InsValue { get; set; }
-        public bool IsCalulated { get; set; }
-       
+        public bool IsCalulated { get; set; }       
 
         public bool DefineSection (Map map)
         {

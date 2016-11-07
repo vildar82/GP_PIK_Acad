@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Colors;
@@ -23,23 +24,21 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Шаг расчетной точки по фронту
         /// </summary>
-        public double StepCalcPointInFront { get { return stepCalcPointInFront; } set { stepCalcPointInFront = value; RaisePropertyChanged(); } }
-        double stepCalcPointInFront;
-
+        public double StepCalcPointInFront { get; set; }=0.3;
         /// <summary>
         /// Толщина линии фрона
         /// </summary>
-        public double LineFrontWidth { get; set; }
-        public string FrontLineLayer { get; set; }
-        public ObjectId FrontLineLayerId { get; set; }
+        public double LineFrontWidth { get; set; } = 0.6;
+        public string FrontLineLayer { get; set; } = "sapr_ins_front";
 
         public static FrontOptions Default ()
         {
-            var opt = new FrontOptions {
-                StepCalcPointInFront = 0.1,
-                LineFrontWidth = 3,
-                FrontLineLayer = "sapr_ins_front"
-            };
+            var opt = new FrontOptions();
+            //{
+            //    StepCalcPointInFront = 0.3,
+            //    LineFrontWidth = 0.6,
+            //    FrontLineLayer = "sapr_ins_front"
+            //};
             return opt;
         }
 
@@ -62,37 +61,36 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public DicED GetExtDic (Document doc)
         {
-            throw new NotImplementedException();
+            var dicOpt = new DicED();
+            dicOpt.AddRec("FrontOptionsRec", GetDataValues(doc));
+            return dicOpt;
         }
-        public void SetExtDic (DicED dicEd, Document doc)
+        public void SetExtDic (DicED dicOpt, Document doc)
         {
-            throw new NotImplementedException();
+            SetDataValues(dicOpt.GetRec("FrontOptionsRec")?.Values, doc);
         }
         public List<TypedValue> GetDataValues (Document doc)
         {
-            throw new NotImplementedException();
+            return new List<TypedValue> {                
+                TypedValueExt.GetTvExtData(StepCalcPointInFront),
+                TypedValueExt.GetTvExtData(LineFrontWidth),
+                TypedValueExt.GetTvExtData(FrontLineLayer),
+            };
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Определение слоя для линий фронтов
-        /// </summary>
-        /// <param name="db"></param>
-        public void DefineLayer (Database db)
-        {
-            var lt = db.LayerTableId.GetObject(OpenMode.ForRead) as LayerTable;
-            if (!lt.Has(FrontLineLayer))
+            if (values == null || values.Count != 3)
             {
-                var layer = new LayerTableRecord();
-                layer.Name = FrontLineLayer;
-                lt.UpgradeOpen();
-                lt.Add(layer);
-                db.TransactionManager.TopTransaction.AddNewlyCreatedDBObject(layer, true);
+                // Дефолт
+
             }
-            FrontLineLayerId = lt[FrontLineLayer];
+            else
+            {
+                int index = 0;
+                StepCalcPointInFront = TypedValueExt.GetTvValue<double>(values[index++]);
+                LineFrontWidth = TypedValueExt.GetTvValue<double>(values[index++]);
+                FrontLineLayer = TypedValueExt.GetTvValue<string>(values[index++]);
+            }
         }
     }
 }

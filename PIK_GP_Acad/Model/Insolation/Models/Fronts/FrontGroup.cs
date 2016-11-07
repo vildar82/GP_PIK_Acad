@@ -85,17 +85,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
-            Document doc = Front.Model.Doc;
-            Database db = Front.Model.Doc.Database;
-            using (doc.LockDocument())
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                Front.InitToCalc();
+            //Document doc = Front.Model.Doc;
+            //Database db = Front.Model.Doc.Database;
+            //using (doc.LockDocument())
+            //using (var t = db.TransactionManager.StartTransaction())
+            //{
+                //Front.InitToCalc();
                 // Определение домов
                 UpdateHouses();
 
-                t.Commit();
-            }
+            //    t.Commit();
+            //}
         }        
 
         private void OnIsExpandedChanged ()
@@ -167,7 +167,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 if (!FindHouse(ref houses, building))
                 {
-                    var house = new House();
+                    var house = new House(this);
                     house.Sections.Add(building);
                     houses.Add(house);
                 }
@@ -185,20 +185,24 @@ namespace PIK_GP_Acad.Insolation.Models
             return houses;
         }        
 
-        private static bool FindHouse (ref List<House> houses, MapBuilding building)
-        {
-            var offset = building.Contour.Offset(3, OffsetSide.Out).First();
+        private bool FindHouse (ref List<House> houses, MapBuilding building)
+        {            
             var findHouses = new List<House>();
-            foreach (var house in houses)
+            using (var offset = building.Contour.Offset(3, OffsetSide.Out).First())
             {
-                foreach (var blInHouse in house.Sections)
+                foreach (var house in houses)
                 {
-                    var ptsIntersect = new Point3dCollection();
-                    offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                    if (ptsIntersect.Count > 0)
+                    foreach (var blInHouse in house.Sections)
                     {
-                        findHouses.Add(house);
-                        break;
+                        using (var ptsIntersect = new Point3dCollection())
+                        {
+                            offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                            if (ptsIntersect.Count > 0)
+                            {
+                                findHouses.Add(house);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -209,7 +213,8 @@ namespace PIK_GP_Acad.Insolation.Models
                     // Объединение нескольких домов в один общий
                     var bls = findHouses.SelectMany(s => s.Sections).ToList();
                     bls.Add(building);
-                    var house = new House { Sections = new ObservableCollection<MapBuilding>(bls) };
+                    var house = new House(this);
+                    house.Sections = new ObservableCollection<MapBuilding>(bls);
                     houses.Add(house);
                     foreach (var h in findHouses)
                     {
@@ -232,6 +237,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 foreach (var item in Houses)
                 {
                     item.DisposeContour();
+                    item.Dispose();
                 }
             }
         }

@@ -68,7 +68,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var group = FrontGroup.New(dicGroup);
             Groups.Add(group);
-            group.Update();
+            //group.Update();
         }
 
         public void DeleteGroup (FrontGroup group)
@@ -138,19 +138,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 AddGroup(dicGroup);
             }
-        }
-
-        
-
-        /// <summary>
-        /// Подготовление к расчету фронтов
-        /// </summary>
-        public void InitToCalc ()
-        {
-            if (Options == null)            
-                Options = FrontOptions.Default();            
-            Options.DefineLayer(Model.Doc.Database);
-        }
+        }  
 
         public void Update ()
         {

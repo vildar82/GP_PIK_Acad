@@ -81,6 +81,8 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
             {
                 var plCopy = (Polyline)pl.Clone();
                 plCopy.TransformBy(Transform);
+                if (plCopy.Elevation != 0)
+                    plCopy.Elevation = 0;
                 return plCopy;
             }
         }

@@ -242,7 +242,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var tree = new TreeModel();
             tree.SetExtDic(dicModel.GetInner("TreeModel"), doc);
             // Расчет фронтов
-            var front = new FrontModel();
+            var front = new FrontModel();            
             front.SetExtDic(dicModel.GetInner("FrontModel"), doc);
 
             model = new InsModel();
@@ -284,6 +284,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (doc == null) return;
 
             Tree.ClearVisuals();
+            Tree.Points.Clear();
 
             var idPoints = Map.InsPoints;
             if (idPoints == null || idPoints.Count == 0)

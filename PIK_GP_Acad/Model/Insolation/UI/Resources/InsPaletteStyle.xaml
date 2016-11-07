@@ -20,19 +20,7 @@
     <BitmapImage x:Key="biUpdate" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
     <BitmapImage x:Key="biFront" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Front.png"/>
     <sys:Double x:Key="SmallButtonsHeight">20</sys:Double>    
-    <sys:Double x:Key="NormalButtonsHeight">23</sys:Double>    
-    <Image x:Key="imOn" Source="{StaticResource biOn}"/>
-    <Image x:Key="imOff" Source="{StaticResource biOff}"/>
-    <Image x:Key="imSun" Source="{StaticResource biSun}"/>
-    <Image x:Key="imTree" Source="{StaticResource biTree}"/>
-    <Image x:Key="imIlums" Source="{StaticResource biIlums}"/>
-    <Image x:Key="imOptions" Source="{StaticResource biOptions}"/>
-    <Image x:Key="imDelete" Source="{StaticResource biClose}"/>
-    <Image x:Key="imAdd" Source="{StaticResource biAdd}"/>
-    <Image x:Key="imOption_dots" Source="{StaticResource biOption_dots}"/>
-    <Image x:Key="imDraw_visuals" Source="{StaticResource biDraw_visuals}"/>
-    <Image x:Key="imUpdate" Source="{StaticResource biUpdate}"/>
-    <Image x:Key="imFront" Source="{StaticResource biFront}"/>
+    <sys:Double x:Key="NormalButtonsHeight">23</sys:Double>        
     <!--<Style x:Key="ControlBase" TargetType="FrameworkElement">
         <Setter Property="Margin" Value="5"/>
     </Style>

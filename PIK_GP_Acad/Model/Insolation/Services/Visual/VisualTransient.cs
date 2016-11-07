@@ -76,7 +76,7 @@ namespace PIK_GP_Acad.Insolation.Services
             EraseDraws();
         }
 
-        public void Dispose ()
+        public virtual void Dispose ()
         {
             if (draws != null)
             {

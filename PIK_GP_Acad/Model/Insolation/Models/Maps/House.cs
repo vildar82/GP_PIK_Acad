@@ -19,16 +19,18 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Дом - состоит из блок-секций в ряд
     /// </summary>
-    public class House : ModelBase
+    public class House : ModelBase, IDisposable
     {
-        private Document doc = Application.DocumentManager.MdiActiveDocument;
-
-        public House ()
+        public House (FrontGroup frontGroup)
         {
-            VisualFront = new VisualFront();
+            FrontGroup = frontGroup;
+            Doc = FrontGroup.Front.Model.Doc;
+            VisualFront = new VisualFront(Doc);
+            //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;
             Sections = new ObservableCollection<MapBuilding>();
         }   
 
+        public Document Doc { get; set; }
         public FrontGroup FrontGroup { get; set; }
         
         /// <summary>
@@ -89,9 +91,9 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             try
             {
-                using (doc.LockDocument())
+                using (Doc.LockDocument())
                 {
-                    doc.Editor.Zoom(GetExtents());
+                    Doc.Editor.Zoom(GetExtents());
                 }
             }
             catch { }
@@ -208,6 +210,11 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateVisual ()
         {
             VisualFront?.VisualUpdate();
+        }
+
+        public void Dispose ()
+        {
+            VisualFront?.Dispose();
         }
     }
 }

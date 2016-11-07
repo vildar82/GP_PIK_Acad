@@ -48,17 +48,19 @@
                                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                                             <ToggleButton
                                                 Margin="1"
-                                                Style="{StaticResource tbtnSmall}"
-                                                Content="{StaticResource imFront}"
+                                                Style="{StaticResource tbtnSmall}"                                                
                                                 IsChecked="{Binding IsVisualFrontOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                ToolTip="Включение/отключение визуализации фронтов" />
+                                                ToolTip="Включение/отключение визуализации фронтов" >
+                                                <Image Source="{StaticResource biFront}"/>
+                                            </ToggleButton>
                                             <Button
                                                 Margin="1"
                                                 Style="{StaticResource btnSmall}"
                                                 Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
-                                                CommandParameter="{Binding}"
-                                                Content="{StaticResource imDelete}"
-                                                ToolTip="Удаление группы" />
+                                                CommandParameter="{Binding}"                                                
+                                                ToolTip="Удаление группы" >
+                                                <Image Source="{StaticResource biClose}"/>
+                                            </Button>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
@@ -98,9 +100,10 @@
                 Width="Auto"
                 Margin="1"
                 Style="{StaticResource btnNormal}"
-                Command="{Binding Add}"
-                Content="{StaticResource imAdd}"
-                ToolTip="Добавить группу - выбор области на чертеже" />
+                Command="{Binding Add}"                
+                ToolTip="Добавить группу - выбор области на чертеже" >
+                <Image Source="{StaticResource biAdd}"/>
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

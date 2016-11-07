@@ -127,6 +127,11 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var plsPointTrees = new List<Polyline>();
 
+            if (insPoint.AngleStartOnPlane==0 && insPoint.AngleEndOnPlane==0)
+            {
+                return plsPointTrees;
+            }
+
             Point2d p1 = insPoint.Point.Convert2d();
             Point2d p2= p1;
             Point2d p3;

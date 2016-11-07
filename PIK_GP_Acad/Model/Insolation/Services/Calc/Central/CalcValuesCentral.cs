@@ -11,6 +11,10 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public class CalcValuesCentral : ICalcValues
     {
+        private Dictionary<double, double> dictAngleFromAcad = new Dictionary<double, double>();
+        private Dictionary<Tuple<double, double>, double> dictXRay = new Dictionary<Tuple<double, double>, double>();
+        private Dictionary<int, Tuple<double, double>> dictYShadowLineByHeight = new Dictionary<int, Tuple<double, double>>();
+        private Dictionary<double, double> dictAngleSun = new Dictionary<double, double>();
         private double FiTan;
         private double FiCos;
         /// <summary>
@@ -57,9 +61,19 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <returns>Длина тени на земле (по перпендикуляру)</returns>
         public double YShadowLineByHeight (int height, out double cShadowPlane)
         {
-            var res = height * FiTan;
-            cShadowPlane = height / FiCos;
-            return res;
+            Tuple<double, double> val;
+            if (!dictYShadowLineByHeight.TryGetValue(height, out val))
+            {
+                var y = height * FiTan;
+                cShadowPlane = height / FiCos;
+                val = new Tuple<double, double>(y, cShadowPlane);
+                dictYShadowLineByHeight.Add(height, val);
+            }
+            else
+            {
+                cShadowPlane = val.Item2;
+            }
+            return val.Item1;
         }
 
         /// <summary>
@@ -79,12 +93,17 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="angleOnPlane">Угол на проекции (рад)</param>        
         public double AngleSun (double angleOnPlane)
-        {
-            var y = Math.Tan(angleOnPlane);
-            var c = y / ratioYtoC;
-            var resAngleSun = Math.Atan(c);
-            if (resAngleSun < 0)
-                resAngleSun = Math.PI + resAngleSun;
+        {            
+            double resAngleSun;
+            if (!dictAngleSun.TryGetValue(angleOnPlane, out resAngleSun))
+            {
+                var y = Math.Tan(angleOnPlane);
+                var c = y / ratioYtoC;
+                resAngleSun = Math.Atan(c);
+                if (resAngleSun < 0)
+                    resAngleSun = Math.PI + resAngleSun;
+                dictAngleSun.Add(angleOnPlane, resAngleSun);
+            }
             return resAngleSun;
         }
 
@@ -95,11 +114,18 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <returns>Угол проекции на землю</returns>
         public double AngleSunOnPlane (double angleSun)
         {
-            var c = Math.Tan(angleSun);
-            var y = c * ratioYtoC;
-            var resAngleOnPlane = Math.Atan(y);
-            if (resAngleOnPlane < 0)
-                resAngleOnPlane = Math.PI + resAngleOnPlane;
+            Dictionary<double, double> dictAngleSunOnPlane = new Dictionary<double, double>();
+            double resAngleOnPlane;
+            if (!dictAngleSunOnPlane.TryGetValue(angleSun, out resAngleOnPlane))
+            {
+                var c = Math.Tan(angleSun);
+                var y = c * ratioYtoC;
+                resAngleOnPlane = Math.Atan(y);
+                if (resAngleOnPlane < 0)
+                    resAngleOnPlane = Math.PI + resAngleOnPlane;
+
+                dictAngleSunOnPlane.Add(angleSun, resAngleOnPlane);
+            }
             return resAngleOnPlane;
         }        
 
@@ -110,11 +136,17 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="cSunPlane">Кактет противоположный углу луча солнца (или yShadow или cShadow)</param>
         /// <param name="angleSun">Угол луча солнца от 0 до Пи</param>        
         public double GetXRay (double cSunPlane, double angleSun)
-        {   
-            var res = cSunPlane / Math.Tan(angleSun);
-            if (angleSun > Math.PI)
+        {
+            double res;
+            var key = new Tuple<double, double>(cSunPlane, angleSun);
+            if (!dictXRay.TryGetValue(key, out res))
             {
-                res = -res;
+                res = cSunPlane / Math.Tan(angleSun);
+                if (angleSun > Math.PI)
+                {
+                    res = -res;
+                }
+                dictXRay.Add(key, res);
             }
             return res;
         }
@@ -127,9 +159,14 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <returns>Угол для инсоляции (радианы)</returns>
         public double GetInsAngleFromAcad (double acadAngle)
         {
-            var res = acadAngle.FixedAngle();
-            if (res > 0.01)
-                res = MathExt.PI2 - res;
+            double res;
+            if (!dictAngleFromAcad.TryGetValue(acadAngle, out res))
+            {
+                res = acadAngle.FixedAngle();
+                if (res > 0.01)
+                    res = MathExt.PI2 - res;
+                dictAngleFromAcad.Add(acadAngle, res);
+            }
             return res;
         }
     }

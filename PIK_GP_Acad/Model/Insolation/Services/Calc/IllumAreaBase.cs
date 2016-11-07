@@ -12,7 +12,7 @@ using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public abstract class IllumAreaBase : IIlluminationArea
+    public class IllumAreaBase : IIlluminationArea
     {        
         public Point2d PtOrig { get; set; }
         public Point2d PtStart { get; set; }
@@ -109,6 +109,28 @@ namespace PIK_GP_Acad.Insolation.Services
         {            
             var vecRay = Vector2d.XAxis.RotateBy(-angleRayIns)* length;
             return ptOrig + vecRay;
+        }
+
+        public Vector2d GetMidVector ()
+        {
+            double midAngle;
+            if (AngleStartOnPlane > AngleEndOnPlane)
+            {
+                midAngle = AngleStartOnPlane + (AngleEndOnPlane - AngleStartOnPlane) / 2 + Math.PI;
+            }
+            else
+            {
+                midAngle = AngleStartOnPlane + (AngleEndOnPlane - AngleStartOnPlane) / 2;
+            }                        
+            var vecMid = Vector2d.XAxis.RotateBy(midAngle);
+            return vecMid;
+        }
+
+        public void Invert ()
+        {
+            var t = AngleStartOnPlane;
+            AngleStartOnPlane = AngleEndOnPlane;
+            AngleEndOnPlane = t;
         }
     }
 }

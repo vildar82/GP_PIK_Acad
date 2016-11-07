@@ -47,8 +47,10 @@ namespace PIK_GP_Acad.Insolation.Services
         //}
 
         public static List<IIlluminationArea> Invert (List<IIlluminationArea> illums, 
-            double angleStart, double angleEnd, Point2d ptOrig)
+            IIlluminationArea startAnglesIllumBound, Point2d ptOrig)
         {
+            double angleStart = startAnglesIllumBound.AngleStartOnPlane;
+            double angleEnd= startAnglesIllumBound.AngleEndOnPlane;
             List<IIlluminationArea> inverts = new List<IIlluminationArea>();
 
             if (illums.Count == 0)

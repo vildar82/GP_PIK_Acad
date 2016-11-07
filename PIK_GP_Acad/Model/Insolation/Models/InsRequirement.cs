@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         InsRequirementEnum type;
         Color color;
-        string name;
+        string name = "Не определено";
 
         public InsRequirementEnum Type {
             get { return type; }
