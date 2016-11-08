@@ -172,7 +172,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчет в точке - без окна!
             var insPt = new InsPoint();
             insPt.Model = model;            
-            insPt.Window = null;
+            insPt.Window = WindowOptions.Default();
 
             foreach (var calcFrontPt in calcPts)
             {

@@ -71,7 +71,7 @@ namespace PIK_GP_Acad.Insolation.Models
             catch
             {
                 Illums = null;
-                InsValue = null;
+                InsValue = InsValue.Empty;
             }            
         }  
 

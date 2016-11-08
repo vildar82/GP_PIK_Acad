@@ -214,7 +214,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (building != null)
             {
                 // Проверка находится ли точка на контуре дома
-                if (!CorrectCalcPoint(ref pt, building, model.Doc.Database))
+                if (!CorrectCalcPoint(ref pt, building, model.Doc))
                 {
                     building = null;
                 }
@@ -226,24 +226,21 @@ namespace PIK_GP_Acad.Insolation.Models
             return building;
         }
 
-        public static bool CorrectCalcPoint (ref Point3d pt, MapBuilding building, Database db)
+        public static bool CorrectCalcPoint (ref Point3d pt, MapBuilding building, Document doc)
         {
             bool res;
             // Корректировка точки
             Point3d correctPt;
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                building.InitContour();
-                correctPt = building.Contour.GetClosestPointTo(pt, true);
-                building.Contour.Dispose();
-                t.Commit();
-            }
+            building.InitContour();
+            correctPt = building.Contour.GetClosestPointTo(pt, true);
+            building.Contour.Dispose();                
 
             if ((pt - correctPt).Length < 1)
-            {
+            {                
                 // Точка достаточно близко к контуру - поправка точки и ОК.
                 pt = correctPt;
                 res = true;
+
             }
             else
             {

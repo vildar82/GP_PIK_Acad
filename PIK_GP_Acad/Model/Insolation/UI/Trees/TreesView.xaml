@@ -58,7 +58,7 @@
                             <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, UpdateSourceTrigger=PropertyChanged}" />
                         </WrapPanel>
                         <!--  Кнопки  -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="1">
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="3">
                             <!--  Вкл/выкл зон инсоляции точки  -->
                             <ToggleButton
                                 Height="{StaticResource SmallButtonsHeight}"
