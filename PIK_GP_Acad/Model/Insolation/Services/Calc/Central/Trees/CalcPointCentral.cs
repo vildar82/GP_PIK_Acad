@@ -76,7 +76,10 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         // зоны тени для домов этой высоты
                         var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key - insPt.Height);
-                        resAreas.AddRange(illumsByHeight);
+                        if (illumsByHeight != null && illumsByHeight.Any())
+                        {
+                            resAreas.AddRange(illumsByHeight);
+                        }
                     }
                 }
                 resAreas = IllumAreaBase.Merge(resAreas);
@@ -118,7 +121,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     if (build.YMin > lineShadow.StartPoint.Y)
                     {
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints());
+                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<=ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
                             illumShadows.Add(ilumShadow);
@@ -130,6 +133,8 @@ namespace PIK_GP_Acad.Insolation.Services
                         illumShadows.AddRange(ilumsBoundary);
                     }
                 }
+                // Test 
+                EntityHelper.AddEntityToCurrentSpace(lineShadow);
             }
             // Объединение совпадающих зон теней
             illumShadows = IllumAreaBase.Merge(illumShadows);

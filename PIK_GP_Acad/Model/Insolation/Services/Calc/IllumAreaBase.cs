@@ -45,11 +45,14 @@ namespace PIK_GP_Acad.Insolation.Services
             IIlluminationArea cur = sortedByStart[0];
             merged.Add(cur);
             foreach (var ilum in sortedByStart.Skip(1))
-            {
+            {                
                 if (ilum.AngleStartOnPlane <= cur.AngleEndOnPlane)
                 {
-                    cur.AngleEndOnPlane = ilum.AngleEndOnPlane;
-                    cur.PtEnd = ilum.PtEnd;
+                    if (ilum.AngleEndOnPlane > cur.AngleEndOnPlane)
+                    {
+                        cur.AngleEndOnPlane = ilum.AngleEndOnPlane;
+                        cur.PtEnd = ilum.PtEnd;
+                    }
                 }
                 else
                 {

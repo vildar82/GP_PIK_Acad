@@ -66,7 +66,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         private void AddGroup (DicED dicGroup)
         {
-            var group = FrontGroup.New(dicGroup);
+            var group = FrontGroup.New(dicGroup, this);
             Groups.Add(group);
             //group.Update();
         }
@@ -133,11 +133,15 @@ namespace PIK_GP_Acad.Insolation.Models
             Options.SetExtDic(dicFront.GetInner("FrontOptions"), doc);
 
             int groupCount = 0;
-            var dicGroup = dicFront.GetInner("Group" + groupCount); 
-            if (dicGroup != null)
+            DicED dicGroup;
+            do
             {
-                AddGroup(dicGroup);
-            }
+                dicGroup = dicFront.GetInner("Group" + groupCount++);
+                if (dicGroup != null)
+                {
+                    AddGroup(dicGroup);
+                }                
+            } while (dicGroup!= null);            
         }  
 
         public void Update ()

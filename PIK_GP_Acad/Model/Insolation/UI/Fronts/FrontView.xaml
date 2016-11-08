@@ -29,7 +29,7 @@
             ItemsSource="{Binding Front.Groups, UpdateSourceTrigger=PropertyChanged}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" BorderBrush="Gray" BorderThickness="1">
+                    <Border Margin="5" BorderBrush="Gray" BorderThickness="1" Background="Gray">
                         <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
                             <!--  Заголовок группы - все о группе  -->
                             <Expander.HeaderTemplate>

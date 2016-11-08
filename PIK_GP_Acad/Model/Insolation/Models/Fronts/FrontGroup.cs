@@ -73,9 +73,10 @@ namespace PIK_GP_Acad.Insolation.Models
             var frontGroup = new FrontGroup(selReg, front);
             return frontGroup;
         }
-        public static FrontGroup New (DicED dicGroup)
-        {
+        public static FrontGroup New (DicED dicGroup, FrontModel front)
+        {            
             var group = new FrontGroup();
+            group.Front = front;
             group.SetExtDic(dicGroup, null);
             return group;
         }
@@ -296,10 +297,10 @@ namespace PIK_GP_Acad.Insolation.Models
             if (recSel!= null && recSel.Values!= null && recSel.Values.Count == 4)
             {
                 int index = 0;
-                var minPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
-                var minPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
-                var maxPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
-                var maxPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index]);
+                var minPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index++]);
+                var minPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index++]);
+                var maxPtX = TypedValueExt.GetTvValue<double>(recSel.Values[index++]);
+                var maxPtY = TypedValueExt.GetTvValue<double>(recSel.Values[index++]);
 
                 resExt = new Extents3d(new Point3d(minPtX, minPtY, 0), new Point3d (maxPtX, maxPtY, 0));
             }
