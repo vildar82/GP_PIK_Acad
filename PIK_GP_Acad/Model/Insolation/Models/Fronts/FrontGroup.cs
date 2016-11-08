@@ -191,7 +191,7 @@ namespace PIK_GP_Acad.Insolation.Models
         private bool FindHouse (ref List<House> houses, MapBuilding building)
         {            
             var findHouses = new List<House>();
-            using (var offset = building.Contour.Offset(3, OffsetSide.Out).First())
+            using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
             {
                 foreach (var house in houses)
                 {

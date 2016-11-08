@@ -19,22 +19,22 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Здание  -->
-        <WrapPanel Grid.Row="0" Margin="2">
-            <StackPanel Margin="2">
+        <WrapPanel Grid.Row="0" Margin="2" HorizontalAlignment="Center">
+            <StackPanel Margin="4">
                 <TextBlock Text="Тип здания:" />
                 <ComboBox ItemsSource="{Binding BuildingTypes}" SelectedItem="{Binding BuildingType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                    <!--<ComboBox.ItemTemplate>
+                    <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={converters:EnumBindingSource}}" />
-                            /// ComboBox ItemsSource="{Binding Source={local:BuildingTypes {x:Type local:MyEnum}}}"    ///
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>-->
+                            <TextBlock Text="{Binding Converter={converters:EnumDescriptionConverter}}"/>
+                            <!--ComboBox ItemsSource="{Binding Source={local:BuildingTypes {x:Type local:MyEnum}}}"-->
+                        </DataTemplate>                        
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
             <!--  Расчетный этаж (расчетная высота)  -->
-            <StackPanel Margin="2">
+            <StackPanel Margin="4">
                 <TextBlock Text="Высота точки, м:" />
-                <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  HorizontalContentAlignment="Center"/>
             </StackPanel>
         </WrapPanel>
         <local:WindowOptionsView Grid.Row="1" DataContext="{Binding WindowVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -43,14 +43,14 @@
             Margin="2" HorizontalAlignment="Center"
             Orientation="Horizontal">
             <Button
-                Width="50"
+                Width="60"
                 Margin="5" HorizontalAlignment="Center"
                 Command="{Binding OK}"
                 Content="OK" 
                 Click="OkButtonClick"
                 IsDefault="True"/>
             <Button
-                Width="50"
+                Width="60"
                 Margin="5" HorizontalAlignment="Center"                
                 Content="Cancel" 
                 IsCancel="True"/>
