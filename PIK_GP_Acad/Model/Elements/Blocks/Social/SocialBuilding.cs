@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AcadLib.Blocks;
 using AcadLib.Errors;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Elements.InfraworksExport;
@@ -42,6 +44,8 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Social;
 
         public string HouseName { get; set; }
+
+        public string PluginName { get; set; }
 
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {
@@ -106,6 +110,31 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
             recs.AddRange(recsCoverage);
 
             return recs;
+        }
+
+        public DBObject GetDBObject ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public DicED GetExtDic (Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetExtDic (DicED dicEd, Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -165,7 +165,7 @@ namespace PIK_GP_Acad.Insolation.Services
             calcPts.Add(new FrontCalcPoint(seg.EndPoint, true));
 
             // Определение блок-секций для точек
-            DefineSectionInRange(ref calcPts, 0, calcPts.Count-1);
+            DefineSectionInRange(ref calcPts);
             // Расчетные точки с определенными секциями - только их считать
             //calcPts = calcPts.Where(w => w.Section != null).ToList();
 
@@ -204,61 +204,13 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Определение расчетной секции для точек
         /// </summary>        
-        private void DefineSectionInRange (ref List<FrontCalcPoint> calcPts, int startIndex, int endIndex)
-        {            
-            if (endIndex <= startIndex) return;
-            
-            // Секция стартовой точки
-            if (!DefineSectionInPoint(ref calcPts,ref startIndex, 1))
+        private void DefineSectionInRange (ref List<FrontCalcPoint> calcPts)
+        {   
+            foreach (var item in calcPts)
             {
-                // Не определена секция 
-                return;
-            }            
-            // Секция конечной точки
-            if (!DefineSectionInPoint(ref calcPts,ref endIndex, -1))
-            {
-                return;
+                item.DefineSection(map);
             }
-            
-            if (startIndex< endIndex)
-            {
-                // Если у стартовой точки и у конечной одна и таже секция, то все промежуточные точки с тойжке секцией
-                if (calcPts[startIndex].Section == calcPts[endIndex].Section)
-                {
-                    var sec = calcPts[startIndex].Section;
-                    for (int i = startIndex+1; i < endIndex; i++)
-                    {
-                        calcPts[i].Section = sec;
-                    }
-                }
-                else
-                {
-                    // Деление диапазона пополам и в нем определение секций
-                    var centerIndex = (endIndex - startIndex) / 2;
-                    DefineSectionInRange(ref calcPts, startIndex, centerIndex);
-                    DefineSectionInRange(ref calcPts, centerIndex+1, endIndex);
-                }
-            }            
-        }
-
-        private bool DefineSectionInPoint (ref List<FrontCalcPoint> calcPts,ref int index, int dir)
-        {
-            bool res = false;
-            if (index >= calcPts.Count || index <0) return res;
-
-            var calcPt = calcPts[index];
-            if (calcPt.DefineSection(map))
-            {
-                res = true;
-            }
-            else
-            {
-                // Сдвиг на след точку
-                index += dir;
-                res = DefineSectionInPoint(ref calcPts, ref index, dir);
-            }            
-            return res;
-        }
+        }       
     }
 
     class FrontCalcPoint

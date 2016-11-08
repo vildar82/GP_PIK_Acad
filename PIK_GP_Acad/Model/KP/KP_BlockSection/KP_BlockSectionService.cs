@@ -250,13 +250,10 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                                 // ГНС линия пересекаемой секции
                                 var plExternItem =bsIntersect.IdPlContour.GetObject( OpenMode.ForRead, false, true) as Polyline;
                                 plExternItem = plExternItem.Clone() as Polyline;
-                                plExternItem.TransformBy(bsIntersect.Transform);
+                                plExternItem.TransformBy(bsIntersect.Transform);                                
 
-                                // Точки пересечения блок секций
-                                Point3dCollection ptIntersects = new Point3dCollection ();
-                                plExtern.IntersectWith(plExternItem, Intersect.OnBothOperands, new Plane(), ptIntersects, IntPtr.Zero, IntPtr.Zero);
-
-                                ModifyPlExternal(plExtern, plExternItem, ptIntersects, bs);
+                                // Корректировка контура б.с. если она пересекается с другим контуром б.с.
+                                BlockSectionBase.CorrectSectionsConnect(ref plExtern, plExternItem);
                             }
                         }
                     }
@@ -296,46 +293,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             return rtree;
         }
 
-        private static void ModifyPlExternal (Polyline pl, Polyline plItem, Point3dCollection ptIntersects,
-            BlockSectionKP bs)
-        {            
-            if (ptIntersects.Count == 0) return;
-
-            int numVertex = pl.NumberOfVertices;
-            var modifiedPoints = new List<Point2d> ();            
-
-            // для каждой точки пересечения найти ближайшую вершину на двух полилиниях
-            foreach (Point3d ptIntersect in ptIntersects)
-            {                
-                var ptClosest = pl.GetClosestPointTo(ptIntersect, true);
-                var param = pl.GetParameterAtPoint(ptClosest);
-                var paramIndex = Convert.ToInt32(param);
-                var ptVertexNearest = pl.GetPointAtParameter(paramIndex).Convert2d();
-                int vertexIndex = paramIndex == numVertex? 0: paramIndex;
-
-                if (modifiedPoints.Contains(ptVertexNearest))
-                {
-                    continue;
-                }
-
-                var ptClosestItem = plItem.GetClosestPointTo(ptIntersect, true);                
-                var paramItem = plItem.GetParameterAtPoint(ptClosestItem);
-                var paramIndexItem = Convert.ToInt32(paramItem);
-                var ptVertexNearestItem = plItem.GetPointAtParameter(paramIndexItem).Convert2d();
-
-                if ((ptVertexNearest - ptVertexNearestItem).Length>5)
-                {
-                    continue;
-                }
-
-                Point2d ptInsert =   ptVertexNearest.Center(ptVertexNearestItem);
-
-                pl.RemoveVertexAt(vertexIndex);
-                pl.AddVertexAt(vertexIndex, ptInsert, 0, 0, 0);
-
-                modifiedPoints.Add(ptInsert);
-            }            
-        }        
+        
 
         private static void FillContour (BlockSectionKP bs, Polyline plExtern, BlockTableRecord cs, Transaction t)
         {

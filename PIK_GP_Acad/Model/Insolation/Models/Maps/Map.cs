@@ -23,9 +23,10 @@ namespace PIK_GP_Acad.Insolation.Models
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
-        public Map (Database db)
-        {   
-            this.db = db;
+        public Map (Document doc)
+        {
+            Doc = doc;
+            db = doc.Database;
             LoadMap();
             SubscribeDB();
         }
@@ -66,6 +67,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Buildings = new List<MapBuilding>();
             InsPoints = new List<ObjectId>();
             treeBuildings = new RTree<MapBuilding>();
+            using (Doc.LockDocument())
             using (var t = db.TransactionManager.StartTransaction())
             {
                 var ms = db.CurrentSpaceId.GetObject(OpenMode.ForRead) as BlockTableRecord;

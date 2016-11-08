@@ -24,11 +24,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Шаг расчетной точки по фронту
         /// </summary>
-        public double StepCalcPointInFront { get; set; }=0.3;
+        public double StepCalcPointInFront { get; set; }=0.5;
         /// <summary>
         /// Толщина линии фрона
         /// </summary>
-        public double LineFrontWidth { get; set; } = 0.6;
+        public double LineFrontWidth { get; set; } = 0.8;
         public string FrontLineLayer { get; set; } = "sapr_ins_front";
 
         public static FrontOptions Default ()

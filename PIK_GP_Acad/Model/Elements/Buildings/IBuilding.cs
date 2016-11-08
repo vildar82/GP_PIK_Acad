@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib.XData;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -11,7 +12,7 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// <summary>
     /// Здание
     /// </summary>
-    public interface IBuilding: IElement
+    public interface IBuilding: IElement, IDboDataSave
     {
         int Floors { get; }
         Extents3d ExtentsInModel { get; }        
@@ -21,6 +22,6 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// <summary>
         /// Имя дома - объекта
         /// </summary>
-        string HouseName { get; set; }
+        string HouseName { get; set; }             
     }
 }

@@ -118,23 +118,25 @@ namespace PIK_GP_Acad.Insolation.Services
                 foreach (var build in buildings)
                 {
                     // Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
-                    if (build.YMin > lineShadow.StartPoint.Y)
+                    if (build.YMin >= lineShadow.StartPoint.Y)
                     {
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<=ptCalc.Y).ToList());
+                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
                             illumShadows.Add(ilumShadow);
                         }
                     }
-                    else if (build.YMax > lineShadow.StartPoint.Y)
+                    else if (build.YMax >= lineShadow.StartPoint.Y)
                     {
                         var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
                         illumShadows.AddRange(ilumsBoundary);
                     }
                 }
+#if TEST
                 // Test 
                 EntityHelper.AddEntityToCurrentSpace(lineShadow);
+#endif
             }
             // Объединение совпадающих зон теней
             illumShadows = IllumAreaBase.Merge(illumShadows);

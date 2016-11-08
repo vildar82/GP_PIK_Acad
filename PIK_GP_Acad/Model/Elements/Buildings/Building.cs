@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib.Errors;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.FCS;
@@ -27,6 +29,8 @@ namespace PIK_GP_Acad.Elements.Buildings
         public ClassType ClassType { get; set; }
         public BuildingTypeEnum BuildingType { get; set; }
         public string HouseName { get; set; }
+
+        public string PluginName { get; set; }
 
         public Building (Entity ent, int height, List<FCProperty> props, ClassType classType)
         {
@@ -56,6 +60,31 @@ namespace PIK_GP_Acad.Elements.Buildings
                 }
             }
             return null;
+        }
+
+        public DBObject GetDBObject ()
+        {
+            throw new NotImplementedException();
+        }
+
+        public DicED GetExtDic (Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetExtDic (DicED dicEd, Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -84,7 +84,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
-                Map = new Map(Doc.Database);
+                Map = new Map(Doc);
                 Map.BuildingAdded += Map_BuildingAdded;
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;

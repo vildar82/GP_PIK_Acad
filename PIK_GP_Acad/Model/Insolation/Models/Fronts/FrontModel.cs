@@ -116,6 +116,18 @@ namespace PIK_GP_Acad.Insolation.Models
                 groupCount++;
             }
 
+            // Сохранение имен домов в блок-секциях
+            using (doc.LockDocument())
+            using (var t = doc.TransactionManager.StartTransaction())
+            {                
+                var sections = Groups.SelectMany(s => s.Houses.SelectMany(h => h.Sections));
+                foreach (var item in sections)
+                {
+                    item.Building.SaveDboDict();
+                }
+                t.Commit();
+            }
+
             return dicFront;
         }
 

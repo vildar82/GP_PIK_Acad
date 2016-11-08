@@ -19,6 +19,8 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
+        private static Tolerance toleranceVertex = new Tolerance(1,1);
+
         public FrontGroup()
         {
 
@@ -201,6 +203,12 @@ namespace PIK_GP_Acad.Insolation.Models
                             if (ptsIntersect.Count > 0)
                             {
                                 findHouses.Add(house);
+                                // Усреднение полилиний
+                                foreach (var item in house.Sections)
+                                {
+                                    var contourItem = item.Contour;
+                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex);
+                                }
                                 break;
                             }
                         }

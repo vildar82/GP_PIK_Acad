@@ -13,6 +13,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib.XData;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -63,8 +64,14 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         bool isVisualFront;
 
-        public Error Error  { get { return error; } set { error = value; RaisePropertyChanged(); } }
+        public Error Error  { get { return error; } set { error = value; RaisePropertyChanged(); Info = error?.Message; } }
         Error error;
+
+        public string Info {
+            get { return info; }
+            set { info = value; RaisePropertyChanged(); }
+        }               
+        string info;
 
         /// <summary>
         /// Расчет фронтов дома
@@ -72,11 +79,17 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Update ()
         {
             if (Contour == null) return;
-
             var calcService = FrontGroup.Front.Model.CalcService;
-            var frontLines = calcService.CalcFront.CalcHouse(this);
-            VisualFront.FrontLines = frontLines;
-            VisualFront.VisualUpdate();
+            try
+            {
+                var frontLines = calcService.CalcFront.CalcHouse(this);
+                VisualFront.FrontLines = frontLines;
+                VisualFront.VisualUpdate();
+            }
+            catch(Exception ex)
+            {
+                AddError(ex.ToString());
+            }   
         }
 
         private void OnIsVisualFrontChanged ()
@@ -123,11 +136,10 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (string.IsNullOrEmpty(Name)) return;
             if (Sections!= null)
-            {
+            {                
                 foreach (var item in Sections)
                 {
-                    item.Building.HouseName = Name;
-                    // TODO: Сохранить имя дома в расшир.данных объекта здания (IBuilding)                                   
+                    item.Building.HouseName = Name;                    
                 }
             }
         }        
@@ -169,7 +181,11 @@ namespace PIK_GP_Acad.Insolation.Models
         public void DefineContour ()
         {
             if (Sections == null) return;
-            var pls = Sections.Select(s => s.Contour).ToList();            
+            var pls = Sections.Select(s => s.Contour).ToList();
+
+            // Предварительное соединение полилиний (близкие точки вершин разных полилиний - в среднюю вершину)
+            // Сделал при определении домов
+                       
             using (var reg = pls.Union(null))
             {
                 var ptsRegByLoopType = reg.GetPoints2dByLoopType();
@@ -192,6 +208,9 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
             }
+#if TEST
+            EntityHelper.AddEntityToCurrentSpace(Contour);
+#endif
         }
 
         public void DisposeContour ()
