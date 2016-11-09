@@ -29,12 +29,16 @@
             ItemsSource="{Binding Front.Groups, UpdateSourceTrigger=PropertyChanged}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" BorderBrush="Gray" BorderThickness="1" Background="Gray">
+                    <Border
+                        Margin="5"
+                        Background="Gray" BorderBrush="Gray" BorderThickness="1">
                         <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
                             <!--  Заголовок группы - все о группе  -->
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
+                                    <Grid Margin="1,5,1,5" 
+                                          HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" 
+                                          ToolTip="{Binding Info}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="Auto" />
@@ -48,18 +52,18 @@
                                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                                             <ToggleButton
                                                 Margin="1"
-                                                Style="{StaticResource tbtnSmall}"                                                
+                                                Style="{StaticResource tbtnSmall}"
                                                 IsChecked="{Binding IsVisualFrontOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                ToolTip="Включение/отключение визуализации фронтов" >
-                                                <Image Source="{StaticResource biFront}"/>
+                                                ToolTip="Включение/отключение визуализации фронтов">
+                                                <Image Source="{StaticResource biFront}" />
                                             </ToggleButton>
                                             <Button
                                                 Margin="1"
                                                 Style="{StaticResource btnSmall}"
                                                 Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
-                                                CommandParameter="{Binding}"                                                
-                                                ToolTip="Удаление группы" >
-                                                <Image Source="{StaticResource biClose}"/>
+                                                CommandParameter="{Binding}"
+                                                ToolTip="Удаление группы">
+                                                <Image Source="{StaticResource biClose}" />
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -68,10 +72,10 @@
                             <!--  Список домов в группе  -->
                             <Expander.ContentTemplate>
                                 <DataTemplate>
-                                    <ItemsControl ItemsSource="{Binding Houses}">                                       
+                                    <ItemsControl ItemsSource="{Binding Houses}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Margin="2" BorderBrush="Black" BorderThickness="1">                                                    
+                                                <Border Margin="2" BorderBrush="Black" BorderThickness="1">
                                                     <StackPanel Margin="4" Orientation="Horizontal">
                                                         <StackPanel.InputBindings>
                                                             <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
@@ -100,9 +104,9 @@
                 Width="Auto"
                 Margin="1"
                 Style="{StaticResource btnNormal}"
-                Command="{Binding Add}"                
-                ToolTip="Добавить группу - выбор области на чертеже" >
-                <Image Source="{StaticResource biAdd}"/>
+                Command="{Binding Add}"
+                ToolTip="Добавить группу - выбор области на чертеже">
+                <Image Source="{StaticResource biAdd}" />
             </Button>
         </Grid>
     </Grid>

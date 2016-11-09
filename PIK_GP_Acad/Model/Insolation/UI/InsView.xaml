@@ -101,9 +101,19 @@
                     <local:TreesView DataContext="{Binding TreeVM, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem.Content>
             </TabItem>
+            <!--  Вкладка - Фронт  -->
             <TabItem Background="Transparent">
                 <TabItem.Header>
                     <Image Source="{StaticResource biFront}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Фронты"/>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}"/>
+                </TabItem.Content>
+            </TabItem>
+            <!--  Вкладка - Площадка  -->
+            <TabItem Background="Transparent">
+                <TabItem.Header>
+                    <Image Source="{StaticResource biPlace}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Фронты"/>
                 </TabItem.Header>
                 <TabItem.Content>
                     <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}"/>

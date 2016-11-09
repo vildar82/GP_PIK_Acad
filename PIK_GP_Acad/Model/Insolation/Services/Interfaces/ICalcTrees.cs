@@ -9,6 +9,6 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public interface ICalcTrees
     {
-        List<IIlluminationArea> CalcPoint (InsPoint insPoint);
+        List<IIlluminationArea> CalcPoint (InsPoint insPoint, bool withOwnerBuilding = true);
     }
 }

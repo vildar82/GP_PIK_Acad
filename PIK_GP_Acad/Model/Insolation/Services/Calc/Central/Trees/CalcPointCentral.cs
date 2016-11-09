@@ -24,6 +24,8 @@ namespace PIK_GP_Acad.Insolation.Services
         CalcServiceCentral calc;
         ICalcValues values;
         public IllumAreaBase StartAnglesIllum { get; set; }
+        public bool WithOwnerBuilding { get; set; }
+
         ///// <summary>
         ///// Начальный угол в плане (радиан). Начальное значение = 0 - восход.
         ///// Будут определены для этой расвчетной точки индивидуально
@@ -38,7 +40,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             this.map = insPt.Model.Map;
             buildingOwner = insPt.Building;
-            buildingOwner.InitContour();        
+            buildingOwner?.InitContour();        
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
@@ -67,7 +69,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 using (var scope = map.GetScope(ext))
                 {
                     // исключение из списка домов собственно расчетного дома
-                    scope.Buildings.Remove(buildingOwner);
+                    if (buildingOwner!= null)
+                        scope.Buildings.Remove(buildingOwner);
 
                     // Расчет зон теней
                     // группировка домов по высоте
@@ -92,12 +95,13 @@ namespace PIK_GP_Acad.Insolation.Services
                 StartAnglesIllum.AngleEndOnPlane = 0;
                 StartAnglesIllum.AngleStartOnPlane = 0;
             }
-            buildingOwner.Contour.Dispose();
+            buildingOwner?.Contour.Dispose();
             return resAreas;
         }
 
         private void CorrectCalcPoint ()
         {
+            if (!WithOwnerBuilding) return;
             var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
             if ((correctPt - ptCalc).Length >2)
             {
@@ -238,6 +242,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool DefineStartAnglesByOwnerBuilding ()
         {
+            if (!WithOwnerBuilding) return true;
+
             // Если полилиния дома полностью выше или равна расчетной точке - то точка полность освещен (сам себя не загораживает никак)
             if (buildingOwner.ExtentsInModel.MinPoint.Y >= ptCalc.Y)
             {

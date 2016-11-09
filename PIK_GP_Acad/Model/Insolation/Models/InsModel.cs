@@ -57,6 +57,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public FrontModel Front { get { return front; } set { front = value; RaisePropertyChanged(); } }
         FrontModel front;
+        /// <summary>
+        /// Расчет площадок
+        /// </summary>
+        public PlaceModel Place { get { return place; } set { place = value; RaisePropertyChanged(); } }
+        PlaceModel place;
 
         public string UpdateInfo { get; set; } = "Обновление расчета";
         /// <summary>

@@ -143,8 +143,16 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Maps\House.cs" />
+    <Compile Include="Model\Insolation\Models\Place\Place.cs" />
+    <Compile Include="Model\Insolation\Models\Place\PlaceModel.cs" />
+    <Compile Include="Model\Insolation\Models\Place\PlaceOptions.cs" />
+    <Compile Include="Model\Insolation\Models\Place\SelectPlace.cs" />
+    <Compile Include="Model\Insolation\Models\Place\Tile.cs" />
+    <Compile Include="Model\Insolation\Models\Place\TileLevel.cs" />
     <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\CalcFrontCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\Place\CalcPlaceCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Interfaces\ICalcPlace.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcFront.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\InsExtDataHelper.cs" />
@@ -153,6 +161,7 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Fronts\VisualFront.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Place\VisualPlace.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDrawOverrule.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\CalcValuesCentral.cs" />
@@ -205,6 +214,10 @@
     <Compile Include="Model\Insolation\UI\InsRegionViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
     <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Place\PlaceView.xaml.cs">
+      <DependentUpon>PlaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Place\PlaceViewModel.cs" />
     <Compile Include="Model\MVVM\ModelBase.cs" />
     <Compile Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml.cs">
       <DependentUpon>TreeOptionsView.xaml</DependentUpon>
@@ -408,6 +421,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="Model\Insolation\UI\Place\PlaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -468,6 +485,10 @@
   <ItemGroup>
     <Resource Include="Resources\GP_Ins_Front.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GP_Ins_Place.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

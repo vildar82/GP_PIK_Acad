@@ -27,11 +27,13 @@ namespace PIK_GP_Acad.Insolation.Services
             CalcValues = new CalcValuesCentral(options);
             CalcTrees = new CalcTreesCentral(this);
             CalcFront = new CalcFrontCentral(this);
+            CalcPlace = new CalcPlaceCentral(this);
         }
 
         public ICalcTrees CalcTrees { get; set; }
         public ICalcFront CalcFront { get; set; }
-        public ICalcValues CalcValues { get; set; }
+        public ICalcPlace CalcPlace { get; set; }
+        public ICalcValues CalcValues { get; set; }        
         //public InsOptions Options { get; set; }
         public InsRegion Region { get; set; }        
 

@@ -22,17 +22,18 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Расчет инсоляции в точке
         /// </summary>
-        public List<IIlluminationArea> CalcPoint (InsPoint insPoint)
+        public List<IIlluminationArea> CalcPoint (InsPoint insPoint, bool withOwnerBuilding = true)
         {
             List<IIlluminationArea> illumAreas = new List<IIlluminationArea>();
-
-            if (insPoint.Building == null)
+            
+            if (withOwnerBuilding && insPoint.Building == null)
             {
                 return illumAreas;
             }
 
             var doc = insPoint.Model.Doc;
             var calcPt = new CalcPointCentral(insPoint, insService);
+            calcPt.WithOwnerBuilding = withOwnerBuilding;
             // Расчет освещенности в точке            
             illumAreas = calcPt.Calc();
             insPoint.AngleStartOnPlane = calcPt.StartAnglesIllum.AngleStartOnPlane;

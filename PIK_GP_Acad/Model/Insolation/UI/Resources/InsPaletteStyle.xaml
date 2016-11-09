@@ -19,6 +19,7 @@
     <BitmapImage x:Key="biDraw_visuals" UriSource="/PIK_GP_Acad;component/Resources/draw_visuals.png" />    
     <BitmapImage x:Key="biUpdate" UriSource="/PIK_GP_Acad;component/Resources/update.png"/>
     <BitmapImage x:Key="biFront" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Front.png"/>
+    <BitmapImage x:Key="biPlace" UriSource="/PIK_GP_Acad;component/Resources/GP_Ins_Place.png"/>
     <sys:Double x:Key="SmallButtonsHeight">20</sys:Double>    
     <sys:Double x:Key="NormalButtonsHeight">23</sys:Double>        
     <!--<Style x:Key="ControlBase" TargetType="FrameworkElement">

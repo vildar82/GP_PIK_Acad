@@ -15,6 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
         ICalcValues CalcValues { get; set; }
         ICalcTrees CalcTrees { get; set; }
         ICalcFront CalcFront { get; set; }
+        ICalcPlace CalcPlace { get; set; }
         void CreateShadowMap ();
         InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums, BuildingTypeEnum buildingType);
 

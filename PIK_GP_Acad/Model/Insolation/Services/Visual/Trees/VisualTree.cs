@@ -36,90 +36,75 @@ namespace PIK_GP_Acad.Insolation.Services
         public override List<Entity> CreateVisual ()
         {
             var points = Points;
-            if (points == null || points.Count == 0 || points.All(p=>p.Illums== null)) return null;
+            if (points == null || points.Count == 0 || points.All(p => p.Illums == null)) return null;
 
-            List<Entity> draws = new List<Entity>();
-            List<List<Polyline>> plsAllTrees = new List<List<Polyline>>();
-            List<List<ObjectId>> idsPlsAllTrees = new List<List<ObjectId>>();
-            List<VisualOption> visOptions = new List<VisualOption>();
+            var draws = new List<Entity>();
+            var plsAllTrees = new List<List<Polyline>>();
+            var idsPlsAllTrees = new List<List<Polyline>>();
+            var visOptions = new List<VisualOption>();
             foreach (var item in Model.Tree.TreeOptions.TreeVisualOptions)
             {
                 plsAllTrees.Add(new List<Polyline>());
-                idsPlsAllTrees.Add(new List<ObjectId>());
+                idsPlsAllTrees.Add(new List<Polyline>());
                 var visOpt = new VisualOption(item.Color, Point3d.Origin, 60);
                 visOptions.Add(visOpt);
             }
 
-            var db = Model.Doc.Database;
-            db.DisableUndoRecording(true);
-            using (Model.Doc.LockDocument())
-            using (var t = db.TransactionManager.StartTransaction())
-            {   
-                var ms = SymbolUtilityServices.GetBlockModelSpaceId(db).GetObject(OpenMode.ForWrite) as BlockTableRecord;
-                // Получение полилиний елочек от всех точек (у каждой высоты визуализации - свой список полилиний)
-                foreach (var item in Points)
-                {
-                    if (item.Illums == null) continue;
-                    var plsItem = GetTreePolylines(item, visOptions);
-                    for (int i = 0; i < plsItem.Count; i++)
-                    {
-                        var pl = plsItem[i];
-                        ms.AppendEntity(pl);
-                        t.AddNewlyCreatedDBObject(pl, true);
-                        idsPlsAllTrees[i].Add(pl.Id);
-                        pl.DowngradeOpen();
-                    }                    
-                }
-                t.Commit();
-            }
-            using (Model.Doc.LockDocument())
-            using (var t = db.TransactionManager.StartTransaction())
+            // Получение полилиний елочек от всех точек (у каждой высоты визуализации - свой список полилиний)
+            foreach (var item in Points)
             {
-                for (int i = 0; i < idsPlsAllTrees.Count; i++)
-                {                    
-                    foreach (var item in idsPlsAllTrees[i])
-                    {
-                        var pl = item.GetObject(OpenMode.ForRead) as Polyline;
-                        plsAllTrees[i].Add(pl);
-                    }
-                }
-
-                // Объединение полилиний по высотам
-                Region overReg = null;
-                for (int i = 0; i < plsAllTrees.Count; i++)
+                if (item.Illums == null) continue;
+                var plsItem = GetTreePolylines(item, visOptions);
+                for (int i = 0; i < plsItem.Count; i++)
                 {
-                    var visOpt = visOptions[i];
-                    var pls = plsAllTrees[i];
-                    try
-                    {
-                        var region = pls.Union((Region)overReg?.Clone());
-                        var plsByLoop = region.GetPoints2dByLoopType();
+                    var pl = plsItem[i];
+                    idsPlsAllTrees[i].Add(pl);
+                }
+            }
+            for (int i = 0; i < idsPlsAllTrees.Count; i++)
+            {
+                foreach (var item in idsPlsAllTrees[i])
+                {
+                    plsAllTrees[i].Add(item);
+                }
+            }
 
-                        if (overReg == null)
-                        {
-                            overReg = region;
-                        }
-                        else
-                        {
-                            overReg.BooleanOperation(BooleanOperationType.BoolUnite, region);
-                        }
-                        
-                        var hatch = GetHatch(plsByLoop, visOpt);                        
-                        if (hatch != null)
-                        {
-                            draws.Add(hatch);
-                        }                        
-                    }
-                    catch { }
-                    foreach (var item in pls)
+            // Объединение полилиний по высотам
+            Region overReg = null;
+            for (int i = 0; i < plsAllTrees.Count; i++)
+            {
+                var visOpt = visOptions[i];
+                var pls = plsAllTrees[i];
+                try
+                {
+                    // Подставляемый регион для объединения
+                    var regToUnion = (Region)overReg?.Clone();
+                    var region = pls.Union(regToUnion);
+                    regToUnion?.Dispose();
+                    var plsByLoop = region.GetPoints2dByLoopType();
+
+                    if (overReg == null)
                     {
-                        item.UpgradeOpen();
-                        item.Erase();
+                        overReg = region;
+                    }
+                    else
+                    {
+                        overReg.BooleanOperation(BooleanOperationType.BoolUnite, region);
+                    }
+
+                    var hatch = GetHatch(plsByLoop, visOpt);
+                    if (hatch != null)
+                    {
+                        draws.Add(hatch);
                     }
                 }
-                t.Commit();                
+                catch { }
+                foreach (var item in pls)
+                {
+                    item.Dispose();
+                }
             }
-            db.DisableUndoRecording(false);
+            overReg?.Dispose();
             return draws;
         }        
 
