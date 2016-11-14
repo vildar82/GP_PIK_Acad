@@ -214,6 +214,10 @@
     <Compile Include="Model\Insolation\UI\InsRegionViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
     <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Place\PlaceOptionsView.xaml.cs">
+      <DependentUpon>PlaceOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Place\PlaceOptionsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Place\PlaceView.xaml.cs">
       <DependentUpon>PlaceView.xaml</DependentUpon>
     </Compile>
@@ -421,6 +425,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="Model\Insolation\UI\Place\PlaceOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Model\Insolation\UI\Place\PlaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

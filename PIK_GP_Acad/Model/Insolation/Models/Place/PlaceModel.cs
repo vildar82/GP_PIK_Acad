@@ -32,23 +32,39 @@ namespace PIK_GP_Acad.Insolation.Models
                 Options = PlaceOptions.Default();                        
         }
 
-        public void AddPlace (ObjectId placeId)
+        public Place AddPlace (ObjectId placeId)
         {
             // Проверка нет ли уже такой площадки (по placeId)
-            var place = GetPlace(placeId);
+            var place = FindPlace(placeId);
             if (place != null)
             {
                 InsService.ShowMessage("Эта площадка уже добавлена - " + place.Name, System.Windows.MessageBoxImage.Information);
-                return;
+                return null;
             }
             place = new Place(placeId, this);
             Places.Add(place);
             place.Update();
+            return place;
         }
 
-        private Place GetPlace (ObjectId placeId)
+        public void RemovePlace (Place place)
         {
-            throw new NotImplementedException();
+            place.Dispose();
+            Places.Remove(place);
         }
+
+        private Place FindPlace (ObjectId placeId)
+        {
+            var findPlace = Places.FirstOrDefault(p => p.PlaceId == placeId);
+            return findPlace;
+        }
+
+        public void Update ()
+        {
+            foreach (var place in Places)
+            {
+                place.Update();
+            }
+        }        
     }
 }

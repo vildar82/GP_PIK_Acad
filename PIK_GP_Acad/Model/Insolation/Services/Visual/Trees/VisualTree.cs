@@ -81,7 +81,14 @@ namespace PIK_GP_Acad.Insolation.Services
                     var regToUnion = (Region)overReg?.Clone();
                     var region = pls.Union(regToUnion);
                     regToUnion?.Dispose();
-                    var plsByLoop = region.GetPoints2dByLoopType();
+
+
+                    var hatch = region.CreateHatch();
+                    if (hatch != null)
+                    {
+                        SetEntityOpt(hatch, visOpt);
+                        draws.Add(hatch);
+                    }                    
 
                     if (overReg == null)
                     {
@@ -90,13 +97,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     else
                     {
                         overReg.BooleanOperation(BooleanOperationType.BoolUnite, region);
-                    }
-
-                    var hatch = GetHatch(plsByLoop, visOpt);
-                    if (hatch != null)
-                    {
-                        draws.Add(hatch);
-                    }
+                    }                    
                 }
                 catch { }
                 foreach (var item in pls)
@@ -166,41 +167,39 @@ namespace PIK_GP_Acad.Insolation.Services
             return pl;
         }
 
-        private Hatch GetHatch (List<KeyValuePair<Point2dCollection, BrepLoopType>> plsByLoop, VisualOption visOpt)
-        {
-            var externalLoops = plsByLoop.Where(p => p.Value != BrepLoopType.LoopInterior).ToList();
-            var interiorLoops = plsByLoop.Where(p => p.Value == BrepLoopType.LoopInterior).ToList();
+        //private Hatch GetHatch (Region region)
+        //{
+        //    var plsByLoop = region.GetPoints2dByLoopType();
+        //    var externalLoops = plsByLoop.Where(p => p.Value != BrepLoopType.LoopInterior).ToList();
+        //    var interiorLoops = plsByLoop.Where(p => p.Value == BrepLoopType.LoopInterior).ToList();
 
-            if (!externalLoops.Any())
-            {
-                return null;
-            }
+        //    if (!externalLoops.Any())
+        //    {
+        //        return null;
+        //    }
 
-            var h = new Hatch();
-            h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
-            SetEntityOpt(h, visOpt);
+        //    var h = new Hatch();
+        //    h.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");            
 
-            foreach (var item in externalLoops)
-            {
-                var pts2dCol = item.Key;
-                pts2dCol.Add(item.Key[0]);
-                h.AppendLoop(HatchLoopTypes.External, pts2dCol, new DoubleCollection(new double[externalLoops.Count+1]));
-            }
+        //    foreach (var item in externalLoops)
+        //    {
+        //        var pts2dCol = item.Key;
+        //        pts2dCol.Add(item.Key[0]);
+        //        h.AppendLoop(HatchLoopTypes.External, pts2dCol, new DoubleCollection(new double[externalLoops.Count+1]));
+        //    }
 
-            if (interiorLoops.Any())
-            {
-                foreach (var item in interiorLoops)
-                {
-                    var pts2dCol = item.Key;
-                    pts2dCol.Add(item.Key[0]);
-                    h.AppendLoop(HatchLoopTypes.SelfIntersecting, pts2dCol, new DoubleCollection(new double[interiorLoops.Count + 1]));
-                }
-            }
+        //    if (interiorLoops.Any())
+        //    {
+        //        foreach (var item in interiorLoops)
+        //        {
+        //            var pts2dCol = item.Key;
+        //            pts2dCol.Add(item.Key[0]);
+        //            h.AppendLoop(HatchLoopTypes.SelfIntersecting, pts2dCol, new DoubleCollection(new double[interiorLoops.Count + 1]));
+        //        }
+        //    }
 
-            h.EvaluateHatch(true);                                
-            return h;
-        }
-
-        
+        //    h.EvaluateHatch(true);                                
+        //    return h;
+        //}        
     }
 }

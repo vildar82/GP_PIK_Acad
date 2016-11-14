@@ -13,16 +13,18 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class Tile
     {
-        public Tile (Point2d pt, double area, double size)
+        public Tile (Point2d pt, double width, double height)
         {
             Point = pt;
-            Area = area;
-            Size = size;
+            Area = Math.Round(width*height,4);
+            Width = width;
+            Height = height;
             Contour = CreateContour();
         }        
 
         public double Area { get; set; }
-        public double Size { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
         public Polyline Contour { get; set; }
         public InsValue InsValue { get; set; }
         public TileLevel Level { get; set; }
@@ -31,16 +33,16 @@ namespace PIK_GP_Acad.Insolation.Models
         private Polyline CreateContour ()
         {
             var pl = new Polyline();
-            var pt = new Point2d(Point.X- Size*0.5, Point.Y-Size*0.5);
+            var pt = new Point2d(Point.X- Width*0.5, Point.Y-Height*0.5);
             pl.AddVertexAt(0, pt,0,0,0);
 
-            pt = new Point2d(pt.X, pt.Y + Size);
+            pt = new Point2d(pt.X, pt.Y + Height);
             pl.AddVertexAt(1, pt, 0, 0, 0);
 
-            pt = new Point2d(pt.X+Size, pt.Y);
+            pt = new Point2d(pt.X+Width, pt.Y);
             pl.AddVertexAt(2, pt, 0, 0, 0);
 
-            pt = new Point2d(pt.X, pt.Y-Size);
+            pt = new Point2d(pt.X, pt.Y-Height);
             pl.AddVertexAt(3, pt, 0, 0, 0);
 
             pl.Closed = true;

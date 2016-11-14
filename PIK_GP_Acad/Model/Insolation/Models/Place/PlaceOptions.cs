@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,15 +20,20 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Размер ячейки площадки (шаг расчетных точек на площадке) [м]
         /// </summary>
-        public double TileSize { get; set; } = 0.1;
+        public double TileSize { get { return tileSize; } set { tileSize = value; RaisePropertyChanged(); } }
+        double tileSize;
 
-        public List<TileLevel> Levels { get; set; }
+        public ObservableCollection<TileLevel> Levels { get { return levels; } set { levels = value; RaisePropertyChanged(); } }
+        ObservableCollection<TileLevel> levels;
+
+        public byte Transparent { get; set; } = 60;
 
         public static PlaceOptions Default ()
         {
             var opt = new PlaceOptions();
-            opt.Levels = new List<TileLevel>() {
-                new TileLevel { TotalTimeH=3, Color = System.Drawing.Color.Yellow, Transparent = 60 }
+            opt.TileSize = 1;
+            opt.Levels = new ObservableCollection<TileLevel>() {
+                new TileLevel { TotalTimeH=3, Color = System.Drawing.Color.Yellow }
             };
             return opt;
         }

@@ -285,7 +285,8 @@ namespace PIK_GP_Acad.Insolation.Services
             return new Dictionary<Type, Type> {
                 { typeof(InsRegionViewModel),  typeof(InsRegionView)},
                 { typeof (TreeOptionsViewModel), typeof(TreeOptionsView) },
-                {  typeof (InsPointViewModel), typeof(InsPointView)}
+                {  typeof (InsPointViewModel), typeof(InsPointView)},
+                { typeof(PlaceOptionsViewModel), typeof(PlaceOptionsView) }
             };
         }
 
@@ -297,6 +298,20 @@ namespace PIK_GP_Acad.Insolation.Services
         public static void ShowMessage (string msg, MessageBoxImage icon)
         {
             MessageBox.Show(msg, "Инсоляция", MessageBoxButton.OK, icon, MessageBoxResult.OK);
+        }
+
+        public static System.Drawing.Color ColorPicker (System.Drawing.Color current)
+        {
+            var colorDialog = new System.Windows.Forms.ColorDialog();
+            colorDialog.AnyColor = true;
+            colorDialog.FullOpen = true;
+            colorDialog.Color = current;
+            colorDialog.AllowFullOpen = true;
+            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return colorDialog.Color;
+            }
+            return current;
         }
     }
 }

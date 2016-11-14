@@ -116,7 +116,7 @@
                     <Image Source="{StaticResource biPlace}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Фронты"/>
                 </TabItem.Header>
                 <TabItem.Content>
-                    <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}"/>
+                    <local:PlaceView DataContext="{Binding PlaceVM, UpdateSourceTrigger=PropertyChanged}"/>
                 </TabItem.Content>
             </TabItem>
         </TabControl>

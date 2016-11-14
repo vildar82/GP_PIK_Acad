@@ -110,6 +110,13 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             Front.Initialize(this);
 
+            // Расчет площадок
+            if (Place == null)
+            {
+                Place = new PlaceModel();
+            }
+            Place.Initialize(this);
+
             doc.Database.BeginSave += Database_BeginSave;
             Redrawable();            
         }
@@ -168,7 +175,9 @@ namespace PIK_GP_Acad.Insolation.Models
             // Загрузка точек всех типов и добавление в расчеты
             LoadPoints();
 
-            Front.Update();           
+            Front.Update();
+
+            Place.Update();
 
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";

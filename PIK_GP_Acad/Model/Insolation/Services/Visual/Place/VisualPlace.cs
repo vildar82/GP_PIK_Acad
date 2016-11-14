@@ -16,12 +16,19 @@ namespace PIK_GP_Acad.Insolation.Services
     public class VisualPlace : VisualDatabase
     {
         private List<Entity> visuals;
-        public VisualPlace (Document doc) : base (doc)
+        private PlaceModel placeModel;
+        public VisualPlace (PlaceModel placeModel) : base (placeModel?.Model?.Doc)
         {
-
+            this.placeModel = placeModel;
         }
 
-        public List<Tile> Tiles { get { return tiles; } set { tiles = value; UnionTiles(); } }
+        public List<Tile> Tiles { get { return tiles; }
+            set {
+                DisposeTiles();
+                tiles = value;
+                UnionTiles();
+            }
+        }
         List<Tile> tiles;        
 
         public override List<Entity> CreateVisual ()
@@ -31,11 +38,45 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private void UnionTiles ()
         {
+            if (Tiles == null || Tiles.Count == 0) return;
+
+            DisposeVisuals();
+            visuals = new List<Entity>();
+
             var groupLevels = Tiles.GroupBy(g => g.Level);
             foreach (var group in groupLevels)
             {
+                if (group.Key.TotalTimeH == 0) return;
                 var pls = group.Select(s => s.Contour).ToList();
-                var region = pls.Union(null);                
+                using (var region = pls.Union(null))
+                {
+                    var h = region.CreateHatch();
+                    var visOpt = new VisualOption(group.Key.Color, placeModel.Options.Transparent);
+                    VisualHelper.SetEntityOpt(h, visOpt);
+                    visuals.Add(h);
+                }
+            }
+        }
+
+        private void DisposeVisuals ()
+        {
+            if (visuals != null)
+            {
+                foreach (var item in visuals)
+                {
+                    item.Dispose();
+                }
+            }
+        }
+
+        public void DisposeTiles ()
+        {
+            if (Tiles != null)
+            {
+                foreach (var item in Tiles)
+                {
+                    item.Contour?.Dispose();
+                }
             }
         }
     }

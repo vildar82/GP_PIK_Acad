@@ -5,6 +5,7 @@ using PIK_GP_Acad.Insolation.Models;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using MicroMvvm;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -88,21 +89,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnSelectColorExecute (TreeVisualOption treeVisOpt)
         {
-            treeVisOpt.Color = ColorPicker(treeVisOpt.Color);
-        }
-
-        private Color ColorPicker (Color current)
-        {
-            var colorDialog = new System.Windows.Forms.ColorDialog();
-            colorDialog.AnyColor = true;
-            colorDialog.FullOpen = true;           
-            colorDialog.Color = current;
-            colorDialog.AllowFullOpen = true;
-            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                return colorDialog.Color;
-            }
-            return current;
+            treeVisOpt.Color = InsService.ColorPicker(treeVisOpt.Color);
         }
     }
 

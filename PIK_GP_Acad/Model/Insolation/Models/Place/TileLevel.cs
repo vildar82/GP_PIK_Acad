@@ -11,14 +11,14 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Уровень освещенности ячейки
     /// </summary>
-    public class TileLevel : IEquatable<TileLevel>
+    public class TileLevel : ModelBase, IEquatable<TileLevel>
     {
         public TileLevel()
         {
 
         }
 
-        public static TileLevel Empty { get; private set; } = new TileLevel { Color = Color.Gray, TotalTimeH = 0, Transparent = 0 };
+        public static TileLevel Empty { get; private set; } = new TileLevel { Color = Color.Gray, TotalTimeH = 0};
 
         /// <summary>
         /// Общее время освещенности ячейки (в часах)
@@ -28,12 +28,14 @@ namespace PIK_GP_Acad.Insolation.Models
             set {
                 totalTimeH = value;
                 TotalTimeMin = totalTimeH.ToMin();
+                RaisePropertyChanged();
             }
         }
         double totalTimeH;
+
         public double TotalTimeMin { get; private set; }
-        public Color Color { get; set; }
-        public byte Transparent { get; set; }
+
+        public Color Color { get; set; }        
 
         public bool Equals (TileLevel other)
         {
@@ -44,6 +46,17 @@ namespace PIK_GP_Acad.Insolation.Models
         public override int GetHashCode ()
         {
             return TotalTimeH.GetHashCode();
+        }
+
+        /// <summary>
+        /// Проверка и корректировка уровней
+        /// </summary>        
+        public static List<TileLevel> CheckAndCorrect (List<TileLevel> levels)
+        {
+            // сортировка по уровням
+            var levelsCorrect = levels.Where(w=>w.TotalTimeH>0).GroupBy(g => g.TotalTimeH)
+                .Select(s => s.First()).OrderByDescending(o => o.TotalTimeH).ToList();
+            return levelsCorrect;
         }
     }
 }

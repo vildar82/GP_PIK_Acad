@@ -13,7 +13,7 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public class CalcPlaceCentral : ICalcPlace
     {
-        private Dictionary<double, TileLevel> dictLevels = new Dictionary<double, TileLevel>();
+        private Dictionary<double, TileLevel> dictLevels;
         private CalcServiceCentral calcService;
         private ICalcTrees calcTrees;
         private Polyline pl;
@@ -21,11 +21,13 @@ namespace PIK_GP_Acad.Insolation.Services
         private List<TileLevel> levels;
         private InsModel model;
         private double step;
+        private double stepHalf;
+        private double stepQuart;
 
         public CalcPlaceCentral(CalcServiceCentral calcService)
         {
             this.calcService = calcService;
-            calcTrees = calcService.CalcTrees;
+            calcTrees = calcService.CalcTrees;            
         }
 
         /// <summary>
@@ -34,12 +36,16 @@ namespace PIK_GP_Acad.Insolation.Services
         public List<Tile> CalcPlace (Place place)
         {
             List<Tile> tiles;
+            dictLevels = new Dictionary<double, TileLevel>();
             placeOptions = place.PlaceModel.Options;
             levels = placeOptions.Levels.OrderByDescending (o=>o.TotalTimeMin).ToList();
             model = place.PlaceModel.Model;            
             step = placeOptions.TileSize;
+            stepHalf = step * 0.5;
+            stepQuart = step * 0.25;
             using (pl = place.PlaceId.Open(OpenMode.ForRead) as Polyline)
             {
+                place.Area = pl.Area.Round(2);                    
                 // Нарезка площадки на ячейки (tiles)
                 tiles = DividePlace();
                 //  расчет каждой ячейке (точка - без оуна и без здания)
@@ -78,8 +84,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var ext = pl.GeometricExtents;
             var horTiles = Divide(ext.MinPoint.X, ext.MaxPoint.X);
             var verticTiles = Divide(ext.MinPoint.Y, ext.MaxPoint.Y);
-            var plane = new Plane();
-            var area = step * step;
+            var plane = new Plane();            
             foreach (var horT in horTiles)
             {
                 // Построение вертик линии
@@ -98,24 +103,25 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         var pts = ptsIntersect.Cast<Point3d>().OrderBy(o => o.Y);                       
                         var ptIntersectLower = pts.First();                        
-                        foreach (var pyIntersectTop in pts.Skip(1))
+                        foreach (var ptIntersectTop in pts.Skip(1))
                         {
-                            var ptMid = ptIntersectLower.Center(pyIntersectTop);                            
+                            var ptMid = ptIntersectLower.Center(ptIntersectTop);                            
                             if (pl.IsPointInsidePolygon(ptMid))
                             {
                                 foreach (var vertT in verticTiles)
                                 {
-                                    if (vertT >= ptIntersectLower.Y)
-                                    {
-                                        var pt = new Point2d(horT, vertT);
-                                        resTiles.Add(new Tile(pt, area, step));
-                                    }
-                                    else if (vertT >= pyIntersectTop.Y)
+                                    if (vertT >= ptIntersectTop.Y)
                                     {
                                         break;
                                     }
+                                    else if(vertT - ptIntersectLower.Y >= stepQuart)
+                                    {                                        
+                                        var pt = new Point2d(horT, vertT);
+                                        resTiles.Add(new Tile(pt, step, step));
+                                    }                                                                     
                                 }
                             }
+                            ptIntersectLower = ptIntersectTop;
                         }
                     }
                 }
@@ -130,10 +136,10 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var resTiles = new List<double>();
 
-            resTiles.Add(startCoord);
+            //resTiles.Add(startCoord);
             var count = (endCoord - startCoord) / step;
-            double curCoord = startCoord;
-            for (int i = 1; i < count; i++)
+            double curCoord = startCoord - stepHalf;
+            for (int i = 0; i < count; i++)
             {
                 curCoord += step;
                 resTiles.Add(curCoord);
@@ -145,7 +151,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 resTiles.Add(curCoord);
             }
 
-            resTiles.Add(endCoord);
+            //resTiles.Add(endCoord);
 
             return resTiles;
         }

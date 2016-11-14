@@ -1,13 +1,14 @@
-﻿<UserControl x:Class="PIK_GP_Acad.Insolation.UI.PlaceView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
-             d:DataContext="{d:DesignInstance local:PlaceViewModel,
+﻿<UserControl
+    x:Class="PIK_GP_Acad.Insolation.UI.PlaceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    d:DataContext="{d:DesignInstance local:PlaceViewModel,
                                      IsDesignTimeCreatable=True}"
-             mc:Ignorable="d" 
-             d:DesignHeight="160.024" d:DesignWidth="147.048">
+    d:DesignHeight="162.024" d:DesignWidth="192.048"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,29 +18,45 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ItemsControl Grid.Row="0" x:Name="icPlaces"
-            ItemsSource="{Binding Place.Places}">            
+        <ItemsControl x:Name="icPlaces" Grid.Row="0" ItemsSource="{Binding Place.Places}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="2" Background="Gray">
                         <Grid.InputBindings>
-                            <MouseBinding Command="{Binding ElementName=icPlaces, Path=DataContext.ShowPlace}"
-                                          CommandParameter="{Binding}"
-                                          Gesture="LeftClick" />
+                            <MouseBinding Command="{Binding ElementName=icPlaces, Path=DataContext.ShowPlace}" CommandParameter="{Binding}" Gesture="LeftClick" />
                         </Grid.InputBindings>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <WrapPanel Grid.Column="0">
-                            <TextBox Text="{Binding Name}" Background="Transparent" Margin="5" BorderThickness="0" FontSize="20"/>
+                            <TextBox
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Background="Transparent" BorderThickness="0"
+                                FontSize="20"
+                                Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Area, StringFormat={}{0}м² :}" VerticalAlignment="Center" Margin="2" />
+                            <TextBlock
+                                Margin="1" VerticalAlignment="Center"
+                                Background="Transparent"
+                                Text="{Binding LevelsInfo}" />
                         </WrapPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="3">
-                            <Button Command="{Binding Delete}" Style="{StaticResource btnSmall}">
-                                <Image Source="{StaticResource biClose}"/>
+                        <StackPanel Grid.Column="1" Margin="3" Orientation="Horizontal">
+                            <ToggleButton
+                                Margin="1"
+                                Style="{StaticResource tbtnSmall}"
+                                IsChecked="{Binding IsVisualPlaceOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                ToolTip="Включение/отключение визуализации фронтов">
+                                <Image Source="{StaticResource biPlace}" />
+                            </ToggleButton>
+                            <Button Style="{StaticResource btnSmall}"
+                                    Command="{Binding ElementName=icPlaces, Path=DataContext.Delete}"
+                                    CommandParameter="{Binding}">                                
+                                <Image Source="{StaticResource biClose}" />
                             </Button>
                         </StackPanel>
                     </Grid>
@@ -48,13 +65,26 @@
         </ItemsControl>
         <!--  Кнопки управления  -->
         <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <Button
+                Grid.Column="0"
                 Width="Auto"
                 Margin="1"
                 Style="{StaticResource btnNormal}"
-                Command="{Binding Add}"                
-                ToolTip="Добавить группу - выбор области на чертеже" >
-                <Image Source="{StaticResource biAdd}"/>
+                Command="{Binding Add}"
+                ToolTip="Добавить площадку - выбор полилинии на чертеже">
+                <Image Source="{StaticResource biAdd}" />
+            </Button>
+            <Button    
+                Grid.Column="1"
+                Margin="1"
+                Style="{StaticResource btnNormal}"
+                Command="{Binding EditOptions}"
+                ToolTip="Настройки площадок">
+                <Image Source="{StaticResource biOptions}" />
             </Button>
         </Grid>
     </Grid>
