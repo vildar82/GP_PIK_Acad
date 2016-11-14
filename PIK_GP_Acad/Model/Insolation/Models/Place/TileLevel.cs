@@ -5,13 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AcadLib;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Уровень освещенности ячейки
     /// </summary>
-    public class TileLevel : ModelBase, IEquatable<TileLevel>
+    public class TileLevel : ModelBase, IEquatable<TileLevel>, ITypedDataValues
     {
         public TileLevel()
         {
@@ -57,6 +60,37 @@ namespace PIK_GP_Acad.Insolation.Models
             var levelsCorrect = levels.Where(w=>w.TotalTimeH>0).GroupBy(g => g.TotalTimeH)
                 .Select(s => s.First()).OrderByDescending(o => o.TotalTimeH).ToList();
             return levelsCorrect;
+        }        
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(TotalTimeH),
+                TypedValueExt.GetTvExtData(Color.A),
+                TypedValueExt.GetTvExtData(Color.R),
+                TypedValueExt.GetTvExtData(Color.G),
+                TypedValueExt.GetTvExtData(Color.B)
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values== null && values.Count != 5)
+            {
+                // Default
+                TotalTimeH = 3;
+                Color = Color.Yellow;
+            }
+            else
+            {
+                int index = 0;
+                TotalTimeH = TypedValueExt.GetTvValue<double>(values[index++]);
+                var a = values[index++].GetTvValue<byte>();
+                var r = values[index++].GetTvValue<byte>();
+                var g = values[index++].GetTvValue<byte>();
+                var b = values[index++].GetTvValue<byte>();
+                Color = Color.FromArgb(a, r, g, b);
+            }
         }
     }
 }

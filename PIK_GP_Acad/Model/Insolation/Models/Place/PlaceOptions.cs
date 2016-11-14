@@ -4,13 +4,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AcadLib;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Настройки площадок
     /// </summary>
-    public class PlaceOptions : ModelBase
+    public class PlaceOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
         public PlaceOptions()
         {
@@ -36,6 +40,56 @@ namespace PIK_GP_Acad.Insolation.Models
                 new TileLevel { TotalTimeH=3, Color = System.Drawing.Color.Yellow }
             };
             return opt;
+        }
+
+        public DicED GetExtDic (Document doc)
+        {
+            var dicOpt = new DicED();
+            dicOpt.AddRec("Recs", GetDataValues(doc));
+            var dicLevels = new DicED("Levels");
+            for (int i = 0; i < Levels.Count; i++)
+            {
+                var l = Levels[i];
+                dicLevels.AddRec("Level" + i, l.GetDataValues(doc));
+            }
+            return dicOpt;
+        }
+
+        public void SetExtDic (DicED dicOpt, Document doc)
+        {
+            SetDataValues(dicOpt?.GetRec("Recs")?.Values, doc);
+            var dicLevels = dicOpt.GetInner("Levels");
+            int index = 0;
+            while (true)
+            {
+                var recL = dicLevels.GetRec("Level" + index++);
+                if (recL == null)
+                {
+                    var level = new TileLevel();
+                    level.SetDataValues(recL.Values, doc);
+                    Levels.Add(level);
+                }
+            }
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(TileSize)
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values == null && values.Count != 1)
+            {
+                // Default
+                TileSize = 1;
+            }
+            else
+            {
+                TileSize = TypedValueExt.GetTvValue<double>(values[0]);
+            }
         }
     }
 }
