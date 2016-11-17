@@ -205,7 +205,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
-                Height = values[0].GetTvValue<int>();
+                Height = values[0].GetTvValue<double>();
                 IsVisualIllumsOn = values[1].GetTvValue<bool>();
             }
         }

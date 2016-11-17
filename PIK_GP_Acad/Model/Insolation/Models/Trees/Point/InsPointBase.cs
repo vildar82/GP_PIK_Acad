@@ -55,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }        
         public MapBuilding Building { get; set; }        
-        public int Height { get; set; }  
+        public double Height { get; set; }  
         public List<IIlluminationArea> Illums { get; set; }        
         public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }
         string info;

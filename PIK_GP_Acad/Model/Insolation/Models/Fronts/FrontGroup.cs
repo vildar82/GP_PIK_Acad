@@ -16,6 +16,7 @@ namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Группа выбора - для расчета фронтонов
+    /// Группа - соответствует Блоку в проекте
     /// </summary>
     public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
@@ -30,7 +31,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Front = front;
             SelectRegion = selReg;
-            Name = GenerateName();
+            Name = DefineNewName();
         }        
 
         /// <summary>
@@ -45,7 +46,15 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Пользовательское имя группы
         /// </summary>
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
-        string name;        
+        string name;
+
+        /// <summary>
+        /// Высота расчета фронтов
+        /// </summary>
+        public double FrontHeight { get { return frontHeight; }
+            set { frontHeight = value; RaisePropertyChanged(); OnFrontHeightChanged(); } }
+        double frontHeight;
+
         /// <summary>
         /// Дома
         /// </summary>
@@ -62,9 +71,12 @@ namespace PIK_GP_Acad.Insolation.Models
         string info;
 
         public bool IsExpanded { get { return isExpanded; } set { isExpanded = value; OnIsExpandedChanged(); RaisePropertyChanged(); } }
-        
+        bool isExpanded;
 
-        bool isExpanded;        
+        /// <summary>
+        /// Индентификатор группы (блока) в базе
+        /// </summary>
+        public int GroupId { get; set; }        
 
         /// <summary>
         /// Новая группа фронтонов
@@ -120,6 +132,17 @@ namespace PIK_GP_Acad.Insolation.Models
             
         }
 
+        private void OnFrontHeightChanged ()
+        {
+            if (Houses != null)
+            {
+                foreach (var item in Houses)
+                {
+                    item.FrontHeight = FrontHeight;
+                }
+            }
+        }
+
         /// <summary>
         /// Показать область группы на чертеде
         /// </summary>
@@ -130,10 +153,10 @@ namespace PIK_GP_Acad.Insolation.Models
             ed.Zoom(SelectRegion);
         }
 
-        private string GenerateName ()
+        private string DefineNewName ()
         {
-            int index = Front?.Groups.Count + 1 ?? 1;
-            var name = "Группа " + index;
+            int index = Front?.Groups.Count +1 ?? 1;
+            var name = "Блок " + index;
             return name; 
         }
 
@@ -145,6 +168,8 @@ namespace PIK_GP_Acad.Insolation.Models
             // Как сохранить предыдущие данные домов
             DisposeHouses();
 
+            var oldHouses = Houses?.ToList();
+
             // Считываение домов с чертежа в заданной области
             using (var scope = Front.Model.Map.GetScope(SelectRegion))
             {
@@ -152,7 +177,16 @@ namespace PIK_GP_Acad.Insolation.Models
                 Houses = new ObservableCollection<House>(houses);
                 foreach (var house in houses)
                 {
-                    house.IsVisualFront = true;
+                    // найти этот дом в старых домах
+                    var oldHouse = oldHouses?.Find(h=>h.Name.Equals(house.Name));
+                    if (oldHouse != null)
+                    {
+                        house.SetDataFromOldHouse(oldHouse);
+                    }
+                    else
+                    {
+                        house.IsVisualFront = true;
+                    }
                     house.Update();
                 }
             }
@@ -255,12 +289,13 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             return new List<TypedValue> {
                 TypedValueExt.GetTvExtData(Name),
-                TypedValueExt.GetTvExtData(IsVisualFrontOn)                
+                TypedValueExt.GetTvExtData(IsVisualFrontOn),
+                TypedValueExt.GetTvExtData(GroupId),
             };
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 2)
+            if (values == null || values.Count != 3)
             {
                 // Default
                 Name = "";
@@ -270,6 +305,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 int index = 0;
                 Name = values[index++].GetTvValue<string>();
                 IsVisualFrontOn = values[index++].GetTvValue<bool>();                
+                GroupId = values[index++].GetTvValue<int>();
             }
         }
         public DicED GetExtDic (Document doc)

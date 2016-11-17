@@ -5,12 +5,15 @@ using System;
 using System.Collections.ObjectModel;
 using PIK_GP_Acad.Insolation.Models;
 using MicroMvvm;
+using PIK_DB_Projects;
+using AcadLib;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
-    public class InsRegionViewModel : ViewModelBase
+    public class InsOptionsViewModel : ViewModelBase
     {
-        Dictionary<string, ObservableCollection<InsRegion>> dictRegions = Services.InsService.Settings.Regions.
+        Dictionary<string, ObservableCollection<InsRegion>> dictRegions = InsService.Settings.Regions.
                      GroupBy(g => g.RegionName).OrderBy(o => o.Key).ToDictionary(k => k.Key, v =>
                      {
                          var regs = new ObservableCollection<InsRegion>();
@@ -21,17 +24,30 @@ namespace PIK_GP_Acad.Insolation.UI
                          return regs;
                      });
 
-        public InsRegionViewModel ()
+        public InsOptionsViewModel ()
         {
-
+            
         }
 
-        public InsRegionViewModel (InsRegion region)
+        public InsOptionsViewModel (InsOptions opt)
         {
-            InsRegion = region;
+            InsOptions = opt;
             RegionNames = new ObservableCollection<string>(dictRegions.Keys);                        
-            SelectedRegionName = InsRegion.RegionName;
-            SelectedRegion = region;
+            SelectedRegionName = InsOptions.Region.RegionName;
+            SelectedRegion = opt.Region;
+
+            // Загрузка проектов из базы
+            Projects = DBService.GetProjects();            
+
+            // Выбор текущего проекта, если он есть
+            if (opt.Project != null && Projects != null && Projects.Any())
+            {
+                var findProject = Projects.Find(p => p.Id == opt.Project.Id);
+                if (findProject != null)
+                {
+                    SelectedProject = findProject;
+                }
+            }
 
             OK = new RelayCommand(OnOkExecute);
         }        
@@ -39,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.UI
         /// <summary>
         /// Модель
         /// </summary>
-        public InsRegion InsRegion { get; set; }
+        public InsOptions InsOptions { get; set; }        
 
         public RelayCommand OK { get; set; }
 
@@ -55,6 +71,10 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public InsRegion SelectedRegion { get { return selectedRegion; } set { selectedRegion = value; RaisePropertyChanged(); } }
         InsRegion selectedRegion;
+
+
+        public List<ProjectDB> Projects { get; set; }
+        public ProjectDB SelectedProject { get; set; }
 
         private void OnSelectedRegionNameChanged ()
         {
@@ -75,11 +95,15 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnOkExecute ()
         {
-            InsRegion = SelectedRegion;
+            InsOptions.Region = SelectedRegion;
+            if (SelectedProject != null)
+            {
+                InsOptions.Project = SelectedProject;
+            }
         }
     }
 
-    public class DesignInsRegionViewModel : InsRegionViewModel
+    public class DesignInsRegionViewModel : InsOptionsViewModel
     {
         public DesignInsRegionViewModel () : base()
         {

@@ -81,7 +81,7 @@ namespace PIK_GP_Acad.BlockSection
 
         public static List<BlockSectionGP> Parse (List<ObjectId> ids, out List<IArea> classes, Editor ed)
         {
-            ClassTypeService classService = new ClassTypeService();
+            var classService = new ClassTypeService();
             classes = new List<IArea>();
             var sections = new List<BlockSectionGP>();
 

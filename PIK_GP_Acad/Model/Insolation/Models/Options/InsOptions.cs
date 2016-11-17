@@ -9,6 +9,7 @@ using AcadLib;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using PIK_DB_Projects;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
@@ -37,6 +38,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Конечный расчетный угол (минус последний час) [град]. Заход(центр) = 180град -15
         /// </summary>
         public double SunCalcAngleEnd { get; set; }/* = 165.0;        */
+        /// <summary>
+        /// Проект (по базе)
+        /// </summary>
+        public ProjectDB Project { get { return project; } set { project = value; RaisePropertyChanged(); } }
+        ProjectDB project;
 
         public static InsOptions Default ()
         {
@@ -83,13 +89,14 @@ namespace PIK_GP_Acad.Insolation.Models
                 TypedValueExt.GetTvExtData(TileSize),
                 TypedValueExt.GetTvExtData(ShadowDegreeStep),
                 TypedValueExt.GetTvExtData(SunCalcAngleStart),
-                TypedValueExt.GetTvExtData(SunCalcAngleEnd)
+                TypedValueExt.GetTvExtData(SunCalcAngleEnd),
+                TypedValueExt.GetTvExtData(Project.Id)
             };
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 5)
+            if (values == null || values.Count != 6)
             {
                 // Дефолтные настройки
                 var defOpt = Default();
@@ -107,6 +114,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 ShadowDegreeStep = values[index++].GetTvValue<int>();
                 SunCalcAngleStart = values[index++].GetTvValue<double>();
                 SunCalcAngleEnd = values[index++].GetTvValue<double>();
+                var id = values[index++].GetTvValue<int>();
+                Project = DBService.FindProject(id);
             }
         }
     }

@@ -1,10 +1,10 @@
 ﻿namespace PIK_GP_Acad.Insolation.UI
 {
-    public partial class InsRegionView
+    public partial class InsOptionsView
     {
-        public InsRegionView () : this(null) { }
+        public InsOptionsView () : this(null) { }
 
-        public InsRegionView (InsRegionViewModel vm)
+        public InsOptionsView (InsOptionsViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

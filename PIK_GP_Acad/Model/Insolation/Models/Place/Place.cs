@@ -7,13 +7,15 @@ using Autodesk.AutoCAD.DatabaseServices;
 using AcadLib;
 using Autodesk.AutoCAD.EditorInput;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib.XData;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Одна площадка - по контуру полилинии
     /// </summary>
-    public class Place : ModelBase, IDisposable
+    public class Place : ModelBase, IDisposable, AcadLib.XData.IDboDataSave
     {
         public Place (ObjectId placeId, PlaceModel placeModel)
         {
@@ -43,11 +45,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public bool IsVisualPlaceOn { get { return isVisualPlaceOn; }
             set {
-                isVisualPlaceOn = true;
+                isVisualPlaceOn = value;
                 RaisePropertyChanged();
                 OnVisualPlaceChanged();
             }
         }
+
+        public string PluginName { get; set; } = "ins";
 
         bool isVisualPlaceOn;
 
@@ -94,11 +98,57 @@ namespace PIK_GP_Acad.Insolation.Models
             return name;
         }
 
+        /// <summary>
+        /// Сохранение площадки (в расш данных полилнии)
+        /// </summary>
+        public void Save()
+        {
+            this.SaveDboDict();
+        }
+
         public void Dispose ()
         {
             VisualPlace.VisualsDelete();
             VisualPlace.DisposeTiles();
             VisualPlace.Dispose();
+        }
+
+        public DBObject GetDBObject ()
+        {
+            var pl = PlaceId.Open(OpenMode.ForWrite, false, true) as Polyline;
+            return pl;
+        }
+
+        public DicED GetExtDic (Document doc)
+        {
+            var dicPlace = new DicED("Place");
+            dicPlace.AddRec("Recs", GetDataValues(doc));
+            return dicPlace;
+        }
+
+        public void SetExtDic (DicED dicPlace, Document doc)
+        {
+            SetDataValues(dicPlace?.GetRec("Recs")?.Values, doc);
+        }
+
+        public List<TypedValue> GetDataValues (Document doc)
+        {
+            return new List<TypedValue> {
+                TypedValueExt.GetTvExtData(Name)
+            };
+        }
+
+        public void SetDataValues (List<TypedValue> values, Document doc)
+        {
+            if (values == null || values.Count != 1)
+            {
+                // Default
+                Name = "Площадка " + PlaceModel?.Places.Count; 
+            }
+            else
+            {
+                Name = TypedValueExt.GetTvValue<string>(values[0]);
+            }
         }
     }
 }

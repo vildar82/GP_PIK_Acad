@@ -18,10 +18,16 @@ using AcadLib.XData;
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
-    /// Дом - состоит из блок-секций в ряд
+    /// Дом - состоит из блок-секций
+    /// Дом - соответствует Корпусу в проекте
     /// </summary>
     public class House : ModelBase, IDisposable
     {
+        public House ()
+        {
+
+        }
+
         public House (FrontGroup frontGroup)
         {
             FrontGroup = frontGroup;
@@ -48,6 +54,12 @@ namespace PIK_GP_Acad.Insolation.Models
         string name;
 
         /// <summary>
+        /// Высота расчета фронтов
+        /// </summary>
+        public double FrontHeight { get { return frontHeight; } set { frontHeight = value; RaisePropertyChanged(); } }
+        double frontHeight;
+
+        /// <summary>
         /// Блок-секции дома
         /// </summary>
         public ObservableCollection<MapBuilding> Sections { get { return sections; } set { sections = value; RaisePropertyChanged(); } }
@@ -57,6 +69,10 @@ namespace PIK_GP_Acad.Insolation.Models
         Polyline contour;
 
         public VisualFront VisualFront { get; set; }
+
+        public List<FrontValue> FrontLines { get; set; }
+
+        public List<List<FrontCalcPoint>> ContourSegmentsCalcPoints { get; set; }
 
         public bool IsVisualFront {
             get { return isVisualFront; }
@@ -70,8 +86,13 @@ namespace PIK_GP_Acad.Insolation.Models
         public string Info {
             get { return info; }
             set { info = value; RaisePropertyChanged(); }
-        }               
+        }
         string info;
+
+        /// <summary>
+        /// Идентификатор Корпуса в базе
+        /// </summary>
+        public int HouseId { get; set; }
 
         /// <summary>
         /// Расчет фронтов дома
@@ -82,8 +103,15 @@ namespace PIK_GP_Acad.Insolation.Models
             var calcService = FrontGroup.Front.Model.CalcService;
             try
             {
-                var frontLines = calcService.CalcFront.CalcHouse(this);
-                VisualFront.FrontLines = frontLines;
+                // Отдельные линии инсоляции
+                List<List<FrontCalcPoint>> contourSegmentsCalcPoints;
+                FrontLines = calcService.CalcFront.CalcHouse(this, out contourSegmentsCalcPoints);
+                ContourSegmentsCalcPoints = contourSegmentsCalcPoints;
+
+                // Объединение линий фронтов для визуализациир
+                var frontLinesCopy = FrontLines.Select(s => s.Clone()).ToList();
+                var frontLinesMerged = FrontValue.Merge(ref frontLinesCopy);
+                VisualFront.FrontLines = frontLinesMerged;
                 VisualFront.VisualUpdate();
             }
             catch(Exception ex)
@@ -118,10 +146,17 @@ namespace PIK_GP_Acad.Insolation.Models
         public void DefineName (int countHouse)
         {
             if (!string.IsNullOrEmpty(Name)) return;
+            // По идентификатору !!!???
+                    
             if (Sections != null)
             {
                 //TODO: FIX: определение имени дома по блок-секциям
-                Name = Sections[0].Building.HouseName;
+                var hn = Sections.Where(w=>!string.IsNullOrEmpty(w.Building.HouseName))
+                    .GroupBy(g => g.Building.HouseName).Select(s => s.Key);
+                if (hn.Count() == 1)
+                {
+                    Name = hn.First();
+                }
             }
             if (string.IsNullOrEmpty(Name))
             {
@@ -139,10 +174,15 @@ namespace PIK_GP_Acad.Insolation.Models
             {                
                 foreach (var item in Sections)
                 {
-                    item.Building.HouseName = Name;                    
+                    if (item.Building != null)
+                    {
+                        item.Building.HouseName = Name;
+                    }
                 }
             }
-        }        
+        }
+
+        
 
         /// <summary>
         /// Добавление ошибки - относящейся к этому дому
@@ -213,6 +253,15 @@ namespace PIK_GP_Acad.Insolation.Models
 #endif
         }
 
+        /// <summary>
+        /// Установить параметры дома из старого дома
+        /// </summary>        
+        public void SetDataFromOldHouse (House oldHouse)
+        {
+            FrontHeight = oldHouse.FrontHeight;
+            IsVisualFront = oldHouse.IsVisualFront;
+        }
+
         public void DisposeContour ()
         {
             if (Contour != null && !Contour.IsDisposed)
@@ -234,6 +283,16 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Dispose ()
         {
             VisualFront?.Dispose();
+            if (FrontLines != null)
+            {
+                foreach (var item in FrontLines)
+                {
+                    if (item != null && item.Line != null && !item.Line.IsDisposed)
+                    {
+                        item.Line.Dispose();
+                    }
+                }
+            }
         }
     }
 }

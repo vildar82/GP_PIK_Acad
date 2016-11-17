@@ -42,11 +42,11 @@ namespace PIK_GP_Acad.Insolation.UI
         }
         BuildingTypeEnum buildingType;   
         
-        public int Height {
+        public double Height {
             get { return height; }
             set { height = value; RaisePropertyChanged(); }
         }
-        int height;
+        double height;
 
         public WindowOptionsViewModel WindowVM { get { return windowVM; } set { windowVM = value; RaisePropertyChanged(); } }
         WindowOptionsViewModel windowVM;

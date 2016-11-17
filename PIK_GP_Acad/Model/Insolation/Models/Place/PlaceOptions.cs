@@ -36,9 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var opt = new PlaceOptions();
             opt.TileSize = 1;
-            opt.Levels = new ObservableCollection<TileLevel>() {
-                new TileLevel { TotalTimeH=3, Color = System.Drawing.Color.Yellow }
-            };
+            opt.Levels = TileLevel.Defaults();
             return opt;
         }
 
@@ -58,17 +56,23 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetExtDic (DicED dicOpt, Document doc)
         {
             SetDataValues(dicOpt?.GetRec("Recs")?.Values, doc);
-            var dicLevels = dicOpt.GetInner("Levels");
+            var dicLevels = dicOpt?.GetInner("Levels");
             int index = 0;
-            while (true)
+            RecXD recL;
+            do
             {
-                var recL = dicLevels.GetRec("Level" + index++);
-                if (recL == null)
+                recL = dicLevels?.GetRec("Level" + index++);
+                if (recL != null)
                 {
                     var level = new TileLevel();
                     level.SetDataValues(recL.Values, doc);
                     Levels.Add(level);
                 }
+            } while (recL != null && index<4);
+            if (Levels == null)
+            {
+                // Дефолтные уровни
+                Levels = TileLevel.Defaults();
             }
         }
 
@@ -81,7 +85,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null && values.Count != 1)
+            if (values == null || values.Count != 1)
             {
                 // Default
                 TileSize = 1;

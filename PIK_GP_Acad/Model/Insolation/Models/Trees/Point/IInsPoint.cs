@@ -9,7 +9,7 @@ namespace PIK_GP_Acad.Insolation.Models
         double AngleEndOnPlane { get; set; }
         double AngleStartOnPlane { get; set; }
         MapBuilding Building { get; }
-        int Height { get; set; }
+        double Height { get; set; }
         List<IIlluminationArea> Illums { get; set; }
         string Info { get; set; }
         InsValue InsValue { get; set; }        

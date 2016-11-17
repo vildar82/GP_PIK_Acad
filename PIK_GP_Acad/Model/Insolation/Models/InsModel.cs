@@ -46,7 +46,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Настройки инсоляции
         /// </summary>
-        public InsOptions Options { get; set; }
+        public InsOptions Options { get { return options; } set { options = value; RaisePropertyChanged(); } }
+        InsOptions options;
         /// <summary>
         /// Расчет елочек
         /// </summary>
@@ -217,17 +218,19 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (Doc == null || Doc.IsDisposed) return;
             // Словарь InsModel
-            var DicED = new DicED("InsModel");
+            var dicInsModel = new DicED("InsModel");
             // Список значений самого расчета InsModelRec                        
-            DicED.AddRec("InsModelRec", GetDataValues(Doc));   
+            dicInsModel.AddRec("InsModelRec", GetDataValues(Doc));   
             // Словарь настроек InsOptions            
-            DicED.AddInner("InsOptions", Options.GetExtDic(Doc));
+            dicInsModel.AddInner("InsOptions", Options.GetExtDic(Doc));
             // Словарь расчета елочек TreeModel            
-            DicED.AddInner("TreeModel", Tree.GetExtDic(Doc));
+            dicInsModel.AddInner("TreeModel", Tree.GetExtDic(Doc));
             // Словарь расчета фронтов FrontModel            
-            DicED.AddInner("FrontModel", Front.GetExtDic(Doc));
+            dicInsModel.AddInner("FrontModel", Front.GetExtDic(Doc));
+            // Словарь расчета площадок
+            dicInsModel.AddInner("PlaceModel", Place.GetExtDic(Doc));
             // Сохранение словаря InsModel в NOD чертежа
-            InsExtDataHelper.SaveToNod(Doc, DicED);
+            InsExtDataHelper.SaveToNod(Doc, dicInsModel);
 
             // Сохранение всех точек
             Tree.SavePoints();            
@@ -258,13 +261,17 @@ namespace PIK_GP_Acad.Insolation.Models
             // Расчет фронтов
             var front = new FrontModel();            
             front.SetExtDic(dicModel.GetInner("FrontModel"), doc);
+            // Расчет площадок
+            var place = new PlaceModel();
+            place.SetExtDic(dicModel.GetInner("PlaceModel"), doc);
 
             model = new InsModel();
             model.Doc = doc;
             model.SetDataValues(recModel?.Values, doc);
             model.Options = opt;
             model.Tree = tree;
-            model.Front = front;         
+            model.Front = front;
+            model.Place = place;
             //model.Initialize(doc);           
 
             return model;

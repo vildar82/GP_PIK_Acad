@@ -13,7 +13,7 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         private Dictionary<double, double> dictAngleFromAcad = new Dictionary<double, double>();
         private Dictionary<Tuple<double, double>, double> dictXRay = new Dictionary<Tuple<double, double>, double>();
-        private Dictionary<int, Tuple<double, double>> dictYShadowLineByHeight = new Dictionary<int, Tuple<double, double>>();
+        private Dictionary<double, Tuple<double, double>> dictYShadowLineByHeight = new Dictionary<double, Tuple<double, double>>();
         private Dictionary<double, double> dictAngleSun = new Dictionary<double, double>();
         private double FiTan;
         private double FiCos;
@@ -59,7 +59,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="height">Высота</param>
         /// <param name="cShadowPlane">Гипотенуза на плоскости солнца</param>
         /// <returns>Длина тени на земле (по перпендикуляру)</returns>
-        public double YShadowLineByHeight (int height, out double cShadowPlane)
+        public double YShadowLineByHeight (double height, out double cShadowPlane)
         {
             Tuple<double, double> val;
             if (!dictYShadowLineByHeight.TryGetValue(height, out val))

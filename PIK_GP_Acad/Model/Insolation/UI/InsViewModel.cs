@@ -66,10 +66,9 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnSelectRegionExecute ()
         {            
-            var regVM = new InsRegionViewModel(Model.Options.Region);                        
-            if (InsService.ShowDialog(regVM) == true)
-            {
-                Model.Options.Region = regVM.InsRegion;
+            var optVM = new InsOptionsViewModel(Model.Options);                        
+            if (InsService.ShowDialog(optVM) == true)
+            {                
                 Model.Update();
                 UpdateBinding();                
             }            

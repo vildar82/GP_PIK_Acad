@@ -9,6 +9,7 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using MicroMvvm;
+using PIK_GP_Acad.Insolation.Services.Export;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -29,8 +30,10 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Группы - выбранные области на чертеже для расчета фронтонов
         /// </summary>
-        public ObservableCollection<FrontGroup> Groups { get { return groups; }
-            set { groups = value; RaisePropertyChanged(); } }
+        public ObservableCollection<FrontGroup> Groups {
+            get { return groups; }
+            set { groups = value; RaisePropertyChanged(); }
+        }
         ObservableCollection<FrontGroup> groups;
 
         public bool IsVisualsFrontOn { get { return isVisualsFrontOn; } set { isVisualsFrontOn = value; RaisePropertyChanged(); } }
@@ -42,20 +45,20 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void Initialize (InsModel insModel)
         {
-            this.Model = insModel; 
+            this.Model = insModel;
 
             // Настройки
             if (Options == null)
             {
                 Options = FrontOptions.Default();
-            }            
+            }
         }
 
         /// <summary>
         /// Добавление новой группы пользователем
         /// </summary>        
         public void AddGroup (FrontGroup group)
-        {            
+        {
             Groups.Add(group);
             // Обновлоение расчета группы
             group.Update();
@@ -80,21 +83,21 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<TypedValue> GetDataValues (Document doc)
         {
             return new List<TypedValue>() {
-                TypedValueExt.GetTvExtData(IsVisualsFrontOn)                
+                TypedValueExt.GetTvExtData(IsVisualsFrontOn)
             };
-        }       
+        }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             if (values == null || values.Count != 1)
             {
                 // Default
-                IsVisualsFrontOn = true;                
+                IsVisualsFrontOn = true;
             }
             else
             {
                 int index = 0;
-                IsVisualsFrontOn = values[index++].GetTvValue<bool>();                
+                IsVisualsFrontOn = values[index++].GetTvValue<bool>();
             }
         }
 
@@ -119,7 +122,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Сохранение имен домов в блок-секциях
             using (doc.LockDocument())
             using (var t = doc.TransactionManager.StartTransaction())
-            {                
+            {
                 var sections = Groups.SelectMany(s => s.Houses.SelectMany(h => h.Sections));
                 foreach (var item in sections)
                 {
@@ -152,9 +155,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (dicGroup != null)
                 {
                     AddGroup(dicGroup);
-                }                
-            } while (dicGroup!= null);            
-        }  
+                }
+            } while (dicGroup != null);
+        }
 
         public void Update ()
         {
@@ -178,6 +181,15 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 item.UpdateVisual();
             }
+        }
+
+        /// <summary>
+        /// Экпорт инсоляции в базу
+        /// </summary>
+        public void ExportInsToBD ()
+        {
+            var export = new ExportToDB(this);
+            export.Export();
         }
     }
 }

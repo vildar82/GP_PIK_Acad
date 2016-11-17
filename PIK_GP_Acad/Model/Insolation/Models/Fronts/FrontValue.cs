@@ -14,6 +14,10 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class FrontValue
     {
+        public FrontValue ()
+        {
+        }
+
         public FrontValue (Point2d ptStart, Point2d ptEnd, InsRequirementEnum insValue, FrontOptions opt)
         {
             InsValue = insValue;
@@ -42,8 +46,9 @@ namespace PIK_GP_Acad.Insolation.Models
 
         /// <summary>
         /// Объединение полилиний фронтов
+        /// Переданные линии объединяются. От объединенных линии берутся точки в объединяемую линию, а добавляемая линия очищается!
         /// </summary>       
-        public static List<FrontValue> Merge (List<FrontValue> fronts)
+        public static List<FrontValue> Merge (ref List<FrontValue> fronts)
         {
             var mergedFronts = new List<FrontValue>();
             var prewFront = fronts.First();
@@ -53,7 +58,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (item.InsValue == prewFront.InsValue &&
                     item.Line.StartPoint.IsEqualTo (prewFront.Line.EndPoint))
                 {
-                    prewFront.AddFront(item);                    
+                    prewFront.AddFront(item);
+                    item.Line.Dispose();                                          
                 }
                 else
                 {
@@ -69,12 +75,21 @@ namespace PIK_GP_Acad.Insolation.Models
                 prewFront.Line.ReverseCurve();
                 firstFront.Line.ReverseCurve();
                 firstFront.AddFront(prewFront);
+                prewFront.Line.Dispose();
             }
             else
             {
                 mergedFronts.Add(prewFront);
             }
             return mergedFronts;
+        }
+
+        public FrontValue Clone ()
+        {
+            var resVal = new FrontValue();
+            resVal.InsValue = InsValue;
+            resVal.Line = (Polyline)Line.Clone();
+            return resVal;
         }
 
         public void AddFront (FrontValue front)
@@ -84,7 +99,7 @@ namespace PIK_GP_Acad.Insolation.Models
             for (int i = 1; i < front.Line.NumberOfVertices; i++)
             {
                 Line.AddVertexAt(index++, front.Line.GetPoint2dAt(i), 0,0,0);
-            }
+            }            
             Line.ConstantWidth = w;            
         }
     }

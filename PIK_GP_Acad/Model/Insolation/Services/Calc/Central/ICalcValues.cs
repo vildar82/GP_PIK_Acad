@@ -13,6 +13,6 @@
         double AngleSunOnPlane (double yShadow, double xShadow);
         double GetInsAngleFromAcad (double acadAngle);
         double GetXRay (double cSunPlane, double angleSun);
-        double YShadowLineByHeight (int height, out double cShadowPlane);
+        double YShadowLineByHeight (double height, out double cShadowPlane);
     }
 }

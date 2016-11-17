@@ -480,7 +480,7 @@ namespace PIK_GP_Acad
 
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
-            LoadDll(fileCivilDll);            
+            LoadDll(fileCivilDll);
         }
 
         private static void LoadDll (string  file)

@@ -9,8 +9,9 @@ namespace PIK_GP_Acad.BlockSection
 {
     public class ClassTypeService : IClassTypeService
     {
+        public const string Site = "Участок";
         static List<ClassType> classTypes = new List<ClassType>() {
-             new ClassType("Участок", "Площадь участка, га", null, 0),
+             new ClassType(Site, "Площадь участка, га", null, 0),
              new ClassType("УДС", "", null, 1),
              new ClassType("ПК", "", null, 1),
              new ClassType("Паркинг", "", null, 1),

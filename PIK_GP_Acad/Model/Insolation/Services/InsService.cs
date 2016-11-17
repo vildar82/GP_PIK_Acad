@@ -36,7 +36,9 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
             dictVmViews = GetViews();
-        }        
+        }
+
+        
 
         /// <summary>
         /// Переключатель активации расчета
@@ -283,7 +285,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private static Dictionary<Type, Type> GetViews ()
         {
             return new Dictionary<Type, Type> {
-                { typeof(InsRegionViewModel),  typeof(InsRegionView)},
+                { typeof(InsOptionsViewModel),  typeof(InsOptionsView)},
                 { typeof (TreeOptionsViewModel), typeof(TreeOptionsView) },
                 {  typeof (InsPointViewModel), typeof(InsPointView)},
                 { typeof(PlaceOptionsViewModel), typeof(PlaceOptionsView) }
@@ -313,5 +315,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             return current;
         }
+
+        
     }
 }

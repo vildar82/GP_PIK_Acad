@@ -13,11 +13,11 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация площадки
     /// </summary>
-    public class VisualPlace : VisualDatabase
+    public class VisualPlace : VisualTransient
     {
         private List<Entity> visuals;
         private PlaceModel placeModel;
-        public VisualPlace (PlaceModel placeModel) : base (placeModel?.Model?.Doc)
+        public VisualPlace (PlaceModel placeModel)// : base (placeModel?.Model?.Doc)
         {
             this.placeModel = placeModel;
         }
@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public override List<Entity> CreateVisual ()
         {
-            return visuals;
+            return visuals.Select(s=>(Entity)s.Clone()).ToList();
         }
 
         private void UnionTiles ()

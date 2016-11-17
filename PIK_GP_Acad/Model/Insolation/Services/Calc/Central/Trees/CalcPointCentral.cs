@@ -78,7 +78,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     foreach (var bHeight in heights)
                     {
                         // зоны тени для домов этой высоты
-                        var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), bHeight.Key - insPt.Height);
+                        var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), (double)bHeight.Key - insPt.Height);
                         if (illumsByHeight != null && illumsByHeight.Any())
                         {
                             resAreas.AddRange(illumsByHeight);
@@ -112,7 +112,7 @@ namespace PIK_GP_Acad.Insolation.Services
             StartAnglesIllum.PtOrig = ptCalc2d;
         }
 
-        private List<IIlluminationArea> CalcIllumsByHeight (List<MapBuilding> buildings, int height)
+        private List<IIlluminationArea> CalcIllumsByHeight (List<MapBuilding> buildings, double height)
         {
             List<IIlluminationArea> illumShadows = new List<IIlluminationArea>();           
             
@@ -572,7 +572,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return angleIns;
         }
 
-        private Line GetLineShadow (int height)
+        private Line GetLineShadow (double height)
         {
             // катет тени и гипотенуза тени (относительно расчетной точки) - высота линии тени
             double cShadow;

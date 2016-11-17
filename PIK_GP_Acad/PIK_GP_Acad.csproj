@@ -65,6 +65,10 @@
     <Reference Include="MicroMvvm">
       <HintPath>..\..\..\Package\MVVM\MicroMvvm.dll</HintPath>
     </Reference>
+    <Reference Include="PIK_DB_Projects">
+      <HintPath>..\..\..\ОБЩЕЕ\DBMDM\PIK_DB_Projects\PIK_DB_Projects\bin\Release\PIK_DB_Projects.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationFramework.Aero" />
@@ -151,7 +155,16 @@
     <Compile Include="Model\Insolation\Models\Place\TileLevel.cs" />
     <Compile Include="Model\Insolation\Models\Trees\TreeOptions.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\CalcFrontCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\Front\FrontCalcPoint.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Place\CalcPlaceCentral.cs" />
+    <Compile Include="Model\Insolation\Services\DBService.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportHouseIns.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml.cs">
+      <DependentUpon>ExportGroupsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsViewModel.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportToDB.cs" />
+    <Compile Include="Model\Insolation\Services\Export\InsCell.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcPlace.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcFront.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />
@@ -208,10 +221,10 @@
       <DependentUpon>FrontView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Fronts\FrontViewModel.cs" />
-    <Compile Include="Model\Insolation\UI\InsRegionView.xaml.cs">
-      <DependentUpon>InsRegionView.xaml</DependentUpon>
+    <Compile Include="Model\Insolation\UI\InsOptionsView.xaml.cs">
+      <DependentUpon>InsOptionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Insolation\UI\InsRegionViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\InsOptionsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\InsServicePallete.cs" />
     <Compile Include="Model\Insolation\UI\InsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Place\PlaceOptionsView.xaml.cs">
@@ -413,11 +426,15 @@
     <None Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Model\Insolation\UI\Fronts\FrontView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Model\Insolation\UI\InsRegionView.xaml">
+    <Page Include="Model\Insolation\UI\InsOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -477,9 +494,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\On.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\option_dots.png" />

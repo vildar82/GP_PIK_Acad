@@ -17,7 +17,7 @@ namespace PIK_GP_Acad.Insolation.UI
             Front = model;
             Add = new RelayCommand(OnAddExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
-            ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
+            ShowHouse = new RelayCommand<House>(OnShowHouseExecute);            
         }        
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public RelayCommand Add { get; set; }
         public RelayCommand<FrontGroup> Delete { get; set; }
-        public RelayCommand<House> ShowHouse { get; set; }        
+        public RelayCommand<House> ShowHouse { get; set; }                   
 
         private void OnAddExecute ()
         {

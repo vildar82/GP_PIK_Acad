@@ -1,0 +1,39 @@
+﻿<Window x:Class="PIK_GP_Acad.Insolation.Services.Export.ExportGroupsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.Services.Export"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:ExportGroupsViewModelTest,
+                                     IsDesignTimeCreatable=True}"
+        Title="Экспортируемые объекты" Height="300" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Key="ItemGroup">
+                <TextBlock Text="{Binding Name}"/>
+            </DataTemplate>
+        </ResourceDictionary>        
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!-- Экспортируемые группы (блоки) -->
+        <StackPanel Grid.Row="0">
+            <ItemsControl ItemsSource="{Binding ExportedGroups, UpdateSourceTrigger=PropertyChanged}" 
+                          ItemTemplate="{StaticResource ItemGroup}">                
+            </ItemsControl>
+        </StackPanel>
+        <!-- Не экспортируемые группы (блоки) - непроидентифицированные -->
+        <StackPanel Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding NotIdentifiedGroups, UpdateSourceTrigger=PropertyChanged}" 
+                          ItemTemplate="{StaticResource ItemGroup}">
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</Window>

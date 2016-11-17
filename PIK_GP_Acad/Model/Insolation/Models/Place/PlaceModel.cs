@@ -80,7 +80,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetExtDic (DicED dicPlace, Document doc)
         {
             Options = new PlaceOptions();
-            Options.SetExtDic(dicPlace.GetInner("Options"), doc);
+            Options.SetExtDic(dicPlace?.GetInner("Options"), doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)

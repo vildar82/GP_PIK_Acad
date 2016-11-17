@@ -69,7 +69,7 @@ namespace PIK_GP_Acad.BlockSection
             // По классификатору
             if (_service.Classes.Count>0)
             {
-                var landClass = _service.Classes.Find(c => c.ClassType.ClassName == "Участок");
+                var landClass = _service.Classes.Find(c => c.ClassType.ClassName == ClassTypeService.Site);
                 if (landClass != null)
                 {
                     FC_LandArea = landClass.Area * 0.0001;

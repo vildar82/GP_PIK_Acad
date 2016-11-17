@@ -36,19 +36,26 @@
                             <!--  Заголовок группы - все о группе  -->
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="1,5,1,5" 
-                                          HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" 
-                                          ToolTip="{Binding Info}">
+                                    <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBox
-                                            Grid.Column="0"
-                                            Margin="5" HorizontalAlignment="Left"
-                                            Background="Transparent" BorderThickness="0"
-                                            FontSize="20"
-                                            Text="{Binding Name}" />
+                                        <Grid Grid.Column="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox
+                                                Margin="5" HorizontalAlignment="Left"
+                                                Background="Transparent" BorderThickness="0"
+                                                FontSize="20"
+                                                Text="{Binding Name}" />
+                                            <TextBox Text="{Binding FrontHeight}" 
+                                                     Background="Transparent" HorizontalAlignment="Right" Margin="3" 
+                                                     ToolTip="Высота расчета фронтов, м." BorderThickness="0"
+                                                     VerticalAlignment="Center"/>
+                                        </Grid>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                                             <ToggleButton
                                                 Margin="1"
@@ -62,7 +69,7 @@
                                                 Style="{StaticResource btnSmall}"
                                                 Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
                                                 CommandParameter="{Binding}"
-                                                ToolTip="Удаление группы">
+                                                ToolTip="Удаление блока из расчета">
                                                 <Image Source="{StaticResource biClose}" />
                                             </Button>
                                         </StackPanel>
@@ -76,17 +83,25 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Margin="2" BorderBrush="Black" BorderThickness="1">
-                                                    <StackPanel Margin="4" Orientation="Horizontal">
-                                                        <StackPanel.InputBindings>
-                                                            <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
-                                                        </StackPanel.InputBindings>
+                                                    <Grid Margin="4">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.InputBindings>
+                                                            <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
+                                                        </Grid.InputBindings>
                                                         <TextBox
+                                                            Grid.Column="0"
                                                             Margin="2" VerticalAlignment="Center"
                                                             Background="Transparent" BorderThickness="0"
                                                             FontSize="15"
                                                             Text="{Binding Name}" />
-                                                        <TextBlock Margin="2" VerticalAlignment="Center" Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
-                                                    </StackPanel>
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Margin="2" VerticalAlignment="Center"
+                                                            Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
+                                                    </Grid>
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -105,7 +120,7 @@
                 Margin="1"
                 Style="{StaticResource btnNormal}"
                 Command="{Binding Add}"
-                ToolTip="Добавить группу - выбор области на чертеже">
+                ToolTip="Добавить блок в расчет - выбор области на чертеже">
                 <Image Source="{StaticResource biAdd}" />
             </Button>
         </Grid>

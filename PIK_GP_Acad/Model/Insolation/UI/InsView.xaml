@@ -1,22 +1,23 @@
 ﻿<UserControl
     x:Class="PIK_GP_Acad.Insolation.UI.InsView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"    
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
-    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:PIK_GP_Acad.Properties"
     xmlns:service="clr-namespace:PIK_GP_Acad.Insolation.Services"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Background="{DynamicResource DarkThemeBackgroundBrush}"
-    mc:Ignorable="d" d:DesignWidth="208" d:DesignHeight="182">
+    d:DesignHeight="193" d:DesignWidth="258"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
-            </ResourceDictionary.MergedDictionaries>            
-        </ResourceDictionary>        
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,24 +25,24 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-            <ToggleButton                
-                x:Name="chkBoxInsActivated"                
-                Style="{StaticResource ToggleButtonOnOff}"                
+            <ToggleButton
+                x:Name="chkBoxInsActivated"
                 Grid.Row="0"
-                BorderThickness="0"                                
-                Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"                
+                Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"
+                Style="{StaticResource ToggleButtonOnOff}"
+                BorderThickness="0"
                 IsChecked="{Binding Path=(service:InsService.InsActivate)}"
                 ToolTip="Включение/отключение инсоляции для документа." />
             <Button
-                Grid.Row="0"                
+                Grid.Row="0"
                 Margin="2"
                 Background="Transparent"
-                Command="{Binding Update}"                
-                Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}"                
-                ToolTip="{Binding UpdateInfo}">
-                <Image Source="{StaticResource biUpdate}"/>
+                Command="{Binding Update}"
+                ToolTip="{Binding UpdateInfo}"
+                Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}">
+                <Image Source="{StaticResource biUpdate}" />
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource btnNormal}">
+                    <Style BasedOn="{StaticResource btnNormal}" TargetType="Button">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsUpdateRequired}" Value="True">
                                 <DataTrigger.EnterActions>
@@ -67,24 +68,29 @@
         <StackPanel
             Grid.Row="0"
             Margin="1" HorizontalAlignment="Right"
-            Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}"                            
-            Orientation="Horizontal">
-            <TextBlock Margin="2" VerticalAlignment="Center" Text="Регион:" />
-            <TextBlock
-                Margin="2" VerticalAlignment="Center"
-                Text="{Binding City, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="Город" />
-            <TextBlock
-                Margin="2" VerticalAlignment="Center"
-                Text="{Binding Latitude, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="Широта °" />
+            Orientation="Horizontal"
+            Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Text="Регион: " />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="{Binding City, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Город" />
+                    <TextBlock
+                        Margin="2,0,0,1" VerticalAlignment="Center"
+                        Text="{Binding Latitude, StringFormat={}{0}°, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Широта °" />
+                </StackPanel>
+                <TextBlock Text="{Binding Model.Options.Project.Name, StringFormat={}Проект: {0}, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
             <Button
+                Margin="2"
                 Style="{StaticResource btnNormal}"
-                Margin="2"                
+                Background="Transparent"
                 Command="{Binding SelectRegion}"
-                ToolTip="Выбор региорна"
-                Background="Transparent">
-                <Image Source="{StaticResource biOptions}"/>
+                ToolTip="Выбор региорна">
+                <Image Source="{StaticResource biOptions}" />
             </Button>
         </StackPanel>
         <!--  Выбор расчета  -->
@@ -95,7 +101,7 @@
             <!--  Вкладка - Елочки  -->
             <TabItem Background="Transparent">
                 <TabItem.Header>
-                    <Image Source="{StaticResource biTree}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Елочки"/>
+                    <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource biTree}" ToolTip="Елочки" />
                 </TabItem.Header>
                 <TabItem.Content>
                     <local:TreesView DataContext="{Binding TreeVM, UpdateSourceTrigger=PropertyChanged}" />
@@ -104,19 +110,19 @@
             <!--  Вкладка - Фронт  -->
             <TabItem Background="Transparent">
                 <TabItem.Header>
-                    <Image Source="{StaticResource biFront}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Фронты"/>
+                    <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource biFront}" ToolTip="Фронты" />
                 </TabItem.Header>
                 <TabItem.Content>
-                    <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}"/>
+                    <local:FrontView DataContext="{Binding FrontVM, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem.Content>
             </TabItem>
             <!--  Вкладка - Площадка  -->
             <TabItem Background="Transparent">
                 <TabItem.Header>
-                    <Image Source="{StaticResource biPlace}" Height="{StaticResource NormalButtonsHeight}" ToolTip="Фронты"/>
+                    <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource biPlace}" ToolTip="Фронты" />
                 </TabItem.Header>
                 <TabItem.Content>
-                    <local:PlaceView DataContext="{Binding PlaceVM, UpdateSourceTrigger=PropertyChanged}"/>
+                    <local:PlaceView DataContext="{Binding PlaceVM, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem.Content>
             </TabItem>
         </TabControl>

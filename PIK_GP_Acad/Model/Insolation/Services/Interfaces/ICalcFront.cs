@@ -15,6 +15,6 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Расчет фронтонов дома
         /// </summary>
-        List<FrontValue> CalcHouse (House house);
+        List<FrontValue> CalcHouse (House house, out List<List<FrontCalcPoint>> contourSegmentsCalcPoints);
     }
 }
