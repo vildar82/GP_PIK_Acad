@@ -207,13 +207,19 @@ namespace PIK_GP_Acad.Insolation.Models
         public MapBuilding GetBuildingInPoint (Point2d pt)
         {
             MapBuilding building = null;
-            Point p = new Point(pt.X, pt.Y, 0);
-            var nearest = treeBuildings.Nearest(p, 2);
-            if (nearest.Count > 0)
+            var buildingsInPt = GetBuildingsInPoint(pt);      
+            if (buildingsInPt.Count > 0)
             {
-                building = nearest[0];
+                building = buildingsInPt[0];
             }
             return building;
+        }
+
+        public List<MapBuilding> GetBuildingsInPoint (Point2d pt)
+        {            
+            Point p = new Point(pt.X, pt.Y, 0);
+            var nearest = treeBuildings.Nearest(p, 2);            
+            return nearest;
         }
 
         public MapBuilding GetBuildingInPoint (Point3d pt)

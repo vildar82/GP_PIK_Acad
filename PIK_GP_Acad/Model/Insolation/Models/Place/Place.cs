@@ -133,7 +133,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Delete ()
         {
             // Удаление словаря
-            this.DeleteDboDict();
+            using (PlaceModel.Model.Doc.LockDocument())
+            {
+                this.DeleteDboDict();
+            }
             Dispose();
         }
 

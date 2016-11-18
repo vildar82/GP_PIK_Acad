@@ -39,8 +39,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public CalcPointCentral (InsPoint insPt, CalcServiceCentral insCalcService)
         {
             this.map = insPt.Model.Map;
-            buildingOwner = insPt.Building;
-            buildingOwner?.InitContour();        
+            buildingOwner = insPt.Building;            
             this.insPt = insPt;
             ptCalc = insPt.Point;
             ptCalc2d = ptCalc.Convert2d();
@@ -58,7 +57,13 @@ namespace PIK_GP_Acad.Insolation.Services
             var resAreas = new List<IIlluminationArea>();
 
             // Корректировка расчетной точки
-            CorrectCalcPoint();
+            if (!CorrectCalcPoint()) return null;
+
+            // Проверка - если точка расположена внутри другого дома (кроме собственного), то вся точка в тени
+            if (IsCalcPointInsideOtherBuilding())
+            {
+                return null;
+            }
 
             // Определение ограничений углов (начального и конечного) с учетом плоскости стены расчетного дома
             if (DefineStartAnglesByOwnerBuilding())
@@ -94,22 +99,43 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 StartAnglesIllum.AngleEndOnPlane = 0;
                 StartAnglesIllum.AngleStartOnPlane = 0;
-            }
-            buildingOwner?.Contour.Dispose();
+            }            
             return resAreas;
         }
 
-        private void CorrectCalcPoint ()
+        /// <summary>
+        /// Если расчетная точка находится внутри другого дома.
+        /// </summary>        
+        private bool IsCalcPointInsideOtherBuilding ()
         {
-            if (!WithOwnerBuilding) return;
+            var buildings = map.GetBuildingsInPoint(ptCalc2d);
+            if (buildings != null && buildings.Any())
+            {
+                if (buildingOwner != null)
+                {
+                    buildings.Remove(buildingOwner);
+                }
+                if (buildings.Any())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool CorrectCalcPoint ()
+        {
+            if (!WithOwnerBuilding) return true;
             var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
             if ((correctPt - ptCalc).Length >2)
             {
-                throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
+                return false;
+                //throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
             }
             ptCalc = correctPt;
             ptCalc2d = correctPt.Convert2d();
             StartAnglesIllum.PtOrig = ptCalc2d;
+            return true;
         }
 
         private List<IIlluminationArea> CalcIllumsByHeight (List<MapBuilding> buildings, double height)
@@ -255,15 +281,19 @@ namespace PIK_GP_Acad.Insolation.Services
                 return false;
             }
 
-            // Ограничения от собственного сегмента и окна
-            CorrectStartAnglesByOwnerSegAndWindow();            
-
-            // Проверка ограничения от самого здания - горизонтальная линия через расчетную точку
-            List<Point3d> ptsIntersectShadow;
-            if (!CorrectStartAnglesByOwnerZeroHorLineIntersects(out ptsIntersectShadow))
+            buildingOwner?.InitContour();
+            using (var contour = buildingOwner?.Contour)
             {
-                // Не все стороны определены от горизоентальной линии - построение вертикальной линии через расчетную точку
-                //CorrectStartAnglesByOwnerZeroVerticLineIntersects(ptsIntersectShadow);
+                // Ограничения от собственного сегмента и окна
+                CorrectStartAnglesByOwnerSegAndWindow();
+
+                // Проверка ограничения от самого здания - горизонтальная линия через расчетную точку
+                List<Point3d> ptsIntersectShadow;
+                if (!CorrectStartAnglesByOwnerZeroHorLineIntersects(out ptsIntersectShadow))
+                {
+                    // Не все стороны определены от горизоентальной линии - построение вертикальной линии через расчетную точку
+                    //CorrectStartAnglesByOwnerZeroVerticLineIntersects(ptsIntersectShadow);
+                }
             }
 
             // Стартовый угол не может быть больше конечного

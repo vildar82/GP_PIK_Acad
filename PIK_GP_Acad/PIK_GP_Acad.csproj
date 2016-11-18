@@ -105,6 +105,7 @@
     <Compile Include="Model\BlockSection\Settings.cs" />
     <Compile Include="Model\BlockSection\TableSecton.cs" />
     <Compile Include="Model\BlockSection\TableSectonKP.cs" />
+    <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionPIK1KP.cs" />
     <Compile Include="Model\Elements\Buildings\Building.cs" />
     <Compile Include="Model\Elements\Buildings\BuildingTypeEnum.cs" />
     <Compile Include="Model\Elements\Buildings\IBuilding.cs" />

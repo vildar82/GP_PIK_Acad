@@ -39,7 +39,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public double TotalTimeMin { get; private set; }
 
-        public Color Color { get; set; }        
+        public Color Color { get { return color; } set { color = value; RaisePropertyChanged(); } }
+        Color color;
 
         public bool Equals (TileLevel other)
         {

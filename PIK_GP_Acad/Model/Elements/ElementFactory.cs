@@ -20,7 +20,8 @@ namespace PIK_GP_Acad.Elements
             {
                 { TowerKPBS.BlockName, typeof(TowerKPBS) },
                 { BlockSectionGP.BlockNameMatch, typeof(BlockSectionGP) },
-                { BlockSectionKP.BlockNameMatch, typeof(BlockSectionKP) },                
+                { BlockSectionKP.BlockNameMatch, typeof(BlockSectionKP) },
+                { BlockSectionPIK1KP.BlockNameMatch, typeof(BlockSectionPIK1KP) },
                 { LineParking.BlockName, typeof(LineParking) },
                 { Parking.BlockName, typeof(Parking) },
                 { ParkingBuilding.BlockName, typeof(ParkingBuilding) },
