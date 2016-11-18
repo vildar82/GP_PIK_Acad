@@ -50,9 +50,17 @@ namespace PIK_GP_Acad.Insolation.Models
             return place;
         }
 
-        public void RemovePlace (Place place)
+        public void AddPlace (ObjectId plId, DicED dicPlace)
         {
-            place.Dispose();
+            var place = new Place(plId, dicPlace, this);
+            Places.Add(place);
+            place.Update();
+        }
+
+        public void DeletePlace (Place place)
+        {
+            // Удаление словаря инсоляции.
+            place.Delete();            
             Places.Remove(place);
         }
 
@@ -64,9 +72,32 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Update ()
         {
-            foreach (var place in Places)
+            if (Places.Count == 0)
             {
-                place.Update();
+                var placesId = Model.Map?.Places;
+                if (placesId != null)
+                {
+                    // Загрузка площадок из карты
+                    foreach (var placeId in Model.Map.Places)
+                    {
+                        AddPlace(placeId.Key, placeId.Value);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var place in Places)
+                {
+                    place.Update();
+                }
+            }
+        }
+
+        public void ClearVisual ()
+        {
+            foreach (var item in Places)
+            {
+                item.ClearVisual();
             }
         }
 
@@ -74,6 +105,13 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var dicPlace = new DicED();
             dicPlace.AddInner("Options", Options.GetExtDic(doc));
+
+            // Сохранение площадок            
+            foreach (var item in Places)
+            {
+                item.Save();
+            }
+
             return dicPlace;
         }
 
@@ -102,5 +140,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
         }
+
+        
     }
 }

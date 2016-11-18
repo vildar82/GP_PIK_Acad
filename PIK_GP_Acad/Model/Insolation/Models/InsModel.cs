@@ -348,7 +348,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Map.ClearVisual();
             Tree.ClearVisuals();
-            Front.ClearVisual();            
+            Front.ClearVisual();
+            Place.ClearVisual();        
         }
 
         private void Map_BuildingModified (object sender, MapBuilding e)

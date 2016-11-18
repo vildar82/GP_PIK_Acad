@@ -17,10 +17,23 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class Place : ModelBase, IDisposable, AcadLib.XData.IDboDataSave
     {
-        public Place (ObjectId placeId, PlaceModel placeModel)
+        public const string PlaceDicName = "Place";        
+
+        /// <summary>
+        /// Для загрузки площадки из расш.данных полилинии
+        /// </summary>
+        public Place (ObjectId plId, DicED dicPlace, PlaceModel placeModel)
         {
             PlaceModel = placeModel;
-            PlaceId = placeId;
+            PlaceId = plId;
+            VisualPlace = new VisualPlace(placeModel);
+            SetExtDic(dicPlace, Application.DocumentManager.MdiActiveDocument);
+        }
+
+        public Place (ObjectId plId, PlaceModel placeModel)
+        {
+            PlaceModel = placeModel;
+            PlaceId = plId;
             VisualPlace = new VisualPlace(placeModel);
             Name = DefineName();            
         }        
@@ -41,7 +54,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
         string name;        
 
-        public VisualPlace VisualPlace { get; set; }
+        public VisualPlace VisualPlace { get; set; }        
 
         public bool IsVisualPlaceOn { get { return isVisualPlaceOn; }
             set {
@@ -51,7 +64,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        public string PluginName { get; set; } = "ins";
+        public string PluginName { get; set; } = InsService.PluginName;
 
         bool isVisualPlaceOn;
 
@@ -76,6 +89,11 @@ namespace PIK_GP_Acad.Insolation.Models
             VisualPlace.VisualUpdate();
         }
 
+        public void ClearVisual ()
+        {
+            VisualPlace?.VisualsDelete();
+        }
+
         private string GetLevelsInfo (List<Tile> tiles)
         {
             var groupTiles = tiles.GroupBy(g => g.Level.TotalTimeH).OrderByDescending(o=>o.Key)
@@ -86,7 +104,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnVisualPlaceChanged ()
         {
-            VisualPlace.VisualIsOn = IsVisualPlaceOn;
+            if (VisualPlace != null)
+            {
+                VisualPlace.VisualIsOn = IsVisualPlaceOn;
+            }
         }
 
         private string DefineName ()
@@ -106,6 +127,16 @@ namespace PIK_GP_Acad.Insolation.Models
             this.SaveDboDict();
         }
 
+        /// <summary>
+        /// Удаление площадки - очистка словаря и удаление визуализации
+        /// </summary>
+        public void Delete ()
+        {
+            // Удаление словаря
+            this.DeleteDboDict();
+            Dispose();
+        }
+
         public void Dispose ()
         {
             VisualPlace.VisualsDelete();
@@ -121,7 +152,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public DicED GetExtDic (Document doc)
         {
-            var dicPlace = new DicED("Place");
+            var dicPlace = new DicED(PlaceDicName);
             dicPlace.AddRec("Recs", GetDataValues(doc));
             return dicPlace;
         }
@@ -134,13 +165,14 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<TypedValue> GetDataValues (Document doc)
         {
             return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Name)
+                TypedValueExt.GetTvExtData(Name),
+                TypedValueExt.GetTvExtData(IsVisualPlaceOn)
             };
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 1)
+            if (values == null || values.Count != 2)
             {
                 // Default
                 Name = "Площадка " + PlaceModel?.Places.Count; 
@@ -148,6 +180,7 @@ namespace PIK_GP_Acad.Insolation.Models
             else
             {
                 Name = TypedValueExt.GetTvValue<string>(values[0]);
+                IsVisualPlaceOn = TypedValueExt.GetTvValue<bool>(values[1]);
             }
         }
     }

@@ -21,6 +21,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public static class InsService
     {
+        public const string PluginName = "ins";
         static Dictionary<Type, Type> dictVmViews;
         static Dictionary<InsRequirementEnum, InsRequirement> dictInsReq;        
         static Dictionary<Document, InsModel> insModels;
@@ -36,9 +37,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
             dictVmViews = GetViews();
-        }
-
-        
+        }        
 
         /// <summary>
         /// Переключатель активации расчета
@@ -74,7 +73,7 @@ namespace PIK_GP_Acad.Insolation.Services
             StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propName));
         }
 
-        public static void Start (Document doc)
+        public static void StartInsolationPalette (Document doc)
         {
             if (doc == null || doc.IsDisposed) return;
             if (insModels == null)
@@ -95,7 +94,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             palette.Visible = true;
 
-            ChangeDocument(doc);               
+            ChangeDocument(doc);
         }
 
         private static void DocumentManager_DocumentToBeDestroyed (object sender, DocumentCollectionEventArgs e)
@@ -142,6 +141,8 @@ namespace PIK_GP_Acad.Insolation.Services
             InsPointDrawOverrule.Stop();
 
             GC.Collect();
+
+            Logger.Log.Info($"Закрытие палитры инсоляции.");
         }
 
         private static void DocumentManager_DocumentToBeDeactivated (object sender, DocumentCollectionEventArgs e)
@@ -243,6 +244,9 @@ namespace PIK_GP_Acad.Insolation.Services
                     //insModel.Initialize(doc);
                     // Обновление расчетов
                     insModel.Update();
+
+                    // лог включения инсоляции для текущего чертежа
+                    Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }
                 // Если расчет уже есть - обновить визуализацию
                 else
@@ -264,6 +268,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 //// Удаление
                 //insModels.Remove(doc);
                 //insModel = null;
+
+                // лог отключения инсоляции для текущего чертежа
+                Logger.Log.Info($"Отключение расчета инсоляции для чертежа - {doc.Name}");
             }
             // Переключение на модель (или на null)                
             insViewModel.Model = insModel;

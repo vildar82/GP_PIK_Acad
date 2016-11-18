@@ -61,7 +61,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnDeleteExecute (Place place)
         {
-            Place.RemovePlace(place);
+            Place.DeletePlace(place);
         }
     }
 }

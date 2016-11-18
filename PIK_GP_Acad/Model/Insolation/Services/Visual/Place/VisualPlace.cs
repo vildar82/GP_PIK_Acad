@@ -32,8 +32,8 @@ namespace PIK_GP_Acad.Insolation.Services
         List<Tile> tiles;        
 
         public override List<Entity> CreateVisual ()
-        {
-            return visuals.Select(s=>(Entity)s.Clone()).ToList();
+        {            
+            return visuals?.Select(s=>(Entity)s.Clone()).ToList();
         }
 
         private void UnionTiles ()

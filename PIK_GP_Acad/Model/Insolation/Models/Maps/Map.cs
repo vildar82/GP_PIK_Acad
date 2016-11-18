@@ -10,6 +10,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Buildings;
+using AcadLib.XData;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
@@ -39,6 +41,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Найденные точки инсоляции
         /// </summary>
         public List<ObjectId> InsPoints { get; private set; }
+        public List<KeyValuePair<ObjectId, DicED>> Places { get; private set; }
         /// <summary>
         /// Добавлено здание
         /// </summary>
@@ -66,6 +69,7 @@ namespace PIK_GP_Acad.Insolation.Models
             FCS.FCService.Init(db);
             Buildings = new List<MapBuilding>();
             InsPoints = new List<ObjectId>();
+            Places = new List<KeyValuePair<ObjectId, DicED>>();
             treeBuildings = new RTree<MapBuilding>();
             using (Doc.LockDocument())
             using (var t = db.TransactionManager.StartTransaction())
@@ -151,11 +155,12 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Оповещение расчета о изменении здания   
                 if (IsEventsOn)
                     BuildingAdded?.Invoke(this, insBuild);
+                return;
             }
             // Сбор точек инсоляции
-            else if (ent is DBPoint)
+            var dbPt = ent as DBPoint;
+            if (dbPt != null)
             {
-                var dbPt = (DBPoint)ent;
                 if (InsPointHelper.IsInsPoint(dbPt))
                 {
                     InsPoints.Add(dbPt.Id);
@@ -164,6 +169,21 @@ namespace PIK_GP_Acad.Insolation.Models
                     if (IsEventsOn)
                         InsPointAdded?.Invoke(this, dbPt.Id);
                 }
+                return;
+            }
+            var pl = ent as Polyline;  
+            if (pl != null)
+            {
+                var entExtDicExt = new EntDictExt(pl, InsService.PluginName);
+                var dic = entExtDicExt.Load();
+                if (dic != null)
+                {
+                    var dicPlace = dic.GetInner(Place.PlaceDicName);
+                    if (dicPlace != null)
+                    {
+                        Places.Add(new KeyValuePair<ObjectId, DicED>(pl.Id, dicPlace));
+                    }
+                }                
             }
         }
 

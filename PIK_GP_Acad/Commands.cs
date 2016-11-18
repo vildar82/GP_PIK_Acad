@@ -466,7 +466,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                Insolation.Services.InsService.Start(doc);
+                Insolation.Services.InsService.StartInsolationPalette(doc);
             });
         }
         
