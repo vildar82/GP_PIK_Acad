@@ -8,11 +8,11 @@ using PIK_DB_Projects;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public static class DBService
+    public static class DbService
     {
-        public static ProjectDB FindProject (int id)
+        public static ProjectMDM FindProject (int id)
         {
-            ProjectDB project = null;
+            ProjectMDM project = null;
             if (id != 0)
             {
                 try
@@ -28,7 +28,7 @@ namespace PIK_GP_Acad.Insolation.Services
             return project;
         }
 
-        public static List<ProjectDB> GetProjects ()
+        public static List<ProjectMDM> GetProjects ()
         {
             try
             {
@@ -40,5 +40,17 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             return null;
         }
-    }
+
+
+        /// <summary>
+        /// Получение корпусов для проекта.
+        /// Корпус - объект МДМ у которого все вложенные объекты уровнем ниже Корпуса или нет вложенных объектов
+        /// </summary>        
+        public static List<ObjectMDM> GetHouses(ProjectMDM project)
+        {
+            if (project == null) return null;
+            var objs = MDMService.GetObjects(project.Id, ObjectTypeEnum.House);
+            return objs;
+        }
+    }    
 }

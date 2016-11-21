@@ -24,9 +24,9 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         protected override void Define (BlockReference blRef)
         {
             base.Define(blRef);
-            AreaBKFN = GetPropValue<double>(propAreaBKFN);
-            AreaGNS = GetPropValue<double>(propAreaGNS);
-            AreaLive = GetPropValue<double>(propAreaLive);
+            AreaBKFN = BlockBase.GetPropValue<double>(propAreaBKFN);
+            AreaGNS = BlockBase.GetPropValue<double>(propAreaGNS);
+            AreaLive = BlockBase.GetPropValue<double>(propAreaLive);
         }
     }
 }

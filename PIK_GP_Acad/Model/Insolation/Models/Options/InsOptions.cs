@@ -41,8 +41,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Проект (по базе)
         /// </summary>
-        public ProjectDB Project { get { return project; } set { project = value; RaisePropertyChanged(); } }
-        ProjectDB project;
+        public ProjectMDM Project { get { return project; } set { project = value; RaisePropertyChanged(); } }
+        ProjectMDM project;
 
         public static InsOptions Default ()
         {
@@ -115,7 +115,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 SunCalcAngleStart = values[index++].GetTvValue<double>();
                 SunCalcAngleEnd = values[index++].GetTvValue<double>();
                 var id = values[index++].GetTvValue<int>();
-                Project = DBService.FindProject(id);
+                Project = Services.DbService.FindProject(id);
             }
         }
     }

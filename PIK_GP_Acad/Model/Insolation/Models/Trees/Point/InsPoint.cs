@@ -65,8 +65,12 @@ namespace PIK_GP_Acad.Insolation.Models
 
             try
             {
-                Illums = Model.CalcService.CalcTrees.CalcPoint(this);
-                InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building.BuildingType);
+                building.InitContour();
+                using (building.Contour)
+                {
+                    Illums = Model.CalcService.CalcTrees.CalcPoint(this);
+                    InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building.BuildingType);
+                }
             }
             catch
             {

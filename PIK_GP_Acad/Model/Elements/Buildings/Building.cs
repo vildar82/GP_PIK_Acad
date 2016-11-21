@@ -15,33 +15,23 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// <summary>
     /// Здание - по классифицированному контуру полилинии
     /// </summary>
-    public class Building : IBuilding, IClassificator
+    public class Building : BuildingBase, IBuilding, IClassificator
     {
         public const string PropHeight = "Высота";
         public const string PropFloors = "Этажность";
+        
+        public List<FCProperty> FCProperties { get; set; }               
+        public ClassType ClassType { get; set; }        
 
-        public ObjectId IdEnt { get; set; }
-        public int Floors { get; set; }
-        public Extents3d ExtentsInModel { get; set; }        
-        public List<FCProperty> FCProperties { get; set; }
-        public int Height { get; set; }  
-        public Error Error { get; set; }        
-        public ClassType ClassType { get; set; }
-        public BuildingTypeEnum BuildingType { get; set; }
-        public string HouseName { get; set; }
-
-        public string PluginName { get; set; }
-
-        public Building (Entity ent, int height, List<FCProperty> props, ClassType classType)
-        {
-            IdEnt = ent.Id;
+        public Building (Entity ent, int height, List<FCProperty> props, ClassType classType) : base(ent.Id)
+        {            
             ExtentsInModel = ent.GeometricExtents;            
             ClassType = classType;
             FCProperties = props;
             Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
             Height = height;            
         }
-        public Polyline GetContourInModel()
+        public override Polyline GetContourInModel()
         {
             using (var ent = IdEnt.Open(OpenMode.ForRead) as Entity)
             {
@@ -60,31 +50,6 @@ namespace PIK_GP_Acad.Elements.Buildings
                 }
             }
             return null;
-        }
-
-        public DBObject GetDBObject ()
-        {
-            throw new NotImplementedException();
-        }
-
-        public DicED GetExtDic (Document doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetExtDic (DicED dicEd, Document doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<TypedValue> GetDataValues (Document doc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetDataValues (List<TypedValue> values, Document doc)
-        {
-            throw new NotImplementedException();
-        }
+        }        
     }
 }

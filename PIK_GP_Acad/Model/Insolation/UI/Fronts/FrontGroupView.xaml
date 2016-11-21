@@ -1,0 +1,53 @@
+﻿<Window x:Class="PIK_GP_Acad.Insolation.UI.FrontGroupView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+        d:DataContext="{d:DesignInstance local:FrontGroupViewModel,
+                                     IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Title="Группа фронтов" Height="214.667" Width="218.333">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--Группа фронтов-->
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                <TextBlock Text="Имя группы: "/>
+                <TextBox Text="{Binding Name}" MinWidth="100"/>
+            </StackPanel>
+            <!--Связь с объектом MDM-->
+            <Grid Grid.Row="1" HorizontalAlignment="Center" Margin="10">
+                <TextBlock Text="Связь: "/>
+                <ItemsControl ItemsSource="{Binding ObjectsMDM}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Key.Name}"/>
+                                <ComboBox ItemsSource="{Binding Value}" MinWidth="100">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FullName}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Grid>
+        <!--Кнопки диалога - OK/Cancel-->
+        <StackPanel Grid.Row="1" Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="OK" Command="{Binding OK}" Click="Ok" Width="80" Margin="3"/>
+            <Button Content="Отмена" Width="80"  IsCancel="True" Margin="3" IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

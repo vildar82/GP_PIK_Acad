@@ -32,7 +32,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         protected override void Define (BlockReference blRef)
         {
             // Определение этажности по атрибуту
-            Floors = GetPropValue<int>(OptionsKPBS.Instance.BlockSectionAtrFloor, exactMatch: false);
+            Floors = BlockBase.GetPropValue<int>(OptionsKPBS.Instance.BlockSectionAtrFloor, exactMatch: false);
 
             base.Define(blRef);
         }
@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// </summary>        
         public List<IODRecord> GetODRecords ()
         {
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour,OD.Records.BuildingType.Live, Height);
+            var odBuild = ODBuilding.GetRecord(BlockBase, IdPlContour,OD.Records.BuildingType.Live, Height);
             return new List<IODRecord> { odBuild };
         }
     }

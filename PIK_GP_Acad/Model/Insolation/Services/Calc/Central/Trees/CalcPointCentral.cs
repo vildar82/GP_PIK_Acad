@@ -10,6 +10,7 @@ using PIK_GP_Acad.Elements.Buildings;
 using AcadLib.Geometry;
 using AcadLib.Exceptions;
 using PIK_GP_Acad.Insolation.Models;
+using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -123,22 +124,32 @@ namespace PIK_GP_Acad.Insolation.Services
             return false;
         }
 
-        private bool CorrectCalcPoint ()
+        private bool CorrectCalcPoint()
         {
             if (!WithOwnerBuilding || buildingOwner == null) return true;
-            buildingOwner.InitContour();
-            using (var contour = buildingOwner.Contour)
+            //buildingOwner.InitContour();
+            //using (var contour = buildingOwner.Contour)
+            //{
+            var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
+            if ((correctPt - ptCalc).Length > 2)
             {
-                var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
-                if ((correctPt - ptCalc).Length > 2)
-                {
-                    return false;
-                    //throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
-                }
-                ptCalc = correctPt;
-                ptCalc2d = correctPt.Convert2d();
-                StartAnglesIllum.PtOrig = ptCalc2d;
-            }                                  
+#if TEST
+                //var dbPt = new DBPoint(correctPt);
+                //dbPt.Color = Color.FromColor(System.Drawing.Color.AliceBlue);
+                //EntityHelper.AddEntityToCurrentSpace(dbPt);
+                //dbPt = new DBPoint(ptCalc);
+                //dbPt.Color = Color.FromColor(System.Drawing.Color.Gold);
+                //EntityHelper.AddEntityToCurrentSpace(dbPt);
+                //EntityHelper.AddEntityToCurrentSpace((Polyline)buildingOwner.Contour.Clone());
+                //throw new Exception();
+#endif
+                return false;
+                //throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
+            }
+            ptCalc = correctPt;
+            ptCalc2d = correctPt.Convert2d();
+            StartAnglesIllum.PtOrig = ptCalc2d;
+            //}                                  
             return true;
         }
 
@@ -167,8 +178,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         illumShadows.AddRange(ilumsBoundary);
                     }
                 }
-#if TEST
-                // Test 
+#if TEST                
                 EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
             }
@@ -285,9 +295,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 return false;
             }
 
-            buildingOwner?.InitContour();
-            using (var contour = buildingOwner?.Contour)
-            {
+            //buildingOwner?.InitContour();
+            //using (var contour = buildingOwner?.Contour)
+            //{
                 // Ограничения от собственного сегмента и окна
                 CorrectStartAnglesByOwnerSegAndWindow();
 
@@ -298,7 +308,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     // Не все стороны определены от горизоентальной линии - построение вертикальной линии через расчетную точку
                     //CorrectStartAnglesByOwnerZeroVerticLineIntersects(ptsIntersectShadow);
                 }
-            }
+            //}
 
             // Стартовый угол не может быть больше конечного
             if (IsAllShadow()) return false;

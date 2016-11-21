@@ -230,7 +230,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     plExtern.ColorIndex = 256;
                     plExtern.Linetype = SymbolUtilityServices.LinetypeByLayerName;
                     plExtern.LineWeight = LineWeight.ByLayer;
-                    plExtern.TransformBy(bs.Transform);                    
+                    plExtern.TransformBy(bs.BlockBase.Transform);                    
 
                     try
                     {
@@ -250,7 +250,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                                 // ГНС линия пересекаемой секции
                                 var plExternItem =bsIntersect.IdPlContour.GetObject( OpenMode.ForRead, false, true) as Polyline;
                                 plExternItem = plExternItem.Clone() as Polyline;
-                                plExternItem.TransformBy(bsIntersect.Transform);                                
+                                plExternItem.TransformBy(bsIntersect.BlockBase.Transform);                                
 
                                 // Корректировка контура б.с. если она пересекается с другим контуром б.с.
                                 BlockSectionBase.CorrectSectionsConnect(ref plExtern, plExternItem);
@@ -260,7 +260,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                     catch (Exception ex)
                     {
                         Inspector.AddError($"Ошибка определения точного контура ГНС блок-секции - {ex}",
-                            bs.IdBlRef, System.Drawing.SystemIcons.Warning);
+                            bs.BlockBase.IdBlRef, System.Drawing.SystemIcons.Warning);
                     }
                     bs.AreaGNS = plExtern.Area;
 
@@ -274,7 +274,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
                         catch (Exception ex)
                         {
                             Inspector.AddError($"Ошибка заполнения штриховки контура ГНС блок-секции - {ex}",
-                                bs.IdBlRef, System.Drawing.SystemIcons.Warning);
+                                bs.BlockBase.IdBlRef, System.Drawing.SystemIcons.Warning);
                         }
                     }
                 }

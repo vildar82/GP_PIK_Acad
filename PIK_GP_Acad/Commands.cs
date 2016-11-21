@@ -89,8 +89,8 @@ namespace PIK_GP_Acad
             };
         }
 
-        [CommandMethod(Group, "PIK_Start", CommandFlags.Modal)]
-        public void PaletteStart()
+        [CommandMethod(Group, nameof(PIK_Start), CommandFlags.Modal)]
+        public void PIK_Start()
         {
             CommandStart.Start(doc =>
             {
@@ -476,7 +476,7 @@ namespace PIK_GP_Acad
         {
             // Передача списка команд для палитры ПИК в AcadLib.             
             InitCommands();
-            PaletteSetCommands.InitPalette(CommandsPalette);
+            PaletteSetCommands.InitPalette(CommandsPalette, nameof(PIK_Start));
 
             // Загрузка сборки Civil
             string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");

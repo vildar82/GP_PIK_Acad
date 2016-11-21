@@ -15,15 +15,14 @@ using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Elements.InfraworksExport;
 using PIK_GP_Acad.OD;
 using PIK_GP_Acad.OD.Records;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 {
-    public abstract class BlockSectionBase : BlockBase, IBuilding, IInfraworksExport
+    public abstract class BlockSectionBase : BuildingBase, IBuilding, IInfraworksExport
     {
         private Rectangle r;
-        public ObjectId IdEnt { get; private set; }
-        public int Floors { get; set; } = 1;
-        public int Height { get; set; }
+        public BlockBase BlockBase { get; set; }        
         /// <summary>
         /// Полащадь секции по внешним границам стен
         /// </summary>
@@ -32,8 +31,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// Полащадь секции - жилой площади
         /// </summary>
         public double AreaLive { get; set; }        
-        public ObjectId IdPlContour { get; set; }
-        public Extents3d ExtentsInModel { get; set; }
+        public ObjectId IdPlContour { get; set; }        
         
         public Rectangle Rectangle {
             get {
@@ -43,15 +41,10 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             }
         }
 
-        public BuildingTypeEnum BuildingType { get; set; } = BuildingTypeEnum.Living;
-        public string HouseName { get; set; }
-
-        public string PluginName { get; set; } = "GP";
-
-        public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
-        {
-            IdEnt = blRef.Id;
-            ExtentsInModel = this.Bounds.Value;
+        public BlockSectionBase (BlockReference blRef, string blName) : base(blRef.Id)
+        {   
+            BlockBase = new BlockBase(blRef, blName);
+            ExtentsInModel = this.BlockBase.Bounds.Value;
             // Площадь по внешней полилинии
             Polyline plLayer;
             var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
@@ -68,12 +61,12 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             this.LoadDboDict();
         }
 
-        public Polyline GetContourInModel ()
+        public override Polyline GetContourInModel ()
         {
             using (var pl = IdPlContour.Open(OpenMode.ForRead) as Polyline)
             {
                 var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(Transform);
+                plCopy.TransformBy(BlockBase.Transform);
                 if (plCopy.Elevation != 0)
                     plCopy.Elevation = 0;
                 return plCopy;
@@ -87,22 +80,22 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public List<IODRecord> GetODRecords ()
         {
-            var odBuild = ODBuilding.GetRecord(this, IdPlContour, OD.Records.BuildingType.Live, Height);
+            var odBuild = ODBuilding.GetRecord(BlockBase, IdPlContour, OD.Records.BuildingType.Live, Height);
             return new List<IODRecord> { odBuild };
         }
 
         private Rectangle GetRectangle ()
         {
             Extents3d ext;
-            if (Bounds != null)
+            if (BlockBase.Bounds != null)
             {
-                ext = Bounds.Value;
+                ext = BlockBase.Bounds.Value;
             }
             else
             {
                 int halfBs = 20;
-                ext = new Extents3d(new Point3d(Position.X - halfBs, Position.Y - halfBs, 0),
-                    new Point3d(Position.X + halfBs, Position.Y + halfBs, 0));
+                ext = new Extents3d(new Point3d(BlockBase.Position.X - halfBs, BlockBase.Position.Y - halfBs, 0),
+                    new Point3d(BlockBase.Position.X + halfBs, BlockBase.Position.Y + halfBs, 0));
             }
             Rectangle r = new Rectangle(ext);
             return r;
@@ -156,44 +149,6 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
                 modifiedPoints.Add(ptInsert);
             }
-        }
-
-        public DBObject GetDBObject ()
-        {
-            return IdEnt.GetObject(OpenMode.ForWrite);
-        }
-
-        public DicED GetExtDic (Document doc)
-        {
-            var dicBuild = new DicED("Building");
-            dicBuild.AddRec("Values", GetDataValues(doc));
-            return dicBuild;
-        }
-
-        public void SetExtDic (DicED dicEd, Document doc)
-        {
-            if (dicEd == null) return;
-            var dicBuild = dicEd.GetInner("Building");
-            SetDataValues(dicBuild.GetRec("Values")?.Values, doc);
-        }
-
-        public List<TypedValue> GetDataValues (Document doc)
-        {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(HouseName)
-            };
-        }
-
-        public void SetDataValues (List<TypedValue> values, Document doc)
-        {
-            if (values == null || values.Count !=1)
-            {
-                // Дефолт
-            }
-            else
-            {
-                HouseName = TypedValueExt.GetTvValue<string>(values[0]);
-            }
-        }
+        }        
     }
 }

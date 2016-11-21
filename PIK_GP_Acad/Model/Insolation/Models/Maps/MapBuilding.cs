@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -20,8 +21,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
         public BuildingTypeEnum BuildingType { get; set; }        
         public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
-        public bool IsSurroundBuilding { get; set; }
-        public bool IsProjectBuilding { get; set; }        
+        public bool IsSurroundBuilding { get; set; }        
 
         public MapBuilding () { }
 
@@ -30,15 +30,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Building = building;            
             Height = building.Height;            
             YMax = ExtentsInModel.MaxPoint.Y;
-            YMin = ExtentsInModel.MinPoint.Y;                  
-            if (building is Building)
-            {
-                IsSurroundBuilding = true;
-            }
-            else
-            {
-                IsProjectBuilding = true;
-            }
+            YMin = ExtentsInModel.MinPoint.Y;                              
         }
 
         /// <summary>

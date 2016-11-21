@@ -180,9 +180,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
             }
-        }
-
-        
+        }        
 
         /// <summary>
         /// Добавление ошибки - относящейся к этому дому
@@ -218,7 +216,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение полилинии контура дома (объединением полилиний от блок-секций)
         /// </summary>
-        public void DefineContour ()
+        public virtual void DefineContour ()
         {
             if (Sections == null) return;
             var pls = Sections.Select(s => s.Contour).ToList();
@@ -249,7 +247,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
 #if TEST
-            EntityHelper.AddEntityToCurrentSpace(Contour);
+            EntityHelper.AddEntityToCurrentSpace((Polyline)Contour.Clone());
 #endif
         }
 

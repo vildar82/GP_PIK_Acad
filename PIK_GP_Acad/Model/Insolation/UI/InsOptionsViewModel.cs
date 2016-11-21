@@ -37,7 +37,7 @@ namespace PIK_GP_Acad.Insolation.UI
             SelectedRegion = opt.Region;
 
             // Загрузка проектов из базы
-            Projects = DBService.GetProjects();            
+            Projects = DbService.GetProjects();            
 
             // Выбор текущего проекта, если он есть
             if (opt.Project != null && Projects != null && Projects.Any())
@@ -73,8 +73,8 @@ namespace PIK_GP_Acad.Insolation.UI
         InsRegion selectedRegion;
 
 
-        public List<ProjectDB> Projects { get; set; }
-        public ProjectDB SelectedProject { get; set; }
+        public List<ProjectMDM> Projects { get; set; }
+        public ProjectMDM SelectedProject { get; set; }
 
         private void OnSelectedRegionNameChanged ()
         {

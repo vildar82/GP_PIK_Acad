@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591</NoWarn>
@@ -107,6 +107,7 @@
     <Compile Include="Model\BlockSection\TableSectonKP.cs" />
     <Compile Include="Model\Elements\Blocks\BlockSection\BlockSectionPIK1KP.cs" />
     <Compile Include="Model\Elements\Buildings\Building.cs" />
+    <Compile Include="Model\Elements\Buildings\BuildingBase.cs" />
     <Compile Include="Model\Elements\Buildings\BuildingTypeEnum.cs" />
     <Compile Include="Model\Elements\Buildings\IBuilding.cs" />
     <Compile Include="Model\Elements\ElementFactory.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Maps\House.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\HousePolyline.cs" />
     <Compile Include="Model\Insolation\Models\Place\Place.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceModel.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceOptions.cs" />
@@ -158,7 +160,7 @@
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\CalcFrontCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\FrontCalcPoint.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Place\CalcPlaceCentral.cs" />
-    <Compile Include="Model\Insolation\Services\DBService.cs" />
+    <Compile Include="Model\Insolation\Services\DbService.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportHouseIns.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml.cs">
       <DependentUpon>ExportGroupsView.xaml</DependentUpon>
@@ -218,6 +220,10 @@
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualTransient.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualDatabase.cs" />
+    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupView.xaml.cs">
+      <DependentUpon>FrontGroupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Fronts\FrontView.xaml.cs">
       <DependentUpon>FrontView.xaml</DependentUpon>
     </Compile>
@@ -428,6 +434,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Model\Insolation\UI\Fronts\FrontGroupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

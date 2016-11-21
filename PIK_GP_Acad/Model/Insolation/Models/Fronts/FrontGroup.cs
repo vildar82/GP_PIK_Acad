@@ -173,7 +173,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Считываение домов с чертежа в заданной области
             using (var scope = Front.Model.Map.GetScope(SelectRegion))
             {
-                var houses = CreateHouses(scope, this);
+                var houses = CreateHouses(scope);
                 Houses = new ObservableCollection<House>(houses);
                 foreach (var house in houses)
                 {
@@ -195,25 +195,35 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение домов в выбранной области
         /// </summary>        
-        public List<House> CreateHouses (Scope scope, FrontGroup frontGroup)
+        public List<House> CreateHouses (Scope scope)
         {
             var houses = new List<House>();
             // Определение домов из блок-секций
-            var buildings = scope.Buildings.Where(b => b.IsProjectBuilding);
+            var buildings = scope.Buildings;//.Where(b => b.IsProjectBuilding);
             foreach (var building in buildings)
-            {
-                if (!FindHouse(ref houses, building))
+            {                
+                if (building.Building is Elements.Blocks.BlockSection.BlockSectionBase)
                 {
-                    var house = new House(this);
-                    house.Sections.Add(building);
-                    houses.Add(house);
+                    // Дом из блок-секций
+                    if (!FindHouse(ref houses, building))
+                    {
+                        var house = new House(this);
+                        house.Sections.Add(building);
+                        houses.Add(house);
+                    }
+                }
+                else
+                {   
+                    // Дом из одного здания (полилиния, блок соц. или прочее)
+                    var housePl = new HouseSingle(this, building);
+                    houses.Add(housePl);
                 }
             }
             // Для каждого дома - создание общей полилинии
             int countHouse = 1;
             foreach (var house in houses)
             {
-                house.FrontGroup = frontGroup;
+                house.FrontGroup = this;
                 house.DefineContour();
                 // Заполнение оставшихся свойств дома
                 house.DefineName(countHouse);
