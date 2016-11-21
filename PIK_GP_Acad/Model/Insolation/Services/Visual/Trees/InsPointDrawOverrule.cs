@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public InsPointDrawOverrule()
         {
-            SetXDataFilter(AcadLib.XDataExt.PikApp);
+            SetXDataFilter(AcadLib.XData.ExtDicHelper.PikApp);
         }
 
         public static void Start()

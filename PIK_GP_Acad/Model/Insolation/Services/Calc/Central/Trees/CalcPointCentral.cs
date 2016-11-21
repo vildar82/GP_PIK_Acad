@@ -125,16 +125,20 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private bool CorrectCalcPoint ()
         {
-            if (!WithOwnerBuilding) return true;
-            var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
-            if ((correctPt - ptCalc).Length >2)
+            if (!WithOwnerBuilding || buildingOwner == null) return true;
+            buildingOwner.InitContour();
+            using (var contour = buildingOwner.Contour)
             {
-                return false;
-                //throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
-            }
-            ptCalc = correctPt;
-            ptCalc2d = correctPt.Convert2d();
-            StartAnglesIllum.PtOrig = ptCalc2d;
+                var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
+                if ((correctPt - ptCalc).Length > 2)
+                {
+                    return false;
+                    //throw new Exception("Не корректное положение расчетной точки - " + ptCalc);
+                }
+                ptCalc = correctPt;
+                ptCalc2d = correctPt.Convert2d();
+                StartAnglesIllum.PtOrig = ptCalc2d;
+            }                                  
             return true;
         }
 
