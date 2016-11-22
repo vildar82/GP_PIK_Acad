@@ -27,14 +27,14 @@ namespace PIK_GP_Acad.OD.Records
         /// <summary>
         /// Запись OD Здания
         /// </summary>        
-        public ODBuilding (ObjectId idEnt, BuildingType type, int height)  : base (ParamTableName, idEnt)
+        public ODBuilding (ObjectId idEnt, BuildingType type, double height)  : base (ParamTableName, idEnt)
         {   
             Parameters = new List<ODParameter>() {
                 new ODParameter(ParamBuildingType, DataType.Character, ParamBuildingTypeDesc, "Жилье") { Value = type.Name },
                 new ODParameter(ParamHeight, DataType.Integer,ParamHeightDesc, 9) { Value = height }
             };
         }
-        public static ODBuilding GetRecord (BlockBase block, ObjectId idEntBuilding, BuildingType type, int height)
+        public static ODBuilding GetRecord (BlockBase block, ObjectId idEntBuilding, BuildingType type, double height)
         {            
             var IdPlContourInModel = block.CopyEntToModel(idEntBuilding.Database.CurrentSpaceId, idEntBuilding);
             ODBuilding od = new ODBuilding(IdPlContourInModel, type, height);

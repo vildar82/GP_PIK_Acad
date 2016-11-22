@@ -10,6 +10,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib;
+using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -232,8 +234,11 @@ namespace PIK_GP_Acad.Insolation.Models
             // Корректировка точки
             Point3d correctPt;
             building.InitContour();
-            correctPt = building.Contour.GetClosestPointTo(pt, true);
-            building.Contour.Dispose();                
+            using (building.Contour)
+            {
+                correctPt = building.Contour.GetClosestPointTo(pt, true);
+
+            }
 
             if ((pt - correctPt).Length < 1)
             {                
@@ -246,6 +251,19 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 // Точка далеко от контура - не пойдет.
                 res = false;
+#if TEST
+                building.InitContour();
+                using (building.Contour)
+                {
+                    EntityHelper.AddEntityToCurrentSpace((Autodesk.AutoCAD.DatabaseServices.Polyline)building.Contour.Clone());
+                }
+                var dbPt = new DBPoint(correctPt);
+                dbPt.Color = Color.FromColor(System.Drawing.Color.AliceBlue);
+                EntityHelper.AddEntityToCurrentSpace(dbPt);
+                dbPt = new DBPoint(pt);
+                dbPt.Color = Color.FromColor(System.Drawing.Color.Gold);
+                EntityHelper.AddEntityToCurrentSpace(dbPt);
+#endif
             }
             return res;
         }

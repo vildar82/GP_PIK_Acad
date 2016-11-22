@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AcadLib;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.DatabaseServices;
+using NetLib;
 
 namespace PIK_GP_Acad.FCS
 {
@@ -117,7 +118,7 @@ namespace PIK_GP_Acad.FCS
             {
                 try
                 {
-                    resVal = (T)Convert.ChangeType(prop.Value, typeof(T));
+                    resVal = prop.Value.GetValue<T>();// (T)Convert.ChangeType(prop.Value, typeof(T));
                 }
                 catch
                 {

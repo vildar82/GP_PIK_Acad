@@ -132,25 +132,31 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Delete ()
         {
-            // Удаление словаря
-            using (PlaceModel.Model.Doc.LockDocument())
+            if (PlaceId.IsValidEx())
             {
-                this.DeleteDboDict();
+                // Удаление словаря
+                using (PlaceModel.Model.Doc.LockDocument())
+                {
+                    this.DeleteDboDict();
+                }
             }
             Dispose();
         }
 
         public void Dispose ()
         {
-            VisualPlace.VisualsDelete();
-            VisualPlace.DisposeTiles();
-            VisualPlace.Dispose();
+            VisualPlace?.VisualsDelete();
+            VisualPlace?.DisposeTiles();
+            VisualPlace?.Dispose();
         }
 
         public DBObject GetDBObject ()
         {
-            var pl = PlaceId.Open(OpenMode.ForWrite, false, true) as Polyline;
-            return pl;
+            if (PlaceId.IsValidEx())
+            {
+                return PlaceId.Open(OpenMode.ForWrite, false, true) as Polyline;
+            }
+            return null;
         }
 
         public DicED GetExtDic (Document doc)

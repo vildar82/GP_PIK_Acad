@@ -392,6 +392,8 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Tree.Dispose();
                 Map.Dispose();
+                Place.Dispose();
+                Front.Dispose();
                 Doc.Database.BeginSave -= Database_BeginSave;
             }
             Doc = null;

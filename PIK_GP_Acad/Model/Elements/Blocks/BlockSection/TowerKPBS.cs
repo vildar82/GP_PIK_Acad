@@ -18,15 +18,9 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         public double AreaBKFN { get; internal set; }
         public TowerKPBS (BlockReference blRef, string blName) : base(blRef, blName)
         {
-            Define(blRef);
-        }
-
-        protected override void Define (BlockReference blRef)
-        {
-            base.Define(blRef);
             AreaBKFN = BlockBase.GetPropValue<double>(propAreaBKFN);
             AreaGNS = BlockBase.GetPropValue<double>(propAreaGNS);
             AreaLive = BlockBase.GetPropValue<double>(propAreaLive);
-        }
+        }        
     }
 }

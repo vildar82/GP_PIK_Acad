@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MicroMvvm;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -37,7 +38,7 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             var selPlace = new SelectPlace();
             var placeId = selPlace.Select();
-            if (placeId.IsNull) return;
+            if (!placeId.IsValidEx()) return;
             var place = Place.AddPlace(placeId);
             if (place != null)
             {

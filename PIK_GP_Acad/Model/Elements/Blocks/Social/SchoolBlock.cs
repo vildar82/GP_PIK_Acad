@@ -14,9 +14,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
     public class SchoolBlock : SocialBuilding
     {
         public const string BlockName = "КП_СОШ";
-        const string contourLayer = "_ГП_здания СОШ";
-
-        public override ObjectId IdPlContour { get; set; }    
+        const string contourLayer = "_ГП_здания СОШ";       
 
         public SchoolBlock (BlockReference blRef, string blName) : base(blRef, blName, contourLayer)
         {

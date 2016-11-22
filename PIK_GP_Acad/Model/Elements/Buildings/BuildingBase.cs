@@ -8,32 +8,38 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using AcadLib;
+using AcadLib.RTree.SpatialIndex;
 
 namespace PIK_GP_Acad.Elements.Buildings
 {
-    public class BuildingBase : IBuilding
+    /// <summary>
+    /// Базовый абстрактный класс для всех зданий (реализует общее поведение всех зданий - Блок-секций, Соц, Классификаторов.)
+    /// </summary>
+    public abstract class BuildingBase : IBuilding
     {
-        public BuildingTypeEnum BuildingType { get; set; }
-        public Error Error { get; set; }
-        public Extents3d ExtentsInModel { get; set; }
-        public int Floors { get; set; }
-        public int Height { get; set; }
-        public string HouseName { get; set; }
-        public ObjectId IdEnt { get; set; }
-        public string PluginName { get; set; } = "GP";
 
-        public BuildingBase (ObjectId idEnt)
+
+        public BuildingBase(ObjectId idEnt)
         {
             IdEnt = idEnt;
         }
 
-        public virtual Polyline GetContourInModel()
-        {
-            throw new NotImplementedException();
-        }
+        public BuildingTypeEnum BuildingType { get; set; }
+        public Error Error { get; set; }
+        public Extents3d ExtentsInModel { get; set; }
+        public int Floors { get; set; }
+        public double Height { get; set; }        
+        public double Elevation { get; set; }
+        public string HouseName { get; set; }
+        public ObjectId IdEnt { get; set; }
+        public string PluginName { get; set; } = "GP";
+        public abstract Rectangle Rectangle { get; set; }        
+
+        public abstract Polyline GetContourInModel();        
 
         public DBObject GetDBObject()
         {
+            if (!IdEnt.IsValidEx()) return null;
             return IdEnt.GetObject(OpenMode.ForWrite, false, true);
         }
 

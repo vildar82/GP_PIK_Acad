@@ -25,25 +25,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public BlockSectionKP(BlockReference blRef, string blName) : base (blRef, blName)
         {
-            // Определить параметры блок-секции: площадь,этажность            
-            Define(blRef);            
-        }
-
-        protected override void Define (BlockReference blRef)
-        {
-            // Определение этажности по атрибуту
-            Floors = BlockBase.GetPropValue<int>(OptionsKPBS.Instance.BlockSectionAtrFloor, exactMatch: false);
-
-            base.Define(blRef);
-        }
-
-        /// <summary>
-        /// Для экспорта в Infraworks - запись OD к полилинии контура
-        /// </summary>        
-        public List<IODRecord> GetODRecords ()
-        {
-            var odBuild = ODBuilding.GetRecord(BlockBase, IdPlContour,OD.Records.BuildingType.Live, Height);
-            return new List<IODRecord> { odBuild };
+            
         }
     }
 }

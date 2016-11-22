@@ -16,9 +16,14 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     public class BlockSectionGP : BlockSectionBase
     {
         public const string BlockNameMatch = "ГП_Блок-секция";
-
         private List<string> ReductionFactorIgnoringNamesBS = new List<string> { "Б-13", "Б-14" };
-                
+
+        public BlockSectionGP(BlockReference blRef, string blName) : base(blRef, blName)
+        {
+            // обработка атрибутов
+            parseAttrs();            
+        }
+
         /// <summary>
         /// Общая площадь квартир 
         /// </summary>
@@ -28,21 +33,15 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// </summary>
         public double AreaBKFN { get; private set; }        
         /// <summary>
-        /// Имя блок-секции 
+        /// Имя блок-секции (У-С-10)
         /// </summary>
-        public string Name { get; private set; } = string.Empty;                        
-
-        public BlockSectionGP(BlockReference blRef, string blName) : base(blRef, blName)
-        {          
-            // обработка атрибутов
-            parseAttrs();
-            Define(blRef);
-        }
+        public string Name { get; private set; } = string.Empty;      
 
         private void parseAttrs ()
         {
             // Кол этажей
             Floors = BlockBase.GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
+            Height = Floors * 3 + 3;
             // Наименование
             Name = BlockBase.GetPropValue<string>(SettingsBS.Default.AttrName);
             // Площадь БКФН

@@ -14,8 +14,7 @@ namespace PIK_GP_Acad.Insolation.Models
     public class MapBuilding : ModelBase
     {        
         public IBuilding Building { get; set; }        
-        public Polyline Contour { get; private set; }
-        public int Height { get; private set; }
+        public Polyline Contour { get; private set; }        
         public double YMax { get; private set; }
         public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
@@ -27,8 +26,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public MapBuilding(IBuilding building)
         {
-            Building = building;            
-            Height = building.Height;            
+            Building = building;                        
             YMax = ExtentsInModel.MaxPoint.Y;
             YMin = ExtentsInModel.MinPoint.Y;                              
         }

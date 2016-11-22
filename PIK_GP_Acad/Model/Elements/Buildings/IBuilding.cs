@@ -15,14 +15,19 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// </summary>
     public interface IBuilding: IElement, IDboDataSave
     {
-        int Floors { get; }
-        Extents3d ExtentsInModel { get; }        
-        int Height { get; }        
+        int Floors { get; set; }
+        Extents3d ExtentsInModel { get; set; }        
+        double Height { get; set; }                
+        /// <summary>
+        /// Относительный уровень
+        /// </summary>
+        double Elevation { get; set; }
         Polyline GetContourInModel ();
         BuildingTypeEnum BuildingType { get; set; }        
         /// <summary>
         /// Имя дома - объекта
         /// </summary>
-        string HouseName { get; set; }             
+        string HouseName { get; set; }
+        Rectangle Rectangle { get; set; }
     }
 }

@@ -52,6 +52,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void AddPlace (ObjectId plId, DicED dicPlace)
         {
+            if (!plId.IsValidEx()) return;
             var place = new Place(plId, dicPlace, this);
             Places.Add(place);
             place.Update();
@@ -86,8 +87,15 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
-                foreach (var place in Places)
+                // Очистка удаленных контуров
+                var deletedPlaces = Places.Where(p => !p.PlaceId.IsValidEx()).ToList();
+                foreach (var item in deletedPlaces)
                 {
+                    item.Delete();
+                    Places.Remove(item);
+                }
+                foreach (var place in Places)
+                {                    
                     place.Update();
                 }
             }

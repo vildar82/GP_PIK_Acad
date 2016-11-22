@@ -9,9 +9,9 @@ using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class VisualFront : VisualTransient, IDisposable
+    public class VisualFront : VisualDatabase, IDisposable
     {
-        public VisualFront(Document doc)//: base(doc)
+        public VisualFront(Document doc): base(doc)
         {
 
         }

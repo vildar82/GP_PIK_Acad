@@ -16,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Фронтоны - модель расчета
     /// </summary>
-    public class FrontModel : ModelBase, IExtDataSave, ITypedDataValues
+    public class FrontModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
         public FrontModel ()
         {
@@ -190,6 +190,17 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var export = new ExportToDB(this);
             export.Export();
+        }
+
+        public void Dispose()
+        {
+            if (Groups!= null)
+            {
+                foreach (var item in Groups)
+                {
+                    item.Dispose();
+                }
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
-        public int MaxBuildingHeight => GetMaxBuildingHeight();
+        public double MaxBuildingHeight => GetMaxBuildingHeight();
         public List<MapBuilding> Buildings { get; private set; }       
         /// <summary>
         /// Найденные точки инсоляции
@@ -96,12 +96,12 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDB();
         }
 
-        private int GetMaxBuildingHeight ()
+        private double GetMaxBuildingHeight ()
         {
-            int res = 0;
+            double res = 0;
             if (Buildings.Count != 0)
             {
-                res = Buildings.Max(b => b.Height);
+                res = Buildings.Max(b => b.Building.Height);
             }
             return res;
         }

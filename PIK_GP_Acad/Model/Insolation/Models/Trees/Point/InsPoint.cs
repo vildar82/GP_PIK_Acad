@@ -117,7 +117,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {                
-                info.Append("Здание: ").Append(building.BuildinTypeName).Append(", Высота - ").Append(building.Height).AppendLine();
+                info.Append("Здание: ").Append(building.BuildinTypeName).Append(", Высота - ").Append(building.Building.Height).AppendLine();
             }
             info.Append("Окно: ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
                 Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth);

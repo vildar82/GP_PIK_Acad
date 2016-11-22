@@ -189,7 +189,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
 
                 insPt.Point = calcFrontPt.Point.Convert3d();
-                insPt.Building = calcFrontPt.Section;                                
+                insPt.Building = calcFrontPt.Section;
+                insPt.Building.InitContour();
                 try
                 {
                     var illums = calcTrees.CalcPoint(insPt);

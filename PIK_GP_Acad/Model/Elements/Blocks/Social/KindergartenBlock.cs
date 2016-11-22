@@ -20,8 +20,6 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
         public const string BlockName = "КП_ДОО";
         const string contourLayer = "_ГП_здания ДОО";        
 
-        public override ObjectId IdPlContour { get; set; }
-
         public KindergartenBlock (BlockReference blRef, string blName) : base(blRef, blName, contourLayer)
         {
             
