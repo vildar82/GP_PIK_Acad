@@ -101,9 +101,8 @@ namespace PIK_GP_Acad.Elements
                 // Если есть параметр высоты, то это здание
                 var height = tag.Value.GetPropertyValue<double>(Building.PropHeight, ent.Id, false);
                 if (height != 0)
-                {
-                    var elevation = tag.Value.GetPropertyValue<double>(Building.PropElevation, ent.Id, false);
-                    var building = new Building(ent, height, elevation, tag.Value, clType);
+                {                    
+                    var building = new Building(ent, height, tag.Value, clType);
                     res = building;
                 }
                 else

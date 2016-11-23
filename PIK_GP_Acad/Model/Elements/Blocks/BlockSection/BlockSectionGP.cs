@@ -19,9 +19,21 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         private List<string> ReductionFactorIgnoringNamesBS = new List<string> { "Б-13", "Б-14" };
 
         public BlockSectionGP(BlockReference blRef, string blName) : base(blRef, blName)
-        {
-            // обработка атрибутов
-            parseAttrs();            
+        {            
+            // Кол этажей
+            //Floors = BlockBase.GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
+            Height = Floors * 3 + 3;
+            // Наименование
+            Name = BlockBase.GetPropValue<string>(SettingsBS.Default.AttrName);
+            // Площадь БКФН
+            AreaBKFN = BlockBase.GetPropValue<double>(SettingsBS.Default.AttrAreaBKFN);
+            //if (Floors >= 30)
+            //    AreaBKFN *= 0.92;
+            // Площадь квартир на одном этаже
+            AreaLive = BlockBase.GetPropValue<double>(SettingsBS.Default.AttrAreaApart);
+            // Площадь квартир общая на секцию (по всем этажам кроме 1)
+            //AreaApartTotal = GetPropValue<double>(SettingsBS.Default.AttrAreaApartTotal);
+            AreaApartTotal = CalcAreaApartTotal();
         }
 
         /// <summary>
@@ -36,25 +48,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// Имя блок-секции (У-С-10)
         /// </summary>
         public string Name { get; private set; } = string.Empty;      
-
-        private void parseAttrs ()
-        {
-            // Кол этажей
-            Floors = BlockBase.GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
-            Height = Floors * 3 + 3;
-            // Наименование
-            Name = BlockBase.GetPropValue<string>(SettingsBS.Default.AttrName);
-            // Площадь БКФН
-            AreaBKFN = BlockBase.GetPropValue<double>(SettingsBS.Default.AttrAreaBKFN);
-            //if (Floors >= 30)
-            //    AreaBKFN *= 0.92;
-            // Площадь квартир на одном этаже
-            AreaLive = BlockBase.GetPropValue<double>(SettingsBS.Default.AttrAreaApart);
-            // Площадь квартир общая на секцию (по всем этажам кроме 1)
-            //AreaApartTotal = GetPropValue<double>(SettingsBS.Default.AttrAreaApartTotal);
-            AreaApartTotal = CalcAreaApartTotal();            
-        }
-
+       
         private double CalcAreaApartTotal ()
         {
             var res = AreaLive * (Floors - 1);

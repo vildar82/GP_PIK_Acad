@@ -23,8 +23,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
     {
         public const string BlockName = "КП_Паркинг";
 
-        private const string ParamPlaces = "^МАШИНОМЕСТА";
-        private const string ParamFloors = "^ЭТАЖНОСТЬ";
+        private const string ParamPlaces = "^МАШИНОМЕСТА";        
 
         const string LayerContour = "_ГП_здания паркингов";
         const string LayerCoverage = "_ГП_проект проездов";
@@ -35,8 +34,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         public ParkingBuilding (BlockReference blRef, string blName) : base(blRef, blName)
         {
-            IdBlRef = blRef.Id;
-            Floors = BlockBase.GetPropValue<int>(ParamFloors, exactMatch: false);
+            IdBlRef = blRef.Id;            
             Height = Floors * 3;
 
             var valPlaces = BlockBase.GetPropValue<string>(ParamPlaces, exactMatch:false);

@@ -37,8 +37,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {
             //ExtentsInModel = BlockBase.Bounds.Value;
-            // Определить параметры блок-секции: площадь,этажность            
-            Floors = BlockBase.GetPropValue<int>("ЭТАЖ", isRequired: false, exactMatch: false);
+            // Определить параметры блок-секции: площадь,этажность                        
             Height = Floors * 3 + 3;
             // Относительный уровень
             Elevation = BlockBase.GetPropValue<double>(Building.PropElevation, false, true);

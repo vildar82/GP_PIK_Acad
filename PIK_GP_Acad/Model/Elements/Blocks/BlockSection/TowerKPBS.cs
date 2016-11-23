@@ -14,13 +14,14 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         private const string propAreaBKFN = "SБКФН";
         private const string propAreaGNS = "SГНС";
         private const string propAreaLive = "SКВ";
-
-        public double AreaBKFN { get; internal set; }
+        
         public TowerKPBS (BlockReference blRef, string blName) : base(blRef, blName)
         {
             AreaBKFN = BlockBase.GetPropValue<double>(propAreaBKFN);
             AreaGNS = BlockBase.GetPropValue<double>(propAreaGNS);
             AreaLive = BlockBase.GetPropValue<double>(propAreaLive);
-        }        
+        }
+
+        public double AreaBKFN { get; internal set; }
     }
 }

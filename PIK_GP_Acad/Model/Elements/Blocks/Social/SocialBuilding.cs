@@ -34,8 +34,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
 
         public SocialBuilding (BlockReference blRef, string blName, string layerPlContour) : base(blRef, blName)
         {            
-            Type = BlockBase.GetPropValue<string>("^ТИП", exactMatch: false);
-            Floors = BlockBase.GetPropValue<int>("^ЭТАЖНОСТЬ", exactMatch: false);
+            Type = BlockBase.GetPropValue<string>("^ТИП", exactMatch: false);            
             Height = Floors * 4;            
             Places = GetPlaces(ParamPlaces);
             BuildingType = BuildingTypeEnum.Social;
@@ -51,19 +50,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
                 IdPlContour = plContour.Id;
             }
             
-        }
-
-        public Polyline GetContourInModel ()
-        {
-            using (var pl = IdPlContour.Open(OpenMode.ForRead) as Polyline)
-            {
-                var plCopy = (Polyline)pl.Clone();
-                plCopy.TransformBy(BlockBase.Transform);
-                if (plCopy.Elevation != 0)
-                    plCopy.Elevation = 0;
-                return plCopy;
-            }
-        }
+        }       
 
         private int GetPlaces (string paramName)
         {

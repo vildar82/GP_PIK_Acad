@@ -26,17 +26,20 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// </summary>
         public const string PropHeight = "Высота";
         public const string PropElevation = "Относительный уровень";
-        public const string PropFloors = "Этажность";       
+        public const string PropFloors = "Этажность";
+        public const string PropBuildingType = "Тип здания";
 
-        public Building(Entity ent, double height, double elevation, List<FCProperty> props, ClassType classType) : base(ent.Id)
+        public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent.Id)
         {
             ExtentsInModel = ent.GeometricExtents;
             ClassType = classType;
             FCProperties = props;
             Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
+            var buildingTypeShortName = props.GetPropertyValue<string>(PropBuildingType, IdEnt, false);
+            BuildingType = GetBuildingType(buildingTypeShortName);
             Height = height;
-            Elevation = elevation;
-        }
+            Elevation = props.GetPropertyValue<int>(PropElevation, IdEnt, false);
+        }        
 
         public List<FCProperty> FCProperties { get; set; }               
         public ClassType ClassType { get; set; }
@@ -80,6 +83,19 @@ namespace PIK_GP_Acad.Elements.Buildings
             {
                 var ext = ent.GeometricExtents;
                 return new Rectangle(ext);
+            }
+        }
+
+        public static BuildingTypeEnum GetBuildingType(string buildingTypeShortName)
+        {
+            switch (buildingTypeShortName.ToLower())
+            {
+                case "с":
+                case "c":
+                    return BuildingTypeEnum.Social;                                        
+                default:
+                    // Пока есть только: ж, с.
+                    return BuildingTypeEnum.Living;
             }
         }
     }
