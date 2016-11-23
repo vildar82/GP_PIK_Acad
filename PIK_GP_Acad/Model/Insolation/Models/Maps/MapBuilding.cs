@@ -15,6 +15,10 @@ namespace PIK_GP_Acad.Insolation.Models
     {        
         public IBuilding Building { get; set; }        
         public Polyline Contour { get; private set; }        
+        /// <summary>
+        /// Расчетная высота здания, с учетом уровня
+        /// </summary>
+        public double HeightCalc { get; set; }
         public double YMax { get; private set; }
         public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
@@ -28,7 +32,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Building = building;                        
             YMax = ExtentsInModel.MaxPoint.Y;
-            YMin = ExtentsInModel.MinPoint.Y;                              
+            YMin = ExtentsInModel.MinPoint.Y;
+            HeightCalc = building.Height + building.Elevation;                            
         }
 
         /// <summary>

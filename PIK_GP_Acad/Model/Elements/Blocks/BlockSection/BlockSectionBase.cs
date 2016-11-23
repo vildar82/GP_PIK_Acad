@@ -23,7 +23,11 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// Общий абстрактный класс для всех Блок-секций (основан гна здании из блока)
     /// </summary>
     public abstract class BlockSectionBase : BuildingBlockBase, IBuilding, IInfraworksExport
-    {        
+    {
+        private const string PropHeightTypicalFloor = "H_Типового_этажа";
+        private const string PropHeightFirstFloor = "H_1_этажа";
+        private const string PropHeightTechFloor = "H_Тех_этажа";
+
         /// <summary>
         /// Полащадь секции по внешним границам стен
         /// </summary>
@@ -31,14 +35,14 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// <summary>
         /// Полащадь секции - жилой площади
         /// </summary>
-        public double AreaLive { get; set; }        
-        
+        public double AreaLive { get; set; }  
 
         public BlockSectionBase (BlockReference blRef, string blName) : base(blRef, blName)
         {
             //ExtentsInModel = BlockBase.Bounds.Value;
-            // Определить параметры блок-секции: площадь,этажность                        
-            Height = Floors * 3 + 3;
+            // Определить параметры блок-секции: площадь,этажность  
+                                  
+            Height = CalcHeight();
             // Относительный уровень
             Elevation = BlockBase.GetPropValue<double>(Building.PropElevation, false, true);
             // Площадь по внешней полилинии
@@ -55,7 +59,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             }
             // Загрузка значений из словаря объекта
             this.LoadDboDict();
-        }                
+        }        
 
         public List<IODRecord> GetODRecords ()
         {
@@ -111,6 +115,28 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
                 modifiedPoints.Add(ptInsert);
             }
-        }        
+        }
+
+        /// <summary>
+        /// Определение высоты
+        /// </summary>
+        /// <returns></returns>
+        private double CalcHeight()
+        {
+            double resHeight;
+            var h1 = BlockBase.GetPropValue<double>(PropHeightFirstFloor, false);
+            var hTyp = BlockBase.GetPropValue<double>(PropHeightTypicalFloor, false);
+            var hTech = BlockBase.GetPropValue<double>(PropHeightTechFloor, false);
+
+            if (hTyp == 0)
+            {
+                resHeight = Floors * 3 + 3;
+            }
+            else
+            {
+                resHeight = (Floors - 1) * hTyp + h1 + hTech;
+            }
+            return resHeight;
+        }
     }
 }

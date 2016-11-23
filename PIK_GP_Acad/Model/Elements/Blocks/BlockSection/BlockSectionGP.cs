@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         {            
             // Кол этажей
             //Floors = BlockBase.GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
-            Height = Floors * 3 + 3;
+            //Height = Floors * 3 + 3;
             // Наименование
             Name = BlockBase.GetPropValue<string>(SettingsBS.Default.AttrName);
             // Площадь БКФН

@@ -101,7 +101,7 @@ namespace PIK_GP_Acad.Insolation.Models
             double res = 0;
             if (Buildings.Count != 0)
             {
-                res = Buildings.Max(b => b.Building.Height);
+                res = Buildings.Max(b => b.HeightCalc);
             }
             return res;
         }

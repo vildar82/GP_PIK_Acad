@@ -80,11 +80,15 @@ namespace PIK_GP_Acad.Insolation.Services
 
                     // Расчет зон теней
                     // группировка домов по высоте
-                    var heights = scope.Buildings.GroupBy(g => g.Building.Height);
+                    var heights = scope.Buildings.GroupBy(g => g.HeightCalc);
+                    // высота точки с учетом уровня дома
+                    var ptHeightCalc = insPt.Height + (buildingOwner?.Building.Elevation ?? 0);
                     foreach (var bHeight in heights)
                     {
                         // зоны тени для домов этой высоты
-                        var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), (double)bHeight.Key - insPt.Height);
+                        // Расчетная высота точки
+                        var heightCalc = bHeight.Key - ptHeightCalc;
+                        var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), heightCalc);
                         if (illumsByHeight != null && illumsByHeight.Any())
                         {
                             resAreas.AddRange(illumsByHeight);
@@ -439,7 +443,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
 
                 // Линия тени - пересечение собственного дрма сней?                
-                using (var lineShadow = GetLineShadow(buildingOwner.Building.Height))
+                using (var lineShadow = GetLineShadow(buildingOwner.HeightCalc))
                 {
                     using (var ptsIntersect = new Point3dCollection())
                     {
