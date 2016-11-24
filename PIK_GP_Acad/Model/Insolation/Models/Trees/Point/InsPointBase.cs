@@ -237,7 +237,6 @@ namespace PIK_GP_Acad.Insolation.Models
             using (building.Contour)
             {
                 correctPt = building.Contour.GetClosestPointTo(pt, true);
-
             }
 
             if ((pt - correctPt).Length < 1)
@@ -252,17 +251,17 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Точка далеко от контура - не пойдет.
                 res = false;
 #if TEST
-                building.InitContour();
-                using (building.Contour)
-                {
-                    EntityHelper.AddEntityToCurrentSpace((Autodesk.AutoCAD.DatabaseServices.Polyline)building.Contour.Clone());
-                }
-                var dbPt = new DBPoint(correctPt);
-                dbPt.Color = Color.FromColor(System.Drawing.Color.AliceBlue);
-                EntityHelper.AddEntityToCurrentSpace(dbPt);
-                dbPt = new DBPoint(pt);
-                dbPt.Color = Color.FromColor(System.Drawing.Color.Gold);
-                EntityHelper.AddEntityToCurrentSpace(dbPt);
+                //building.InitContour();
+                //using (building.Contour)
+                //{
+                //    EntityHelper.AddEntityToCurrentSpace((Autodesk.AutoCAD.DatabaseServices.Polyline)building.Contour.Clone());
+                //}
+                //var dbPt = new DBPoint(correctPt);
+                //dbPt.Color = Color.FromColor(System.Drawing.Color.AliceBlue);
+                //EntityHelper.AddEntityToCurrentSpace(dbPt);
+                //dbPt = new DBPoint(pt);
+                //dbPt.Color = Color.FromColor(System.Drawing.Color.Gold);
+                //EntityHelper.AddEntityToCurrentSpace(dbPt);
 #endif
             }
             return res;

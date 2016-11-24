@@ -41,7 +41,11 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Определение требования освещенности
         /// </summary>
         public InsValue CalcTimeAndGetRate (List<IIlluminationArea> illums, BuildingTypeEnum buildingType)
-        {            
+        {
+            if (illums == null)
+            {
+                return InsValue.Empty;
+            }
             int maxTimeContinuosIlum = 0;
             int curContinuosTime = 0;
             int totalTime = 0;

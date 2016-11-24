@@ -122,7 +122,28 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
                 if (buildings.Any())
                 {
-                    return true;
+                    // Проверить что тока внутри контура другого здания
+                    bool resInside = false;
+                    foreach (var item in buildings)
+                    {
+                        bool isInitContour = false;
+                        if (item.Contour==null || item.Contour.IsDisposed)
+                        {
+                            isInitContour = true;
+                            item.InitContour();
+                        }
+
+                        if (item.Contour.IsPointInsidePolygon(ptCalc))
+                        {
+                            resInside = true;
+                        }
+
+                        if (isInitContour)
+                            item.Contour.Dispose();
+
+                        if (resInside)
+                            return true;
+                    }                    
                 }
             }
             return false;

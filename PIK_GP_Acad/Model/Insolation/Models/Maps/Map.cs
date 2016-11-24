@@ -121,7 +121,11 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void Unsubscribe ()
         {
-            db.ObjectAppended -= Database_ObjectAppended;
+            try
+            {
+                db.ObjectAppended -= Database_ObjectAppended;
+            }
+            catch { }
             using (var t = db.TransactionManager.StartTransaction())
             {
                 foreach (var item in Buildings)
@@ -207,10 +211,40 @@ namespace PIK_GP_Acad.Insolation.Models
         public MapBuilding GetBuildingInPoint (Point2d pt)
         {
             MapBuilding building = null;
-            var buildingsInPt = GetBuildingsInPoint(pt);      
-            if (buildingsInPt.Count > 0)
+            var buildingsInPt = GetBuildingsInPoint(pt);
+            if (buildingsInPt.Count == 1)
             {
                 building = buildingsInPt[0];
+            }
+            else if (buildingsInPt.Count > 1)
+            {
+                // Выбрать ближайшую полилинию                
+                double minLen = -1;
+                var pt3d = pt.Convert3d();
+                foreach (var buildItem in buildingsInPt)
+                {
+                    bool initContour = false;
+                    if (buildItem.Contour == null || buildItem.Contour.IsDisposed)
+                    {
+                        buildItem.InitContour();
+                        initContour = true;
+                    }
+
+                    try
+                    {
+                        var ptContour = buildItem.Contour.GetClosestPointTo(pt3d, false);
+                        var l = (pt3d - ptContour).Length;
+                        if (l < minLen || minLen ==-1)
+                        {
+                            minLen = l;
+                            building = buildItem;
+                        }
+                    }
+                    catch { }
+
+                    if (initContour)
+                        buildItem.Contour.Dispose();
+                }
             }
             return building;
         }
