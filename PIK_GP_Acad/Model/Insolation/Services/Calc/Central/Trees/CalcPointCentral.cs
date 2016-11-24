@@ -244,18 +244,42 @@ namespace PIK_GP_Acad.Insolation.Services
             // Дом на границе тени, нужно строить линию пересечения с домом
             Point3dCollection ptsIntersects = new Point3dCollection();
             lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
-            // Точки выше найденного пересецения
-            var ptsContour = build.Contour.GetPoints();
-            var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.Y).ToList();
-            foreach (Point3d item in ptsIntersects)
+            
+            // Между каждыми точками пересечения определение петли полилинии и определение тени
+            if (ptsIntersects.Count > 1)
             {
-                ptsAboveLine.Add(item.Convert2d());
+                var ptsItersectSort = ptsIntersects.Cast<Point3d>().OrderBy(o => o.X);
+                var ptIntersectPrew = ptsItersectSort.First();
+                foreach (var ptIntersect in ptsItersectSort.Skip(1))
+                {
+                    // Если средняя точка внутри полилинии
+                    if (build.Contour.IsPointInsidePolygon(ptIntersect.Center(ptIntersectPrew)))
+                    {
+                        // Точки петли выше
+                        var ptsLoopAbove = build.Contour.GetLoopSideBetweenHorizontalIntersectPoints(
+                                            ptIntersectPrew, ptIntersect, true, true);
+                        var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p=>p.Y<= ptCalc.Y).ToList());
+                        if (ilumShadow != null)
+                        {
+                            resIlumsShadows.Add(ilumShadow);
+                        }
+                    }
+                    ptIntersectPrew = ptIntersect;
+                }
             }
-            var ilumShadow = GetIllumShadow(ptsAboveLine);
-            if (ilumShadow != null)
-            {
-                resIlumsShadows.Add(ilumShadow);
-            }            
+
+            //// Точки выше найденного пересечения
+            //var ptsContour = build.Contour.GetPoints();
+            //var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.Y).ToList();
+            //foreach (Point3d item in ptsIntersects)
+            //{
+            //    ptsAboveLine.Add(item.Convert2d());
+            //}
+            //var ilumShadow = GetIllumShadow(ptsAboveLine);
+            //if (ilumShadow != null)
+            //{
+            //    resIlumsShadows.Add(ilumShadow);
+            //}            
             return resIlumsShadows;
         }
 
