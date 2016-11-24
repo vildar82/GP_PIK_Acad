@@ -299,7 +299,11 @@ namespace PIK_GP_Acad.Insolation.Services
             double ySunPlane = values.YShadowLineByHeight(maxHeight, out cSunPlane);
             // растояние до точки пересечения луча и линии тени
             double xRayToStart = values.GetXRay(ySunPlane, StartAnglesIllum.AngleStartOnPlane);
+            if (xRayToStart < ptCalc.X)
+                xRayToStart = ptCalc.X;
             double xRayToEnd = values.GetXRay(ySunPlane, StartAnglesIllum.AngleEndOnPlane);
+            if (xRayToEnd > ptCalc.X)
+                xRayToEnd = ptCalc.X;
             Extents3d ext = new Extents3d(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
                                           new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
             return ext;
