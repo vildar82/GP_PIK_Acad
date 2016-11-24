@@ -191,7 +191,8 @@ namespace PIK_GP_Acad.Insolation.Services
                     if (build.YMin >= lineShadow.StartPoint.Y)
                     {
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
+                        var ilumShadow = GetBuildingZeroLineShadows(build);
+                        //var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
                             illumShadows.Add(ilumShadow);
@@ -210,7 +211,30 @@ namespace PIK_GP_Acad.Insolation.Services
             // Объединение совпадающих зон теней
             illumShadows = IllumAreaBase.Merge(illumShadows);
             return illumShadows;
-        }        
+        }
+
+
+        /// <summary>
+        /// Определение зон теней от дома, который выше расчетной линии тени  - по линии через 0
+        /// </summary>
+        /// <param name="build"></param>        
+        /// <returns></returns>
+        private IIlluminationArea GetBuildingZeroLineShadows(MapBuilding build)
+        {
+            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
+            {
+                Point3dCollection ptsIntersects = new Point3dCollection();
+                lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                var pts = build.Contour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
+                pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s=>s.Convert2d()));
+                if (pts.Any())
+                {
+                    var ilumShadow = GetIllumShadow(pts);
+                    return ilumShadow;
+                }                
+            }
+            return null;
+        }
 
         private List<IIlluminationArea> GetBuildingLineShadowBoundary (MapBuilding build, Line lineShadow,
             Intersect intersectMode)

@@ -88,6 +88,8 @@ namespace PIK_GP_Acad.Elements.Buildings
 
         public static BuildingTypeEnum GetBuildingType(string buildingTypeShortName)
         {
+            if (string.IsNullOrEmpty(buildingTypeShortName))
+                return BuildingTypeEnum.Living;
             switch (buildingTypeShortName.ToLower())
             {
                 case "с":
