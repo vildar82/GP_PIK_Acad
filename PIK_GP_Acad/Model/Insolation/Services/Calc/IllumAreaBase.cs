@@ -20,10 +20,11 @@ namespace PIK_GP_Acad.Insolation.Services
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }
         public int Time { get; set; }        
-        public InsPoint InsPoint { get; set; }      
+        public IInsPoint InsPoint { get; set; }      
 
-        public IllumAreaBase(Point2d ptOrig,double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
+        public IllumAreaBase(IInsPoint insPoint, Point2d ptOrig,double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
         {
+            InsPoint = insPoint;
             AngleStartOnPlane = angleStart;
             AngleEndOnPlane = angleEnd;
             PtOrig = ptOrig;
@@ -68,7 +69,8 @@ namespace PIK_GP_Acad.Insolation.Services
             List<Entity> draws = new List<Entity>();
 
             // Штриховка
-            var visOpt = new VisualOption(System.Drawing.Color.Red, Point3d.Origin, 60);
+            var color = InsPoint?.InsValue?.Requirement?.Color ?? System.Drawing.Color.Gray;
+            var visOpt = new VisualOption(color, Point3d.Origin, 60);
             var points = new List<Point2d> { PtOrig, PtStart, PtEnd };
             var h = VisualHelper.CreateHatch(points, visOpt);
             draws.Add(h);

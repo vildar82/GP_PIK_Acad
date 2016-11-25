@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Services;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -20,8 +21,8 @@ namespace PIK_GP_Acad.Insolation.Services
         //public Polyline Medium { get; set; }
         //public Polyline Hight { get; set; }       
 
-        public IllumAreaCentral (Point2d ptOrig, double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
-            : base(ptOrig, angleStart, angleEnd, ptStart, ptEnd)
+        public IllumAreaCentral (IInsPoint insPoint, Point2d ptOrig, double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
+            : base(insPoint, ptOrig, angleStart, angleEnd, ptStart, ptEnd)
         {
 
         }
@@ -47,7 +48,7 @@ namespace PIK_GP_Acad.Insolation.Services
         //}
 
         public static List<IIlluminationArea> Invert (List<IIlluminationArea> illums, 
-            IIlluminationArea startAnglesIllumBound, Point2d ptOrig)
+            IIlluminationArea startAnglesIllumBound, Point2d ptOrig, IInsPoint insPoint)
         {
             double angleStart = startAnglesIllumBound.AngleStartOnPlane;
             double angleEnd= startAnglesIllumBound.AngleEndOnPlane;
@@ -56,7 +57,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (illums.Count == 0)
             {
                 // Зон теней нет. От стартового угла до конечного - зона освещена                    
-                var illum = new IllumAreaCentral(ptOrig, angleStart, angleEnd,
+                var illum = new IllumAreaCentral(insPoint, ptOrig, angleStart, angleEnd,
                     GetPointInRayByLength(ptOrig, angleStart, 50),
                     GetPointInRayByLength(ptOrig, angleEnd, 50));
                 inverts.Add(illum);
@@ -70,7 +71,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 {
                     if (item.AngleStartOnPlane - curStart > 0.01)
                     {
-                        var illum = new IllumAreaCentral(item.PtOrig, curStart, item.AngleStartOnPlane, cusStartPt, item.PtStart);
+                        var illum = new IllumAreaCentral(insPoint, item.PtOrig, curStart, item.AngleStartOnPlane, cusStartPt, item.PtStart);
                         inverts.Add(illum);
                     }
                     curStart = item.AngleEndOnPlane;
@@ -79,7 +80,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 if (angleEnd - curStart > 0.1)
                 {
                     Point2d ptEnd = GetPointInRayFromPoint(illums[0].PtOrig, cusStartPt, angleEnd);
-                    var illum = new IllumAreaCentral(illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
+                    var illum = new IllumAreaCentral(insPoint,illums[0].PtOrig, curStart, angleEnd, cusStartPt, ptEnd);
                     inverts.Add(illum);
                 }
             }

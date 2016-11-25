@@ -49,7 +49,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
             //AngleStartOnPlane = values.SunCalcAngleStartOnPlane;
             //AngleEndOnPlane = values.SunCalcAngleEndOnPlane;
-            StartAnglesIllum = new IllumAreaBase(ptCalc2d, values.SunCalcAngleStartOnPlane, values.SunCalcAngleEndOnPlane,
+            StartAnglesIllum = new IllumAreaBase(insPt, ptCalc2d, values.SunCalcAngleStartOnPlane, values.SunCalcAngleEndOnPlane,
                 Point2d.Origin, Point2d.Origin);
         }
 
@@ -98,7 +98,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 resAreas = IllumAreaBase.Merge(resAreas);
 
                 // Инвертировать зоны теней в зоны освещенностей    
-                resAreas = IllumAreaCentral.Invert(resAreas, StartAnglesIllum, ptCalc2d);                
+                resAreas = IllumAreaCentral.Invert(resAreas, StartAnglesIllum, ptCalc2d, insPt);                
             }
             else
             {
@@ -333,7 +333,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ptEnd = IllumAreaBase.GetPointInRayFromPoint(ptCalc2d, angleEnd.Item1, StartAnglesIllum.AngleEndOnPlane);
                 angleEnd = new Tuple<Point2d, double>(ptEnd, StartAnglesIllum.AngleEndOnPlane);
             }
-            var ilum = new IllumAreaCentral(ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
+            var ilum = new IllumAreaCentral(insPt, ptCalc2d, angleStart.Item2, angleEnd.Item2, angleStart.Item1, angleEnd.Item1);
             return ilum;
         }
 
@@ -468,7 +468,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var seg = contour.GetLineSegment2dAt(vertexIndex);
             var segNext = contour.GetLineSegment2dAt(nextIndex);
             // Область освещения от угла контура - от 1 сегмента до 2 (угол вне дома)
-            var cornerIllum = new IllumAreaBase(ptCalc2d, seg.Direction.Angle, segNext.Direction.Negate().Angle, Point2d.Origin, Point2d.Origin);
+            var cornerIllum = new IllumAreaBase(insPt, ptCalc2d, seg.Direction.Angle, segNext.Direction.Negate().Angle, Point2d.Origin, Point2d.Origin);
 
             // Проверка - если средний вектор внутри здания, то инвертировать область
             var midVec = cornerIllum.GetMidVector();

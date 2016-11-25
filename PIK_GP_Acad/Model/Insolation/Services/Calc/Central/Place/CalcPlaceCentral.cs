@@ -53,6 +53,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 insPt.Model = model;
                 insPt.Window = null;
                 insPt.Building = null;
+                insPt.Height = 0;
                 foreach (var tile in tiles)
                 {
                     insPt.Point = tile.Point.Convert3d();                    

@@ -8,7 +8,7 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public interface IIlluminationArea
     {
-        InsPoint InsPoint { get; set; }
+        IInsPoint InsPoint { get; set; }
         Point2d PtOrig { get; set; }
         Point2d PtStart { get; set; }
         Point2d PtEnd { get; set; }

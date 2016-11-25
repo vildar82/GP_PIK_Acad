@@ -173,7 +173,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчетные точки с определенными секциями - только их считать
             //calcPts = calcPts.Where(w => w.Section != null).ToList();
 
-            // Расчет в точке - без окна!
+            // Расчет в точке
             var insPt = new InsPoint();
             insPt.Model = model;            
             insPt.Window = WindowOptions.Default();

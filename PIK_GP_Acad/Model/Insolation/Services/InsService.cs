@@ -127,6 +127,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 try
                 {
+                    //item.Value.SaveIns();
                     item.Value.Dispose();
                 }
                 catch
@@ -134,13 +135,13 @@ namespace PIK_GP_Acad.Insolation.Services
                     // ignored
                 }
             }
-            palette = null;
-            insModels = null;
-            insViewModel = null;
-            insView = null;
+            //palette = null;
+            //insModels = null;
+            //insViewModel = null;
+            //insView = null;
             InsPointDrawOverrule.Stop();
 
-            GC.Collect();
+            //GC.Collect();
 
             Logger.Log.Info($"Закрытие палитры инсоляции.");
         }

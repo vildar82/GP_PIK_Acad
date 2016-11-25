@@ -46,8 +46,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public static InsOptions Default ()
         {
+            var defaultRegion = InsService.Settings.Regions
+                .FirstOrDefault(r => r.City.Equals("Москва", StringComparison.OrdinalIgnoreCase)) ?? InsService.Settings.Regions[0];            
             InsOptions defaultOptions = new InsOptions {
-                Transparence = 120, TileSize = 1, Region = InsService.Settings.Regions[0],
+                Transparence = 120, TileSize = 1, Region = defaultRegion,
                 ShadowDegreeStep = 1, SunCalcAngleStart = 15.0, SunCalcAngleEnd = 165.0
             };
             return defaultOptions;
@@ -90,7 +92,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 TypedValueExt.GetTvExtData(ShadowDegreeStep),
                 TypedValueExt.GetTvExtData(SunCalcAngleStart),
                 TypedValueExt.GetTvExtData(SunCalcAngleEnd),
-                TypedValueExt.GetTvExtData(Project.Id)
+                TypedValueExt.GetTvExtData(Project?.Id ?? 0)
             };
         }
 

@@ -75,7 +75,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public static WindowOptions Default ()
         {
             return new WindowOptions {
-                Width = 1.5,
+                Width = 1.2,
                 Quarter = 0.07,                                
                 Construction = WindowConstruction.WindowConstructions[0] };
         }
