@@ -3,6 +3,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.GraphicsInterface;
 using PIK_GP_Acad.Insolation.Models;
+using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -15,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.Services
         double AngleEndOnPlane { get; set; }
         double AngleStartOnPlane { get; set; }
         int Time { get; set; }
-        List<Entity> CreateVisual ();
+        List<Entity> CreateVisual (byte transparence);
         Vector2d GetMidVector ();
         /// <summary>
         /// Смена стартового и конечного углов

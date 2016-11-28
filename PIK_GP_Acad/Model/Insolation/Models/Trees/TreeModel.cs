@@ -75,11 +75,11 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 // Удаление старой визуализации
                 VisualTrees.VisualsDelete();
-                VisualTrees.Model = insModel;
+                VisualTrees.TreeModel = this;
             }
             else
             {
-                VisualTrees = new VisualTree(insModel);
+                VisualTrees = new VisualTree(this);
                 if (isVisualTreeOnOffForLoad)
                     VisualTrees.VisualIsOn = isVisualTreeOnOffForLoad;
             }            

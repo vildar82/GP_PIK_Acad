@@ -20,7 +20,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
         }
 
-        public byte Transparence { get; set; }/* = 120;        */
+        //public byte Transparence { get; set; }/* = 120;        */
         /// <summary>
         /// Размер ячейки карты - квадрата, на который разбивается вся карта
         /// </summary>
@@ -33,11 +33,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Начальный расчетный угол (пропуская первый час) [град]. Восход(центр) = 0град + 15
         /// </summary>
-        public double SunCalcAngleStart { get; set; }/* = 15.0;*/
+        public double SunCalcAngleStart { get; set; } = 15.0;
         /// <summary>
         /// Конечный расчетный угол (минус последний час) [град]. Заход(центр) = 180град -15
         /// </summary>
-        public double SunCalcAngleEnd { get; set; }/* = 165.0;        */
+        public double SunCalcAngleEnd { get; set; }= 165.0;       
         /// <summary>
         /// Проект (по базе)
         /// </summary>
@@ -49,7 +49,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var defaultRegion = InsService.Settings.Regions
                 .FirstOrDefault(r => r.City.Equals("Москва", StringComparison.OrdinalIgnoreCase)) ?? InsService.Settings.Regions[0];            
             InsOptions defaultOptions = new InsOptions {
-                Transparence = 120, TileSize = 1, Region = defaultRegion,
+                TileSize = 1, Region = defaultRegion,
                 ShadowDegreeStep = 1, SunCalcAngleStart = 15.0, SunCalcAngleEnd = 165.0
             };
             return defaultOptions;
@@ -68,8 +68,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (dicOpt== null)
             {
                 // Default
-                var defOpt = Default();
-                Transparence = defOpt.Transparence;
+                var defOpt = Default();                
                 TileSize = defOpt.TileSize;
                 Region = defOpt.Region;
                 ShadowDegreeStep = defOpt.ShadowDegreeStep;
@@ -86,8 +85,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Transparence),
+            return new List<TypedValue> {                
                 TypedValueExt.GetTvExtData(TileSize),
                 TypedValueExt.GetTvExtData(ShadowDegreeStep),
                 TypedValueExt.GetTvExtData(SunCalcAngleStart),
@@ -98,26 +96,24 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 6)
+            if (values == null || values.Count != 3)
             {
                 // Дефолтные настройки
-                var defOpt = Default();
-                Transparence = defOpt.Transparence;
+                var defOpt = Default();                
                 TileSize = defOpt.TileSize;
                 ShadowDegreeStep = defOpt.ShadowDegreeStep;
-                SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
-                SunCalcAngleStart = defOpt.SunCalcAngleStart;
+                //SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
+                //SunCalcAngleStart = defOpt.SunCalcAngleStart;
             }
             else
             {
-                int index = 0;
-                Transparence = values[index++].GetTvValue<byte>();
+                int index = 0;                
                 TileSize = values[index++].GetTvValue<int>();
                 ShadowDegreeStep = values[index++].GetTvValue<int>();
-                SunCalcAngleStart = values[index++].GetTvValue<double>();
-                SunCalcAngleEnd = values[index++].GetTvValue<double>();
+                //SunCalcAngleStart = values[index++].GetTvValue<double>();
+                //SunCalcAngleEnd = values[index++].GetTvValue<double>();
                 var id = values[index++].GetTvValue<int>();
-                Project = Services.DbService.FindProject(id);
+                Project = DbService.FindProject(id);
             }
         }
     }

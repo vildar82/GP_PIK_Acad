@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Models;
+using AcadLib;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -74,17 +76,41 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчитанные точки сегмента
             calcPoints = GetFrontCalcPoints(seg, delta);
             // Определение фронтов
-            var ptsIsCalced = calcPoints.Where(p => p.IsCalulated).ToList();
+            var ptsIsCalced = calcPoints;//.Where(p => p.IsCalulated).ToList(); ???!!!
             FrontCalcPoint fPtPrew = ptsIsCalced.First();
             fPtPrew.InsValue = ptsIsCalced.Skip(1).First().InsValue;
             FrontCalcPoint fPtStart = fPtPrew;
-            foreach (var item in ptsIsCalced.Skip(1))
+            for (int i =1; i< ptsIsCalced.Count; i++)
             {
+                var item = ptsIsCalced[i];
                 if (fPtPrew.InsValue != item.InsValue || item.IsCorner)
                 {
                     if (item.IsCorner)
                     {
                         fPtPrew = item;
+                    }
+                    // Если это одна точка с другой инсоляцией, то игнорирование
+                    else
+                    {
+                        // значение инс след точки
+                        var iNext = i + 1;
+                        if (iNext< ptsIsCalced.Count)
+                        {
+                            var itemNext = ptsIsCalced[iNext];
+                            if (itemNext.IsCorner)
+                            {
+                                i++;
+                                fPtPrew = itemNext;
+                            }
+                            else
+                            {
+                                if (itemNext.InsValue == fPtPrew.InsValue)
+                                {
+                                    // Инс след точки совпадает с предыдущей - текущую игнорим.
+                                    continue;
+                                }
+                            }
+                        }
                     }
                     // Создание фронта
                     var frontLine = CreateFrontLine(fPtStart, fPtPrew, seg);
@@ -189,6 +215,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
 
                 insPt.Point = calcFrontPt.Point.Convert3d();
+#if TEST
+                //EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
+#endif
                 insPt.Building = calcFrontPt.Section;
                 insPt.Building.InitContour();
                 try
@@ -200,6 +229,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
                 catch
                 {
+                    calcFrontPt.InsValue = InsRequirementEnum.None;
                     // На угловых точках - может не рассчитаться пока
                     // Пропустить!?
                 }

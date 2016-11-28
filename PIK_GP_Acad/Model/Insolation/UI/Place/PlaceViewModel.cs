@@ -57,7 +57,10 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnEditOptionsExecute ()
         {
             var placeOptVM = new PlaceOptionsViewModel(Place.Options);
-            InsService.ShowDialog(placeOptVM);
+            if (InsService.ShowDialog(placeOptVM) == true)
+            {
+                Place.Update();
+            }
         }
 
         private void OnDeleteExecute (Place place)

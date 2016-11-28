@@ -64,13 +64,13 @@ namespace PIK_GP_Acad.Insolation.Services
             return merged;
         }
 
-        public List<Entity> CreateVisual ()
+        public List<Entity> CreateVisual (byte transparence)
         {
             List<Entity> draws = new List<Entity>();
 
             // Штриховка
             var color = InsPoint?.InsValue?.Requirement?.Color ?? System.Drawing.Color.Gray;
-            var visOpt = new VisualOption(color, Point3d.Origin, 60);
+            var visOpt = new VisualOption(color, Point3d.Origin, transparence);
             var points = new List<Point2d> { PtOrig, PtStart, PtEnd };
             var h = VisualHelper.CreateHatch(points, visOpt);
             draws.Add(h);

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Настройки площадок"
-    Width="200" Height="221"
+    Width="191" Height="339"
     d:DataContext="{d:DesignInstance local:PlaceOptionsViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
@@ -24,62 +24,121 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="5" HorizontalAlignment="Left">
-            <TextBlock Text="Шаг расчета" />
-            <TextBox Text="{Binding PlaceOptions.TileSize}" TextAlignment="Center" />
-        </StackPanel>
-        <Grid Grid.Row="1" Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Уровни освещенности, ч.:" />
-            <ItemsControl x:Name="icLevels" Grid.Row="1" ItemsSource="{Binding PlaceOptions.Levels}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Margin="2"
-                            Background="{Binding Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}"
-                            BorderBrush="Gray" BorderThickness="1">
-                            <Grid Margin="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.InputBindings>
-                                    <MouseBinding Command="{Binding ElementName=icLevels, Path=DataContext.SelectColor}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
-                                </Grid.InputBindings>
-                                <TextBox
-                                    Grid.ColumnSpan="2"
-                                    Margin="0"
-                                    Background="{Binding Color, Converter={converters:ColorToBrushConverter}}"
-                                    FontSize="20" FontWeight="Bold"
-                                    Text="{Binding TotalTimeH, UpdateSourceTrigger=PropertyChanged}"
-                                    TextAlignment="Center" ToolTip="Уровень освещенности"
-                                    Cursor="Arrow">
-                                    <TextBox.InputBindings>
-                                        <MouseBinding Command="{Binding ElementName=icLevels, Path=DataContext.SelectColor}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
-                                    </TextBox.InputBindings>                                    
-                                </TextBox>
-                                <Button
-                                    Grid.Column="1"
-                                    Width="20" Height="20"
-                                    Margin="5" HorizontalAlignment="Right"
-                                    Command="{Binding ElementName=icLevels, Path=DataContext.DeleteLevel}"
-                                    CommandParameter="{Binding}">
-                                    <Image Source="{StaticResource biClose}" />
-                                </Button>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <Button
-                Grid.Row="2"
-                Margin="2"
-                Command="{Binding AddLevel}"
-                Content="Добавить" />
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.Row="0"
+                Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Шаг расчета" />
+                <TextBox Text="{Binding TileSize}" TextAlignment="Center" />
+            </StackPanel>
+            <Grid Grid.Column="1" Margin="5" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Прозрачность" />
+                <Slider
+                    Grid.Row="1" Grid.Column="0"
+                    MinWidth="100"
+                    Maximum="250" TickFrequency="1"
+                    Value="{Binding TransparenceInvert}" />
+                <TextBox
+                    Grid.Row="1" Grid.Column="1"
+                    MinWidth="40"
+                    Text="{Binding TransparenceInvert}"
+                    TextAlignment="Center" />
+            </Grid>
         </Grid>
+        <ScrollViewer Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Уровни освещенности, ч.:" />
+                <ItemsControl x:Name="icLevels" Grid.Row="1" ItemsSource="{Binding Levels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Margin="2"
+                                Background="{Binding Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                BorderBrush="Gray" BorderThickness="1">
+                                <Grid Margin="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.InputBindings>
+                                        <MouseBinding Command="{Binding ElementName=icLevels, Path=DataContext.SelectColor}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
+                                    </Grid.InputBindings>
+                                    <TextBox
+                                        Grid.ColumnSpan="2"
+                                        Margin="0"
+                                        Background="{Binding Color, Converter={converters:ColorToBrushConverter}}"
+                                        FontSize="20" FontWeight="Bold"
+                                        Cursor="Arrow"
+                                        Text="{Binding TotalTimeH, UpdateSourceTrigger=PropertyChanged}"
+                                        TextAlignment="Center" ToolTip="Уровень освещенности">
+                                        <TextBox.InputBindings>
+                                            <MouseBinding Command="{Binding ElementName=icLevels, Path=DataContext.SelectColor}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Button
+                                        Grid.Column="1"
+                                        Width="20" Height="20"
+                                        Margin="5" HorizontalAlignment="Right"
+                                        Command="{Binding ElementName=icLevels, Path=DataContext.DeleteLevel}"
+                                        CommandParameter="{Binding}">
+                                        <Image Source="{StaticResource biClose}" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button                        
+                        Grid.Column="0"
+                        Margin="2"
+                        Command="{Binding AddLevel}"
+                        Content="Добавить" />
+                    <Button
+                        Grid.Column="1"
+                        MinWidth="40"
+                        Margin="2"
+                        Command="{Binding ResetLevels}"
+                        Content="Сброс" ToolTip="Сброс уровней освещенности площадок на стандартные" />
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+        <StackPanel
+            Grid.Row="3"
+            Margin="10" HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <Button
+                MinWidth="60"
+                Margin="3"
+                Click="Ok_Click"
+                Command="{Binding OK}"
+                Content="OK" />
+            <Button
+                MinWidth="60"
+                Margin="3"
+                Content="Отмена" IsCancel="True" />
+
+        </StackPanel>
     </Grid>
 </Window>

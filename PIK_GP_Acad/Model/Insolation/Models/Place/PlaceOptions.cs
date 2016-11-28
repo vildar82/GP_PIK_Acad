@@ -79,20 +79,23 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<TypedValue> GetDataValues (Document doc)
         {
             return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(TileSize)
+                TypedValueExt.GetTvExtData(TileSize),
+                TypedValueExt.GetTvExtData(Transparent)
             };
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 1)
+            if (values == null || values.Count != 2)
             {
                 // Default
                 TileSize = 1;
+                Transparent = 60;
             }
             else
             {
                 TileSize = TypedValueExt.GetTvValue<double>(values[0]);
+                Transparent = TypedValueExt.GetTvValue<byte>(values[1]);
             }
         }
     }

@@ -46,7 +46,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var groupLevels = Tiles.GroupBy(g => g.Level);
             foreach (var group in groupLevels)
             {
-                if (group.Key.TotalTimeH == 0) return;
+                if (group.Key.TotalTimeH == 0) continue;
                 var pls = group.Select(s => s.Contour).ToList();
                 using (var region = pls.Union(null))
                 {

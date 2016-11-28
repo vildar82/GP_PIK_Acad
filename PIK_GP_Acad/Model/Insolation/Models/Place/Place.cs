@@ -99,6 +99,8 @@ namespace PIK_GP_Acad.Insolation.Models
             var groupTiles = tiles.GroupBy(g => g.Level.TotalTimeH).OrderByDescending(o=>o.Key)
                 .Select(s=> $"{s.Key}ч.-{s.Sum(i=>i.Area).Round(2)}м{General.Symbols.Square}");
             var levelsInfo = string.Join(", ", groupTiles);
+            var minLevel = PlaceModel.Options.Levels.Min(o => o.TotalTimeH);
+            levelsInfo = levelsInfo.Replace("0ч.", $"<{minLevel}ч.");
             return levelsInfo;
         }
 

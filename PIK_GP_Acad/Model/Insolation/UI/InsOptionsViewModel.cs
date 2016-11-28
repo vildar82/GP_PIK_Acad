@@ -29,28 +29,22 @@ namespace PIK_GP_Acad.Insolation.UI
             
         }
 
-        public InsOptionsViewModel (InsOptions opt)
+        public InsOptionsViewModel (InsModel insModel)
         {
-            InsOptions = opt;
-            RegionNames = new ObservableCollection<string>(dictRegions.Keys);                        
-            SelectedRegionName = InsOptions.Region.RegionName;
-            SelectedRegion = opt.Region;
-
+            InsModel = insModel;
+            InsOptions =insModel.Options;
+            RegionNames = new ObservableCollection<string>(dictRegions.Keys);
             // Загрузка проектов из базы
-            Projects = DbService.GetProjects();            
+            Projects = DbService.GetProjects();
 
-            // Выбор текущего проекта, если он есть
-            if (opt.Project != null && Projects != null && Projects.Any())
-            {
-                var findProject = Projects.Find(p => p.Id == opt.Project.Id);
-                if (findProject != null)
-                {
-                    SelectedProject = findProject;
-                }
-            }
+            // Установка свойств настроек
+            FillProperties(InsOptions);
 
             OK = new RelayCommand(OnOkExecute);
+            Reset = new RelayCommand(OnResetExecute);
         }        
+
+        public InsModel InsModel { get; set;}
 
         /// <summary>
         /// Модель
@@ -58,6 +52,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsOptions InsOptions { get; set; }        
 
         public RelayCommand OK { get; set; }
+        public RelayCommand Reset { get; set; }
 
         public ObservableCollection<string> RegionNames { get; set; }
         public string SelectedRegionName {
@@ -71,7 +66,6 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public InsRegion SelectedRegion { get { return selectedRegion; } set { selectedRegion = value; RaisePropertyChanged(); } }
         InsRegion selectedRegion;
-
 
         public List<ProjectMDM> Projects { get; set; }
         public ProjectMDM SelectedProject { get; set; }
@@ -99,6 +93,29 @@ namespace PIK_GP_Acad.Insolation.UI
             if (SelectedProject != null)
             {
                 InsOptions.Project = SelectedProject;
+            }
+            InsModel.Options = InsOptions;
+        }
+
+        private void OnResetExecute()
+        {
+            var defaultOpt =InsOptions.Default();
+            FillProperties(InsOptions);
+        }
+
+        private void FillProperties(InsOptions opt)
+        {
+            SelectedRegionName = InsOptions.Region.RegionName;
+            SelectedRegion = opt.Region;
+
+            // Выбор текущего проекта, если он есть
+            if (opt.Project != null && Projects != null && Projects.Any())
+            {
+                var findProject = Projects.Find(p => p.Id == opt.Project.Id);
+                if (findProject != null)
+                {
+                    SelectedProject = findProject;
+                }
             }
         }
     }

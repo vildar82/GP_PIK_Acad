@@ -107,10 +107,9 @@ namespace PIK_GP_Acad.Insolation.UI
             var treeOptionsVM = new TreeOptionsViewModel(Tree.TreeOptions);            
             if (InsService.ShowDialog(treeOptionsVM) == true)
             {
-                
-            }
-            // Обновление расчета елочек
-            Tree.Update();
+                // Обновление расчета елочек
+                Tree.UpdateVisual();
+            }            
         }
 
         /// <summary>

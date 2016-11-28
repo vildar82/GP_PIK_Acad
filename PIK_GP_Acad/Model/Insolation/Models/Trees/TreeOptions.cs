@@ -15,18 +15,24 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Настройки елочек
     /// </summary>
-    public class TreeOptions : ModelBase, IExtDataSave
+    public class TreeOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
         /// <summary>
         /// Список высотностей для елочек
         /// Должны быть отсортированы по возрастанию высоты и не должно быть повторений высот
         /// </summary>
         public ObservableCollection<TreeVisualOption> TreeVisualOptions { get; set; }
+        /// <summary>
+        /// Прозрачность
+        /// </summary>
+        public byte Transparence { get { return transparence; } set { transparence = value; } }
+        byte transparence;
 
         public static TreeOptions Default ()
         {
             TreeOptions defTreeOpt = new TreeOptions();
             defTreeOpt.TreeVisualOptions = new ObservableCollection<TreeVisualOption>(TreeVisualOption.DefaultTreeVisualOptions());
+            defTreeOpt.Transparence = 60;
             return defTreeOpt;
         }
 
@@ -45,6 +51,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 string name = item.Height.ToString();
                 dicTreeOpt.AddRec(name, values);
             }
+            // Transparence
+            dicTreeOpt.AddRec("Rec", GetDataValues(doc));
             return dicTreeOpt;
         }
 
@@ -57,8 +65,11 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 // Default
                 TreeVisualOptions = new ObservableCollection<TreeVisualOption>(TreeVisualOption.DefaultTreeVisualOptions());
+                SetDataValues(null, doc);
                 return;
             }
+            // Список настроек
+            SetDataValues(dicTreeOpt.GetRec("Rec")?.Values, doc);
 
             // Список настроек визуалных высот
             var treeVisOpts = new List<TreeVisualOption>();
@@ -71,6 +82,26 @@ namespace PIK_GP_Acad.Insolation.Models
             // Проверка высот
             TreeVisualOption.CheckAndCorrect(ref treeVisOpts);
             TreeVisualOptions = new ObservableCollection<TreeVisualOption>(treeVisOpts);            
+        }
+
+        public List<TypedValue> GetDataValues(Document doc)
+        {
+            return new List<TypedValue>() {
+                TypedValueExt.GetTvExtData(Transparence)
+            };
+        }
+
+        public void SetDataValues(List<TypedValue> values, Document doc)
+        {
+            if (values == null || values.Count != 1)
+            {
+                // Default
+                Transparence = 60;
+            }
+            else
+            {
+                Transparence = TypedValueExt.GetTvValue<byte>(values[0]);
+            }
         }
     }
 }

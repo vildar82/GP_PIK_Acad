@@ -60,17 +60,23 @@
             VerticalAlignment="Bottom"
             Orientation="Horizontal">
             <Button
-                Width="50"
-                Margin="2" HorizontalAlignment="Center"
+                Width="60"
+                Margin="2"
                 Command="{Binding OK}"
                 Content="OK" 
                 Click="OkButtonClick"
                 IsDefault="True"/>
             <Button
-                Width="50"
-                Margin="2" HorizontalAlignment="Center"                
-                Content="Cancel" 
+                Width="60"
+                Margin="2"  
+                Content="Отмена" 
                 IsCancel="True"/>
+            <Button
+                Command="{Binding Reset}"
+                ToolTip="Сброс настроек на значения по умолчанию"
+                Width="50"
+                Margin="25,2,2,2"
+                Content="Сброс"/>
         </StackPanel>
     </Grid>
 </Window>

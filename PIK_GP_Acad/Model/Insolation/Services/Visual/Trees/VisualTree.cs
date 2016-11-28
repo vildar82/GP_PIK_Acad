@@ -18,16 +18,16 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualTree : VisualTransient
     {
-        public VisualTree (InsModel model) //: base (model.Doc)
+        public VisualTree (TreeModel model) //: base (model.Doc)
         {
-            Model = model;
+            TreeModel = model;
         }
 
-        public InsModel Model { get; set; }       
+        public TreeModel TreeModel { get; set; }       
 
         public List<InsPoint> Points {
             get {
-                var res = Model.Tree.Points?.ToList();
+                var res = TreeModel.Points?.ToList();
                 if (res == null) return new List<InsPoint>();
                 return res;
             }
@@ -42,11 +42,11 @@ namespace PIK_GP_Acad.Insolation.Services
             var plsAllTrees = new List<List<Polyline>>();
             var idsPlsAllTrees = new List<List<Polyline>>();
             var visOptions = new List<VisualOption>();
-            foreach (var item in Model.Tree.TreeOptions.TreeVisualOptions)
+            foreach (var item in TreeModel.TreeOptions.TreeVisualOptions)
             {
                 plsAllTrees.Add(new List<Polyline>());
                 idsPlsAllTrees.Add(new List<Polyline>());
-                var visOpt = new VisualOption(item.Color, Point3d.Origin, 60);
+                var visOpt = new VisualOption(item.Color, Point3d.Origin, TreeModel.TreeOptions.Transparence);
                 visOptions.Add(visOpt);
             }
 
@@ -148,7 +148,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Point2d p1, Point2d p2, out Point2d p3, out Point2d p4)
         {
             var ptOrig = insPoint.Point.Convert2d();
-            var calcValues = Model.CalcService.CalcValues;
+            var calcValues = TreeModel.Model.CalcService.CalcValues;
 
             double cShadow;
             // Высота тени (на заданной настройкой высоте елочки) - катет по Y

@@ -30,6 +30,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public double LineFrontWidth { get; set; } = 0.8;
         public string FrontLineLayer { get; set; } = "sapr_ins_front";
+        
 
         public static FrontOptions Default ()
         {

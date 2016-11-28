@@ -28,9 +28,10 @@ namespace PIK_GP_Acad.Insolation.Services
 
             if (InsPoint.Illums != null)
             {
+                var transp = InsPoint?.Model?.Tree?.TreeOptions?.Transparence ?? 60;
                 foreach (var item in InsPoint.Illums)
                 {
-                    draws.AddRange(item.CreateVisual());
+                    draws.AddRange(item.CreateVisual(transp));
                 }
             }
             return draws;
