@@ -38,13 +38,13 @@
                 Margin="2"
                 Background="Transparent"
                 Command="{Binding Update}"
-                ToolTip="{Binding UpdateInfo}"
+                ToolTip="{Binding Model.UpdateInfo}"
                 Visibility="{Binding ElementName=chkBoxInsActivated, Path=IsChecked, Converter={converters:BooleanToHidingVisibilityConverter}}">
                 <Image Source="{StaticResource biUpdate}" />
                 <Button.Style>
                     <Style BasedOn="{StaticResource btnNormal}" TargetType="Button">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsUpdateRequired}" Value="True">
+                            <DataTrigger Binding="{Binding Model.IsUpdateRequired}" Value="True">
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard Name="Alarm">
                                         <Storyboard RepeatBehavior="Forever">
@@ -56,7 +56,7 @@
                                     </BeginStoryboard>
                                 </DataTrigger.EnterActions>
                                 <DataTrigger.ExitActions>
-                                    <StopStoryboard BeginStoryboardName="Alarm" />
+                                    <StopStoryboard BeginStoryboardName="Alarm"/>
                                 </DataTrigger.ExitActions>
                             </DataTrigger>
                         </Style.Triggers>

@@ -39,7 +39,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Флаг - требуется обновление расчета
         /// </summary>        
-        public bool IsUpdateRequired { get; set; }        
+        public bool IsUpdateRequired { get { return isUpdateRequired; } set { isUpdateRequired = value; RaisePropertyChanged();  } }
+        bool isUpdateRequired;
         public Document Doc { get; set; }        
         public Map Map { get; set; }        
         public ICalcService CalcService { get; set; }
@@ -64,7 +65,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public PlaceModel Place { get { return place; } set { place = value; RaisePropertyChanged(); } }
         PlaceModel place;
 
-        public string UpdateInfo { get; set; } = "Обновление расчета";
+        public string UpdateInfo { get { return updateInfo; } set { updateInfo = value; RaisePropertyChanged(); } }
+        string updateInfo = "Обновление расчета";
         /// <summary>
         /// Состояние - включен/отключен расчет
         /// </summary>

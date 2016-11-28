@@ -39,21 +39,7 @@ namespace PIK_GP_Acad.Insolation.UI
         FrontViewModel frontVM;
 
         public PlaceViewModel PlaceVM { get { return placeVM; } set { placeVM = value; RaisePropertyChanged(); } }
-        PlaceViewModel placeVM;
-
-        public string UpdateInfo {
-            get { return Model?.UpdateInfo; }
-            set { Model.UpdateInfo = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsUpdateRequired {
-            get { return Model?.IsUpdateRequired ?? false; }
-            set { Model.IsUpdateRequired = value;
-                RaisePropertyChanged();
-            }
-        }
+        PlaceViewModel placeVM;        
 
         public string City {
             get { return Model?.Options.Region.City; }
