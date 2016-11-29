@@ -23,14 +23,13 @@ namespace PIK_GP_Acad.Insolation.UI
         {            
             Tree = treeModel;
             AddPoint = new RelayCommand(OnAddPointExecute);
-            ShowPoint = new RelayCommand(OnShowPointExecute);
+            ShowPoint = new RelayCommand<InsPoint>(OnShowPointExecute);
             EditPoint = new RelayCommand<InsPoint>(OnEditPointExecute);
             DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);
+            ReportPoint = new RelayCommand<InsPoint>(OnReportPointExecute);
             EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
             DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
-        }
-
-        
+        }        
 
         /// <summary>
         /// Модель
@@ -38,14 +37,12 @@ namespace PIK_GP_Acad.Insolation.UI
         public TreeModel Tree { get; set; }          
 
         public RelayCommand AddPoint { get; private set; }
-        public RelayCommand ShowPoint { get; private set; }
+        public RelayCommand<InsPoint> ShowPoint { get; private set; }
         public RelayCommand<InsPoint> EditPoint { get; private set; }
         public RelayCommand<InsPoint> DeletePoint { get; private set; }
+        public RelayCommand<InsPoint> ReportPoint { get; private set; }        
         public RelayCommand EditTreeOptions { get; private set; }
         public RelayCommand DrawVisuals { get; private set; }
-        
-
-        public InsPoint SelectedPoint { get; set; }
 
         private void OnAddPointExecute ()
         {
@@ -63,9 +60,9 @@ namespace PIK_GP_Acad.Insolation.UI
             }
         }        
         
-        private void OnShowPointExecute ()
+        private void OnShowPointExecute (InsPoint insPt)
         {
-            Tree.ShowPoint(SelectedPoint);
+            Tree.ShowPoint(insPt);
         }
 
         private void OnEditPointExecute (InsPoint insPoint)
@@ -110,6 +107,11 @@ namespace PIK_GP_Acad.Insolation.UI
                 // Обновление расчета елочек
                 Tree.UpdateVisual();
             }            
+        }
+
+        private void OnReportPointExecute(InsPoint insPt)
+        {
+            // отчет по точке
         }
 
         /// <summary>

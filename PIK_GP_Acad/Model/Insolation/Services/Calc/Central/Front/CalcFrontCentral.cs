@@ -77,38 +77,35 @@ namespace PIK_GP_Acad.Insolation.Services
             calcPoints = GetFrontCalcPoints(seg, delta);
             // Определение фронтов
             var ptsIsCalced = calcPoints;//.Where(p => p.IsCalulated).ToList(); ???!!!
-            FrontCalcPoint fPtPrew = ptsIsCalced.First();
-            fPtPrew.InsValue = ptsIsCalced.Skip(1).First().InsValue;
-            FrontCalcPoint fPtStart = fPtPrew;
+            var fPtPrew = ptsIsCalced.First();
+            //fPtPrew.InsValue = ptsIsCalced.Skip(1).First().InsValue;
+            var fPtStart = fPtPrew;
             for (int i =1; i< ptsIsCalced.Count; i++)
             {
                 var item = ptsIsCalced[i];
-                if (fPtPrew.InsValue != item.InsValue || item.IsCorner)
+                if (!item.IsCorner && fPtPrew.InsValue == InsRequirementEnum.None)
                 {
-                    if (item.IsCorner)
+                    fPtStart.InsValue = item.InsValue;
+                }
+                else if (fPtPrew.InsValue != item.InsValue && !item.IsCorner)
+                {
+                    // значение инс след точки
+                    var iNext = i + 1;
+                    if (iNext < ptsIsCalced.Count)
                     {
-                        fPtPrew = item;
-                    }
-                    // Если это одна точка с другой инсоляцией, то игнорирование
-                    else
-                    {
-                        // значение инс след точки
-                        var iNext = i + 1;
-                        if (iNext< ptsIsCalced.Count)
+                        var itemNext = ptsIsCalced[iNext];
+                        if (itemNext.IsCorner)
                         {
-                            var itemNext = ptsIsCalced[iNext];
-                            if (itemNext.IsCorner)
+                            i++;
+                            fPtPrew = itemNext;
+                            continue;
+                        }
+                        else
+                        {
+                            if (itemNext.InsValue == fPtPrew.InsValue)
                             {
-                                i++;
-                                fPtPrew = itemNext;
-                            }
-                            else
-                            {
-                                if (itemNext.InsValue == fPtPrew.InsValue)
-                                {
-                                    // Инс след точки совпадает с предыдущей - текущую игнорим.
-                                    continue;
-                                }
+                                // Инс след точки совпадает с предыдущей - текущую игнорим.
+                                continue;
                             }
                         }
                     }
@@ -230,6 +227,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 catch
                 {
                     calcFrontPt.InsValue = InsRequirementEnum.None;
+                    calcFrontPt.IsCorner = true;
                     // На угловых точках - может не рассчитаться пока
                     // Пропустить!?
                 }

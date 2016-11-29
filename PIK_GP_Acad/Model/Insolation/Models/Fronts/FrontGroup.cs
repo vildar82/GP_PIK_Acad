@@ -252,6 +252,10 @@ namespace PIK_GP_Acad.Insolation.Models
                                 {
                                     var contourItem = item.Contour;
                                     building.Contour.AverageVertexes(ref contourItem, toleranceVertex);
+#if TEST
+                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)building.Contour.Clone());
+                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)contourItem.Clone());
+#endif
                                 }
                                 break;
                             }

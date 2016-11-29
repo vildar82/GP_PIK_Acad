@@ -11,7 +11,8 @@
     d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="213" d:DesignWidth="257"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    x:Name="treesView">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -27,25 +28,34 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
-        <ListBox
+        <ItemsControl
             x:Name="lbPoints"
             Grid.Row="0"
             HorizontalContentAlignment="Stretch"
             Background="Transparent" BorderThickness="0"
             ItemsSource="{Binding Tree.Points, UpdateSourceTrigger=PropertyChanged}"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectedItem="{Binding SelectedPoint}">
-            <ListBox.ItemTemplate>
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}"
+                          Tag="{Binding ElementName=lbPoints, Path=DataContext}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.InputBindings>
-                            <MouseBinding Command="{Binding ElementName=lbPoints, Path=DataContext.ShowPoint}" Gesture="LeftDoubleClick" />
+                            <MouseBinding Command="{Binding ElementName=lbPoints, Path=DataContext.ShowPoint}" CommandParameter="{Binding}" Gesture="LeftClick" />
                         </Grid.InputBindings>
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Отчет по точке" Command="{Binding ReportPoint}" Height="25">
+                                    <MenuItem.Icon>
+                                        <Image Source="{StaticResource biReport}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
                         <TextBlock
                             Grid.Column="0"
                             Margin="3" VerticalAlignment="Center"
@@ -88,8 +98,8 @@
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <!--  Кнопки управление елочками  -->
         <Grid Grid.Row="1" Margin="2">
             <Grid.ColumnDefinitions>

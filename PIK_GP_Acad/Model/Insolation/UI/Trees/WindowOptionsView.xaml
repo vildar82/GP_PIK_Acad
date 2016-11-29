@@ -27,7 +27,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"  Margin="1"/>
-                                    <TextBlock Text="{Binding Depthm, UpdateSourceTrigger=PropertyChanged}" Margin="1" />
+                                    <TextBlock Text="{Binding Depth, UpdateSourceTrigger=PropertyChanged}" Margin="1" />
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>

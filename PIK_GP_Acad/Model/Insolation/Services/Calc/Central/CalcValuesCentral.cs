@@ -17,11 +17,12 @@ namespace PIK_GP_Acad.Insolation.Services
         private Dictionary<double, double> dictAngleSun = new Dictionary<double, double>();
         private double FiTan;
         private double FiCos;
+        private double MinInRadian = 229.1831181; // Минут в одном радиане
+        private TimeSpan StartTime = new TimeSpan(6,0,0);
         /// <summary>
         /// Отношение перпендикуляров солнца на проекции и на плоскости солнца (<1)
         /// </summary>
         private double ratioYtoC;
-
         /// <summary>
         /// Угол Фи в радианах - широта
         /// </summary>
@@ -111,7 +112,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Угол проекции данного угла солнца
         /// </summary>
         /// <param name="angleSun">Угол солнца (от 0 до Пи)</param>
-        /// <returns>Угол проекции на землю</returns>
+        /// <returns>Угол проекции на землю (рад)</returns>
         public double AngleSunOnPlane (double angleSun)
         {
             Dictionary<double, double> dictAngleSunOnPlane = new Dictionary<double, double>();
@@ -168,6 +169,19 @@ namespace PIK_GP_Acad.Insolation.Services
                 dictAngleFromAcad.Add(acadAngle, res);
             }
             return res;
+        }
+
+        /// <summary>
+        /// Определение времени (24-часовой)
+        /// </summary>
+        /// <param name="angleOnSun">Угол в плоскости солнца (Рад)</param>
+        /// <returns>Время - Например 13:32</returns>
+        public string GetTime(double angleOnSun)
+        {
+            var mins = Convert.ToInt32( angleOnSun * MinInRadian);
+            // Прибавить минуты к 6 часам (0град = 6 утра)
+            var time = StartTime + new TimeSpan(0, mins, 0);
+            return time.ToString(@"hh\:mm");
         }
     }
 }

@@ -49,16 +49,20 @@ namespace PIK_GP_Acad.Insolation.Services
             int maxTimeContinuosIlum = 0;
             int curContinuosTime = 0;
             int totalTime = 0;
+            string startTime;
+            string endTime;
             IIlluminationArea prev = null;
             foreach (var item in illums)
             {
-                item.Time = CalcTime(item.AngleStartOnPlane, item.AngleEndOnPlane);
+                item.Time = CalcTime(item.AngleStartOnPlane, item.AngleEndOnPlane, out startTime, out endTime);
                 curContinuosTime += item.Time;
                 totalTime += item.Time;
+                item.TimeStart = startTime;
+                item.TimeEnd = endTime;
 
                 if (prev != null)
                 {
-                    var interval = CalcTime(prev.AngleEndOnPlane, item.AngleStartOnPlane);
+                    var interval = CalcTime(prev.AngleEndOnPlane, item.AngleStartOnPlane, out startTime, out endTime);
                     if (interval >= 10)
                     {
                         curContinuosTime = item.Time;
@@ -107,10 +111,12 @@ namespace PIK_GP_Acad.Insolation.Services
             return req;
         }
 
-        private int CalcTime (double angleStart, double angleEnd)
+        private int CalcTime (double angleStart, double angleEnd, out string startTime, out string endTime)
         {
             var angleStartOnSun = CalcValues.AngleSun(angleStart);
+            startTime = CalcValues.GetTime(angleStartOnSun);
             var angleEndOnSun = CalcValues.AngleSun(angleEnd);
+            endTime = CalcValues.GetTime(angleEndOnSun);
             var angleDegree = (angleEndOnSun - angleStartOnSun).ToDegrees();
             var time = Convert.ToInt32(angleDegree * 4);// в 1 градусе 4 минуты времени хода солнца (по своей плоскости)
             return time;

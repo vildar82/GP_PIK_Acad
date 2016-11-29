@@ -290,6 +290,11 @@ namespace PIK_GP_Acad.Insolation.Models
                         item.Line.Dispose();
                     }
                 }
+                FrontLines = null;
+                if (VisualFront != null)
+                {
+                    VisualFront.FrontLines = null;
+                }
             }
         }
     }

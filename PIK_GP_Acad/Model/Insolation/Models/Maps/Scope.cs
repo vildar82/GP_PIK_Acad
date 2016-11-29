@@ -30,8 +30,11 @@ namespace PIK_GP_Acad.Insolation.Models
             foreach (var item in Buildings)
             {
                 // Если есть старый контур - удаление и создание нового
-                DisposeBuildingContour(item);
-                item.InitContour();
+                //DisposeBuildingContour(item);
+                if (item.Contour == null || item.Contour.IsDisposed)
+                {
+                    item.InitContour();
+                }
             }
         }
 

@@ -13,6 +13,7 @@ using Autodesk.AutoCAD.GraphicsInterface;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using AcadLib.XData;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -26,17 +27,22 @@ namespace PIK_GP_Acad.Insolation.Models
         public InsPoint () { }
 
         public InsPoint (InsModel model, Point3d pt) : base(pt, model)
+                   
         {               
             Window = WindowOptions.Default();
             Height = 0.9;
+            ReportPoint = new RelayCommand(OnReportPointExecute);
         }
 
         /// <summary>
         /// Создание расчетной точки из словарных записей объекта
         /// </summary>        
-        public InsPoint (DBPoint dbPt, InsModel model) : base(dbPt, model)
-        {            
-        }       
+        public InsPoint(DBPoint dbPt, InsModel model) : base(dbPt, model)
+        {
+            ReportPoint = new RelayCommand(OnReportPointExecute);
+        }
+
+        public RelayCommand ReportPoint { get; set; }
 
         public bool IsVisualIllumsOn { get { return isVisualIllumsOn; }
             set { isVisualIllumsOn = value; RaisePropertyChanged(); OnIsVisualIllumsOnChanged(); } }
@@ -91,6 +97,22 @@ namespace PIK_GP_Acad.Insolation.Models
             base.Delete();
         }
 
+        /// <summary>
+        /// Отчет по точке - вставка таблицы отчета
+        /// </summary>
+        public void Report()
+        {
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc == null) return;
+            using (doc.LockDocument())
+            {
+                var report = new InsPointReport(this, doc.Database);
+                report.CalcRows();
+                var table = report.Create();
+                report.Insert(table, doc);
+            }
+        }
+
         private void OnIsVisualIllumsOnChanged ()
         {
             // Включение/выключение визуализации инсоляционных зон точки
@@ -99,6 +121,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualIllums.VisualIsOn = IsVisualIllumsOn;
                 SaveInsPoint();
             }
+        }
+
+        private void OnReportPointExecute()
+        {
+            Report();
         }
 
         /// <summary>

@@ -20,7 +20,9 @@ namespace PIK_GP_Acad.Insolation.Services
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }
         public int Time { get; set; }        
-        public IInsPoint InsPoint { get; set; }      
+        public IInsPoint InsPoint { get; set; }
+        public string TimeStart { get; set; }
+        public string TimeEnd { get; set; }
 
         public IllumAreaBase(IInsPoint insPoint, Point2d ptOrig,double angleStart, double angleEnd, Point2d ptStart, Point2d ptEnd)
         {
@@ -136,6 +138,6 @@ namespace PIK_GP_Acad.Insolation.Services
             var t = AngleStartOnPlane;
             AngleStartOnPlane = AngleEndOnPlane;
             AngleEndOnPlane = t;
-        }
+        }               
     }
 }

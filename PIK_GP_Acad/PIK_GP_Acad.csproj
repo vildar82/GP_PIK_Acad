@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591</NoWarn>
@@ -217,6 +217,7 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\WindowOptions.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\SelectPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Trees\Report\InsPointReport.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualDatabaseAny.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointIllums.cs" />
@@ -526,7 +527,9 @@
   <ItemGroup>
     <Resource Include="Resources\GP_Ins_Place.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\GP_Ins_Report.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

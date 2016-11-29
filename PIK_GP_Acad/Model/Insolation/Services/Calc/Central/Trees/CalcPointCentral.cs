@@ -63,7 +63,8 @@ namespace PIK_GP_Acad.Insolation.Services
             // Проверка - если точка расположена внутри другого дома (кроме собственного), то вся точка в тени
             if (IsCalcPointInsideOtherBuilding())
             {
-                return null;
+                throw new Exception("Расчтеная точка попадает на соседнее здание.");
+                //return null;
             }
 
             // Определение ограничений углов (начального и конечного) с учетом плоскости стены расчетного дома
@@ -133,7 +134,8 @@ namespace PIK_GP_Acad.Insolation.Services
                             item.InitContour();
                         }
 
-                        if (item.Contour.IsPointInsidePolygon(ptCalc))
+                        if (item.Contour.IsPointInsidePolygon(ptCalc) ||
+                            item.Contour.IsPointOnPolyline(ptCalc))
                         {
                             resInside = true;
                         }

@@ -14,5 +14,6 @@
         double GetInsAngleFromAcad (double acadAngle);
         double GetXRay (double cSunPlane, double angleSun);
         double YShadowLineByHeight (double height, out double cShadowPlane);
+        string GetTime(double angleOnSun);
     }
 }

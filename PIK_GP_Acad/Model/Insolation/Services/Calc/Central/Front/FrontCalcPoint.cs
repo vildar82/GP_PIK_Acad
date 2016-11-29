@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Models;
+using AcadLib;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -42,6 +44,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 else
                 {
                     res = true;
+#if TEST
+                    //EntityHelper.AddEntityToCurrentSpace((Polyline)Section.Contour.Clone());
+#endif
                 }
             }
             else

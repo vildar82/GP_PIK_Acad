@@ -183,6 +183,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GP_Ins_Report {
+            get {
+                object obj = ResourceManager.GetObject("GP_Ins_Report", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GP_Ins_Trees {
             get {
                 object obj = ResourceManager.GetObject("GP_Ins_Trees", resourceCulture);

@@ -16,11 +16,13 @@ namespace PIK_GP_Acad.Insolation.Services
         double AngleEndOnPlane { get; set; }
         double AngleStartOnPlane { get; set; }
         int Time { get; set; }
+        string TimeStart { get; set; }
+        string TimeEnd { get; set; }
         List<Entity> CreateVisual (byte transparence);
         Vector2d GetMidVector ();
         /// <summary>
         /// Смена стартового и конечного углов
         /// </summary>
-        void Invert ();
+        void Invert ();        
     }
 }

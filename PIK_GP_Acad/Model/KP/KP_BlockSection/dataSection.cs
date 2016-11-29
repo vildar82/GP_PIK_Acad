@@ -56,7 +56,7 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
 
         public void Calc ()
         {
-            // Расчет площадей обычных блок-секций - без башень
+            // Расчет площадей обычных блок-секций - без башен
             foreach (var blSec in blocks.Where(b => !(b is TowerKPBS)))
             {
                 AreaFirstGNS += blSec.AreaGNS;

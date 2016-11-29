@@ -34,11 +34,7 @@ namespace PIK_GP_Acad.Insolation.Models
             get { return groups; }
             set { groups = value; RaisePropertyChanged(); }
         }
-        ObservableCollection<FrontGroup> groups;
-
-        public bool IsVisualsFrontOn { get { return isVisualsFrontOn; } set { isVisualsFrontOn = value; RaisePropertyChanged(); } }
-        bool isVisualsFrontOn;
-
+        ObservableCollection<FrontGroup> groups; 
 
         /// <summary>
         /// Инициализация расчета
@@ -82,23 +78,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue>() {
-                TypedValueExt.GetTvExtData(IsVisualsFrontOn)
+            return new List<TypedValue>() {                
             };
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 1)
-            {
-                // Default
-                IsVisualsFrontOn = true;
-            }
-            else
-            {
-                int index = 0;
-                IsVisualsFrontOn = values[index++].GetTvValue<bool>();
-            }
+            // нет параметров            
         }
 
         public DicED GetExtDic (Document doc)

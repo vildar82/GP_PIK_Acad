@@ -17,9 +17,10 @@ namespace PIK_GP_Acad.Insolation.UI
             Place = place;
             Add = new RelayCommand(OnAddExecute);
             EditOptions = new RelayCommand(OnEditOptionsExecute);
-            Show = new RelayCommand<Place>(OnShowExecute);
+            ShowPlace = new RelayCommand<Place>(OnShowPlaceExecute);
             Delete = new RelayCommand<Place>(OnDeleteExecute);
         }
+        
 
         /// <summary>
         /// Модель
@@ -28,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public RelayCommand Add { get; set; }
         public RelayCommand EditOptions { get; set; }
-        public RelayCommand<Place> Show { get; set; }
+        public RelayCommand<Place> ShowPlace { get; set; }
         public RelayCommand<Place> Delete { get; set; }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace PIK_GP_Acad.Insolation.UI
         /// <summary>
         /// Показать площадку на чертеже
         /// </summary>
-        private void OnShowExecute (Place place)
+        private void OnShowPlaceExecute (Place place)
         {
             place.Show();
         }
