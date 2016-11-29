@@ -35,6 +35,11 @@ namespace PIK_GP_Acad.Insolation.Services
             var ilums = insPoint?.Illums;
             if (ilums == null || ilums.Count == 0) return;
 
+            var rowItem = table.Rows[0];
+            rowItem.Height = 8;
+            rowItem = table.Rows[1];
+            rowItem.Height = 8;
+
             int row = 2;
             Cell cell;
             foreach (var item in ilums)
@@ -50,10 +55,12 @@ namespace PIK_GP_Acad.Insolation.Services
             table.MergeCells(table.Rows[row]);
             cell = table.Cells[row, 0];
             cell.TextString = $"Продолжительность непрерывной инсоляции {insPoint.InsValue.MaxContinuosTimeString}";
+            cell.Borders.Top.LineWeight = LwBold;
             row++;
             // итого прерыв инс
             table.MergeCells(table.Rows[row]);
             cell = table.Cells[row, 0];
+            cell.Borders.Top.LineWeight = LwBold;
             cell.TextString = $"Сумма прерывистой инсоляции {insPoint.InsValue.TotalTimeString}";
         }
 
@@ -61,11 +68,11 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var col = columns[0];
             col.Alignment = CellAlignment.MiddleCenter;
-            col.Width = 30;
+            col.Width = 40;
             col[1, 0].TextString = "Начало";
             col = columns[1];
             col.Alignment = CellAlignment.MiddleCenter;
-            col.Width = 30;
+            col.Width = 40;
             col[1, 1].TextString = "Конец";
         }
     }
