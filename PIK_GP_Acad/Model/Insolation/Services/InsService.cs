@@ -140,9 +140,7 @@ namespace PIK_GP_Acad.Insolation.Services
             //insViewModel = null;
             //insView = null;
             InsPointDrawOverrule.Stop();
-
             //GC.Collect();
-
             Logger.Log.Info($"Закрытие палитры инсоляции.");
         }
 

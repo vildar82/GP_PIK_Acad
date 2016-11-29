@@ -7,6 +7,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using MicroMvvm;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
+using System.Collections.ObjectModel;
+using PIK_DB_Projects;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -17,7 +19,9 @@ namespace PIK_GP_Acad.Insolation.UI
             Front = model;
             Add = new RelayCommand(OnAddExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
-            ShowHouse = new RelayCommand<House>(OnShowHouseExecute);            
+            ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
+
+            FillHouseDb();
         }        
 
         /// <summary>
@@ -27,7 +31,12 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public RelayCommand Add { get; set; }
         public RelayCommand<FrontGroup> Delete { get; set; }
-        public RelayCommand<House> ShowHouse { get; set; }                   
+        public RelayCommand<House> ShowHouse { get; set; }        
+
+        public Visibility ComboboxHouseDbVisibility 
+            { get { return comboboxHouseDbVisibility; }
+            set { comboboxHouseDbVisibility = value; RaisePropertyChanged(); } }
+        Visibility comboboxHouseDbVisibility;        
 
         private void OnAddExecute ()
         {
@@ -63,6 +72,19 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnShowHouseExecute (House house)
         {
             house.Show();
+        }        
+
+        private void FillHouseDb()
+        {
+            var project = Front.Model.Options.Project;
+            if (project == null)
+            {
+                ComboboxHouseDbVisibility = Visibility.Invisible;                
+            }
+            else
+            {
+                ComboboxHouseDbVisibility = Visibility.Visible;                                
+            }
         }
     }
 }

@@ -10,6 +10,8 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using MicroMvvm;
 using PIK_GP_Acad.Insolation.Services.Export;
+using PIK_DB_Projects;
+using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -36,6 +38,9 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         ObservableCollection<FrontGroup> groups; 
 
+        public ObservableCollection<ObjectMDM> HousesDbFree { get { return housesDb; } set { housesDb = value; RaisePropertyChanged(); } }
+        ObservableCollection<ObjectMDM> housesDb;
+
         /// <summary>
         /// Инициализация расчета
         /// </summary>        
@@ -47,7 +52,7 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Options == null)
             {
                 Options = FrontOptions.Default();
-            }
+            }            
         }
 
         /// <summary>
@@ -151,6 +156,8 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 item.Update();
             }
+            // Определение корпусов проекта
+            DefineHouseDb();
         }
 
         public void ClearVisual ()
@@ -170,13 +177,61 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         /// <summary>
+        /// Определение связанных/несвязанных корпусов проекта и
+        /// </summary>
+        public void DefineHouseDb()
+        {
+            // Проект
+            var project = Model.Options.Project;
+            var houses = Groups.SelectMany(s => s.Houses.Select(h => h)).ToList();
+            HousesDbFree = null;
+            if (project == null)
+            {                
+                foreach (var item in houses)
+                {
+                    item.HouseId = 0;
+                }
+            }
+            else
+            {
+                // Корпуса (дома)  в проекте
+                var housesDb = DbService.GetHouses(project);
+                // Исключение из корпусов уже назначенных
+                if (housesDb != null)
+                {
+                    foreach (var item in houses)
+                    {
+                        if (item.HouseId != 0)
+                        {
+                            var itemDb = housesDb.FirstOrDefault(h => h.Id == item.HouseId);
+                            if (itemDb == null)
+                            {
+                                // Назначенный дому id не найден - обнуление
+                                item.HouseId = 0;
+                            }
+                            else
+                            {
+                                housesDb.Remove(itemDb);
+                            }
+                        }
+                    }
+                    if (housesDb != null)
+                    {
+                        HousesDbFree = new ObservableCollection<ObjectMDM>(housesDb);
+                        housesDb.Add(null); // Пустой объект - чтобы отменить назнваченный выбор
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Экпорт инсоляции в базу
         /// </summary>
         public void ExportInsToBD ()
         {
             var export = new ExportToDB(this);
             export.Export();
-        }
+        }        
 
         public void Dispose()
         {

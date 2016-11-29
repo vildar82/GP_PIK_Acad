@@ -76,13 +76,15 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Общие действия и при создании нового расчета и при загрузке существующего
         /// Обязательно запускать после создания расчета
         /// </summary>
-        public void Initialize (Document doc)
+        public void Initialize(Document doc)
         {
             Doc = doc;
 
             // Дефолтные настройки
             if (Options == null)
+            {
                 Options = InsOptions.Default();
+            }
 
             // Загрузка карты
             if (Map != null)
@@ -97,7 +99,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;
                 Map.InsPointAdded += Map_InsPointAdded;
-            }            
+            }
 
             // Создание расчета елочек
             if (Tree == null)
@@ -107,7 +109,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Tree.Initialize(this);
 
             // Расчет фронтов
-            if (Front== null)
+            if (Front == null)
             {
                 Front = new FrontModel();
             }
@@ -122,7 +124,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
             doc.Database.BeginSave += Database_BeginSave;
             Redrawable();            
-        }
+        }       
 
         public void Redrawable ()
         {
@@ -341,7 +343,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Tree.AddPoint(dicInsPt, idPt);
             }
-        }
+        }        
 
         /// <summary>
         /// Очистка визуализаций (перед переключением на другой чертеж)

@@ -7,7 +7,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:FrontViewModel,
                                      IsDesignTimeCreatable=True}"
-    d:DesignHeight="300" d:DesignWidth="300"
+    d:DesignHeight="325" d:DesignWidth="260"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -86,7 +86,8 @@
                                                     <Grid Margin="4">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition />
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
                                                         <Grid.InputBindings>
                                                             <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
@@ -101,6 +102,16 @@
                                                             Grid.Column="1"
                                                             Margin="2" VerticalAlignment="Center"
                                                             Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
+                                                        <ComboBox Grid.Column="2" Background="Transparent"
+                                                                  Visibility="{Binding ElementName=icGroups, Path=DataContext.ComboboxHouseDbVisibility}"
+                                                                  ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDbFree}"
+                                                                  SelectedItem="{Binding SelectedHouseDb}">
+                                                            <ComboBox.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding FullName}"/>
+                                                                </DataTemplate>
+                                                            </ComboBox.ItemTemplate>
+                                                        </ComboBox>
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>

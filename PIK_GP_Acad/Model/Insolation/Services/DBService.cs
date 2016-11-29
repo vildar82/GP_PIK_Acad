@@ -49,7 +49,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public static List<ObjectMDM> GetHouses(ProjectMDM project)
         {
             if (project == null) return null;
-            var objs = MDMService.GetObjects(project.Id, ObjectTypeEnum.House);
+            var objs = MDMService.GetHouses(project.Id);
             return objs;
         }
     }    

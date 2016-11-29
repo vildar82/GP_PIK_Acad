@@ -14,6 +14,7 @@ using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib.XData;
+using PIK_DB_Projects;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -74,6 +75,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<List<FrontCalcPoint>> ContourSegmentsCalcPoints { get; set; }
 
+        
+
         public bool IsVisualFront {
             get { return isVisualFront; }
             set { isVisualFront = value; OnIsVisualFrontChanged(); RaisePropertyChanged(); }
@@ -93,6 +96,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Идентификатор Корпуса в базе
         /// </summary>
         public int HouseId { get; set; }
+
+        public ObjectMDM SelectedHouseDb {
+            get { return selectedHouseDb; }
+            set {
+                var oldValue = selectedHouseDb;
+                selectedHouseDb = value;
+                RaisePropertyChanged();
+                OnSelectedHouseDbChanged(oldValue);
+            }
+        }
+        ObjectMDM selectedHouseDb;
 
         /// <summary>
         /// Расчет фронтов дома
@@ -123,6 +137,24 @@ namespace PIK_GP_Acad.Insolation.Models
         private void OnIsVisualFrontChanged ()
         {
             VisualFront.VisualIsOn = IsVisualFront;            
+        }
+
+        private void OnSelectedHouseDbChanged(ObjectMDM oldHouseDb)
+        {
+            if (SelectedHouseDb == oldHouseDb)
+            {
+                return;
+            }
+            // Исключить выбранный объект из списка свободных домов            
+            if (SelectedHouseDb== null)
+            {
+                HouseId = 0;
+            }
+            else
+            {
+                HouseId = SelectedHouseDb.Id;
+            }
+            FrontGroup.Front.DefineHouseDb();
         }
 
         /// <summary>

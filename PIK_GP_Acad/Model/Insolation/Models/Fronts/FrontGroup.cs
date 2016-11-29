@@ -59,7 +59,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Дома
         /// </summary>
         public ObservableCollection<House> Houses { get { return houses; } set { houses = value; RaisePropertyChanged(); } }
-        ObservableCollection<House> houses;
+        ObservableCollection<House> houses = new ObservableCollection<House>();
         /// <summary>
         /// Включение/отключение визуализации расчета фронтонов
         /// </summary>
@@ -128,18 +128,14 @@ namespace PIK_GP_Acad.Insolation.Models
             foreach (var item in Houses)
             {
                 item.IsVisualFront = IsVisualFrontOn;
-            }
-            
+            }            
         }
 
-        private void OnFrontHeightChanged ()
+        private void OnFrontHeightChanged()
         {
-            if (Houses != null)
+            foreach (var item in Houses)
             {
-                foreach (var item in Houses)
-                {
-                    item.FrontHeight = FrontHeight;
-                }
+                item.FrontHeight = FrontHeight;
             }
         }
 
@@ -168,7 +164,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Как сохранить предыдущие данные домов
             DisposeHouses();
 
-            var oldHouses = Houses?.ToList();
+            var oldHouses = Houses.ToList();
 
             // Считываение домов с чертежа в заданной области
             using (var scope = Front.Model.Map.GetScope(SelectRegion))
@@ -287,15 +283,12 @@ namespace PIK_GP_Acad.Insolation.Models
             return false;
         }
 
-        private void DisposeHouses ()
+        private void DisposeHouses()
         {
-            if (Houses != null)
+            foreach (var item in Houses)
             {
-                foreach (var item in Houses)
-                {
-                    item.DisposeContour();
-                    item.Dispose();
-                }
+                item.DisposeContour();
+                item.Dispose();
             }
         }
 
@@ -369,14 +362,11 @@ namespace PIK_GP_Acad.Insolation.Models
             return resExt;
         }
 
-        public void ClearVisual ()
+        public void ClearVisual()
         {
-            if (Houses != null)
+            foreach (var item in Houses)
             {
-                foreach (var item in Houses)
-                {
-                    item.ClearVisual();
-                }
+                item.ClearVisual();
             }
         }
 
