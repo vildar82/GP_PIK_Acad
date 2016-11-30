@@ -7,7 +7,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:PlaceViewModel,
                                      IsDesignTimeCreatable=True}"
-    d:DesignHeight="162.024" d:DesignWidth="192.048"
+    d:DesignHeight="180.024" d:DesignWidth="216.048"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -21,48 +21,50 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ItemsControl x:Name="icPlaces" Grid.Row="0" ItemsSource="{Binding Place.Places}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="2" Background="Gray">
-                        <Grid.InputBindings>
-                            <MouseBinding Command="{Binding ElementName=icPlaces, Path=DataContext.ShowPlace}" CommandParameter="{Binding}" Gesture="LeftClick" />
-                        </Grid.InputBindings>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <WrapPanel Grid.Column="0">
-                            <TextBox
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="icPlaces"  ItemsSource="{Binding Place.Places}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="2" Background="Gray">
+                            <Grid.InputBindings>
+                                <MouseBinding Command="{Binding ElementName=icPlaces, Path=DataContext.ShowPlace}" CommandParameter="{Binding}" Gesture="LeftClick" />
+                            </Grid.InputBindings>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <WrapPanel Grid.Column="0">
+                                <TextBox
                                 VerticalAlignment="Center"
                                 Margin="5"
                                 Background="Transparent" BorderThickness="0"
                                 FontSize="20"
                                 Text="{Binding Name}" />
-                            <TextBlock Text="{Binding Area, StringFormat={}{0}м² :}" VerticalAlignment="Center" Margin="2" />
-                            <TextBlock
+                                <TextBlock Text="{Binding Area, StringFormat={}{0}м² :}" VerticalAlignment="Center" Margin="2" />
+                                <TextBlock
                                 Margin="1" VerticalAlignment="Center"
                                 Background="Transparent"
                                 Text="{Binding LevelsInfo}" />
-                        </WrapPanel>
-                        <StackPanel Grid.Column="1" Margin="3" Orientation="Horizontal">
-                            <ToggleButton
+                            </WrapPanel>
+                            <StackPanel Grid.Column="1" Margin="3" Orientation="Horizontal">
+                                <ToggleButton
                                 Margin="1"
                                 Style="{StaticResource tbtnSmall}"
                                 IsChecked="{Binding IsVisualPlaceOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ToolTip="Включение/отключение визуализации фронтов">
-                                <Image Source="{StaticResource biPlace}" />
-                            </ToggleButton>
-                            <Button Style="{StaticResource btnSmall}"
+                                    <Image Source="{StaticResource biPlace}" />
+                                </ToggleButton>
+                                <Button Style="{StaticResource btnSmall}"
                                     Command="{Binding ElementName=icPlaces, Path=DataContext.Delete}"
-                                    CommandParameter="{Binding}">                                
-                                <Image Source="{StaticResource biClose}" />
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                    CommandParameter="{Binding}">
+                                    <Image Source="{StaticResource biClose}" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <!--  Кнопки управления  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

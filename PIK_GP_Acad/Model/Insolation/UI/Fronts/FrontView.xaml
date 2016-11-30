@@ -7,7 +7,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:FrontViewModel,
                                      IsDesignTimeCreatable=True}"
-    d:DesignHeight="325" d:DesignWidth="260"
+    d:DesignHeight="236" d:DesignWidth="268"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -22,112 +22,113 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Список групп - областей расчета фронтов  -->
-        <ItemsControl
-            x:Name="icGroups"
-            Grid.Row="0"
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+            x:Name="icGroups"            
             Background="Transparent"
             ItemsSource="{Binding Front.Groups, UpdateSourceTrigger=PropertyChanged}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
                         Margin="5"
                         Background="Gray" BorderBrush="Gray" BorderThickness="1">
-                        <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
-                            <!--  Заголовок группы - все о группе  -->
-                            <Expander.HeaderTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid Grid.Column="0">
+                            <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
+                                <!--  Заголовок группы - все о группе  -->
+                                <Expander.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBox
+                                            <Grid Grid.Column="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox
                                                 Margin="5" HorizontalAlignment="Left"
                                                 Background="Transparent" BorderThickness="0"
                                                 FontSize="20"
                                                 Text="{Binding Name}" />
-                                            <TextBox Text="{Binding FrontHeight}" 
+                                                <TextBox Text="{Binding FrontHeight}" 
                                                      Background="Transparent" HorizontalAlignment="Right" Margin="3" 
                                                      ToolTip="Высота расчета фронтов, м." BorderThickness="0"
                                                      VerticalAlignment="Center"/>
-                                        </Grid>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <ToggleButton
+                                            </Grid>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <ToggleButton
                                                 Margin="1"
                                                 Style="{StaticResource tbtnSmall}"
                                                 IsChecked="{Binding IsVisualFrontOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                 ToolTip="Включение/отключение визуализации фронтов">
-                                                <Image Source="{StaticResource biFront}" />
-                                            </ToggleButton>
-                                            <Button
+                                                    <Image Source="{StaticResource biFront}" />
+                                                </ToggleButton>
+                                                <Button
                                                 Margin="1"
                                                 Style="{StaticResource btnSmall}"
                                                 Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
                                                 CommandParameter="{Binding}"
                                                 ToolTip="Удаление блока из расчета">
-                                                <Image Source="{StaticResource biClose}" />
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </Expander.HeaderTemplate>
-                            <!--  Список домов в группе  -->
-                            <Expander.ContentTemplate>
-                                <DataTemplate>
-                                    <ItemsControl ItemsSource="{Binding Houses}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Margin="2" BorderBrush="Black" BorderThickness="1">
-                                                    <Grid Margin="4">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Grid.InputBindings>
-                                                            <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
-                                                        </Grid.InputBindings>
-                                                        <TextBox
+                                                    <Image Source="{StaticResource biClose}" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </Expander.HeaderTemplate>
+                                <!--  Список домов в группе  -->
+                                <Expander.ContentTemplate>
+                                    <DataTemplate>
+                                        <ItemsControl ItemsSource="{Binding Houses}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Margin="2" BorderBrush="Black" BorderThickness="1">
+                                                        <Grid Margin="4">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.InputBindings>
+                                                                <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
+                                                            </Grid.InputBindings>
+                                                            <TextBox
                                                             Grid.Column="0"
                                                             Margin="2" VerticalAlignment="Center"
                                                             Background="Transparent" BorderThickness="0"
                                                             FontSize="15"
                                                             Text="{Binding Name}" />
-                                                        <TextBlock
+                                                            <TextBlock
                                                             Grid.Column="1"
                                                             Margin="2" VerticalAlignment="Center"
                                                             Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
-                                                        <ComboBox Grid.Column="2" Background="Transparent" MinWidth="50"
+                                                            <ComboBox Grid.Column="2" Background="Transparent" MinWidth="50"
                                                                   Visibility="{Binding ElementName=icGroups, Path=DataContext.ComboboxHouseDbVisibility, UpdateSourceTrigger=PropertyChanged}"
                                                                   ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
                                                                   SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                   ToolTip="Связывание дома с базой данных">
-                                                            <ComboBox.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <StackPanel Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" Margin="2">
-                                                                        <TextBlock Text="{Binding Name}"
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" Margin="2">
+                                                                            <TextBlock Text="{Binding Name}"
                                                                                ToolTip="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
-                                                                    </StackPanel>
-                                                                </DataTemplate>
-                                                            </ComboBox.ItemTemplate>
-                                                        </ComboBox>
-                                                    </Grid>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </DataTemplate>
-                            </Expander.ContentTemplate>
-                        </Expander>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </DataTemplate>
+                                </Expander.ContentTemplate>
+                            </Expander>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <!--  Кнопки управления  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

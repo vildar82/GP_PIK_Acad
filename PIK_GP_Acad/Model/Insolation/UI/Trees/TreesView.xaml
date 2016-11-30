@@ -10,7 +10,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     d:DataContext="{d:DesignInstance local:TreesViewModel,
                                      IsDesignTimeCreatable=True}"
-    d:DesignHeight="213" d:DesignWidth="257"
+    d:DesignHeight="208" d:DesignWidth="199"
     mc:Ignorable="d"
     x:Name="treesView">
     <UserControl.Resources>
@@ -28,78 +28,79 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Список расчетных точекк  -->
-        <ItemsControl
-            x:Name="lbPoints"
-            Grid.Row="0"
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+            x:Name="lbPoints"            
             HorizontalContentAlignment="Stretch"
             Background="Transparent" BorderThickness="0"
             ItemsSource="{Binding Tree.Points, UpdateSourceTrigger=PropertyChanged}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}"
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="1" Background="{Binding InsValue.Requirement.Color, Converter={converters:ColorToBrushConverter}, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Info, UpdateSourceTrigger=PropertyChanged}"
                           Tag="{Binding ElementName=lbPoints, Path=DataContext}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.InputBindings>
-                            <MouseBinding Command="{Binding ElementName=lbPoints, Path=DataContext.ShowPoint}" CommandParameter="{Binding}" Gesture="LeftClick" />
-                        </Grid.InputBindings>
-                        <Grid.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Отчет по точке" Command="{Binding ReportPoint}" Height="25">
-                                    <MenuItem.Icon>
-                                        <Image Source="{StaticResource biReport}"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </Grid.ContextMenu>
-                        <TextBlock
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.InputBindings>
+                                <MouseBinding Command="{Binding ElementName=lbPoints, Path=DataContext.ShowPoint}" CommandParameter="{Binding}" Gesture="LeftClick" />
+                            </Grid.InputBindings>
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Отчет по точке" Command="{Binding ReportPoint}" Height="25">
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource biReport}"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+                            <TextBlock
                             Grid.Column="0"
                             Margin="3" VerticalAlignment="Center"
                             FontSize="20" FontWeight="Bold"
                             Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
-                        <!--  Инфо  -->
-                        <WrapPanel Grid.Column="1" Margin="1" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, UpdateSourceTrigger=PropertyChanged}" />
-                        </WrapPanel>
-                        <!--  Кнопки  -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="3">
-                            <!--  Вкл/выкл зон инсоляции точки  -->
-                            <ToggleButton
+                            <!--  Инфо  -->
+                            <WrapPanel Grid.Column="1" Margin="1" VerticalAlignment="Center">
+                                <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding InsValue.Requirement.Name, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.TotalTimeString, StringFormat={} всего: {0}, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Margin="1,0,1,0" VerticalAlignment="Center" Text="{Binding InsValue.MaxContinuosTimeString, StringFormat={} макс: {0}, UpdateSourceTrigger=PropertyChanged}" />
+                            </WrapPanel>
+                            <!--  Кнопки  -->
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="3">
+                                <!--  Вкл/выкл зон инсоляции точки  -->
+                                <ToggleButton
                                 Height="{StaticResource SmallButtonsHeight}"
                                 Margin="0"                                
                                 IsChecked="{Binding IsVisualIllumsOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ToolTip="Визуализация зон инсоляции точки." >
-                                <Image Source="{StaticResource biIlums}"/>
-                            </ToggleButton>
-                            <!--  Редактирование параметров точки  -->
-                            <Button
+                                    <Image Source="{StaticResource biIlums}"/>
+                                </ToggleButton>
+                                <!--  Редактирование параметров точки  -->
+                                <Button
                                 Margin="0"
                                 Style="{StaticResource btnSmall}"
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.EditPoint}"
                                 CommandParameter="{Binding}"                                
                                 ToolTip="Редактирование параметров точки">
-                                <Image Source="{StaticResource biOptions}"/>
-                            </Button>
-                            <!--  Удаление точки  -->
-                            <Button
+                                    <Image Source="{StaticResource biOptions}"/>
+                                </Button>
+                                <!--  Удаление точки  -->
+                                <Button
                                 Margin="0"
                                 Style="{StaticResource btnSmall}"
                                 Command="{Binding ElementName=lbPoints, Path=DataContext.DeletePoint}"
                                 CommandParameter="{Binding}"                                
                                 ToolTip="Удаление выделенной точки в списке">
-                                <Image Source="{StaticResource biClose}"/>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                    <Image Source="{StaticResource biClose}"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
         <!--  Кнопки управление елочками  -->
         <Grid Grid.Row="1" Margin="2">
             <Grid.ColumnDefinitions>

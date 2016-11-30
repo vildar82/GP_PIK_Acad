@@ -225,15 +225,18 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
             {
-                Point3dCollection ptsIntersects = new Point3dCollection();
+#if TEST
+                EntityHelper.AddEntityToCurrentSpace(lineZero);
+#endif
+                var ptsIntersects = new Point3dCollection();
                 lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
                 var pts = build.Contour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
-                pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s=>s.Convert2d()));
+                pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
                 if (pts.Any())
                 {
                     var ilumShadow = GetIllumShadow(pts);
                     return ilumShadow;
-                }                
+                }
             }
             return null;
         }
@@ -349,13 +352,18 @@ namespace PIK_GP_Acad.Insolation.Services
             double ySunPlane = values.YShadowLineByHeight(maxHeight, out cSunPlane);
             // растояние до точки пересечения луча и линии тени
             double xRayToStart = values.GetXRay(ySunPlane, StartAnglesIllum.AngleStartOnPlane);
-            if (xRayToStart < ptCalc.X)
-                xRayToStart = ptCalc.X;
+            if (xRayToStart < 0)
+                xRayToStart = 0;
             double xRayToEnd = values.GetXRay(ySunPlane, StartAnglesIllum.AngleEndOnPlane);
-            if (xRayToEnd > ptCalc.X)
-                xRayToEnd = ptCalc.X;
-            Extents3d ext = new Extents3d(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
-                                          new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
+            if (xRayToEnd > 0)
+                xRayToEnd = 0;
+            Extents3d ext = new Extents3d();// (new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
+                                          //new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
+            ext.AddPoint(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0));
+            ext.AddPoint (new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
+#if TEST
+            EntityHelper.AddEntityToCurrentSpace(ext.GetPolyline());
+#endif
             return ext;
         }
 
