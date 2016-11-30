@@ -112,5 +112,14 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             EraseDraws();
         }
+
+        public void DrawForUser()
+        {
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc == null) return;
+            var visDbAny = new VisualDatabaseAny(doc);
+            visDbAny.AddVisual(this);
+            visDbAny.Draw();
+        }
     }
 }

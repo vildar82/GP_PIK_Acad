@@ -57,8 +57,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
                 IdPlContour = plContour.Id;
                 AreaGNS = plContour.Area;
             }
-            // Загрузка значений из словаря объекта
-            this.LoadDboDict();
+            
         }        
 
         public List<IODRecord> GetODRecords ()

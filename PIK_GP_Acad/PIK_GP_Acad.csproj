@@ -234,6 +234,7 @@
       <DependentUpon>FrontView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Fronts\FrontViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Fronts\HouseDbSel.cs" />
     <Compile Include="Model\Insolation\UI\InsOptionsView.xaml.cs">
       <DependentUpon>InsOptionsView.xaml</DependentUpon>
     </Compile>
@@ -529,6 +530,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\GP_Ins_Report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GP_Ins_Front_Export.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

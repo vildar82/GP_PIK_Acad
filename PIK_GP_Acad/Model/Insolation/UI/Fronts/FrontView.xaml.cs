@@ -24,5 +24,12 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             InitializeComponent();
         }
+
+        private void btnDots_Click(object sender, RoutedEventArgs e)
+        {
+            cmDots.DataContext = DataContext;
+            cmDots.Visibility = Visibility.Visible;
+            cmDots.IsOpen = true;
+        }
     }
 }

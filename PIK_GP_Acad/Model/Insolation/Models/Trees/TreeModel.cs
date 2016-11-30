@@ -376,16 +376,15 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void DrawVisuals ()
         {
-            VisualDatabaseAny visDbAny = new VisualDatabaseAny(Model.Doc);
-            visDbAny.AddVisual(VisualTrees);
+            VisualTrees.DrawForUser();            
             if (Points != null)
             {
                 foreach (var item in Points)
                 {
-                    visDbAny.AddVisual(item.VisualIllums);
+                    item.VisualIllums.DrawForUser();
+                    item.VisualPoint.DrawForUser();                    
                 }
-            }
-            visDbAny.Draw();
+            }            
         }
 
         public DicED GetExtDic (Document doc)

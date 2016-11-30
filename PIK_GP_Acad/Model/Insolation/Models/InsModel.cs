@@ -12,6 +12,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -122,7 +123,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             Place.Initialize(this);
 
-            doc.Database.BeginSave += Database_BeginSave;
+            doc.Database.BeginSave += Database_BeginSave;            
             Redrawable();            
         }       
 
@@ -131,16 +132,17 @@ namespace PIK_GP_Acad.Insolation.Models
             // ????
         }
 
-        private void Database_BeginSave (object sender, Autodesk.AutoCAD.DatabaseServices.DatabaseIOEventArgs e)
+        private void Database_BeginSave (object sender, DatabaseIOEventArgs e)
         {
             // При сохранении чертежа - сохранение расчета инсоляции
             try
             {
                 SaveIns();
             }
-            catch
+            catch (Exception ex)
             {
                 // ignored
+                Logger.Log.Error(ex, "SaveIns");
             }
         }
 

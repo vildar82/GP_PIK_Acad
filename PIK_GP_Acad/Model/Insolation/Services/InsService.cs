@@ -186,6 +186,8 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (doc == null) return;
             // Очистка объекта
+            var insModel = GetInsModel(doc);
+            insModel?.Dispose();
             insModels?.Remove(doc);
         }
 

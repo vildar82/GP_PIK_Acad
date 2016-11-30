@@ -20,6 +20,8 @@ namespace PIK_GP_Acad.Insolation.UI
             Add = new RelayCommand(OnAddExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
+            Export = new RelayCommand(OnExportExecute);
+            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
 
             FillHouseDb();
         }        
@@ -31,7 +33,9 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public RelayCommand Add { get; set; }
         public RelayCommand<FrontGroup> Delete { get; set; }
-        public RelayCommand<House> ShowHouse { get; set; }        
+        public RelayCommand<House> ShowHouse { get; set; }
+        public RelayCommand Export { get; set; }
+        public RelayCommand DrawVisuals { get; set; }
 
         public Visibility ComboboxHouseDbVisibility 
             { get { return comboboxHouseDbVisibility; }
@@ -72,7 +76,21 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnShowHouseExecute (House house)
         {
             house.Show();
-        }        
+        }
+
+        private void OnExportExecute()
+        {
+            // Экспорт фронтов инсоляции
+            Front.Export();
+        }
+
+        /// <summary>
+        /// Рисование визуализации в чертеже
+        /// </summary>
+        private void OnDrawVisualsExecute()
+        {
+            Front.DrawVisuals();
+        }
 
         private void FillHouseDb()
         {

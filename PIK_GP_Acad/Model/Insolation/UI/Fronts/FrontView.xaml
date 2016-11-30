@@ -102,13 +102,17 @@
                                                             Grid.Column="1"
                                                             Margin="2" VerticalAlignment="Center"
                                                             Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
-                                                        <ComboBox Grid.Column="2" Background="Transparent"
-                                                                  Visibility="{Binding ElementName=icGroups, Path=DataContext.ComboboxHouseDbVisibility}"
-                                                                  ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDbFree}"
-                                                                  SelectedItem="{Binding SelectedHouseDb}">
+                                                        <ComboBox Grid.Column="2" Background="Transparent" MinWidth="50"
+                                                                  Visibility="{Binding ElementName=icGroups, Path=DataContext.ComboboxHouseDbVisibility, UpdateSourceTrigger=PropertyChanged}"
+                                                                  ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
+                                                                  SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                  ToolTip="Связывание дома с базой данных">
                                                             <ComboBox.ItemTemplate>
                                                                 <DataTemplate>
-                                                                    <TextBlock Text="{Binding FullName}"/>
+                                                                    <StackPanel Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" Margin="2">
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                               ToolTip="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                    </StackPanel>
                                                                 </DataTemplate>
                                                             </ComboBox.ItemTemplate>
                                                         </ComboBox>
@@ -126,13 +130,40 @@
         </ItemsControl>
         <!--  Кнопки управления  -->
         <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <Button
+                Grid.Column="0"
                 Width="Auto"
                 Margin="1"
                 Style="{StaticResource btnNormal}"
                 Command="{Binding Add}"
                 ToolTip="Добавить блок в расчет - выбор области на чертеже">
                 <Image Source="{StaticResource biAdd}" />
+            </Button>
+            <Button                
+                x:Name="btnDots"
+                Style="{StaticResource btnNormal}"
+                Grid.Column="2"
+                Click="btnDots_Click"                
+                ContextMenuService.IsEnabled="False">
+                <Image Source="{StaticResource biOption_dots}"/>
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="cmDots">
+                        <MenuItem Command="{Binding Export}" Header="Экспорт фронтов" Height="22">
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource biFrontExport}"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже" Height="22" >
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource biDraw_visuals}"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
             </Button>
         </Grid>
     </Grid>

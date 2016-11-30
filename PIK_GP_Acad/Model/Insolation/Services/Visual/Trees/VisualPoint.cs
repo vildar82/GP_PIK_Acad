@@ -11,6 +11,7 @@ using PIK_GP_Acad.Insolation.Models;
 using AcadLib;
 using System.Drawing;
 using static PIK_GP_Acad.Insolation.Services.VisualHelper;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -74,6 +75,15 @@ namespace PIK_GP_Acad.Insolation.Services
         public void Dispose ()
         {
             
+        }
+
+        public void DrawForUser()
+        {
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc == null) return;
+            var visDbAny = new VisualDatabaseAny(doc);
+            visDbAny.AddVisual(this);
+            visDbAny.Draw();
         }
     }
 }

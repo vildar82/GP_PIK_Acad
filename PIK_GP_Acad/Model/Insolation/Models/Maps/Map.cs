@@ -146,7 +146,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var building = ElementFactory.Create<IBuilding>(ent);
             if (building != null)
-            {
+            {                
                 var insBuild = new MapBuilding(building);
                 Buildings.Add(insBuild);
                 var r = GetBuildingRectangle(insBuild);

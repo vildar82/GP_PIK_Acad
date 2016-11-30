@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
             BlockBase = new BlockBase(blRef, blName);
             ExtentsInModel = blRef.GeometricExtentsСlean();
-            Floors = BlockBase.GetPropValue<int>("^ЭТАЖ", exactMatch: false);
+            Floors = BlockBase.GetPropValue<int>("^ЭТАЖ", exactMatch: false);            
         }
 
         public BlockBase BlockBase { get; set; }

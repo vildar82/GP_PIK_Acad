@@ -116,8 +116,14 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             string name;
             // TODO: Загрузить словарь полилинии площадки
-            this.LoadDboDict();
-
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc != null)
+            {
+                using (doc.LockDocument())
+                {
+                    this.LoadDboDict();
+                }
+            }
             name = $"Площадка {PlaceModel.Places.Count + 1}";
             return name;
         }

@@ -28,6 +28,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Имя дома - объекта
         /// </summary>
         string HouseName { get; set; }
+        /// <summary>
+        /// Связанный дом с базой MDM
+        /// </summary>
+        int HouseId { get; set; }
         Rectangle Rectangle { get; set; }
     }
 }

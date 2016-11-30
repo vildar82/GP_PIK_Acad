@@ -15,6 +15,7 @@ using PIK_GP_Acad.Insolation;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib.XData;
 using PIK_DB_Projects;
+using PIK_GP_Acad.Insolation.UI;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -34,8 +35,7 @@ namespace PIK_GP_Acad.Insolation.Models
             FrontGroup = frontGroup;
             Doc = FrontGroup.Front.Model.Doc;
             VisualFront = new VisualFront(Doc);
-            //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;
-            Sections = new ObservableCollection<MapBuilding>();
+            //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;            
         }   
 
         public Document Doc { get; set; }
@@ -48,7 +48,7 @@ namespace PIK_GP_Acad.Insolation.Models
             get { return name; }
             set {
                 name = value;
-                SaveHouseNameToSection();
+                SaveHouseNameToSections();
                 RaisePropertyChanged();
             }
         }
@@ -64,7 +64,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Блок-секции дома
         /// </summary>
         public ObservableCollection<MapBuilding> Sections { get { return sections; } set { sections = value; RaisePropertyChanged(); } }
-        ObservableCollection<MapBuilding> sections;
+        ObservableCollection<MapBuilding> sections = new ObservableCollection<MapBuilding>();
 
         public Polyline Contour { get { return contour; } set { DisposeContour(); contour = value;} }
         Polyline contour;
@@ -73,9 +73,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<FrontValue> FrontLines { get; set; }
 
-        public List<List<FrontCalcPoint>> ContourSegmentsCalcPoints { get; set; }
-
-        
+        public List<List<FrontCalcPoint>> ContourSegmentsCalcPoints { get; set; }        
 
         public bool IsVisualFront {
             get { return isVisualFront; }
@@ -95,18 +93,27 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Идентификатор Корпуса в базе
         /// </summary>
-        public int HouseId { get; set; }
+        public int HouseId { get { return houseId; }
+            set {
+                if (houseId == value) return;
+                houseId = value;
+                SaveHouseIdToSections();
+                SelectedHouseDb = FrontGroup.Front.FindHouseDb(value);
+            }
+        }
+        int houseId;
 
-        public ObjectMDM SelectedHouseDb {
+        public HouseDbSel SelectedHouseDb {
             get { return selectedHouseDb; }
             set {
+                if (selectedHouseDb == value) return;                
                 var oldValue = selectedHouseDb;
                 selectedHouseDb = value;
                 RaisePropertyChanged();
                 OnSelectedHouseDbChanged(oldValue);
             }
-        }
-        ObjectMDM selectedHouseDb;
+        }        
+        HouseDbSel selectedHouseDb;
 
         /// <summary>
         /// Расчет фронтов дома
@@ -137,24 +144,25 @@ namespace PIK_GP_Acad.Insolation.Models
         private void OnIsVisualFrontChanged ()
         {
             VisualFront.VisualIsOn = IsVisualFront;            
-        }
+        }        
 
-        private void OnSelectedHouseDbChanged(ObjectMDM oldHouseDb)
+        private void OnSelectedHouseDbChanged(HouseDbSel oldValue)
         {
-            if (SelectedHouseDb == oldHouseDb)
+            if (object.ReferenceEquals(oldValue, SelectedHouseDb)) return;
+            if (SelectedHouseDb != null)
             {
-                return;
-            }
-            // Исключить выбранный объект из списка свободных домов            
-            if (SelectedHouseDb== null)
-            {
-                HouseId = 0;
+                HouseId = SelectedHouseDb.Id;
+                SelectedHouseDb.Connect(this);
             }
             else
             {
-                HouseId = SelectedHouseDb.Id;
+                HouseId = 0;
             }
-            FrontGroup.Front.DefineHouseDb();
+            if (oldValue!= null)
+            {
+                oldValue.Disconnect(this);
+            }
+            //FrontGroup.Front.DefineHouseDb();
         }
 
         /// <summary>
@@ -167,52 +175,61 @@ namespace PIK_GP_Acad.Insolation.Models
                 using (Doc.LockDocument())
                 {
                     Doc.Editor.Zoom(GetExtents());
-                }
+                }                
             }
             catch { }
-        } 
+        }
 
         /// <summary>
         /// Определение имени дома - по блок-секциям или дефолтное по переданному индексу
         /// </summary>        
-        public void DefineName (int countHouse)
+        public void DefineName(int countHouse)
         {
             if (!string.IsNullOrEmpty(Name)) return;
-            // По идентификатору !!!???
-                    
-            if (Sections != null)
+            // По идентификатору !!!???                    
+
+            //TODO: FIX: определение имени дома по блок-секциям
+            var houseNames = Sections.Where(w => !string.IsNullOrEmpty(w.Building.HouseName))
+                .GroupBy(g => g.Building.HouseName).ToList();
+            if (houseNames.Count == 1)
             {
-                //TODO: FIX: определение имени дома по блок-секциям
-                var hn = Sections.Where(w=>!string.IsNullOrEmpty(w.Building.HouseName))
-                    .GroupBy(g => g.Building.HouseName).Select(s => s.Key);
-                if (hn.Count() == 1)
-                {
-                    Name = hn.First();
-                }
+                var houseName = houseNames.First().First();
+                Name = houseName.Building.HouseName;
+                HouseId = houseName.Building.HouseId;
             }
+
             if (string.IsNullOrEmpty(Name))
             {
                 Name = "Дом " + countHouse;
-            }            
+            }
         }
 
         /// <summary>
         /// Сохранение имени дома в секции
         /// </summary>
-        private void SaveHouseNameToSection ()
+        private void SaveHouseNameToSections()
         {
-            if (string.IsNullOrEmpty(Name)) return;
-            if (Sections!= null)
-            {                
-                foreach (var item in Sections)
+            //if (string.IsNullOrEmpty(Name)) return;            
+            foreach (var item in Sections)
+            {
+                if (item.Building != null)
                 {
-                    if (item.Building != null)
-                    {
-                        item.Building.HouseName = Name;
-                    }
+                    item.Building.HouseName = Name;                    
                 }
             }
-        }        
+        }
+
+        private void SaveHouseIdToSections()
+        {
+            //if (string.IsNullOrEmpty(Name)) return;            
+            foreach (var item in Sections)
+            {
+                if (item.Building != null)
+                {
+                    item.Building.HouseId = HouseId;
+                }
+            }
+        }
 
         /// <summary>
         /// Добавление ошибки - относящейся к этому дому
@@ -227,30 +244,29 @@ namespace PIK_GP_Acad.Insolation.Models
             Error.AdditionToMessage(message);
         }
 
-        private Extents3d GetExtents ()
+        private Extents3d GetExtents()
         {
             if (Contour != null)
             {
                 return Contour.GeometricExtents;
             }
-            if (Sections != null)
+
+            var ext = new Extents3d();
+            foreach (var item in Sections)
             {
-                var ext = new Extents3d();
-                foreach (var item in Sections)
-                {
-                    ext.AddExtents(item.ExtentsInModel);
-                }
-                return ext;
+                ext.AddExtents(item.ExtentsInModel);
             }
-            return new Extents3d();
-        }       
+            return ext;            
+        }      
 
         /// <summary>
         /// Определение полилинии контура дома (объединением полилиний от блок-секций)
         /// </summary>
         public virtual void DefineContour ()
         {
-            if (Sections == null) return;
+            Contour?.Dispose();
+            if (Sections.Count == 0) return;
+
             var pls = Sections.Select(s => s.Contour).ToList();
 
             // Предварительное соединение полилиний (близкие точки вершин разных полилиний - в среднюю вершину)

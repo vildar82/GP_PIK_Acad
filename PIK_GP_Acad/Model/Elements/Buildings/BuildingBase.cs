@@ -20,6 +20,8 @@ namespace PIK_GP_Acad.Elements.Buildings
         public BuildingBase(ObjectId idEnt)
         {
             IdEnt = idEnt;
+            // Загрузка значений из словаря объекта
+            this.LoadDboDict();
         }
 
         public BuildingTypeEnum BuildingType { get; set; }
@@ -29,6 +31,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public double Height { get; set; }        
         public double Elevation { get; set; }
         public string HouseName { get; set; }
+        public int HouseId { get; set; }
         public ObjectId IdEnt { get; set; }
         public string PluginName { get; set; } = "GP";
         public abstract Rectangle Rectangle { get; set; }        
@@ -58,19 +61,21 @@ namespace PIK_GP_Acad.Elements.Buildings
         public List<TypedValue> GetDataValues(Document doc)
         {
             return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(HouseName)
+                TypedValueExt.GetTvExtData(HouseName),
+                TypedValueExt.GetTvExtData(HouseId),
             };
         }
 
         public void SetDataValues(List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 1)
+            if (values == null || values.Count != 2)
             {
                 // Дефолт
             }
             else
             {
                 HouseName = TypedValueExt.GetTvValue<string>(values[0]);
+                HouseId = TypedValueExt.GetTvValue<int>(values[1]);
             }
         }
     }

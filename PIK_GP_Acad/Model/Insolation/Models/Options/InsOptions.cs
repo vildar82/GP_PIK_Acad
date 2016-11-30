@@ -88,8 +88,8 @@ namespace PIK_GP_Acad.Insolation.Models
             return new List<TypedValue> {                
                 TypedValueExt.GetTvExtData(TileSize),
                 TypedValueExt.GetTvExtData(ShadowDegreeStep),
-                TypedValueExt.GetTvExtData(SunCalcAngleStart),
-                TypedValueExt.GetTvExtData(SunCalcAngleEnd),
+                //TypedValueExt.GetTvExtData(SunCalcAngleStart),
+                //TypedValueExt.GetTvExtData(SunCalcAngleEnd),
                 TypedValueExt.GetTvExtData(Project?.Id ?? 0)
             };
         }

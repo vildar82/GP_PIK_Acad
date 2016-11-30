@@ -167,6 +167,9 @@ namespace PIK_GP_Acad.Insolation.Services
             return pl;
         }
 
+        
+        
+
         //private Hatch GetHatch (Region region)
         //{
         //    var plsByLoop = region.GetPoints2dByLoopType();
