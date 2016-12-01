@@ -357,8 +357,7 @@ namespace PIK_GP_Acad.Insolation.Services
             double xRayToEnd = values.GetXRay(ySunPlane, StartAnglesIllum.AngleEndOnPlane);
             if (xRayToEnd > 0)
                 xRayToEnd = 0;
-            Extents3d ext = new Extents3d();// (new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0),
-                                          //new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
+            Extents3d ext = new Extents3d();                                          
             ext.AddPoint(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0));
             ext.AddPoint (new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
 #if TEST
