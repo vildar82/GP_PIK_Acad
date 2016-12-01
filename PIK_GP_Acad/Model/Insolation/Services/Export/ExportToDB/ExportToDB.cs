@@ -30,9 +30,18 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         {
             // Отбор групп которым присвоен идентификатор, и в группе всем корпусам назначен идентификаторы
             List<FrontGroup> notIdentifiedGroups;
-            var exportedGroups = GetExportedGroups(out notIdentifiedGroups);
+            List<FrontGroup> exportedGroups = GetExportedGroups(out notIdentifiedGroups);
             // Форма подтверждения экпортируемых и не экпортируемых групп(неидентифицированных)
             var exportGroupsVM = new ExportGroupsViewModel(exportedGroups, notIdentifiedGroups);
+            if (InsService.ShowDialog(exportGroupsVM) == true)
+            {
+                foreach (var item in exportedGroups)
+                {
+                    var exportGroup = new ExportFrontGoup(item);
+                    var exportData = exportGroup.GetExportInsData();
+
+                }
+            }
         }
 
         private List<FrontGroup> GetExportedGroups (out List<FrontGroup> notIdentifiedGroups)

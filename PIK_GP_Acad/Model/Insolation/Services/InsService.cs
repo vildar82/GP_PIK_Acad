@@ -296,7 +296,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 { typeof(InsOptionsViewModel),  typeof(InsOptionsView)},
                 { typeof (TreeOptionsViewModel), typeof(TreeOptionsView) },
                 {  typeof (InsPointViewModel), typeof(InsPointView)},
-                { typeof(PlaceOptionsViewModel), typeof(PlaceOptionsView) }
+                { typeof(PlaceOptionsViewModel), typeof(PlaceOptionsView) },
+                { typeof(Export.ExportGroupsViewModel), typeof(Export.ExportGroupsView) }
             };
         }
 

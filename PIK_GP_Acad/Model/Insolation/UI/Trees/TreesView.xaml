@@ -149,6 +149,11 @@
                                 <Image Source="{StaticResource biDraw_visuals}"/>
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem Command="{Binding ReportAllPoints}" Header="Отчеты по всем точкам" Height="22" >
+                            <MenuItem.Icon>
+                                <Image Source="{StaticResource biReport}"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>

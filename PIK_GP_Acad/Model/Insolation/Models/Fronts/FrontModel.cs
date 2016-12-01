@@ -252,8 +252,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Export ()
         {
-            var export = new ExportToDB(this);
-            export.Export();
+            if (Groups.Any())
+            {
+                var export = new ExportToDB(this);
+                export.Export();
+            }
         }
 
         /// <summary>

@@ -166,13 +166,16 @@
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\FrontCalcPoint.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Place\CalcPlaceCentral.cs" />
     <Compile Include="Model\Insolation\Services\DbService.cs" />
-    <Compile Include="Model\Insolation\Services\Export\ExportHouseIns.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportFrontGoup.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportHouseIns.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportInsData.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\HouseTransform.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml.cs">
       <DependentUpon>ExportGroupsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsViewModel.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportToDB.cs" />
-    <Compile Include="Model\Insolation\Services\Export\InsCell.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\InsCell.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcPlace.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcFront.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />

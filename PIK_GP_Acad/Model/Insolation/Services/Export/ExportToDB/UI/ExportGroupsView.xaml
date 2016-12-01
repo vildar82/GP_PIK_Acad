@@ -7,33 +7,68 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance local:ExportGroupsViewModelTest,
                                      IsDesignTimeCreatable=True}"
-        Title="Экспортируемые объекты" Height="300" Width="300">
+        Title="Экспортируемые объекты" Height="723" Width="663">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Key="ItemGroup">
-                <TextBlock Text="{Binding Name}"/>
+                <Border BorderThickness="1" Margin="5" BorderBrush="Black">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="5" FontSize="20" VerticalAlignment="Center"/>
+                        <ItemsControl Grid.Column="1" Margin="5"
+                                  ItemsSource="{Binding Houses}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="2" FontWeight="Bold" VerticalAlignment="Center"/>                                        
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedHouseDb.Name}" Margin="2" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
             </DataTemplate>
-        </ResourceDictionary>        
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!-- Экспортируемые группы (блоки) -->
-        <StackPanel Grid.Row="0">
-            <ItemsControl ItemsSource="{Binding ExportedGroups, UpdateSourceTrigger=PropertyChanged}" 
-                          ItemTemplate="{StaticResource ItemGroup}">                
-            </ItemsControl>
-        </StackPanel>
-        <!-- Не экспортируемые группы (блоки) - непроидентифицированные -->
-        <StackPanel Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding NotIdentifiedGroups, UpdateSourceTrigger=PropertyChanged}" 
+        <Border Grid.Row="0" BorderBrush="Green" BorderThickness="10">
+            <StackPanel  Margin="5">
+                <TextBlock Text="Экспортируеммые группы домов:"/>
+                <TextBlock Text="Группа домов соответствует одному "/>
+                <ItemsControl ItemsSource="{Binding ExportedGroups, UpdateSourceTrigger=PropertyChanged}" 
                           ItemTemplate="{StaticResource ItemGroup}">
-            </ItemsControl>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+        <!-- Не экспортируемые группы (блоки) - непроидентифицированные -->
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="10" Background="DarkGray">
+            <StackPanel Grid.Row="1" Margin="5">
+                <TextBlock Text="Не экспортируемые группы домов - т.к. не связанны с базой:"/>
+                <ItemsControl ItemsSource="{Binding NotIdentifiedGroups, UpdateSourceTrigger=PropertyChanged}" 
+                          ItemTemplate="{StaticResource ItemGroup}">
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="2" Margin="5" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Content="OK" Command="{Binding OK}" Click="Ok_Clock" MinWidth="70" Margin="5" IsDefault="True"/>
+            <Button Content="Отмена" MinWidth="70" Margin="5" IsCancel="True"/>
         </StackPanel>
     </Grid>
 </Window>

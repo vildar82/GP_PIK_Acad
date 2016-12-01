@@ -12,6 +12,7 @@ using PIK_GP_Acad.Insolation.Services;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using AcadLib.XData;
+using AcadLib.Jigs;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -369,6 +370,29 @@ namespace PIK_GP_Acad.Insolation.Models
         private void CheckPoints ()
         {
             // Проверка точек   
+        }
+
+        /// <summary>
+        /// Отчеты по всем точкам
+        /// </summary>
+        public void ReportsAllPoint ()
+        {
+            var doc = Application.DocumentManager.MdiActiveDocument;
+            if (doc == null) return;
+            var db = doc.Database;
+            using (doc.LockDocument())
+            {             
+                var tables = new List<Entity>();
+                foreach (var item in Points)
+                {
+                    var report = new InsPointReport(item, doc.Database);
+                    report.CalcRows();
+                    var table = report.Create();
+                    tables.Add(table);
+                }
+                // вставка таблиц
+                doc.Editor.Drag(tables, 150);
+            }
         }
 
         /// <summary>

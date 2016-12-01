@@ -27,6 +27,7 @@ namespace PIK_GP_Acad.Insolation.UI
             EditPoint = new RelayCommand<InsPoint>(OnEditPointExecute);
             DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);
             ReportPoint = new RelayCommand<InsPoint>(OnReportPointExecute);
+            ReportAllPoints = new RelayCommand(OnReportAllPointsExecute, CanReportAllPointsExecute);
             EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
             DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
         }        
@@ -40,9 +41,10 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<InsPoint> ShowPoint { get; private set; }
         public RelayCommand<InsPoint> EditPoint { get; private set; }
         public RelayCommand<InsPoint> DeletePoint { get; private set; }
-        public RelayCommand<InsPoint> ReportPoint { get; private set; }        
+        public RelayCommand<InsPoint> ReportPoint { get; private set; }
+        public RelayCommand ReportAllPoints { get; private set; }
         public RelayCommand EditTreeOptions { get; private set; }
-        public RelayCommand DrawVisuals { get; private set; }
+        public RelayCommand DrawVisuals { get; private set; }        
 
         private void OnAddPointExecute ()
         {
@@ -120,6 +122,15 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnDrawVisualsExecute ()
         {
             Tree.DrawVisuals();
+        }
+
+        private bool CanReportAllPointsExecute()
+        {
+            return Tree.Points.Any();            
+        }
+        private void OnReportAllPointsExecute()
+        {
+            Tree.ReportsAllPoint();
         }
     }
 }

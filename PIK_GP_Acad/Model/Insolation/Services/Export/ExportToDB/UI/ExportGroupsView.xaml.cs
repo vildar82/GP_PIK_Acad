@@ -23,5 +23,10 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         {
             InitializeComponent();
         }
+
+        private void Ok_Clock(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+        }
     }
 }

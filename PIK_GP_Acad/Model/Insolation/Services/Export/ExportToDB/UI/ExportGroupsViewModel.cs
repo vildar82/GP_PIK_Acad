@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.Insolation.Models;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Services.Export
 {
@@ -21,10 +22,18 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         {
             ExportedGroups = new ObservableCollection<FrontGroup> ( exportedGroups);
             NotIdentifiedGroups = new ObservableCollection<FrontGroup> (notIdentifiedGroups);
-        }
+            OK = new RelayCommand(OnOkExecute);
+        }        
+
+        public RelayCommand OK { get; set; }
 
         public ObservableCollection<FrontGroup> ExportedGroups { get; set; }
         public ObservableCollection<FrontGroup> NotIdentifiedGroups { get; set; }
+
+        private void OnOkExecute()
+        {
+                        
+        }
     }
 
     public class ExportGroupsViewModelTest : ExportGroupsViewModel

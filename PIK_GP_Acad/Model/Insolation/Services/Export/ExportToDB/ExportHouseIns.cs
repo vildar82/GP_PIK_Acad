@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         private List<InsCell> GetCells ()
         {
             var contour = house.Contour;
-            List<InsCell> insCells = new List<InsCell>();
+            var insCells = new List<InsCell>();
             for (int i = 0; i < house.Contour.NumberOfVertices; i++)
             {
                 InsCell lastCell = null;
