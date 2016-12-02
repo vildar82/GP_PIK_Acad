@@ -50,7 +50,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
 
         private void check()
         {            
-            if (Places == 0)
+            if (Places == 0 && InvalidPlaces ==0)
             {
                 AddError("Кол парковочных мест не определено.");
             }            

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AcadLib;
+using NetLib;
 using AcadLib.Blocks;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Parkings;
@@ -88,14 +88,14 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
                 WidthOnePlace = getDouble(splits[0]);
                 var split1 = splits[1];
                 Angle = getDouble(Regex.Match(split1, @"\d+").Value);
-                IsInvalid = split1.Contains("инвалид", StringComparison.OrdinalIgnoreCase);
+                IsInvalid = NetLib.StringExt.Contains(split1,"инвалид", StringComparison.OrdinalIgnoreCase);
             }
         }
 
         private double getDouble(string value)
         {
-            double res;
-            double.TryParse(value, out res);
+            double res = value.ToDouble();
+            //double.TryParse(value, out res);
             return res;
         }
     }

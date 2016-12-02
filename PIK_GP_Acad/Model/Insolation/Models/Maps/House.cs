@@ -39,8 +39,8 @@ namespace PIK_GP_Acad.Insolation.Models
         }   
 
         public Document Doc { get; set; }
-        public FrontGroup FrontGroup { get; set; }
-        
+        public FrontGroup FrontGroup { get; set; }        
+
         /// <summary>
         /// Имя дома - в иделе = имени объекта принятого в проекте
         /// </summary>
@@ -52,6 +52,19 @@ namespace PIK_GP_Acad.Insolation.Models
                 RaisePropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Центр дома
+        /// </summary>        
+        public Point3d GetCenter()
+        {
+            if (Contour == null || Contour.IsDisposed)
+            {
+                throw new Exception();
+            }
+            return Point3d.Origin;
+        }
+
         string name;
 
         /// <summary>

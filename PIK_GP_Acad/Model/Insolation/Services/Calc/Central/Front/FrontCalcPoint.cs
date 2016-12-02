@@ -10,7 +10,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class FrontCalcPoint
+    public class FrontCalcPoint : ICloneable
     {
         public FrontCalcPoint (Point2d pt, bool isCorner)
         {
@@ -54,6 +54,11 @@ namespace PIK_GP_Acad.Insolation.Services
                 res = true;
             }
             return res;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }
