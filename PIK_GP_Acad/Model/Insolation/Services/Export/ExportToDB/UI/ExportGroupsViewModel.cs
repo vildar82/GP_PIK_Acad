@@ -13,7 +13,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
     /// Модель отображения для экпортируемых и неэкспортируемых групп (блоков)
     /// </summary>
     public class ExportGroupsViewModel : ViewModelBase
-    {
+    {        
         public ExportGroupsViewModel()
         {
 
@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                 ExportGroups.Add(new GroupViewModel(item));
             }
             //NotIdentifiedGroups = new ObservableCollection<FrontGroup> (notIdentifiedGroups);
-            OK = new RelayCommand(OnOkExecute);
+            OK = new RelayCommand(OnOkExecute, () => exportedGroups.Any(g => g.Houses.Any(h => h.HouseId != 0)));
         }        
 
         public RelayCommand OK { get; set; }
@@ -38,6 +38,6 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         private void OnOkExecute()
         {
                         
-        }
+        }        
     }    
 }

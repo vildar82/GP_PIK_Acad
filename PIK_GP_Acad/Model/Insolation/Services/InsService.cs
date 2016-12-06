@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             Settings = new Settings();
             Settings.Load();
-            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);
+            dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);            
             dictVmViews = GetViews();
         }        
 

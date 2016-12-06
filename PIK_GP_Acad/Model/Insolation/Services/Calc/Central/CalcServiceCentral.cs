@@ -106,6 +106,11 @@ namespace PIK_GP_Acad.Insolation.Services
                 {
                     rate = InsRequirementEnum.B;
                 }
+                // Чуток не дотягивает до B - от 1ч.22мин. до 1ч.30мин.
+                else if (maxTimeContinuosIlum >= 82)
+                {
+                    rate = InsRequirementEnum.A1;
+                }
             }
             var req = InsService.GetInsReqByEnum(rate);
             return req;

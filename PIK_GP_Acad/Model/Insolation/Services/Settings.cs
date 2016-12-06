@@ -65,7 +65,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 new InsRequirement() { Type = InsRequirementEnum.D, Color = Color.Aqua },
                 new InsRequirement() { Type = InsRequirementEnum.C, Color = Color.Green },
                 new InsRequirement() { Type = InsRequirementEnum.B, Color = Color.Yellow },
-                new InsRequirement() { Type = InsRequirementEnum.A, Color = Color.Red }
+                new InsRequirement() { Type = InsRequirementEnum.A, Color = Color.Red },
+                new InsRequirement() { Type = InsRequirementEnum.A1, Color = Color.Red }
             };
             return reqs;
         }

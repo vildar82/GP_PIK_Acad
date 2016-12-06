@@ -55,7 +55,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 case InsRequirementEnum.B:
                     return System.Drawing.Color.Yellow;
                 case InsRequirementEnum.A:
-                    return System.Drawing.Color.Red;                
+                    return System.Drawing.Color.Red;                    
+                case InsRequirementEnum.A1:// Немного не дотягивает до B (продолж.непр.инс >=1ч.22.мин, но меньше 1ч.30мин.)
+                    return System.Drawing.Color.HotPink;
             }
             return System.Drawing.Color.Gray;
         }

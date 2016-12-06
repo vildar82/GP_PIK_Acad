@@ -44,10 +44,16 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         /// <returns>Значение инсоляции модуля</returns>
         private InsRequirementEnum GetInsValue(List<FrontCalcPoint> calcPts)
         {
-            var insVal = (InsRequirementEnum)(calcPts.Average(s => (int)s.InsValue));
+            var insVal = calcPts.GroupBy(g => g.InsValue).OrderByDescending(o => o.Count()).First().Key;
+            //var insVal = (InsRequirementEnum)(calcPts.Average(s => (int)s.InsValue));
             if (insVal == InsRequirementEnum.None)
             {
                 insVal = InsRequirementEnum.A;
+            }
+            // Если значение чуток не дотягивает до B (=A1), то приравнять ее к B (генпланисты сделают подгонку)
+            else if (insVal == InsRequirementEnum.A1)
+            {
+                insVal = InsRequirementEnum.B;
             }
             return insVal;
         }

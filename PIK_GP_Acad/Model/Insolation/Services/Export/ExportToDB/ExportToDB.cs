@@ -41,10 +41,10 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                     var exportData = exportGroup.GetExportInsData();
                     if (exportData == null)
                     {
-                        return;
+                        continue;
                     }
 #if TEST
-                    exportData.ToExel(@"c:\temp\exportIns.xlsx");
+                    exportData.ToExel($@"c:\temp\exportIns_{item.Name}.xlsx");
 #endif
                 }
             }
