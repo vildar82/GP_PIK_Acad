@@ -21,16 +21,20 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчетная точка
     /// </summary>    
     public class InsPoint : InsPointBase, IInsPoint
-    {        
+    {
+        /// <summary>
+        /// Дефолтная высота до центра окуна от пола
+        /// </summary>
+        public const double DefaultHeightWindowCenter = 1.8;
+
         public VisualPointIllums VisualIllums { get; set; }
 
-        public InsPoint () { }
+        public InsPoint () { }        
 
-        public InsPoint (InsModel model, Point3d pt) : base(pt, model)
-                   
+        public InsPoint (InsModel model, Point3d pt) : base(pt, model)                   
         {               
             Window = WindowOptions.Default();
-            Height = 0.9;
+            Height = DefaultHeightWindowCenter; // Высота центра окна от пола
             ReportPoint = new RelayCommand(OnReportPointExecute);
         }
 

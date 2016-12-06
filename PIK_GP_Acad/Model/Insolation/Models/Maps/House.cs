@@ -284,26 +284,33 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Предварительное соединение полилиний (близкие точки вершин разных полилиний - в среднюю вершину)
             // Сделал при определении домов
-                       
-            using (var reg = pls.Union(null))
+
+            if (pls.Count == 1)
             {
-                var ptsRegByLoopType = reg.GetPoints2dByLoopType();
-                if (ptsRegByLoopType.Count == 1)
+                Contour = (Polyline)pls.First().Clone();
+            }
+            else
+            {
+                using (var reg = pls.Union(null))
                 {
-                    Contour = ptsRegByLoopType[0].Key.Cast<Point2d>().ToList().CreatePolyline();
-                }
-                else
-                {
-                    // Объединение полилиний
-                    var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
-                    try
+                    var ptsRegByLoopType = reg.GetPoints2dByLoopType();
+                    if (ptsRegByLoopType.Count == 1)
                     {
-                        var plMerged = plsLoop.Merge(2);
-                        Contour = plMerged;
+                        Contour = ptsRegByLoopType[0].Key.Cast<Point2d>().ToList().CreatePolyline();
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        AddError(ex.Message);
+                        // Объединение полилиний
+                        var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
+                        try
+                        {
+                            var plMerged = plsLoop.Merge(2);
+                            Contour = plMerged;
+                        }
+                        catch (Exception ex)
+                        {
+                            AddError(ex.Message);
+                        }
                     }
                 }
             }
@@ -340,7 +347,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public void Dispose ()
-        {
+        {            
             VisualFront?.Dispose();
             if (FrontLines != null)
             {
@@ -357,6 +364,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     VisualFront.FrontLines = null;
                 }
             }
+            DisposeContour();
         }
     }
 }

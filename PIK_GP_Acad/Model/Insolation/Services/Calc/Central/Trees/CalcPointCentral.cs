@@ -83,7 +83,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     // группировка домов по высоте
                     var heights = scope.Buildings.GroupBy(g => g.HeightCalc);
                     // высота точки с учетом уровня дома
-                    var ptHeightCalc = insPt.Height + (buildingOwner?.Building.Elevation ?? 0);
+                    var ptHeightCalc = insPt.Height;// !!!??? Уже должна быть выцчесленная расчетная высотв с учетом всех параметров// + (buildingOwner?.Building.Elevation ?? 0);
                     foreach (var bHeight in heights)
                     {
                         // зоны тени для домов этой высоты

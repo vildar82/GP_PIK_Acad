@@ -34,7 +34,11 @@ namespace PIK_GP_Acad.Elements.Buildings
         public int HouseId { get; set; }
         public ObjectId IdEnt { get; set; }
         public string PluginName { get; set; } = "GP";
-        public abstract Rectangle Rectangle { get; set; }        
+        public abstract Rectangle Rectangle { get; set; }
+        public bool IsProjectedBuilding { get; set; }
+        public double HeightFirstFloor { get; set; }
+        public double HeightTypicalFloors { get; set; }
+        public double HeightTechnicalFloor { get; set; }
 
         public abstract Polyline GetContourInModel();        
 

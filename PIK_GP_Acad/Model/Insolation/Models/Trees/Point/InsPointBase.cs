@@ -56,7 +56,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public IVisualService VisualPoint { get; set; }
         public double AngleEndOnPlane { get; set; }
         public double AngleStartOnPlane { get; set; }        
-        public MapBuilding Building { get; set; }        
+        public MapBuilding Building { get; set; }         
+        /// <summary>
+        /// Высота расчетной точки (с учетом уровня здания, 1 нежилого этажа и высоте от пола до центра окна!!!???)
+        /// </summary>                       
         public double Height { get; set; }  
         public List<IIlluminationArea> Illums { get; set; }        
         public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }

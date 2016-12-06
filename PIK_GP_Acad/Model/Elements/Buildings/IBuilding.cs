@@ -17,10 +17,22 @@ namespace PIK_GP_Acad.Elements.Buildings
     {
         int Floors { get; set; }
         Extents3d ExtentsInModel { get; set; }        
-        double Height { get; set; }                
+        double Height { get; set; }
+        /// <summary>
+        /// Высота первого этажа (Пока, если задано, то это не жилой этаж)
+        /// </summary>
+        double HeightFirstFloor { get; set; }
+        /// <summary>
+        /// Высота типовых этажей
+        /// </summary>
+        double HeightTypicalFloors { get; set; }
+        /// <summary>
+        /// Высоте тех.этажа
+        /// </summary>
+        double HeightTechnicalFloor { get; set; }
         /// <summary>
         /// Относительный уровень
-        /// </summary>
+        /// </summary>        
         double Elevation { get; set; }
         Polyline GetContourInModel ();
         BuildingTypeEnum BuildingType { get; set; }        
@@ -33,5 +45,9 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// </summary>
         int HouseId { get; set; }
         Rectangle Rectangle { get; set; }
+        /// <summary>
+        /// Это проектируемое здание или нет
+        /// </summary>
+        bool IsProjectedBuilding { get; set; }
     }
 }

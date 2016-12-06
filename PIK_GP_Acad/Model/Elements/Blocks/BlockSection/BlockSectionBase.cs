@@ -24,9 +24,9 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// </summary>
     public abstract class BlockSectionBase : BuildingBlockBase, IBuilding, IInfraworksExport
     {
-        private const string PropHeightTypicalFloor = "H_Типового_этажа";
-        private const string PropHeightFirstFloor = "H_1_этажа";
-        private const string PropHeightTechFloor = "H_Тех_этажа";
+        public const string PropHeightTypicalFloor = "H_Типового_этажа";
+        public const string PropHeightFirstFloor = "H_1_этажа";
+        public const string PropHeightTechFloor = "H_Тех_этажа";
 
         /// <summary>
         /// Полащадь секции по внешним границам стен
@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             //ExtentsInModel = BlockBase.Bounds.Value;
             // Определить параметры блок-секции: площадь,этажность  
                                   
-            Height = CalcHeight();
+            Height = DefineHeight();
             // Относительный уровень
             Elevation = BlockBase.GetPropValue<double>(Building.PropElevation, false, true);
             // Площадь по внешней полилинии
@@ -56,8 +56,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             {
                 IdPlContour = plContour.Id;
                 AreaGNS = plContour.Area;
-            }
-            
+            }            
         }        
 
         public List<IODRecord> GetODRecords ()
@@ -120,22 +119,32 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// Определение высоты
         /// </summary>
         /// <returns></returns>
-        private double CalcHeight()
-        {
-            double resHeight;
-            var h1 = BlockBase.GetPropValue<double>(PropHeightFirstFloor, false);
-            var hTyp = BlockBase.GetPropValue<double>(PropHeightTypicalFloor, false);
-            var hTech = BlockBase.GetPropValue<double>(PropHeightTechFloor, false);
+        private double DefineHeight()
+        {            
+            HeightFirstFloor = BlockBase.GetPropValue<double>(PropHeightFirstFloor, false);
+            HeightTypicalFloors = BlockBase.GetPropValue<double>(PropHeightTypicalFloor, false);
+            HeightTechnicalFloor = BlockBase.GetPropValue<double>(PropHeightTechFloor, false);
+            return CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
+        }
 
-            if (hTyp == 0)
+        /// <summary>
+        /// Определение высоты здания по высотам 1, типового и тех этажей
+        /// </summary>
+        /// <param name="h1">Высота 1 этажа, м</param>
+        /// <param name="hTypical">Высота типового этажа, м</param>
+        /// <param name="hTech">Высота тех этажа, м</param>
+        /// <param name="floors">Кол. этажей</param>
+        /// <returns>Высота здания, м</returns>
+        public static double CalcHeight(double h1, double hTypical, double hTech, int floors)
+        {
+            if (hTypical == 0)
             {
-                resHeight = Floors * 3 + 3;
+                return floors * 3 + 3;
             }
             else
             {
-                resHeight = (Floors - 1) * hTyp + h1 + hTech;
-            }
-            return resHeight;
+                return h1 + (floors - 1) * hTypical + hTech;
+            }            
         }
     }
 }

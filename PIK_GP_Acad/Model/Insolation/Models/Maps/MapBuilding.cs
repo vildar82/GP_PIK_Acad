@@ -23,8 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
         public BuildingTypeEnum BuildingType { get; set; }        
-        public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
-        public bool IsSurroundBuilding { get; set; }        
+        public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }        
 
         public MapBuilding () { }
 

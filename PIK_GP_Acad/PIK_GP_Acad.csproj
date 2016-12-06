@@ -158,7 +158,6 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Maps\House.cs" />
-    <Compile Include="Model\Insolation\Models\Maps\HousePolyline.cs" />
     <Compile Include="Model\Insolation\Models\Place\Place.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceModel.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceOptions.cs" />

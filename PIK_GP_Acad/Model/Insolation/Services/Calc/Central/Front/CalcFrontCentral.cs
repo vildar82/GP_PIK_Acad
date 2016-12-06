@@ -216,6 +216,11 @@ namespace PIK_GP_Acad.Insolation.Services
                 //EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
 #endif
                 insPt.Building = calcFrontPt.Section;
+                // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем
+                if (insPt.Height == 0)
+                {
+                    insPt.Height = CalcHeightCalcPt(calcFrontPt);
+                }
                 insPt.Building.InitContour();
                 try
                 {
@@ -233,6 +238,19 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
             }
             return calcPts;
+        }
+
+        /// <summary>
+        /// Определение высоты расчетной точки
+        /// </summary>
+        /// <param name="calcFrontPt">Расчетная точка</param>
+        /// <returns>Высота для расчета инсоляции в точке</returns>
+        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt)
+        {
+            var building = calcFrontPt.Section.Building;
+            // = Уровень здания + высота от пола до центра окна + высота первого этажа (если она задана, то это нежилой этаж)
+            var resHeightPt = building.Elevation + InsPoint.DefaultHeightWindowCenter + building.HeightFirstFloor;
+            return resHeightPt;
         }
 
         /// <summary>

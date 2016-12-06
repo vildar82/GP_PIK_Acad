@@ -195,24 +195,15 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var houses = new List<House>();
             // Определение домов из блок-секций
-            var buildings = scope.Buildings;//.Where(b => b.IsProjectBuilding);
-            foreach (var building in buildings)
-            {                
-                if (building.Building is Elements.Blocks.BlockSection.BlockSectionBase)
+            var projectBuildings = scope.Buildings.Where(b => b.Building.IsProjectedBuilding);
+            foreach (var building in projectBuildings)
+            {
+                // Дом из блок-секций
+                if (!FindHouse(ref houses, building))
                 {
-                    // Дом из блок-секций
-                    if (!FindHouse(ref houses, building))
-                    {
-                        var house = new House(this);
-                        house.Sections.Add(building);
-                        houses.Add(house);
-                    }
-                }
-                else
-                {   
-                    // Дом из одного здания (полилиния, блок соц. или прочее)
-                    var housePl = new HouseSingle(this, building);
-                    houses.Add(housePl);
+                    var house = new House(this);
+                    house.Sections.Add(building);
+                    houses.Add(house);
                 }
             }
             // Для каждого дома - создание общей полилинии

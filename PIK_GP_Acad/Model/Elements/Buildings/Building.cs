@@ -12,6 +12,8 @@ using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.FCS;
 using AcadLib;
 using AcadLib.Extensions;
+using PIK_GP_Acad.Elements.Blocks.BlockSection;
+using NetLib;
 
 namespace PIK_GP_Acad.Elements.Buildings
 {
@@ -28,6 +30,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         public const string PropElevation = "Относительный уровень";
         public const string PropFloors = "Этажность";
         public const string PropBuildingType = "Тип здания";
+        /// <summary>
+        /// Классификатор проектируемых зданий
+        /// </summary>
+        public const string ProjectedBuildingClassName = "Проектируемое здание";
 
         public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent.Id)
         {
@@ -37,8 +43,12 @@ namespace PIK_GP_Acad.Elements.Buildings
             Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
             var buildingTypeShortName = props.GetPropertyValue<string>(PropBuildingType, IdEnt, false);
             BuildingType = GetBuildingType(buildingTypeShortName);
-            Height = height;
+            Height = CalcHeight(height);
             Elevation = props.GetPropertyValue<int>(PropElevation, IdEnt, false);
+            if (ClassType != null)
+            {
+                IsProjectedBuilding = ClassType.ClassName.Equals(ProjectedBuildingClassName, StringComparison.OrdinalIgnoreCase);                
+            }
         }        
 
         public List<FCProperty> FCProperties { get; set; }               
@@ -100,5 +110,26 @@ namespace PIK_GP_Acad.Elements.Buildings
                     return BuildingTypeEnum.Living;
             }
         }
+
+        /// <summary>
+        /// Определение высоты здания. По параметрам высот 1,тип и тех этажа, или = переданной высоте
+        /// </summary>
+        /// <param name="height">Высота заданная в параметре Высота в классифицированном объекте</param>        
+        private double CalcHeight(double height)
+        {
+            if (height != 0)
+            {
+                return height;
+            }
+            else
+            {
+                // Поиск параметров Высоты 1 этажа, типового, и тех     
+                HeightFirstFloor = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightFirstFloor);
+                HeightTypicalFloors = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightTypicalFloor);
+                HeightTechnicalFloor = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightTechFloor);
+                height = BlockSectionBase.CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
+            }
+            return 0;
+        }        
     }
 }

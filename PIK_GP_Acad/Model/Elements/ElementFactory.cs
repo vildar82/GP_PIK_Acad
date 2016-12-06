@@ -98,10 +98,11 @@ namespace PIK_GP_Acad.Elements
                     clType = classService?.GetClassType(tag.Key);
                 }
 
-                // Если есть параметр высоты, то это здание
+                // Если класс проектируемого здания или есть параметр высоты, то это здание ???!!! Сомнительно. Нужна более строгая идентификайция зданий
                 var height = tag.Value.GetPropertyValue<double>(Building.PropHeight, ent.Id, false);
-                if (height != 0)
-                {                    
+                if (clType.ClassName.Equals(Building.ProjectedBuildingClassName, StringComparison.OrdinalIgnoreCase) ||
+                    height != 0)
+                {
                     var building = new Building(ent, height, tag.Value, clType);
                     res = building;
                 }
@@ -112,7 +113,7 @@ namespace PIK_GP_Acad.Elements
                     {
                         var classificator = new Classificator(ent.Id, clType, area);
                         res = classificator;
-                    }                    
+                    }
                 }
             }                     
             return res;
