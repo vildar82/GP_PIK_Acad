@@ -73,10 +73,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public bool IsExpanded { get { return isExpanded; } set { isExpanded = value; OnIsExpandedChanged(); RaisePropertyChanged(); } }
         bool isExpanded;
 
-        /// <summary>
-        /// Индентификатор группы (блока) в базе
-        /// </summary>
-        public int GroupId { get; set; }        
+        ///// <summary>
+        ///// Индентификатор группы (блока) в базе
+        ///// </summary>
+        //public int GroupId { get; set; }        
 
         /// <summary>
         /// Новая группа фронтонов
@@ -296,8 +296,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             return new List<TypedValue> {
                 TypedValueExt.GetTvExtData(Name),
-                TypedValueExt.GetTvExtData(IsVisualFrontOn),
-                TypedValueExt.GetTvExtData(GroupId),
+                TypedValueExt.GetTvExtData(IsVisualFrontOn)
+                //TypedValueExt.GetTvExtData(GroupId),
             };
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
@@ -312,7 +312,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 int index = 0;
                 Name = values[index++].GetTvValue<string>();
                 IsVisualFrontOn = values[index++].GetTvValue<bool>();                
-                GroupId = values[index++].GetTvValue<int>();
+                //GroupId = values[index++].GetTvValue<int>();
             }
         }
         public DicED GetExtDic (Document doc)

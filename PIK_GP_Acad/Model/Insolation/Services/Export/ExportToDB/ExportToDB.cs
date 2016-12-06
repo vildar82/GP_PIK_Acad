@@ -29,36 +29,36 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         public void Export ()
         {
             // Отбор групп которым присвоен идентификатор, и в группе всем корпусам назначен идентификаторы
-            List<FrontGroup> notIdentifiedGroups;
-            List<FrontGroup> exportedGroups = GetExportedGroups(out notIdentifiedGroups);
+            //List<FrontGroup> notIdentifiedGroups;
+            List<FrontGroup> exportedGroups = GetExportedGroups();
             // Форма подтверждения экпортируемых и не экпортируемых групп(неидентифицированных)
-            var exportGroupsVM = new ExportGroupsViewModel(exportedGroups, notIdentifiedGroups);
+            var exportGroupsVM = new ExportGroupsViewModel(exportedGroups);
             if (InsService.ShowDialog(exportGroupsVM) == true)
             {
                 foreach (var item in exportedGroups)
                 {
                     var exportGroup = new ExportFrontGoup(item);
                     var exportData = exportGroup.GetExportInsData();
-
+                    if (exportData == null)
+                    {
+                        return;
+                    }
+#if TEST
+                    exportData.ToExel(@"c:\temp\exportIns.xlsx");
+#endif
                 }
             }
         }
 
-        private List<FrontGroup> GetExportedGroups (out List<FrontGroup> notIdentifiedGroups)
+        private List<FrontGroup> GetExportedGroups ()
         {
             var exportedGroups = new List<FrontGroup>();
-            notIdentifiedGroups = new List<FrontGroup>();
+            //notIdentifiedGroups = new List<FrontGroup>();
             foreach (var group in frontModel.Groups)
-            {
-                if (group.GroupId != 0 && group.Houses.All(h => h.HouseId != 0))
-                {
-                    // Проидентифицированно, можно экспортировать
-                    exportedGroups.Add(group);
-                }
-                else
-                {
-                    notIdentifiedGroups.Add(group);
-                }
+            {                
+                // Проидентифицированно, можно экспортировать
+                exportedGroups.Add(group);
+                //notIdentifiedGroups.Add(group);
             }
             return exportedGroups;
         }

@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\..\Autodesk\AutoCAD\Pik\Settings\Script\NET\ГП\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>CS1591</NoWarn>
@@ -60,6 +60,10 @@
     </Reference>
     <Reference Include="AutoCAD_PIK_Manager">
       <HintPath>..\..\..\AutoCAD_PIK_Manager\AutoCAD_PIK_Manager\bin\Release\AutoCAD_PIK_Manager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\..\..\Package\Excel\EPPlus.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MicroMvvm">
@@ -176,6 +180,8 @@
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsViewModel.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportToDB.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\InsCell.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\GroupViewModel.cs" />
+    <Compile Include="Model\Insolation\Services\Export\ExportToDB\UI\HouseViewModel.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcPlace.cs" />
     <Compile Include="Model\Insolation\Services\Interfaces\ICalcFront.cs" />
     <Compile Include="Model\Insolation\Services\Serialize\IDboDataSave.cs" />

@@ -60,9 +60,9 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (Contour == null || Contour.IsDisposed)
             {
-                throw new Exception();
+                throw new Exception("Полилиния контура дома не определена.");
             }
-            return Point3d.Origin;
+            return Contour.Centroid();
         }
 
         string name;
