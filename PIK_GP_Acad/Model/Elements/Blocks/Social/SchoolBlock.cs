@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
 
         public SchoolBlock (BlockReference blRef, string blName) : base(blRef, blName, contourLayer)
         {
-            
+            FriendlyTypeName = "Школа";
         }        
     }
 }

@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
 
         public KindergartenBlock (BlockReference blRef, string blName) : base(blRef, blName, contourLayer)
         {
-            
+            FriendlyTypeName = "Дет.сад";
         }
     }
 }

@@ -158,6 +158,7 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Maps\House.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\VisualsMap.cs" />
     <Compile Include="Model\Insolation\Models\Place\Place.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceModel.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceOptions.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Fronts\VisualFront.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualElement.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Place\VisualPlace.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\InsPointDrawOverrule.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointHelper.cs" />

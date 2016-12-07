@@ -39,6 +39,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public double HeightFirstFloor { get; set; }
         public double HeightTypicalFloors { get; set; }
         public double HeightTechnicalFloor { get; set; }
+        public string FriendlyTypeName { get; set; }
 
         public abstract Polyline GetContourInModel();        
 

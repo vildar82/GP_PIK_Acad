@@ -22,15 +22,16 @@ namespace PIK_GP_Acad.Insolation.Models
     {   
         Database db;
         RTree<MapBuilding> treeBuildings;
+        VisualsMap visualMap;
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
         public Map (Document doc)
         {
+            IsVisualOn = true; // По-умолчаию визуализация включена
             Doc = doc;
             db = doc.Database;
-            LoadMap();
-            SubscribeDB();
+            Update();
         }
 
         public bool IsEventsOn { get; set; }
@@ -42,6 +43,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public List<ObjectId> InsPoints { get; private set; }
         public List<KeyValuePair<ObjectId, DicED>> Places { get; private set; }
+        /// <summary>
+        /// Включение/ отключение визуализации карты при обновлениях
+        /// </summary>
+        public bool IsVisualOn { get; set; }
+
         /// <summary>
         /// Добавлено здание
         /// </summary>
@@ -94,6 +100,26 @@ namespace PIK_GP_Acad.Insolation.Models
             ClearVisual();            
             LoadMap();
             SubscribeDB();
+
+            UpdateVisual();
+            
+        }
+
+        private void UpdateVisual()
+        {
+            if (IsVisualOn)
+            {
+                if (visualMap == null)
+                {
+                    visualMap = new VisualsMap(this);
+                }
+                visualMap.VisualIsOn = true;
+            }
+            else
+            {
+                visualMap?.Dispose();
+                visualMap = null;
+            }
         }
 
         private double GetMaxBuildingHeight ()
@@ -126,6 +152,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 db.ObjectAppended -= Database_ObjectAppended;
             }
             catch { }
+            if (Buildings == null) return;
             using (var t = db.TransactionManager.StartTransaction())
             {
                 foreach (var item in Buildings)
@@ -349,6 +376,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Dispose ()
         {
             if (db == null || db.IsDisposed) return;
+            visualMap?.Dispose();
             Unsubscribe();
         }
     }

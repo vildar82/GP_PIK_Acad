@@ -19,7 +19,8 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         private List<string> ReductionFactorIgnoringNamesBS = new List<string> { "Б-13", "Б-14" };
 
         public BlockSectionGP(BlockReference blRef, string blName) : base(blRef, blName)
-        {            
+        {
+            FriendlyTypeName = "б/с ПИК1";
             // Кол этажей
             //Floors = BlockBase.GetPropValue<int>(SettingsBS.Default.AttrNumberFloor);
             //Height = Floors * 3 + 3;

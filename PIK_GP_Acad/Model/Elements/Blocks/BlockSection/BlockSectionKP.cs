@@ -25,7 +25,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
 
         public BlockSectionKP(BlockReference blRef, string blName) : base (blRef, blName)
         {
-            
+            FriendlyTypeName = "б/с СЭМ2";
         }
     }
 }

@@ -20,6 +20,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
             AreaBKFN = BlockBase.GetPropValue<double>(propAreaBKFN);
             AreaGNS = BlockBase.GetPropValue<double>(propAreaGNS);
             AreaLive = BlockBase.GetPropValue<double>(propAreaLive);
+            FriendlyTypeName = "башня СЭМ2";
         }
 
         public double AreaBKFN { get; internal set; }

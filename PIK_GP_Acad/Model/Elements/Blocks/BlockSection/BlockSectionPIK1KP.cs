@@ -15,6 +15,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         public const string BlockNameMatch = "ГП_ПИК1_Секция";
         public BlockSectionPIK1KP (BlockReference blRef, string blName) : base(blRef, blName)
         {
+            FriendlyTypeName = "б/с ПИК1";
         }
     }
 }

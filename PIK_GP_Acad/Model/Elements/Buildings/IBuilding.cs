@@ -49,5 +49,9 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Это проектируемое здание или нет
         /// </summary>
         bool IsProjectedBuilding { get; set; }
+        /// <summary>
+        /// Обиходное название типа здания - блок-секция, детсад, школа, 
+        /// </summary>
+        string FriendlyTypeName { get; set; }
     }
 }

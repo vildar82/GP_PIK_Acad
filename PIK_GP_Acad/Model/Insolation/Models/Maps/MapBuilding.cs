@@ -8,10 +8,12 @@ using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib;
+using AcadLib.Geometry;
+using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class MapBuilding : ModelBase
+    public class MapBuilding : ModelBase, IVisualElement
     {        
         public IBuilding Building { get; set; }        
         public Polyline Contour { get; private set; }        
@@ -43,6 +45,74 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Contour != null && !Contour.IsDisposed)
                 Contour.Dispose();
             Contour = Building.GetContourInModel();
+        }
+
+        /// <summary>
+        /// Элементы визуализации здания
+        /// </summary>        
+        public List<Entity> CreateVisual()
+        {
+            var visuals = new List<Entity>();
+
+            var color = Color.FromColor(System.Drawing.Color.Violet);
+            var transp = new Transparency(100);
+            // Контур здания
+            Polyline plContour;
+            if (Contour == null || Contour.IsDisposed)
+            {
+                plContour = Building.GetContourInModel();
+            }
+            else
+            {
+                plContour = (Polyline)Contour.Clone();
+            }
+            plContour.ConstantWidth = 0.2;
+            plContour.Color = color;
+            plContour.Transparency = transp;
+            visuals.Add(plContour);
+
+            // точка вставки текста
+            var ptText = plContour.Centroid();
+
+            // Текст описания здания
+            var textInfo = new MText();
+            textInfo.Location = ptText;
+            textInfo.Attachment = AttachmentPoint.MiddleCenter;
+            textInfo.Height = 2;
+            textInfo.Contents = this.ToString();
+            textInfo.Color = color;
+            textInfo.Transparency = transp;
+            visuals.Add(textInfo);
+
+            return visuals;
+        }
+
+        
+        public override string ToString()
+        {
+            return GetInfo();
+        }
+
+        /// <summary>
+        /// Описание здания
+        /// </summary>        
+        private string GetInfo()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(BuildinTypeName);
+            sb.Append("H=").AppendLine(Building.Height.ToString());
+            if (Building.Elevation != 0)
+            {
+                sb.Append("Уровень=").AppendLine(Building.Elevation.ToString());
+            }
+            string projected = Building.IsProjectedBuilding ? "Проектируемое" : "Окр.застройка";
+            sb.AppendLine(projected);
+            if (!string.IsNullOrEmpty(Building.FriendlyTypeName))
+            {
+                sb.Append(Building.FriendlyTypeName);
+            }
+
+            return sb.ToString();
         }
     }
 }

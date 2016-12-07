@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         {
             //ExtentsInModel = BlockBase.Bounds.Value;
             // Определить параметры блок-секции: площадь,этажность  
-                                  
+            FriendlyTypeName = "Блок-секция";                                  
             Height = DefineHeight();
             // Относительный уровень
             Elevation = BlockBase.GetPropValue<double>(PropElevation, false, true);
