@@ -68,7 +68,7 @@
             </StackPanel>
         </Border>-->
         <StackPanel Grid.Row="1" Margin="5" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Content="OK" Command="{Binding OK}" Click="Ok_Clock" MinWidth="70" Margin="5" IsDefault="True"/>
+            <Button Content="Экспотр" Command="{Binding Export}" Click="Export_Click" MinWidth="70" Margin="5" IsDefault="True"/>
             <Button Content="Отмена" MinWidth="70" Margin="5" IsCancel="True"/>
         </StackPanel>
     </Grid>

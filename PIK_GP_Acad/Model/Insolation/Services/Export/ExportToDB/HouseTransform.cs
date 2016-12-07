@@ -22,10 +22,12 @@ namespace PIK_GP_Acad.Insolation.Services.Export
 
         public HouseTransform(House house)
         {
-            this.house = house;            
+            this.house = house;
+            Id = house.HouseId;         
         }
 
         public List<InsCell> Cells { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Нормализация дома - приведение к ортогональному виду (минимальный поворот до ортогональности вокруг точки центра дома) 

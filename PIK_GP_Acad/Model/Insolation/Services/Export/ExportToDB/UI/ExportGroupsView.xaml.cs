@@ -24,7 +24,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             InitializeComponent();
         }
 
-        private void Ok_Clock(object sender, RoutedEventArgs e)
+        private void Export_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }

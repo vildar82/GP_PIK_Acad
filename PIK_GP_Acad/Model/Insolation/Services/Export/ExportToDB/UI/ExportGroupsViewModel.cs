@@ -27,17 +27,17 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                 ExportGroups.Add(new GroupViewModel(item));
             }
             //NotIdentifiedGroups = new ObservableCollection<FrontGroup> (notIdentifiedGroups);
-            OK = new RelayCommand(OnOkExecute, () => exportedGroups.Any(g => g.Houses.Any(h => h.HouseId != 0)));
+            Export = new RelayCommand(OnExportExecute, () => exportedGroups.Any(g => g.Houses.Any(h => h.HouseId != 0)));
         }        
 
-        public RelayCommand OK { get; set; }
+        public RelayCommand Export { get; set; }
 
         public ObservableCollection<GroupViewModel> ExportGroups { get; set; }
         //public ObservableCollection<FrontGroup> NotIdentifiedGroups { get; set; }
 
-        private void OnOkExecute()
+        private void OnExportExecute()
         {
-                        
+            // Пока ничего. Потом, возможно, добавлю список выбранных групп для экспорта                        
         }        
     }    
 }

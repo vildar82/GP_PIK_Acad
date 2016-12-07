@@ -58,6 +58,11 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             return insVal;
         }
 
+        public string GetInsValue()
+        {
+            return InsValue.ToString();
+        }
+
         /// <summary>
         /// Только для угловых ячеек - наложение модулей от разных сегментов
         /// </summary>
@@ -93,8 +98,8 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         /// </summary>
         public void DefineNumCell()
         {
-            Row = Convert.ToInt32(-PtCenter.Y / 3.6); // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
-            Column = Convert.ToInt32(PtCenter.X / 3.6);
+            Row = Convert.ToInt32(-PtCenter.Y / 3.6) +1; // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
+            Column = Convert.ToInt32(PtCenter.X / 3.6)+1;
         }
     }
 }

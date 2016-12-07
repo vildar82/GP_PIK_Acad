@@ -35,20 +35,24 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             var exportGroupsVM = new ExportGroupsViewModel(exportedGroups);
             if (InsService.ShowDialog(exportGroupsVM) == true)
             {
+                var date = DateTime.Now;
                 foreach (var item in exportedGroups)
                 {
-                    var exportGroup = new ExportFrontGoup(item);
+                    var exportGroup = new ExportFrontGoup(item);                    
                     var exportData = exportGroup.GetExportInsData();
                     if (exportData == null)
                     {
                         continue;
                     }
+                    exportData.Date = date;
 #if TEST
                     exportData.ToExel($@"c:\temp\exportIns_{item.Name}.xlsx");
 #endif
+                    // Запись инсоляции в базу - один таймштамп для группы домов
+                    exportData.ToDb();                    
                 }
             }
-        }
+        }        
 
         private List<FrontGroup> GetExportedGroups ()
         {
@@ -61,6 +65,6 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                 //notIdentifiedGroups.Add(group);
             }
             return exportedGroups;
-        }
+        }        
     }
 }
