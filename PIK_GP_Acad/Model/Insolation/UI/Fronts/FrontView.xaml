@@ -53,7 +53,8 @@
                                                 Text="{Binding Name}" />
                                                 <TextBox Text="{Binding FrontHeight}" 
                                                      Background="Transparent" HorizontalAlignment="Right" Margin="3" 
-                                                     ToolTip="Высота расчета фронтов, м." BorderThickness="0"
+                                                     ToolTip="Высота расчета фронтов, м. При расчете, к этой высоте, также будет прибавлен относительный уровень секций." 
+                                                     BorderThickness="0"
                                                      VerticalAlignment="Center"/>
                                             </Grid>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">

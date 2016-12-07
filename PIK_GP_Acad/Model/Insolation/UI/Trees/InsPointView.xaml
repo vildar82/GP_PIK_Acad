@@ -34,7 +34,8 @@
             <!--  Расчетный этаж (расчетная высота)  -->
             <StackPanel Margin="4">
                 <TextBlock Text="Высота точки, м:" />
-                <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  HorizontalContentAlignment="Center"/>
+                <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  HorizontalContentAlignment="Center"
+                         ToolTip="Расчетная высота точки (центр окна). При расчете, к этой высоте, также будет прибавлен относительный уровень здания этой точки."/>
             </StackPanel>
         </WrapPanel>
         <local:WindowOptionsView Grid.Row="1" DataContext="{Binding WindowVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />

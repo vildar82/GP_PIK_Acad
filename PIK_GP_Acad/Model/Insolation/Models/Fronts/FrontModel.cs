@@ -72,7 +72,11 @@ namespace PIK_GP_Acad.Insolation.Models
         private void AddGroup (DicED dicGroup)
         {
             var group = FrontGroup.New(dicGroup, this);
-            Groups.Add(group);
+            if (string.IsNullOrEmpty(group.Name))
+            {
+                group.DefineNewName();
+            }
+            Groups.Add(group);            
             //group.Update();
         }
 

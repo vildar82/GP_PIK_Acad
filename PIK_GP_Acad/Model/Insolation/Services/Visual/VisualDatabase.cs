@@ -7,6 +7,7 @@ using AcadLib.Layers;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.GraphicsInterface;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -80,23 +81,34 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (draws != null && Doc != null && !Doc.IsDisposed)
             {
-                using (Doc.LockDocument())
-                using (var t = Doc.TransactionManager.StartTransaction())
+                using (new WorkingDatabaseSwitcher(Doc.Database))
                 {
-                    foreach (var item in draws)
+                    using (Doc.LockDocument())
+                    using (var t = Doc.TransactionManager.StartTransaction())
                     {
-                        if (item.IsNull || item.IsErased) continue;
-                        var ent = item.GetObject(OpenMode.ForWrite, false, true);
-                        ent.Erase();
+                        foreach (var item in draws)
+                        {
+                            if (!item.IsValidEx()) continue;
+                            try
+                            {
+                                var ent = item.GetObject(OpenMode.ForWrite, false, true);
+                                ent.Erase();                            
+                            }
+                            catch { }
+                        }
+                        t.Commit();
                     }
-                    t.Commit();
                 }
             }
         }              
 
         public void VisualsDelete ()
         {
-            EraseDraws();
+            try
+            {
+                EraseDraws();
+            }
+            catch { }
         }
 
         private ObjectId GetLayerForVisual (Database db)

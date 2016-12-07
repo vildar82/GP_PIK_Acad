@@ -149,10 +149,10 @@ namespace PIK_GP_Acad.Insolation.Models
             ed.Zoom(SelectRegion);
         }
 
-        private string DefineNewName ()
+        public string DefineNewName ()
         {
             int index = Front?.Groups.Count +1 ?? 1;
-            var name = "Блок " + index;
+            var name = "Группа " + index;
             return name; 
         }
 
@@ -293,7 +293,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 3)
+            if (values == null || values.Count != 2)
             {
                 // Default
                 Name = "";

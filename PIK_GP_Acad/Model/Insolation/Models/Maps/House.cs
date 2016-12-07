@@ -328,13 +328,10 @@ namespace PIK_GP_Acad.Insolation.Models
             IsVisualFront = oldHouse.IsVisualFront;
         }
 
-        public void DisposeContour ()
+        public void DisposeContour()
         {
-            if (Contour != null && !Contour.IsDisposed)
-            {
-                Contour.Dispose();
-            }
-        }
+            Contour?.Dispose();
+        }        
 
         public void ClearVisual ()
         {

@@ -24,9 +24,10 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// </summary>
     public abstract class BlockSectionBase : BuildingBlockBase, IBuilding, IInfraworksExport
     {
-        public const string PropHeightTypicalFloor = "H_Типового_этажа";
+        public const string PropHeightTypicalFloor = "H_Тип_этажа";
         public const string PropHeightFirstFloor = "H_1_этажа";
         public const string PropHeightTechFloor = "H_Тех_этажа";
+        public const string PropElevation = "Уровень";
 
         /// <summary>
         /// Полащадь секции по внешним границам стен
@@ -44,7 +45,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
                                   
             Height = DefineHeight();
             // Относительный уровень
-            Elevation = BlockBase.GetPropValue<double>(Building.PropElevation, false, true);
+            Elevation = BlockBase.GetPropValue<double>(PropElevation, false, true);
             // Площадь по внешней полилинии
             Polyline plLayer;
             var plContour = BlockSectionContours.FindContourPolyline(blRef, out plLayer);
@@ -137,14 +138,11 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// <returns>Высота здания, м</returns>
         public static double CalcHeight(double h1, double hTypical, double hTech, int floors)
         {
-            if (hTypical == 0)
-            {
-                return floors * 3 + 3;
-            }
-            else
-            {
-                return h1 + (floors - 1) * hTypical + hTech;
-            }            
+            if (h1 == 0) h1 = 3;
+            if (hTypical == 0) hTypical = 3;
+            if (hTech == 0) hTech = 3;
+            if (floors == 0) floors = 1;
+            return h1 + (floors - 1) * hTypical + hTech;
         }
     }
 }

@@ -30,10 +30,7 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 foreach (var item in FrontLines)
                 {
-                    if (item.Line != null && !item.Line.IsDisposed)
-                    {
-                        item.Line.Dispose();
-                    }
+                    item.Line?.Dispose();
                 }
             }
             base.Dispose();

@@ -199,8 +199,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчет в точке
             var insPt = new InsPoint();
             insPt.Model = model;            
-            insPt.Window = WindowOptions.Default();
-            insPt.Height = house.FrontHeight;
+            insPt.Window = WindowOptions.Default();            
 
             foreach (var calcFrontPt in calcPts)
             {
@@ -216,11 +215,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 //EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
 #endif
                 insPt.Building = calcFrontPt.Section;
-                // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем
-                if (insPt.Height == 0)
-                {
-                    insPt.Height = CalcHeightCalcPt(calcFrontPt);
-                }
+                // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                
+                insPt.Height = CalcHeightCalcPt(calcFrontPt, house.FrontHeight);                
                 insPt.Building.InitContour();
                 try
                 {
@@ -245,11 +241,20 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="calcFrontPt">Расчетная точка</param>
         /// <returns>Высота для расчета инсоляции в точке</returns>
-        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt)
+        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt, double frontHeight)
         {
-            var building = calcFrontPt.Section.Building;
-            // = Уровень здания + высота от пола до центра окна + высота первого этажа (если она задана, то это нежилой этаж)
-            var resHeightPt = building.Elevation + InsPoint.DefaultHeightWindowCenter + building.HeightFirstFloor;
+            double resHeightPt =0;
+            var building = calcFrontPt.Section.Building;            
+            if (frontHeight == 0)
+            {
+                // = Уровень здания + высота от пола до центра окна + высота первого этажа (если она задана, то это нежилой этаж)
+                resHeightPt = InsPoint.DefaultHeightWindowCenter + building.HeightFirstFloor;
+            }
+            else
+            {
+                // Если задан уровень для всей группы фронтов, то прибавляем к нему только уровень секции
+                resHeightPt = frontHeight;
+            }
             return resHeightPt;
         }
 
