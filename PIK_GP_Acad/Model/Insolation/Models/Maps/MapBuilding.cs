@@ -31,7 +31,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public MapBuilding(IBuilding building)
         {
-            Building = building;                        
+            Building = building;
+            BuildingType = Building.BuildingType;
             YMax = ExtentsInModel.MaxPoint.Y;
             YMin = ExtentsInModel.MinPoint.Y;
             HeightCalc = building.Height + building.Elevation;                            
@@ -68,7 +69,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             plContour.ConstantWidth = 0.2;
             plContour.Color = color;
-            plContour.Transparency = transp;
+            //plContour.Transparency = transp;
             visuals.Add(plContour);
 
             // точка вставки текста
@@ -81,7 +82,7 @@ namespace PIK_GP_Acad.Insolation.Models
             textInfo.Height = 2;
             textInfo.Contents = this.ToString();
             textInfo.Color = color;
-            textInfo.Transparency = transp;
+            //textInfo.Transparency = transp;
             visuals.Add(textInfo);
 
             return visuals;

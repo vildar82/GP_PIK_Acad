@@ -37,6 +37,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
             IdBlRef = blRef.Id;            
             Height = Floors * 3;
             FriendlyTypeName = "Паркинг";
+            BuildingType = BuildingTypeEnum.Garage;
 
             var valPlaces = BlockBase.GetPropValue<string>(ParamPlaces, exactMatch:false);
             var resPlaces = AcadLib.Strings.StringHelper.GetStartInteger(valPlaces);
