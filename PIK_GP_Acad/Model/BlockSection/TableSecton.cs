@@ -3,6 +3,7 @@ using AcadLib.Jigs;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
+using AcadLib;
 
 namespace PIK_GP_Acad.BlockSection
 {
@@ -113,7 +114,7 @@ namespace PIK_GP_Acad.BlockSection
             table.Cells[row, 1].TextString = data.AverageFloors.ToString("N1", numForInf);
             table.Cells[row, 1].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             row++;
-            table.Cells[row, 0].TextString = $"Жителей, чел ({_service.Estimate.LiveAreaPerHuman}м2/чел)";
+            table.Cells[row, 0].TextString = $"Жителей, чел ({_service.Estimate.LiveAreaPerHuman}м.кв./чел)";
             table.Cells[row, 0].Borders.Bottom.LineWeight = LineWeight.LineWeight030;
             data.Population = _service.Estimate.CalcPopulation(data);// Math.Floor(data.TotalAreaApart / _service.Estimate.LiveAreaPerHuman); // Всего площадь квартир/28
             var population = data.Population;
