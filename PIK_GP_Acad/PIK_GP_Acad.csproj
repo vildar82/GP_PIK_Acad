@@ -259,7 +259,6 @@
       <DependentUpon>PlaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Insolation\UI\Place\PlaceViewModel.cs" />
-    <Compile Include="Model\MVVM\ModelBase.cs" />
     <Compile Include="Model\Insolation\UI\Trees\TreeOptionsView.xaml.cs">
       <DependentUpon>TreeOptionsView.xaml</DependentUpon>
     </Compile>
@@ -310,7 +309,6 @@
     <Compile Include="Model\Elements\Blocks\Social\KindergartenBlock.cs" />
     <Compile Include="Model\Elements\Blocks\Social\SocialBuilding.cs" />
     <Compile Include="Model\Elements\Blocks\Parkings\Parking.cs" />
-    <Compile Include="Model\MVVM\ViewModelBase.cs" />
     <Compile Include="Model\OD\DataType.cs" />
     <Compile Include="Model\OD\IODRecord.cs" />
     <Compile Include="Model\OD\Records\BuildingType.cs" />

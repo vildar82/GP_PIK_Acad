@@ -157,13 +157,16 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 foreach (var item in Buildings)
                 {
-                    var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-                    try
+                    if (item.Building.IdEnt.IsValidEx())
                     {
-                        dbo.Modified -= Building_Modified;
-                        dbo.Erased -= Building_Erased;
+                        var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+                        try
+                        {
+                            dbo.Modified -= Building_Modified;
+                            dbo.Erased -= Building_Erased;
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
                 t.Commit();
             }

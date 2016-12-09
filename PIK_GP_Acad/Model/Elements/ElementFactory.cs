@@ -11,6 +11,7 @@ using PIK_GP_Acad.Elements.Blocks.Parkings;
 using PIK_GP_Acad.Elements.Blocks.Social;
 using PIK_GP_Acad.Elements.Buildings;
 using PIK_GP_Acad.FCS;
+using NetLib;     
 
 namespace PIK_GP_Acad.Elements
 {
@@ -100,7 +101,7 @@ namespace PIK_GP_Acad.Elements
 
                 // Если класс проектируемого здания или есть параметр высоты, то это здание ???!!! Сомнительно. Нужна более строгая идентификайция зданий
                 var height = tag.Value.GetPropertyValue<double>(Building.PropHeight, ent.Id, false);
-                if (clType.ClassName.Equals(Building.ProjectedBuildingClassName, StringComparison.OrdinalIgnoreCase) ||
+                if (clType.ClassName.EqualsIgroreCaseAndSpecChars(Building.ProjectedBuildingClassName) ||
                     height != 0)
                 {
                     var building = new Building(ent, height, tag.Value, clType);

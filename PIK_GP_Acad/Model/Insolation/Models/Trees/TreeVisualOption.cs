@@ -11,6 +11,7 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Services;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {

@@ -13,6 +13,7 @@ using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.UI;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Services
 {

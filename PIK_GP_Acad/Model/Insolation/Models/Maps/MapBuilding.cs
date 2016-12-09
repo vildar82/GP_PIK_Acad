@@ -10,6 +10,7 @@ using PIK_GP_Acad.Insolation.Services;
 using AcadLib;
 using AcadLib.Geometry;
 using Autodesk.AutoCAD.Colors;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {

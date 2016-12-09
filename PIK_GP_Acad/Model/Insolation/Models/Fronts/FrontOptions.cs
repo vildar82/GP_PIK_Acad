@@ -8,6 +8,7 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {

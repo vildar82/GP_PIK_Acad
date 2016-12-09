@@ -16,6 +16,7 @@ using PIK_GP_Acad.Insolation.Services;
 using AcadLib.XData;
 using PIK_DB_Projects;
 using PIK_GP_Acad.Insolation.UI;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -314,8 +315,8 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
             }
-#if TEST
-            EntityHelper.AddEntityToCurrentSpace((Polyline)Contour.Clone());
+#if DEBUG
+            EntityHelper.AddEntityToCurrentSpace((Polyline)Contour?.Clone());
 #endif
         }
 

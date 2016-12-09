@@ -1,4 +1,5 @@
-﻿using PIK_GP_Acad.Insolation.Models;
+﻿using MicroMvvm;
+using PIK_GP_Acad.Insolation.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

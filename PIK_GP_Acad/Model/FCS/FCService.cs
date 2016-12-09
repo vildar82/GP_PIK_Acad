@@ -106,7 +106,7 @@ namespace PIK_GP_Acad.FCS
         public static T GetPropertyValue<T> (this List<FCProperty> props, string name, ObjectId idEnt, bool isRequired)
         {
             T resVal = default(T);
-            var prop = props.Find(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            var prop = props.Find(p => p.Name.EqualsIgroreCaseAndSpecChars(name));
             if (prop == null)
             {
                 if (isRequired)

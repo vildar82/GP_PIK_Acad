@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.Insolation.Services;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {

@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.EditorInput;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {

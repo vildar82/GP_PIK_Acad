@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PIK_GP_Acad.Insolation.Models;
 using System.Collections.ObjectModel;
+using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.UI
 {

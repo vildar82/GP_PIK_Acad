@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Параметр в OD полилинии по классификатору
         /// </summary>
         public const string PropHeight = "Высота";
-        public const string PropElevation = "Относительный уровень";
+        public const string PropElevation = "Уровень";
         public const string PropFloors = "Этажность";
         public const string PropBuildingType = "Тип здания";
         /// <summary>
@@ -44,10 +44,10 @@ namespace PIK_GP_Acad.Elements.Buildings
             var buildingTypeShortName = props.GetPropertyValue<string>(PropBuildingType, IdEnt, false);
             BuildingType = GetBuildingType(buildingTypeShortName);
             Height = CalcHeight(height);
-            Elevation = props.GetPropertyValue<int>(PropElevation, IdEnt, false);
+            Elevation = props.GetPropertyValue<double>(PropElevation, IdEnt, false);
             if (ClassType != null)
             {
-                IsProjectedBuilding = ClassType.ClassName.Equals(ProjectedBuildingClassName, StringComparison.OrdinalIgnoreCase);                
+                IsProjectedBuilding = ClassType.ClassName.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName);                
             }
         }        
 
@@ -129,7 +129,7 @@ namespace PIK_GP_Acad.Elements.Buildings
                 HeightTechnicalFloor = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightTechFloor);
                 height = BlockSectionBase.CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
             }
-            return 0;
+            return height;
         }        
     }
 }
