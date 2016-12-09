@@ -275,15 +275,6 @@ namespace PIK_GP_Acad.Insolation.Models
             return false;
         }
 
-        private void DisposeHouses()
-        {
-            foreach (var item in Houses)
-            {
-                item.DisposeContour();
-                item.Dispose();
-            }
-        }
-
         public List<TypedValue> GetDataValues (Document doc)
         {
             return new List<TypedValue> {
@@ -370,6 +361,15 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     item.UpdateVisual();
                 }
+            }
+        }
+
+        private void DisposeHouses()
+        {
+            foreach (var item in Houses)
+            {
+                item.DisposeContour();
+                item.Dispose();
             }
         }
 

@@ -80,8 +80,16 @@ namespace PIK_GP_Acad.Insolation.Models
         public ObservableCollection<MapBuilding> Sections { get { return sections; } set { sections = value; RaisePropertyChanged(); } }
         ObservableCollection<MapBuilding> sections = new ObservableCollection<MapBuilding>();
 
+        /// <summary>
+        /// Единый контур. Для кольцевого дома - внешний контур
+        /// </summary>
         public Polyline Contour { get { return contour; } set { DisposeContour(); contour = value;} }
         Polyline contour;
+        ///// <summary>
+        ///// Только для кольцевого дома - внутренний контур
+        ///// </summary>
+        //public Polyline ContourInner { get { return contourInner; } set { DisposeContour(); contourInner = value; } }
+        //Polyline contourInner;        
 
         public VisualFront VisualFront { get; set; }
 
@@ -300,23 +308,36 @@ namespace PIK_GP_Acad.Insolation.Models
                         Contour = ptsRegByLoopType[0].Key.Cast<Point2d>().ToList().CreatePolyline();
                     }
                     else
-                    {
-                        // Объединение полилиний
-                        var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
-                        try
+                    {                        
+                        // Если это "кольцевой" дом (замкнутый контур из блок-секций)
+                        if (ptsRegByLoopType.Count == 2 && ptsRegByLoopType.Any(p => p.Value == BrepLoopType.LoopInterior))
                         {
-                            var plMerged = plsLoop.Merge(2);
-                            Contour = plMerged;
+                            // Будет один дом состоящий из двух полилиний - внешней и внутренней                            
+                            // Внешний контур
+                            Contour = ptsRegByLoopType.First(p=>p.Value== BrepLoopType.LoopExterior).Key.Cast<Point2d>().ToList().CreatePolyline();
+                            // Внутренний контур
+                            //ContourInner = ptsRegByLoopType.First(p => p.Value == BrepLoopType.LoopInterior).Key.Cast<Point2d>().ToList().CreatePolyline();
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            AddError(ex.Message);
+                            // Объединение полилиний                            
+                            var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
+                            try
+                            {
+                                var plMerged = plsLoop.Merge(2);
+                                Contour = plMerged;
+                            }
+                            catch (Exception ex)
+                            {
+                                AddError(ex.Message);
+                            }
                         }
                     }
                 }
             }
 #if DEBUG
             EntityHelper.AddEntityToCurrentSpace((Polyline)Contour?.Clone());
+            //EntityHelper.AddEntityToCurrentSpace((Polyline)ContourInner?.Clone());
 #endif
         }
 
@@ -327,12 +348,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             FrontHeight = oldHouse.FrontHeight;
             IsVisualFront = oldHouse.IsVisualFront;
-        }
-
-        public void DisposeContour()
-        {
-            Contour?.Dispose();
-        }        
+        }  
 
         public void ClearVisual ()
         {
@@ -342,6 +358,12 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateVisual ()
         {
             VisualFront?.VisualUpdate();
+        }
+
+        public void DisposeContour()
+        {
+            Contour?.Dispose();
+            //ContourInner?.Dispose();
         }
 
         public void Dispose ()
