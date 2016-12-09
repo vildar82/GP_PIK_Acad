@@ -61,9 +61,16 @@ namespace PIK_GP_Acad.KP.KP_BlockSection
             {
                 AreaFirstGNS += blSec.AreaGNS;
                 AreaUpperGNS += blSec.AreaGNS * (blSec.Floors - 1);
-                AreaFirstLive += (blSec.AreaGNS - 77) * 0.68;
+                if (blSec.Floors<18)
+                {
+                    AreaFirstLive += (blSec.AreaGNS - 70) * 0.67;
+                }
+                else
+                {
+                    AreaFirstLive += (blSec.AreaGNS - 77) * 0.67;
+                }                
             }
-            AreaUpperLive = AreaUpperGNS * 0.68;
+            AreaUpperLive = AreaUpperGNS * 0.67;
 
             // Расчет башен    
             foreach (var tower in blocks.OfType<TowerKPBS>())
