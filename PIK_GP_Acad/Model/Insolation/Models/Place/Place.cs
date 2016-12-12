@@ -105,6 +105,8 @@ namespace PIK_GP_Acad.Insolation.Models
             return levelsInfo;
         }
 
+        
+
         private void OnVisualPlaceChanged ()
         {
             if (VisualPlace != null)
@@ -151,6 +153,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
             Dispose();
+        }
+
+        public void UpdateVisual()
+        {
+            VisualPlace?.VisualUpdate();
         }
 
         public void Dispose ()

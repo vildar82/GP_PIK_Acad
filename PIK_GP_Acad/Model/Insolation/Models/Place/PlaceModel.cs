@@ -102,6 +102,14 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
+        public void UpdateVisual()
+        {
+            foreach (var item in Places)
+            {
+                item.UpdateVisual();
+            }
+        }
+
         public void ClearVisual ()
         {
             foreach (var item in Places)
@@ -148,8 +156,6 @@ namespace PIK_GP_Acad.Insolation.Models
                     item.Dispose();
                 }
             }
-        }
-
-        
+        }        
     }
 }

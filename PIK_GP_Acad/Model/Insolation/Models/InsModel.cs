@@ -201,6 +201,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Tree?.UpdateVisual();
             Front?.UpdateVisual();
+            Place?.UpdateVisual();
+            Map?.UpdateVisual();
         }
 
         /// <summary>

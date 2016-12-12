@@ -105,7 +105,7 @@ namespace PIK_GP_Acad.Insolation.Models
             
         }
 
-        private void UpdateVisual()
+        public void UpdateVisual()
         {
             if (IsVisualOn)
             {
@@ -372,7 +372,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void ClearVisual ()
         {
             // отписатся от всех событий
-            // Удалить всю визуализацию (пока нет)
+            // Удалить всю визуализацию
+            visualMap?.VisualsDelete();
             Unsubscribe();            
         }
 
