@@ -158,7 +158,7 @@ namespace PIK_GP_Acad.Insolation.Services
             //using (var contour = buildingOwner.Contour)
             //{
             var correctPt = buildingOwner.Contour.GetClosestPointTo(ptCalc, false);
-            if ((correctPt - ptCalc).Length > 2)
+            if ((correctPt - ptCalc).Length > 1.5)
             {
 #if TEST
                 //var dbPt = new DBPoint(correctPt);
