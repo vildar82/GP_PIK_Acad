@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Autodesk.AutoCAD.Geometry;
 using PIK_GP_Acad.Insolation.Models;
 using AcadLib;
+using AcadLib.Geometry;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Services.Export
 {
@@ -14,6 +16,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
     /// </summary>
     public class InsCell
     {
+        public const double ModuleSize = 3.6;
         public static readonly Tolerance Tolerance = new Tolerance(0.01,1.5);
         public Vector2d Direction { get; set; }
 
@@ -21,6 +24,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         {
             this.Direction = vecModule;
             PtCenter = cellPt;
+            PtCenterOrig = cellPt;
             // Определение значения инсоляции
             InsValue = GetInsValue(calcPts);
         }       
@@ -36,6 +40,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         public InsRequirementEnum InsValue { get; set; }
 
         public Point2d PtCenter { get; set; }
+        public Point2d PtCenterOrig { get; set; }
 
         /// <summary>
         /// Определение значения инсоляции ячейки по набору расчетных точек в этом модуле
@@ -90,7 +95,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
 
         public override string ToString()
         {
-            return $"Ячейка: центр={PtCenter}, направление={Direction}, значение={InsValue}";
+            return $"Ячейка: центр={PtCenter}, направление={Direction}, значение={InsValue}, [{Row};{Column}]";
         }
 
         /// <summary>
@@ -98,8 +103,26 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         /// </summary>
         public void DefineNumCell()
         {
-            Row = Convert.ToInt32(-PtCenter.Y / 3.6) +1; // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
-            Column = Convert.ToInt32(PtCenter.X / 3.6)+1;
+            Row = (int)Math.Floor(-PtCenter.Y / InsCell.ModuleSize) +1; // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
+            Column = (int)Math.Floor(PtCenter.X / InsCell.ModuleSize) +1;
+        }
+
+        /// <summary>
+        /// Тестовая отрисовка ячейки
+        /// </summary>
+        public void TestDraw()
+        {
+            var ext = PtCenter.GetRectangleFromCenter(InsCell.ModuleSize);
+            var pl = ext.GetPolyline();
+            EntityHelper.AddEntityToCurrentSpace(pl);
+            EntityHelper.AddEntityToCurrentSpace(new DBPoint(PtCenter.Convert3d()));
+            var text = new DBText();
+            text.TextString = $"[{Row};{Column}]";
+            text.Height = 1;
+            text.Justify = AttachmentPoint.MiddleCenter;
+            text.AlignmentPoint = PtCenter.Convert3d();
+            text.AdjustAlignment(HostApplicationServices.WorkingDatabase);
+            EntityHelper.AddEntityToCurrentSpace(text);
         }
     }
 }

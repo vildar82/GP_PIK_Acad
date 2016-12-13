@@ -335,11 +335,12 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
             }
-#if DEBUG
+#if TEST
             EntityHelper.AddEntityToCurrentSpace((Polyline)Contour?.Clone());
+            TestDrawContourVertexText();
             //EntityHelper.AddEntityToCurrentSpace((Polyline)ContourInner?.Clone());
 #endif
-        }
+        }        
 
         /// <summary>
         /// Установить параметры дома из старого дома
@@ -385,6 +386,20 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
             DisposeContour();
+        }
+
+        private void TestDrawContourVertexText()
+        {
+            if (Contour == null || Contour.IsDisposed) return;
+            for (int i = 0; i < Contour.NumberOfVertices; i++)
+            {
+                var vertex = Contour.GetPoint2dAt(i);
+                var text = new DBText();
+                text.TextString = i.ToString();
+                text.Position = vertex.Convert3d();
+                text.Height = 2;
+                EntityHelper.AddEntityToCurrentSpace(text);
+            }
         }
     }
 }

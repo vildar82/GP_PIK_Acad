@@ -46,7 +46,12 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
             IdEnt = blRef.Id;
             var view = GetPropValue<string>("Вид");
             parseView(view);
-            Length = GetPropValue<double>("Длина");
+            
+            Length = GetPropValue<double>("Длина", false);
+            if (Length == 0)
+            {
+                Length = GetPropValue<double>("ДлинаПарковки", false);
+            }
             check();
         }
 

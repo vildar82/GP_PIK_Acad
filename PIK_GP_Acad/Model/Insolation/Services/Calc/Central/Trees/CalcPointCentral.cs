@@ -207,7 +207,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                 }
 #if TEST                
-                EntityHelper.AddEntityToCurrentSpace(lineShadow);
+                //EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
             }
             // Объединение совпадающих зон теней
@@ -226,7 +226,7 @@ namespace PIK_GP_Acad.Insolation.Services
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
             {
 #if TEST
-                EntityHelper.AddEntityToCurrentSpace(lineZero);
+                //EntityHelper.AddEntityToCurrentSpace(lineZero);
 #endif
                 var ptsIntersects = new Point3dCollection();
                 lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
@@ -361,7 +361,7 @@ namespace PIK_GP_Acad.Insolation.Services
             ext.AddPoint(new Point3d(ptCalc.X + xRayToEnd, ptCalc.Y - ySunPlane, 0));
             ext.AddPoint (new Point3d(ptCalc.X + xRayToStart, ptCalc.Y, 0));
 #if TEST
-            EntityHelper.AddEntityToCurrentSpace(ext.GetPolyline());
+            //EntityHelper.AddEntityToCurrentSpace(ext.GetPolyline());
 #endif
             return ext;
         }

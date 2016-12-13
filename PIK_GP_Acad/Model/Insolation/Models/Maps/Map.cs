@@ -224,7 +224,7 @@ namespace PIK_GP_Acad.Insolation.Models
         private Rectangle GetBuildingRectangle (MapBuilding building)
         {
 #if TEST
-            EntityHelper.AddEntityToCurrentSpace(building.ExtentsInModel.GetPolyline());
+            //EntityHelper.AddEntityToCurrentSpace(building.ExtentsInModel.GetPolyline());
 #endif
             return new Rectangle(building.ExtentsInModel);
         }

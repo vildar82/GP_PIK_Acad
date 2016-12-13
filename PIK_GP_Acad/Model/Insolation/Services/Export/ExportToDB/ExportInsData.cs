@@ -2,6 +2,7 @@
 using PIK_GP_Acad.Insolation.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,6 +49,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                 }
                 xlPackage.Save();
             }
+            Process.Start(fileOutput);
         }      
         
         /// <summary>

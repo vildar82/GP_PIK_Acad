@@ -81,7 +81,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             {    
                 var segCells = new List<InsCell>();
                 var startPt = segPoints.First().Point;
-                var vecModule = (segPoints.Last().Point - startPt).GetNormal() *3.6;
+                var vecModule = (segPoints.Last().Point - startPt).GetNormal() *InsCell.ModuleSize;
                 var vecHalfModule = vecModule * 0.5;
                 var vecInsidePlHalfModule = GetVectorHalfModuleInsideContour(vecHalfModule, segPoints.Skip(1).First().Point);
 
@@ -98,9 +98,9 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                     var lenSeg = (segPoints.Last().Point - startPt).Length;
 #endif
                     var vec = calcPt.Point - startPt;                    
-                    if (vec.Length>3.6)// 0.1 - запас
+                    if (vec.Length>InsCell.ModuleSize)// 0.1 - запас
                     {
-                        if (vec.Length - 3.6 < 0.1)
+                        if (vec.Length - InsCell.ModuleSize < 0.1)
                         {
                             calcPtsInModule.Add(calcPt);
                         }
@@ -144,7 +144,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                     }
                 }
                 // Проверка последней точки - если остаток больше половины модуля - то добавляем целый модуль
-                if (lastPt != null && (lastPt.Point- startPt).Length > (3.6*0.5))
+                if (lastPt != null && (lastPt.Point- startPt).Length > (InsCell.ModuleSize * 0.5))
                 {
                     var cellPt = GetCenterModulePoint(startPt, vecHalfModule, vecInsidePlHalfModule);
                     var cell = new InsCell(cellPt, calcPtsInModule, vecModule);
@@ -166,7 +166,13 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             {
                 Inspector.AddError(ex.Message, System.Drawing.SystemIcons.Error);
             }
-
+#if TEST
+            // Подпись ячеек            
+            foreach (var item in resCells)
+            {
+                item.TestDraw();
+            }
+#endif
             return resCells;
         }
 
@@ -202,6 +208,25 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             {
                 cell.DefineNumCell();
             }
+
+            // Проверка наложения ячеек - не должно быть ячеек с одинаковым номером строки и столбца
+            var dublicateCells = Cells.GroupBy(g => new { row = g.Row, col = g.Column }).Where(w=>w.Skip(1).Any());
+            foreach (var dubl in dublicateCells)
+            {
+                // Ошибка
+                var fp = dubl.First();
+                var err = $"Наложение ячеек инсоляции! Координата {fp.PtCenterOrig}. Ячейка в Excel [{dubl.Key.row};{dubl.Key.col}]";
+                var ext = fp.PtCenterOrig.GetRectangleFromCenter(InsCell.ModuleSize).Convert3d();
+                Inspector.AddError(err, ext, Matrix3d.Identity, System.Drawing.SystemIcons.Error);
+            }
+
+#if TEST
+            // Подпись ячеек            
+            foreach (var item in Cells)
+            {
+                item.TestDraw();
+            }
+#endif
         }
 
         /// <summary>

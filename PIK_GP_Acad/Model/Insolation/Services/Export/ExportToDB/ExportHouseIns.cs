@@ -37,18 +37,17 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             var contour = house.Contour;
             var insCells = new List<InsCell>();
             for (int i = 0; i < house.Contour.NumberOfVertices; i++)
-            {
-                InsCell lastCell = null;
+            {                
                 using (var seg = contour.GetLineSegment2dAt(i))
                 {
-                    if (seg.Length < 3.6)
+                    if (seg.Length < InsCell.ModuleSize*0.9)
                     {
                         continue;
                     }
                     // расчетнве точки этого сегмента
                     var segCalcPoints = house.ContourSegmentsCalcPoints[i];
                     // вектор одного модуля (шага 3,6)
-                    var vecModule = seg.Direction * 3.6;
+                    var vecModule = seg.Direction * InsCell.ModuleSize;
 
                     // стартовая и конечная точка модуля на сегменте
                     var startModulePt = seg.StartPoint;
