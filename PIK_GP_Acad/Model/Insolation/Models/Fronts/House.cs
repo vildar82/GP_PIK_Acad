@@ -335,6 +335,8 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
             }
+            // Прополка полилилинии
+            Contour.Wedding(TreeModel.TolerancePoints);
 #if TEST
             EntityHelper.AddEntityToCurrentSpace((Polyline)Contour?.Clone());
             TestDrawContourVertexText();

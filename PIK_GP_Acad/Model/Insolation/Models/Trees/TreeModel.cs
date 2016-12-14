@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>    
     public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
-        private static Tolerance tolerancePoints = new Tolerance(0.1, 0.1);
+        public static Tolerance TolerancePoints = new Tolerance(0.02, 0.1);
         private bool isVisualTreeOnOffForLoad;        
 
         /// <summary>
@@ -318,11 +318,11 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Points == null || Points.Count == 0) return false;
             if (dubl)
             {
-                return Points.Where(p => p.Point.IsEqualTo(pt, tolerancePoints)).Skip(1).Any();
+                return Points.Where(p => p.Point.IsEqualTo(pt, TolerancePoints)).Skip(1).Any();
             }
             else
             {
-                return Points.Any(p => p.Point.IsEqualTo(pt, tolerancePoints));
+                return Points.Any(p => p.Point.IsEqualTo(pt, TolerancePoints));
             }            
         }
 
