@@ -128,9 +128,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
 
             return dicFront;
-        }
-
-        
+        }        
 
         public void SetExtDic (DicED dicFront, Document doc)
         {

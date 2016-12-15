@@ -14,19 +14,19 @@ using AcadLib.XData;
 using PIK_GP_Acad.Insolation.Services;
 
 namespace PIK_GP_Acad.Insolation.Models
-{    
+{
     /// <summary>
     /// карта - чертеж с объектами расчета инсоляции
     /// </summary>
     public class Map : IDisposable
-    {   
+    {
         Database db;
         RTree<MapBuilding> treeBuildings;
         VisualsMap visualMap;
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
-        public Map (Document doc)
+        public Map(Document doc)
         {
             IsVisualOn = true; // По-умолчаию визуализация включена
             Doc = doc;
@@ -37,7 +37,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public bool IsEventsOn { get; set; }
         public Document Doc { get; set; }
         public double MaxBuildingHeight => GetMaxBuildingHeight();
-        public List<MapBuilding> Buildings { get; private set; }       
+        public List<MapBuilding> Buildings { get; private set; }
         /// <summary>
         /// Найденные точки инсоляции
         /// </summary>
@@ -60,16 +60,16 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Здание изменилось (удалено и создаено новое)
         /// Передается старое здание
         /// </summary>
-        public event EventHandler<MapBuilding> BuildingModified;     
+        public event EventHandler<MapBuilding> BuildingModified;
         /// <summary>
         /// Добавлена расчетная точка
         /// </summary>
-        public event EventHandler<ObjectId> InsPointAdded;     
-           
+        public event EventHandler<ObjectId> InsPointAdded;
+
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
-        private void LoadMap ()
+        private void LoadMap()
         {
             IsEventsOn = false;
             FCS.FCService.Init(db);
@@ -85,24 +85,22 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     if (idEnt.IsValidEx())
                     {
-                        var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
+                        var ent = idEnt.GetObject(OpenMode.ForRead, false, true) as Entity;
                         DefineEnt(ent);
                     }
                 }
                 t.Commit();
-            }            
+            }
             IsEventsOn = true;
         }
 
-        public void Update ()
+        public void Update()
         {
             Unsubscribe();
-            ClearVisual();            
+            ClearVisual();
             LoadMap();
             SubscribeDB();
-
             UpdateVisual();
-            
         }
 
         public void UpdateVisual()
@@ -122,7 +120,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        private double GetMaxBuildingHeight ()
+        private double GetMaxBuildingHeight()
         {
             double res = 0;
             if (Buildings.Count != 0)
@@ -132,7 +130,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return res;
         }
 
-        private void SubscribeDB ()
+        private void SubscribeDB()
         {
             try
             {
@@ -145,38 +143,38 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        private void Unsubscribe ()
+        private void Unsubscribe()
         {
             try
             {
                 db.ObjectAppended -= Database_ObjectAppended;
             }
             catch { }
-            if (Buildings == null) return;
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                foreach (var item in Buildings)
-                {
-                    if (item.Building.IdEnt.IsValidEx())
-                    {
-                        var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-                        try
-                        {
-                            dbo.Modified -= Building_Modified;
-                            dbo.Erased -= Building_Erased;
-                        }
-                        catch { }
-                    }
-                }
-                t.Commit();
-            }
+            //if (Buildings == null) return;
+            //using (var t = db.TransactionManager.StartTransaction())
+            //{
+            //    foreach (var item in Buildings)
+            //    {
+            //        if (item.Building.IdEnt.IsValidEx())
+            //        {
+            //            var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
+            //            try
+            //            {
+            //                dbo.Modified -= Building_Modified;
+            //                dbo.Erased -= Building_Erased;
+            //            }
+            //            catch { }
+            //        }
+            //    }
+            //    t.Commit();
+            //}
         }
 
-        private void DefineEnt (Entity ent)
+        private void DefineEnt(Entity ent)
         {
             var building = ElementFactory.Create<IBuilding>(ent);
             if (building != null)
-            {                
+            {
                 var insBuild = new MapBuilding(building);
                 Buildings.Add(insBuild);
                 var r = GetBuildingRectangle(insBuild);
@@ -205,7 +203,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
                 return;
             }
-            var pl = ent as Polyline;  
+            var pl = ent as Polyline;
             if (pl != null)
             {
                 var entExtDicExt = new EntDictExt(pl, InsService.PluginName);
@@ -217,11 +215,17 @@ namespace PIK_GP_Acad.Insolation.Models
                     {
                         Places.Add(new KeyValuePair<ObjectId, DicED>(pl.Id, dicPlace));
                     }
-                }                
+                }
+                // Если она на  слое sapr_ins_visuals - удаление
+                if (VisualDatabase.IsVisualElement(ent))
+                {
+                    ent.UpgradeOpen();
+                    ent.Erase();
+                }
             }
         }
 
-        private Rectangle GetBuildingRectangle (MapBuilding building)
+        private Rectangle GetBuildingRectangle(MapBuilding building)
         {
 #if TEST
             //EntityHelper.AddEntityToCurrentSpace(building.ExtentsInModel.GetPolyline());
@@ -232,8 +236,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение расчетной области и объектов в ней
         /// </summary>        
-        public Scope GetScope (Extents3d ext)
-        {            
+        public Scope GetScope(Extents3d ext)
+        {
             var rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             var scope = new Scope(ext, items, this);
@@ -241,7 +245,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return scope;
         }
 
-        public MapBuilding GetBuildingInPoint (Point2d pt)
+        public MapBuilding GetBuildingInPoint(Point2d pt)
         {
             MapBuilding building = null;
             var buildingsInPt = GetBuildingsInPoint(pt);
@@ -267,7 +271,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     {
                         var ptContour = buildItem.Contour.GetClosestPointTo(pt3d, false);
                         var l = (pt3d - ptContour).Length;
-                        if (l < minLen || minLen ==-1)
+                        if (l < minLen || minLen == -1)
                         {
                             minLen = l;
                             building = buildItem;
@@ -282,19 +286,19 @@ namespace PIK_GP_Acad.Insolation.Models
             return building;
         }
 
-        public List<MapBuilding> GetBuildingsInPoint (Point2d pt)
-        {            
+        public List<MapBuilding> GetBuildingsInPoint(Point2d pt)
+        {
             Point p = new Point(pt.X, pt.Y, 0);
-            var nearest = treeBuildings.Nearest(p, 2);            
+            var nearest = treeBuildings.Nearest(p, 2);
             return nearest;
         }
 
-        public MapBuilding GetBuildingInPoint (Point3d pt)
+        public MapBuilding GetBuildingInPoint(Point3d pt)
         {
-            return GetBuildingInPoint(pt.Convert2d());            
+            return GetBuildingInPoint(pt.Convert2d());
         }
 
-        private MapBuilding FindBuildingByEnt (ObjectId id)
+        private MapBuilding FindBuildingByEnt(ObjectId id)
         {
             return Buildings.Find(b => b.Building.IdEnt == id);
         }
@@ -302,7 +306,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Добавление объекта в чертеж
         /// </summary>        
-        private void Database_ObjectAppended (object sender, ObjectEventArgs e)
+        private void Database_ObjectAppended(object sender, ObjectEventArgs e)
         {
             //var ent = e.DBObject as Entity;
             //if (ent == null) return;
@@ -316,12 +320,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Удаление здания
         /// </summary>        
-        private void Building_Erased (object sender, ObjectErasedEventArgs e)
+        private void Building_Erased(object sender, ObjectErasedEventArgs e)
         {
             // Определение удаленного здания
             MapBuilding building = FindBuildingByEnt(e.DBObject.Id);
             if (building != null)
-            {                
+            {
                 Buildings.Remove(building);
                 var r = GetBuildingRectangle(building);
                 treeBuildings.Delete(r, building);
@@ -329,15 +333,15 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (IsEventsOn)
                     BuildingErased?.Invoke(this, building);
             }
-        }        
+        }
 
         /// <summary>
         /// Изменение здания (перемещение)
         /// </summary>        
-        private void Building_Modified (object sender, EventArgs e)
+        private void Building_Modified(object sender, EventArgs e)
         {
             var ent = sender as Entity;
-            if (ent == null) return;           
+            if (ent == null) return;
 
             //// Поиск старого здания
             //var buildingOld = FindBuildingByEnt(ent.Id);
@@ -369,15 +373,15 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Очистка визуализаций и отписка от событий
         /// </summary>
-        public void ClearVisual ()
+        public void ClearVisual()
         {
             // отписатся от всех событий
             // Удалить всю визуализацию
             visualMap?.VisualsDelete();
-            Unsubscribe();            
+            Unsubscribe();
         }
 
-        public void Dispose ()
+        public void Dispose()
         {
             if (db == null || db.IsDisposed) return;
             visualMap?.Dispose();

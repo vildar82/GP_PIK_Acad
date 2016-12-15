@@ -16,12 +16,13 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public abstract class  VisualDatabase : IVisualService
     {        
+        private const string LayerVisualName = "sapr_ins_visuals";
         private bool isOn;
         private List<ObjectId> draws;
         private LayerInfo lay;
 
         public Document Doc { get; set; }
-        public string LayerVisual { get; set; } = "sapr_ins_visuals";
+        private string LayerVisual { get; set; } = LayerVisualName;
 
         public abstract List<Entity> CreateVisual ();
 
@@ -79,7 +80,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private void EraseDraws ()
         {
-            if (draws != null && Doc != null && !Doc.IsDisposed)
+            if (draws != null && draws.Any() && Doc != null && !Doc.IsDisposed)
             {
                 using (new WorkingDatabaseSwitcher(Doc.Database))
                 {
@@ -132,6 +133,15 @@ namespace PIK_GP_Acad.Insolation.Services
             var visDbAny = new VisualDatabaseAny(doc);
             visDbAny.AddVisual(this);
             visDbAny.Draw();
+        }
+
+        /// <summary>
+        /// Проверка, это элемент визуализации
+        /// </summary>                
+        public static bool IsVisualElement(Entity ent)
+        {
+            var res = ent.Layer.Equals(LayerVisualName, StringComparison.OrdinalIgnoreCase);
+            return res;
         }
     }
 }

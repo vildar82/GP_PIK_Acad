@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// <summary>
         /// Классификатор проектируемых зданий
         /// </summary>
-        public const string ProjectedBuildingClassName = "Проектируемое здание";
+        public const string ProjectedBuildingClassName = "Проектируемое_здание";
 
         public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent.Id)
         {

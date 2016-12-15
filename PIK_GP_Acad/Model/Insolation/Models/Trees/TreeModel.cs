@@ -255,6 +255,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         private void OnPointsChanged ()
         {
+            if (Points == null) return;
             Points.CollectionChanged += Points_CollectionChanged;            
         }
 
@@ -482,6 +483,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     item.Dispose();
                 }
             }
+            Points = null;
         }
     }
 }

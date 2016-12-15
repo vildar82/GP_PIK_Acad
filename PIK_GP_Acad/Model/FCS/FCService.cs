@@ -120,10 +120,18 @@ namespace PIK_GP_Acad.FCS
                 {
                     resVal = prop.Value.GetValue<T>();// (T)Convert.ChangeType(prop.Value, typeof(T));
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Inspector.AddError($"Недопустимый тип значения параметра '{name}'= {prop.Value.ToString()}.",
-                        idEnt, System.Drawing.SystemIcons.Error);
+                    var err = $"Недопустимый тип значения параметра '{name}'= {prop.Value.ToString()}";
+
+                    if (isRequired)
+                    {
+                        Inspector.AddError(err,idEnt, System.Drawing.SystemIcons.Error);
+                    }
+                    else
+                    {
+                        Logger.Log.Error(ex, err);
+                    }
                 }
             }
             return resVal;

@@ -405,7 +405,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 Front.Dispose();
                 Doc.Database.BeginSave -= Database_BeginSave;
             }
-            Doc = null;
+            //Doc = null;
         }
     }
 }

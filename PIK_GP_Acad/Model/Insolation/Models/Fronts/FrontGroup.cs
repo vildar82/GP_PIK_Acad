@@ -195,8 +195,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<House> CreateHouses (Scope scope)
         {
             var houses = new List<House>();
-            // Определение домов из блок-секций
-            var projectBuildings = scope.Buildings.Where(b => b.Building.IsProjectedBuilding);
+            // Определение домов
+            var projectBuildings = scope.Buildings;//.Where(b => b.Building.IsProjectedBuilding);
             foreach (var building in projectBuildings)
             {
                 // Дом из блок-секций

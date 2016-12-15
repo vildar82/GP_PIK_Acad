@@ -17,22 +17,28 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         private List<Entity> visuals;
         private PlaceModel placeModel;
+        /// <summary>
+        /// Визуализация контуров уровней площадок на чертеже
+        /// </summary>
+        private VisualPlaceContours visualPlaceContours;
         public VisualPlace (PlaceModel placeModel)// : base (placeModel?.Model?.Doc)
         {
             this.placeModel = placeModel;
+            visualPlaceContours = new VisualPlaceContours(placeModel);
         }
 
         public List<Tile> Tiles { get { return tiles; }
-            set {
-                DisposeTiles();
+            set {                
                 tiles = value;
                 UnionTiles();
+                DisposeTiles();
             }
         }
-        List<Tile> tiles;        
+        List<Tile> tiles;
 
         public override List<Entity> CreateVisual ()
-        {            
+        {
+            visualPlaceContours.VisualIsOn = this.VisualIsOn;
             return visuals?.Select(s=>(Entity)s.Clone()).ToList();
         }
 
@@ -41,6 +47,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (Tiles == null || Tiles.Count == 0) return;
 
             DisposeVisuals();
+            visualPlaceContours.DisposeVisuals();
             visuals = new List<Entity>();
 
             var groupLevels = Tiles.GroupBy(g => g.Level);
@@ -48,28 +55,37 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 if (group.Key.TotalTimeH == 0) continue;
                 var pls = group.Select(s => s.Contour).ToList();
-                using (var region = pls.Union(null))
-                {
-                    var h = region.CreateHatch();
-                    var visOpt = new VisualOption(group.Key.Color, placeModel.Options.Transparent);
-                    VisualHelper.SetEntityOpt(h, visOpt);
-                    visuals.Add(h);
-                }
+
+                var region = pls.Union(null);
+
+                // Добавление региона в визуализацию контуров уровней площадок
+                var visOpt = new VisualOption(group.Key.Color, placeModel.Options.Transparent);
+                VisualHelper.SetEntityOpt(region, visOpt);                
+                visualPlaceContours.AddRegion(region);                
+
+                var h = region.CreateHatch();                
+                VisualHelper.SetEntityOpt(h, visOpt);
+                visuals.Add(h);
             }
         }
 
-        private void DisposeVisuals ()
+        public override void VisualsDelete()
         {
-            if (visuals != null)
-            {
-                foreach (var item in visuals)
-                {
-                    item.Dispose();
-                }
-            }
+            visualPlaceContours.VisualsDelete();
+            base.VisualsDelete();
         }
 
-        public void DisposeTiles ()
+        private void DisposeVisuals()
+        {
+            if (visuals == null) return;
+            foreach (var item in visuals)
+            {
+                item.Dispose();
+            }
+            visuals = null;
+        }
+
+        private void DisposeTiles ()
         {
             if (Tiles != null)
             {
@@ -78,6 +94,14 @@ namespace PIK_GP_Acad.Insolation.Services
                     item.Contour?.Dispose();
                 }
             }
+        }
+
+        public override void Dispose()
+        {
+            DisposeTiles();
+            DisposeVisuals();
+            visualPlaceContours.Dispose();
+            base.Dispose();
         }
     }
 }

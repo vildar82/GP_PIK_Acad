@@ -261,13 +261,20 @@ namespace PIK_GP_Acad.Insolation.Services
                     if (build.Contour.IsPointInsidePolygon(ptIntersect.Center(ptIntersectPrew)))
                     {
                         // Точки петли выше
-                        var ptsLoopAbove = build.Contour.GetLoopSideBetweenHorizontalIntersectPoints(
-                                            ptIntersectPrew, ptIntersect, true, true);
-                        var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p=>p.Y<= ptCalc.Y).ToList());
-                        if (ilumShadow != null)
+                        try
                         {
-                            resIlumsShadows.Add(ilumShadow);
+                            var ptsLoopAbove = build.Contour.GetLoopSideBetweenHorizontalIntersectPoints(
+                                                ptIntersectPrew, ptIntersect, true, true);
+                            var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p => p.Y <= ptCalc.Y).ToList());
+                            if (ilumShadow != null)
+                            {
+                                resIlumsShadows.Add(ilumShadow);
+                            }
                         }
+                        catch (Exception ex)
+                        {
+                            Logger.Log.Error(ex, "В методе GetBuildingLineShadowBoundary вызов build.Contour.GetLoopSideBetweenHorizontalIntersectPoints()");
+                        }                        
                     }
                     ptIntersectPrew = ptIntersect;
                 }

@@ -13,17 +13,25 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsPointViewModel : ViewModelBase
     {
-        private IBuilding ibuild;
+        private IBuilding build;
         public InsPointViewModel (InsPoint insPoint)
         {
             BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
             InsPoint = insPoint;
-            ibuild = insPoint.Building.Building;
 
-            BuildingType = insPoint.Building.BuildingType;
-            Height = insPoint.Height;
-            WindowVM = new WindowOptionsViewModel(insPoint.Window.Copy());
-
+            if (insPoint.Building == null)
+            {
+                HasBuilding = false;
+                WindowVM = new WindowOptionsViewModel(null);
+            }
+            else
+            {
+                HasBuilding = true;
+                build = insPoint.Building.Building;
+                BuildingType = insPoint.Building.BuildingType;
+                WindowVM = new WindowOptionsViewModel(insPoint.Window.Copy());
+            }                       
+            Height = insPoint.Height;            
             OK = new RelayCommand(OnOkExecute);            
         }
 
@@ -51,11 +59,16 @@ namespace PIK_GP_Acad.Insolation.UI
         public WindowOptionsViewModel WindowVM { get { return windowVM; } set { windowVM = value; RaisePropertyChanged(); } }
         WindowOptionsViewModel windowVM;
 
+        public bool HasBuilding { get; set; }
+
         private void OnOkExecute ()
         {
-            InsPoint.Building.BuildingType = BuildingType;
-            InsPoint.Height = Height;
-            InsPoint.Window = WindowVM.Window;
+            if (HasBuilding)
+            {
+                InsPoint.Building.BuildingType = BuildingType;
+                InsPoint.Window = WindowVM.Window;
+            }            
+            InsPoint.Height = Height;            
         }        
     }
 }

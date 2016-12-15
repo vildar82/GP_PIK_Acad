@@ -67,24 +67,23 @@ namespace PIK_GP_Acad.Insolation.Models
         private void Calc ()
         {
             var building = Building;
+            bool withOwnerBuilding = true;            
             if (building == null)
             {
-                Illums = null;
-                InsValue = InsValue.Empty;
-                return;
-            }
-
+                //Illums = null;
+                //InsValue = InsValue.Empty;
+                //return;
+                withOwnerBuilding = false;                
+            }            
             try
             {
-                building.InitContour();
-                using (building.Contour)
-                {
-                    Illums = Model.CalcService.CalcTrees.CalcPoint(this);
-                    InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building.BuildingType);
-                }
+                building?.InitContour();
+                Illums = Model.CalcService.CalcTrees.CalcPoint(this, withOwnerBuilding);
+                InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building?.BuildingType ?? BuildingTypeEnum.Living);
             }
             catch
             {
+                building?.Contour?.Dispose();                
                 Illums = null;
                 InsValue = InsValue.Empty;
             }            

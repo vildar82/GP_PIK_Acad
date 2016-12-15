@@ -15,7 +15,10 @@ using MicroMvvm;
 namespace PIK_GP_Acad.Insolation.Models
 {
     public class MapBuilding : ModelBase, IVisualElement
-    {        
+    {
+#if DEBUG
+        static int testIndexes;
+#endif    
         public IBuilding Building { get; set; }        
         public Polyline Contour { get; private set; }        
         /// <summary>
@@ -26,7 +29,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public double YMin { get; private set; }        
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
         public BuildingTypeEnum BuildingType { get; set; }        
-        public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }        
+        public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
+#if DEBUG
+        public int TestIndex { get; set; }
+#endif
 
         public MapBuilding () { }
 
@@ -36,7 +42,10 @@ namespace PIK_GP_Acad.Insolation.Models
             BuildingType = Building.BuildingType;
             YMax = ExtentsInModel.MaxPoint.Y;
             YMin = ExtentsInModel.MinPoint.Y;
-            HeightCalc = building.Height + building.Elevation;                            
+            HeightCalc = building.Height + building.Elevation;
+#if DEBUG
+            TestIndex = testIndexes++;
+#endif
         }
 
         /// <summary>
@@ -81,7 +90,7 @@ namespace PIK_GP_Acad.Insolation.Models
             textInfo.Location = ptText;
             textInfo.Attachment = AttachmentPoint.MiddleCenter;
             textInfo.Height = 2;
-            textInfo.Contents = this.ToString();
+            textInfo.Contents = this.GetInfo();
             textInfo.Color = color;
             //textInfo.Transparency = transp;
             visuals.Add(textInfo);
@@ -98,7 +107,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Описание здания
         /// </summary>        
-        private string GetInfo()
+        public string GetInfo()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(BuildinTypeName);
@@ -111,9 +120,11 @@ namespace PIK_GP_Acad.Insolation.Models
             sb.AppendLine(projected);
             if (!string.IsNullOrEmpty(Building.FriendlyTypeName))
             {
-                sb.Append(Building.FriendlyTypeName);
+                sb.AppendLine(Building.FriendlyTypeName);
             }
-
+#if DEBUG
+            sb.AppendLine(TestIndex.ToString());
+#endif
             return sb.ToString();
         }
     }

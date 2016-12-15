@@ -55,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
         string name;        
 
-        public VisualPlace VisualPlace { get; set; }        
+        public VisualPlace VisualPlace { get; set; }                
 
         public bool IsVisualPlaceOn { get { return isVisualPlaceOn; }
             set {
@@ -82,6 +82,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
+            if (!IsVisualPlaceOn)
+            {
+                VisualPlace?.Dispose();
+                Tiles = null;
+                return;
+            }
             Tiles = PlaceModel.Model.CalcService.CalcPlace.CalcPlace(this);
             // Суммирование освещенностей по уровням
             LevelsInfo = GetLevelsInfo(Tiles);
@@ -103,12 +109,14 @@ namespace PIK_GP_Acad.Insolation.Models
             var minLevel = PlaceModel.Options.Levels.Min(o => o.TotalTimeH);
             levelsInfo = levelsInfo.Replace("0ч.", $"<{minLevel}ч.");
             return levelsInfo;
-        }
-
-        
+        }        
 
         private void OnVisualPlaceChanged ()
-        {
+        {   
+            if (!IsVisualPlaceOn || (IsVisualPlaceOn && Tiles == null && PlaceModel != null && PlaceModel.Places.Contains(this)))
+            {
+                Update();
+            }
             if (VisualPlace != null)
             {
                 VisualPlace.VisualIsOn = IsVisualPlaceOn;
@@ -161,9 +169,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public void Dispose ()
-        {
-            VisualPlace?.VisualsDelete();
-            VisualPlace?.DisposeTiles();
+        {            
             VisualPlace?.Dispose();
         }
 

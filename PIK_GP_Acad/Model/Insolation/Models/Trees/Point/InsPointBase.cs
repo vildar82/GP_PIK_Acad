@@ -178,11 +178,12 @@ namespace PIK_GP_Acad.Insolation.Models
             if (DBPointId.IsNull) return;
             var doc = Model.Doc;
             using (doc.LockDocument())
-            using (var t = doc.TransactionManager.StartTransaction())
-            {
-                var dbPt = DBPointId.GetObject(OpenMode.ForWrite);
-                dbPt.Erase();
-                t.Commit();
+            {             
+                if (DBPointId.IsValidEx())
+                {
+                    var dbPt = DBPointId.Open(OpenMode.ForWrite, false, true);
+                    dbPt.Erase();
+                }                
             }
         }
 

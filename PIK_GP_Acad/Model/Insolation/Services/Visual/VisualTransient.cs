@@ -71,7 +71,7 @@ namespace PIK_GP_Acad.Insolation.Services
             draws = CreateVisual();            
         }
 
-        public void VisualsDelete ()
+        public virtual void VisualsDelete ()
         {
             EraseDraws();
         }

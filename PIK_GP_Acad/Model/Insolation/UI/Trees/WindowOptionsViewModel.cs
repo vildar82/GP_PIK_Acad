@@ -10,9 +10,13 @@ namespace PIK_GP_Acad.Insolation.UI
     {
         public WindowOptionsViewModel (WindowOptions window) : base()
         {
-            Window = window;
-            WindowConstructions = new ObservableCollection<WindowConstruction>(WindowConstruction.WindowConstructions);
-            Quarters = new ObservableCollection<double> { 0.07, 0.13, 0.26 };
+            if (window != null)
+            {
+                HasWindow = true;
+                Window = window;
+                WindowConstructions = new ObservableCollection<WindowConstruction>(WindowConstruction.WindowConstructions);
+                Quarters = new ObservableCollection<double> { 0.07, 0.13, 0.26 };
+            }
         }        
 
         /// <summary>
@@ -22,5 +26,6 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public ObservableCollection<double> Quarters { get; set; }
         public ObservableCollection<WindowConstruction> WindowConstructions { get; set; }
+        public bool HasWindow { get; set; }
     }
 }

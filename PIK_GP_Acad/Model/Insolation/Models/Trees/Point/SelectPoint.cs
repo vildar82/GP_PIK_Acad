@@ -50,27 +50,18 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private Point3d PromptSelectPointOnScreen (out MapBuilding building)
+        private Point3d PromptSelectPointOnScreen(out MapBuilding building)
         {
             var pt = ed.GetPointWCS("\nВыбор расчетной точки (на внешней стене здания):");
             // Проверка точки
             building = InsPointBase.DefineBuilding(ref pt, model);
-            if (building == null)
+            // Нет ли уже точки в этом месте
+            if (model.Tree.HasPoint(pt))
             {
-                ed.WriteMessage($"\nОшибка. Здание не определено. Укажите точку на внешнем контуре здания...");
+                ed.WriteMessage($"\nУже есть расчетная точка в этом месте. Укажите другую точку.");
                 pt = PromptSelectPointOnScreen(out building);
             }
-            else
-            {
-                // Нет ли уже точки в этом месте
-                if (model.Tree.HasPoint(pt))
-                {
-                    ed.WriteMessage($"\nОшибка. Уже есть расчетная точка в этом месте. Укажите другую точку.");
-                    pt = PromptSelectPointOnScreen(out building);
-                }                
-            }
-
             return pt;
-        }       
+        }    
     }
 }

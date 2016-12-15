@@ -24,15 +24,14 @@ namespace PIK_GP_Acad.Insolation.Services
             return FrontLines.Select(s => (Polyline)s.Line.Clone()).Cast<Entity>().ToList();
         }
 
-        public override void Dispose ()
+        public override void Dispose()
         {
-            if (FrontLines != null)
+            if (FrontLines == null) return;
+            foreach (var item in FrontLines)
             {
-                foreach (var item in FrontLines)
-                {
-                    item.Line?.Dispose();
-                }
+                item.Line?.Dispose();
             }
+            FrontLines = null;
             base.Dispose();
         }
     }
