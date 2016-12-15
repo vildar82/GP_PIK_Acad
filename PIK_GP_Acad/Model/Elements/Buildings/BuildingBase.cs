@@ -65,23 +65,17 @@ namespace PIK_GP_Acad.Elements.Buildings
 
         public List<TypedValue> GetDataValues(Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(HouseName),
-                TypedValueExt.GetTvExtData(HouseId),
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("HouseName", HouseName);
+            tvk.Add("HouseId", HouseId);
+            return tvk.Values;
         }
 
         public void SetDataValues(List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 2)
-            {
-                // Дефолт
-            }
-            else
-            {
-                HouseName = TypedValueExt.GetTvValue<string>(values[0]);
-                HouseId = TypedValueExt.GetTvValue<int>(values[1]);
-            }
+            var dictValues = values?.ToDictionary();
+            HouseName = dictValues.GetValue("HouseName", "");
+            HouseId = dictValues.GetValue("HouseId", 0);            
         }
     }
 }

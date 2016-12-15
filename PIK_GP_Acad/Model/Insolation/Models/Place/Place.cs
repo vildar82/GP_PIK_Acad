@@ -196,24 +196,17 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Name),
-                TypedValueExt.GetTvExtData(IsVisualPlaceOn)
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Name", Name);
+            tvk.Add("IsVisualPlaceOn", IsVisualPlaceOn);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 2)
-            {
-                // Default
-                Name = "Площадка " + PlaceModel?.Places.Count; 
-            }
-            else
-            {
-                Name = TypedValueExt.GetTvValue<string>(values[0]);
-                IsVisualPlaceOn = TypedValueExt.GetTvValue<bool>(values[1]);
-            }
+            var dictValues = values?.ToDictionary();
+            Name = dictValues.GetValue("Name", "Площадка");
+            IsVisualPlaceOn = dictValues.GetValue("IsVisualPlaceOn", true);            
         }
     }
 }

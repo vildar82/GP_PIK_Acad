@@ -277,26 +277,16 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Name),
-                TypedValueExt.GetTvExtData(IsVisualFrontOn)
-                //TypedValueExt.GetTvExtData(GroupId),
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Name", Name);
+            tvk.Add("IsVisualFrontOn", IsVisualFrontOn);
+            return tvk.Values;            
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
-        {
-            if (values == null || values.Count != 2)
-            {
-                // Default
-                Name = "";
-            }
-            else
-            {
-                int index = 0;
-                Name = values[index++].GetTvValue<string>();
-                IsVisualFrontOn = values[index++].GetTvValue<bool>();                
-                //GroupId = values[index++].GetTvValue<int>();
-            }
+        {            
+            var dictValues = values?.ToDictionary();
+            Name = dictValues.GetValue("Name", "Группа");
+            IsVisualFrontOn = dictValues.GetValue("IsVisualFrontOn", true);
         }
         public DicED GetExtDic (Document doc)
         {
@@ -307,8 +297,8 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         public void SetExtDic (DicED dicFront, Document doc)
         {
-            SetDataValues(dicFront.GetRec("GroupRec")?.Values, doc);
-            SelectRegion = GetSelectRegionFromDict(dicFront.GetInner("SelectRegion"));
+            SetDataValues(dicFront?.GetRec("GroupRec")?.Values, doc);
+            SelectRegion = GetSelectRegionFromDict(dicFront?.GetInner("SelectRegion"));
         }
         private DicED GetExtDicSelectRegion ()
         {

@@ -65,57 +65,29 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public void SetExtDic (DicED dicOpt, Document doc)
-        {
-            if (dicOpt== null)
-            {
-                // Default
-                var defOpt = Default();                
-                TileSize = defOpt.TileSize;
-                Region = defOpt.Region;
-                ShadowDegreeStep = defOpt.ShadowDegreeStep;
-                SunCalcAngleStart = defOpt.SunCalcAngleStart;
-                SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
-                return;
-            }
-            var recOpt = dicOpt.GetRec("InsOptionsRec");
-            SetDataValues(recOpt?.Values, doc);
+        {            
+            SetDataValues(dicOpt?.GetRec("InsOptionsRec")?.Values, doc);
             // Регион            
             Region = new InsRegion();
-            Region.SetExtDic(dicOpt.GetInner("InsRegion"), doc);
+            Region.SetExtDic(dicOpt?.GetInner("InsRegion"), doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {                
-                TypedValueExt.GetTvExtData(TileSize),
-                TypedValueExt.GetTvExtData(ShadowDegreeStep),
-                //TypedValueExt.GetTvExtData(SunCalcAngleStart),
-                //TypedValueExt.GetTvExtData(SunCalcAngleEnd),
-                TypedValueExt.GetTvExtData(Project?.Id ?? 0)
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("TileSize", TileSize);
+            tvk.Add("ShadowDegreeStep", ShadowDegreeStep);
+            tvk.Add("ProjectId", Project?.Id ?? 0);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 3)
-            {
-                // Дефолтные настройки
-                var defOpt = Default();                
-                TileSize = defOpt.TileSize;
-                ShadowDegreeStep = defOpt.ShadowDegreeStep;
-                //SunCalcAngleEnd = defOpt.SunCalcAngleEnd;
-                //SunCalcAngleStart = defOpt.SunCalcAngleStart;
-            }
-            else
-            {
-                int index = 0;                
-                TileSize = values[index++].GetTvValue<int>();
-                ShadowDegreeStep = values[index++].GetTvValue<int>();
-                //SunCalcAngleStart = values[index++].GetTvValue<double>();
-                //SunCalcAngleEnd = values[index++].GetTvValue<double>();
-                var id = values[index++].GetTvValue<int>();
-                Project = DbService.FindProject(id);
-            }
+            var dictValues = values?.ToDictionary();            
+            TileSize = dictValues.GetValue("TileSize", 1);
+            ShadowDegreeStep = dictValues.GetValue("ShadowDegreeStep", 1);
+            var id = dictValues.GetValue("ProjectId", 0);
+            Project = DbService.FindProject(id);            
         }
     }
 }

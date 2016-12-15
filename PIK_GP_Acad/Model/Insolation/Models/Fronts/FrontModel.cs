@@ -88,8 +88,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue>() {                
-            };
+            return null;
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
@@ -137,7 +136,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Default                
                 return;
             }
-            // Собственные значения рассчета
+            // Собственные значения расчета
             SetDataValues(dicFront.GetRec("FrontModelRec")?.Values, doc);
             // настроки
             Options = new FrontOptions();

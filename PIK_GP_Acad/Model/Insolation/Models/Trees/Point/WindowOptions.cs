@@ -91,41 +91,30 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SetExtDic (DicED dic, Document doc)
         {            
-            SetDataValues(dic.GetRec("WindowOptionsRec")?.Values, doc);
+            SetDataValues(dic?.GetRec("WindowOptionsRec")?.Values, doc);
             var constr = new WindowConstruction();
-            constr.SetDataValues(dic.GetRec("WindowConstruction")?.Values, doc);            
+            constr.SetDataValues(dic?.GetRec("WindowConstruction")?.Values, doc);            
             Construction = WindowConstruction.GetStandart(constr);            
         }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Width),
-                TypedValueExt.GetTvExtData(Quarter),
-                TypedValueExt.GetTvExtData(ShadowAngle),
-                TypedValueExt.GetTvExtData(IsCustomAngle),
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Width", Width);
+            tvk.Add("Quarter", Quarter);
+            tvk.Add("ShadowAngle", ShadowAngle);
+            tvk.Add("IsCustomAngle", IsCustomAngle);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 4)
-            {
-                // default
-                var defWin = Default();
-                Width = defWin.Width;
-                Quarter = defWin.Quarter;
-                ShadowAngle = defWin.ShadowAngle;
-                IsCustomAngle = defWin.IsCustomAngle;
-            }
-            else
-            {
-                int index = 0;
-                Width = values[index++].GetTvValue<double>();
-                Quarter = values[index++].GetTvValue<double>();
-                ShadowAngle = values[index++].GetTvValue<double>();
-                IsCustomAngle = values[index++].GetTvValue<bool>();
-            }
+            var dictValues = values?.ToDictionary();
+            var defWin = Default();
+            Width = dictValues.GetValue("Width", defWin.Width);
+            Quarter = dictValues.GetValue("Quarter", defWin.Quarter);
+            ShadowAngle = dictValues.GetValue("ShadowAngle", defWin.ShadowAngle);
+            IsCustomAngle = dictValues.GetValue("IsCustomAngle", defWin.IsCustomAngle);            
         }
     }
 }

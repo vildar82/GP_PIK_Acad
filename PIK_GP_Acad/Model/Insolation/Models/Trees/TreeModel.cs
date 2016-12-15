@@ -435,10 +435,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void SetExtDic (DicED dicTree, Document doc)
         {
-            if (dicTree == null)
-            {                
-                return;
-            }
+            if (dicTree == null) return;
             // Собственные значения рассчета елочек            
             SetDataValues(dicTree.GetRec("TreeModelRec")?.Values, doc);
             // настроки елочек                        
@@ -448,29 +445,19 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue>() {
-                TypedValueExt.GetTvExtData(IsVisualIllumsOn),
-                TypedValueExt.GetTvExtData(IsVisualTreeOn),
-                TypedValueExt.GetTvExtData(VisualTrees.VisualIsOn)                
-            };            
+            var tvk = new TypedValueExtKit();
+            tvk.Add("IsVisualIllumsOn", IsVisualIllumsOn);
+            tvk.Add("IsVisualTreeOn", IsVisualTreeOn);
+            tvk.Add("isVisualTreeOnOffForLoad", VisualTrees.VisualIsOn);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 3)
-            {
-                // Default
-                IsVisualIllumsOn = false;
-                IsVisualTreeOn = false; 
-                // Елочки дефолтно выключены
-            }
-            else
-            {
-                int index = 0;
-                IsVisualIllumsOn = values[index++].GetTvValue<bool>();
-                IsVisualTreeOn = values[index++].GetTvValue<bool>();
-                isVisualTreeOnOffForLoad = values[index++].GetTvValue<bool>();
-            }
+            var dictValues = values?.ToDictionary();
+            IsVisualIllumsOn = dictValues.GetValue("IsVisualIllumsOn", false);
+            IsVisualTreeOn = dictValues.GetValue("IsVisualTreeOn", false);
+            isVisualTreeOnOffForLoad = dictValues.GetValue("isVisualTreeOnOffForLoad", false);            
         }
 
         public void Dispose ()

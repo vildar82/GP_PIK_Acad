@@ -53,26 +53,18 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Name),
-                TypedValueExt.GetTvExtData(Depth)
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Name", Name);
+            tvk.Add("Depth", Depth);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 2)
-            {
-                // Default
-                var constr = WindowConstructions[0];
-                Name = constr.Name;
-                Depth = constr.Depth;
-            }
-            else
-            {                
-                Name = values[0].GetTvValue<string>();
-                Depth = values[1].GetTvValue<double>();
-            }
+            var dictValues = values?.ToDictionary();
+            var constr = WindowConstructions[0];
+            Name = dictValues.GetValue("Name", constr.Name);
+            Depth = dictValues.GetValue("Depth", constr.Depth);            
         }
 
         public static WindowConstruction GetStandart (WindowConstruction constr)

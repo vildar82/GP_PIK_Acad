@@ -223,26 +223,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <returns></returns>
         public override List<TypedValue> GetDataValues (Document doc)
         {
-            List<TypedValue> values = new List<TypedValue>() {
-                TypedValueExt.GetTvExtData( Height),                
-                TypedValueExt.GetTvExtData(IsVisualIllumsOn)
-            };
-            return values;
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Height", Height);
+            tvk.Add("IsVisualIllumsOn", IsVisualIllumsOn);
+            return tvk.Values;            
         }
 
         public override void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 2)
-            {
-                // Default 
-                // Height = 0
-                IsVisualIllumsOn = true;
-            }
-            else
-            {
-                Height = values[0].GetTvValue<double>();
-                IsVisualIllumsOn = values[1].GetTvValue<bool>();
-            }
+            var dictValues = values?.ToDictionary();
+            Height = dictValues.GetValue("Height", 0);
+            IsVisualIllumsOn = dictValues.GetValue("IsVisualIllumsOn", true);            
         }
 
         public override DicED GetExtDic (Document doc)
@@ -255,9 +246,9 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public override void SetExtDic (DicED dic, Document doc)
         {
-            SetDataValues(dic.GetRec("InsPointRec")?.Values, doc);
+            SetDataValues(dic?.GetRec("InsPointRec")?.Values, doc);
             Window = new WindowOptions();
-            Window.SetExtDic(dic.GetInner("Window"), doc);
+            Window.SetExtDic(dic?.GetInner("Window"), doc);
         }
 
         public override void Dispose ()

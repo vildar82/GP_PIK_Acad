@@ -42,13 +42,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData(Height),
-                TypedValueExt.GetTvExtData(Color.A),
-                TypedValueExt.GetTvExtData(Color.R),
-                TypedValueExt.GetTvExtData(Color.G),
-                TypedValueExt.GetTvExtData(Color.B),
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Height", Height);
+            tvk.Add("A", Color.A);
+            tvk.Add("R", Color.R);
+            tvk.Add("G", Color.G);
+            tvk.Add("B", Color.B);
+            return tvk.Values;            
         }
 
         public static Color GetNextColor (Color color)
@@ -58,21 +58,13 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 5 )
-            {
-                // Дефолтные 
-                // null
-            }
-            else
-            {
-                int index = 0;
-                Height = values[index++].GetTvValue<int>();
-                var a = values[index++].GetTvValue<byte>();
-                var r = values[index++].GetTvValue<byte>();
-                var g = values[index++].GetTvValue<byte>();
-                var b = values[index++].GetTvValue<byte>();
-                Color = Color.FromArgb(a, r, g, b);
-            }
+            var dictValues = values?.ToDictionary();
+            Height = dictValues.GetValue("Height", 35);
+            byte a = dictValues.GetValue("A", (byte)0);
+            byte r = dictValues.GetValue("R", (byte)255);
+            byte g = dictValues.GetValue("G", (byte)255);
+            byte b = dictValues.GetValue("B", (byte)0);
+            Color = Color.FromArgb(a, r, g, b);            
         }
 
         /// <summary>

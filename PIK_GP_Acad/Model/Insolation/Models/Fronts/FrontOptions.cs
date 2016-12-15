@@ -25,12 +25,12 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Шаг расчетной точки по фронту
         /// </summary>
-        public double StepCalcPointInFront { get; set; }=0.5;
+        public double StepCalcPointInFront { get; set; }=0.4;
         /// <summary>
         /// Толщина линии фрона
         /// </summary>
         public double LineFrontWidth { get; set; } = 0.8;
-        public string FrontLineLayer { get; set; } = "sapr_ins_front";
+        //public string FrontLineLayer { get; set; } = "sapr_ins_front";
         
 
         public static FrontOptions Default ()
@@ -71,30 +71,20 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         public void SetExtDic (DicED dicOpt, Document doc)
         {
-            SetDataValues(dicOpt.GetRec("FrontOptionsRec")?.Values, doc);
+            SetDataValues(dicOpt?.GetRec("FrontOptionsRec")?.Values, doc);
         }
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {                
-                TypedValueExt.GetTvExtData(StepCalcPointInFront),
-                TypedValueExt.GetTvExtData(LineFrontWidth),
-                TypedValueExt.GetTvExtData(FrontLineLayer),
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("StepCalcPointInFront", StepCalcPointInFront);
+            tvk.Add("LineFrontWidth", LineFrontWidth);            
+            return tvk.Values;            
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 3)
-            {
-                // Дефолт
-
-            }
-            else
-            {
-                int index = 0;
-                StepCalcPointInFront = TypedValueExt.GetTvValue<double>(values[index++]);
-                LineFrontWidth = TypedValueExt.GetTvValue<double>(values[index++]);
-                FrontLineLayer = TypedValueExt.GetTvValue<string>(values[index++]);
-            }
+            var dictValues = values?.ToDictionary();
+            StepCalcPointInFront = dictValues.GetValue("StepCalcPointInFront", 0.4);
+            LineFrontWidth = dictValues.GetValue("LineFrontWidth", 0.8);                        
         }
     }
 }

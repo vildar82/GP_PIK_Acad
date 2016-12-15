@@ -62,38 +62,28 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void SetExtDic (DicED dicReg, Document doc)
         {            
-            SetDataValues(dicReg.GetRec("InsRegionRec")?.Values, doc);
+            SetDataValues(dicReg?.GetRec("InsRegionRec")?.Values, doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return new List<TypedValue> {
-                TypedValueExt.GetTvExtData((int)RegionPart),
-                TypedValueExt.GetTvExtData(RegionName),
-                TypedValueExt.GetTvExtData(City),
-                TypedValueExt.GetTvExtData(Latitude)
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("RegionPart", RegionPart);
+            tvk.Add("RegionName", RegionName);
+            tvk.Add("City", City);
+            tvk.Add("Latitude", Latitude);
+            return tvk.Values;            
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 4)
-            {
-                // default
-                var regDef = InsService.Settings.Regions[0];
-                RegionPart = regDef.RegionPart;
-                RegionName = regDef.RegionName;
-                City = regDef.City;
-                Latitude = regDef.Latitude;
-            }
-            else
-            {
-                int index = 0;
-                RegionPart = (RegionEnum)values[index++].GetTvValue<int>();
-                RegionName = values[index++].GetTvValue<string>();
-                City = values[index++].GetTvValue<string>();
-                Latitude = values[index++].GetTvValue<double>();
-            }
+            var dictValues = values?.ToDictionary();
+            var regDef = InsService.Settings.Regions.FirstOrDefault(r => r.City.Equals("Москва", StringComparison.OrdinalIgnoreCase)) 
+                            ?? InsService.Settings.Regions[0];            
+            RegionPart = dictValues.GetValue("RegionPart", regDef.RegionPart);
+            RegionName = dictValues.GetValue("RegionName", regDef.RegionName);
+            City = dictValues.GetValue("City", regDef.City);
+            Latitude = dictValues.GetValue("Latitude", regDef.Latitude);
         }
     }
 }

@@ -87,22 +87,15 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public List<TypedValue> GetDataValues(Document doc)
         {
-            return new List<TypedValue>() {
-                TypedValueExt.GetTvExtData(Transparence)
-            };
+            var tvk = new TypedValueExtKit();
+            tvk.Add("Transparence", Transparence);            
+            return tvk.Values;            
         }
 
         public void SetDataValues(List<TypedValue> values, Document doc)
         {
-            if (values == null || values.Count != 1)
-            {
-                // Default
-                Transparence = 60;
-            }
-            else
-            {
-                Transparence = TypedValueExt.GetTvValue<byte>(values[0]);
-            }
+            var dictValues = values?.ToDictionary();
+            Transparence = dictValues.GetValue("Transparence", (byte)60);            
         }
     }
 }
