@@ -36,11 +36,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<House> ShowHouse { get; set; }
         public RelayCommand Export { get; set; }
         public RelayCommand DrawVisuals { get; set; }
-
-        public Visibility ComboboxHouseDbVisibility 
-            { get { return comboboxHouseDbVisibility; }
-            set { comboboxHouseDbVisibility = value; RaisePropertyChanged(); } }
-        Visibility comboboxHouseDbVisibility;        
+        public bool HasProject { get; set; }         
 
         private void OnAddExecute ()
         {
@@ -94,15 +90,8 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void FillHouseDb()
         {
-            var project = Front.Model.Options.Project;
-            if (project == null)
-            {
-                ComboboxHouseDbVisibility = Visibility.Invisible;                
-            }
-            else
-            {
-                ComboboxHouseDbVisibility = Visibility.Visible;                                
-            }
+            var project = Front?.Model?.Options?.Project;
+            HasProject = project != null;            
         }
     }
 }

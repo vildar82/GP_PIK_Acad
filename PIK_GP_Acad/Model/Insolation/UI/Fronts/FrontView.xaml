@@ -1,6 +1,7 @@
 ﻿<UserControl
     x:Class="PIK_GP_Acad.Insolation.UI.FrontView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:converters="clr-namespace:NetLib.WPF.Converters;assembly=NetLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -23,15 +24,12 @@
         </Grid.RowDefinitions>
         <!--  Список групп - областей расчета фронтов  -->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <ItemsControl
-            x:Name="icGroups"            
-            Background="Transparent"
-            ItemsSource="{Binding Front.Groups, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsControl x:Name="icGroups" Background="Transparent" ItemsSource="{Binding Front.Groups, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border
-                        Margin="5"
-                        Background="Gray" BorderBrush="Gray" BorderThickness="1">
+                            Margin="5"
+                            Background="Gray" BorderBrush="Gray" BorderThickness="1">
                             <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
                                 <!--  Заголовок группы - все о группе  -->
                                 <Expander.HeaderTemplate>
@@ -43,34 +41,34 @@
                                             </Grid.ColumnDefinitions>
                                             <Grid Grid.Column="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox
-                                                Margin="5" HorizontalAlignment="Left"
-                                                Background="Transparent" BorderThickness="0"
-                                                FontSize="20"
-                                                Text="{Binding Name}" />
-                                                <TextBox Text="{Binding FrontHeight}" 
-                                                     Background="Transparent" HorizontalAlignment="Right" Margin="3" 
-                                                     ToolTip="Высота расчета фронтов, м. При расчете, к этой высоте, также будет прибавлен относительный уровень секций." 
-                                                     BorderThickness="0"
-                                                     VerticalAlignment="Center"/>
+                                                    Margin="5" HorizontalAlignment="Left"
+                                                    Background="Transparent" BorderThickness="0"
+                                                    FontSize="20"
+                                                    Text="{Binding Name}" />
+                                                <TextBox
+                                                    Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                    Background="Transparent" BorderThickness="0"
+                                                    Text="{Binding FrontHeight}"
+                                                    ToolTip="Высота расчета фронтов, м. При расчете, к этой высоте, также будет прибавлен относительный уровень секций." />
                                             </Grid>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <ToggleButton
-                                                Margin="1"
-                                                Style="{StaticResource tbtnSmall}"
-                                                IsChecked="{Binding IsVisualFrontOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                ToolTip="Включение/отключение визуализации фронтов">
+                                                    Margin="1"
+                                                    Style="{StaticResource tbtnSmall}"
+                                                    IsChecked="{Binding IsVisualFrontOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                    ToolTip="Включение/отключение визуализации фронтов">
                                                     <Image Source="{StaticResource biFront}" />
                                                 </ToggleButton>
                                                 <Button
-                                                Margin="1"
-                                                Style="{StaticResource btnSmall}"
-                                                Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
-                                                CommandParameter="{Binding}"
-                                                ToolTip="Удаление блока из расчета">
+                                                    Margin="1"
+                                                    Style="{StaticResource btnSmall}"
+                                                    Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="Удаление блока из расчета">
                                                     <Image Source="{StaticResource biClose}" />
                                                 </Button>
                                             </StackPanel>
@@ -87,32 +85,34 @@
                                                         <Grid Margin="4">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto"/>
-                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <Grid.InputBindings>
                                                                 <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
                                                             </Grid.InputBindings>
                                                             <TextBox
-                                                            Grid.Column="0"
-                                                            Margin="2" VerticalAlignment="Center"
-                                                            Background="Transparent" BorderThickness="0"
-                                                            FontSize="15"
-                                                            Text="{Binding Name}" />
+                                                                Grid.Column="0"
+                                                                Margin="2" VerticalAlignment="Center"
+                                                                Background="Transparent" BorderThickness="0"
+                                                                FontSize="15"
+                                                                Text="{Binding Name}" />
                                                             <TextBlock
-                                                            Grid.Column="1"
-                                                            Margin="2" VerticalAlignment="Center"
-                                                            Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
-                                                            <ComboBox Grid.Column="2" Background="Transparent" MinWidth="50"
-                                                                  Visibility="{Binding ElementName=icGroups, Path=DataContext.ComboboxHouseDbVisibility, UpdateSourceTrigger=PropertyChanged}"
-                                                                  ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
-                                                                  SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                  ToolTip="Связывание дома с базой данных">
+                                                                Grid.Column="1"
+                                                                Margin="2" VerticalAlignment="Center"
+                                                                Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
+                                                            <ComboBox
+                                                                Grid.Column="2"
+                                                                MinWidth="50"
+                                                                Background="Transparent"
+                                                                ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
+                                                                SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                ToolTip="Связывание дома с базой данных"
+                                                                Visibility="{Binding ElementName=icGroups, Path=DataContext.HasProject, UpdateSourceTrigger=PropertyChanged, Converter={converters:BooleanToHidingVisibilityConverter}}">
                                                                 <ComboBox.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}" Margin="2">
-                                                                            <TextBlock Text="{Binding Name}"
-                                                                               ToolTip="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                        <StackPanel Margin="2" Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}">
+                                                                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Status, UpdateSourceTrigger=PropertyChanged}" />
                                                                         </StackPanel>
                                                                     </DataTemplate>
                                                                 </ComboBox.ItemTemplate>
@@ -133,8 +133,8 @@
         <!--  Кнопки управления  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button
                 Grid.Column="0"
@@ -145,23 +145,22 @@
                 ToolTip="Добавить блок в расчет - выбор области на чертеже">
                 <Image Source="{StaticResource biAdd}" />
             </Button>
-            <Button                
+            <Button
                 x:Name="btnDots"
-                Style="{StaticResource btnNormal}"
                 Grid.Column="2"
-                Click="btnDots_Click"                
-                ContextMenuService.IsEnabled="False">
-                <Image Source="{StaticResource biOption_dots}"/>
+                Style="{StaticResource btnNormal}"
+                Click="btnDots_Click" ContextMenuService.IsEnabled="False">
+                <Image Source="{StaticResource biOption_dots}" />
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
-                        <MenuItem Command="{Binding Export}" Header="Экспорт фронтов" Height="22">
+                        <MenuItem Height="22" Command="{Binding Export}" Header="Экспорт фронтов">
                             <MenuItem.Icon>
-                                <Image Source="{StaticResource biFrontExport}"/>
+                                <Image Source="{StaticResource biFrontExport}" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже" Height="22" >
+                        <MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
                             <MenuItem.Icon>
-                                <Image Source="{StaticResource biDraw_visuals}"/>
+                                <Image Source="{StaticResource biDraw_visuals}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
