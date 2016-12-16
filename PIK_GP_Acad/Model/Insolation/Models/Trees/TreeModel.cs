@@ -174,9 +174,12 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateVisual ()
         {
             UpdateVisualTree();
-            foreach (var item in Points)
+            if (Points != null)
             {
-                item.UpdateVisual();
+                foreach (var item in Points)
+                {
+                    item.UpdateVisual();
+                }
             }
         }
 

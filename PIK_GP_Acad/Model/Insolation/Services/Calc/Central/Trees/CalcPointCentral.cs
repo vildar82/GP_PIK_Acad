@@ -419,7 +419,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private void CorrectStartAnglesByOwnerSegAndWindow ()
         {            
             var contour = buildingOwner.Contour;
-            var startParam = contour.GetParameterAtPoint(ptCalc);
+            var startParam = contour.GetParameterAtPointTry(ptCalc);
 
             // Если параметр близок к целому числу - то это вершина - угол! - окно не учитывается!?
             if (startParam.IsWholeNumber(0.01))

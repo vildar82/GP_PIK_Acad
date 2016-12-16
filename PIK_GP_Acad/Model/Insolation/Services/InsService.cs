@@ -249,28 +249,22 @@ namespace PIK_GP_Acad.Insolation.Services
                     Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }
                 else
-                {
-                    // Обновление расчетов
-                    insModel.IsEnabled = true;
+                {                    
                     insModel.UpdateVisual();
                 }
+                // Обновление расчетов
+                insModel.IsEnabled = true;
             }
             // Отключение расчета для текущего документа
             else
-            {
-                // Сохранение расчета
-                //insModel.SaveIns();
+            {   
                 if (insModel != null)
                 {
                     insModel.ClearVisual(); // Очистка визуализаций
                     insModel.IsEnabled = false;
+                    // лог отключения инсоляции для текущего чертежа
+                    Logger.Log.Info($"Отключение расчета инсоляции для чертежа - {doc.Name}");
                 }
-                //// Удаление
-                //insModels.Remove(doc);
-                //insModel = null;
-
-                // лог отключения инсоляции для текущего чертежа
-                Logger.Log.Info($"Отключение расчета инсоляции для чертежа - {doc.Name}");
             }
             // Переключение на модель (или на null)                
             insViewModel.Model = insModel;
