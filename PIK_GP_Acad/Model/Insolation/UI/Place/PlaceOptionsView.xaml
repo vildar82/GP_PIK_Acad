@@ -1,7 +1,7 @@
 ﻿<Window
     x:Class="PIK_GP_Acad.Insolation.UI.PlaceOptionsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:converters="clr-namespace:AcadLib.WPF.Converters;assembly=AcadLib"
+    xmlns:converters="clr-namespace:NetLib.WPF.Converters;assembly=NetLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -86,7 +86,7 @@
                                         Background="{Binding Color, Converter={converters:ColorToBrushConverter}}"
                                         FontSize="20" FontWeight="Bold"
                                         Cursor="Arrow"
-                                        Text="{Binding TotalTimeH, UpdateSourceTrigger=PropertyChanged}"
+                                        Text="{Binding TotalTimeH, UpdateSourceTrigger=LostFocus, Converter={converters:DoubleConverter}}"
                                         TextAlignment="Center" ToolTip="Уровень освещенности">
                                         <TextBox.InputBindings>
                                             <MouseBinding Command="{Binding ElementName=icLevels, Path=DataContext.SelectColor}" CommandParameter="{Binding}" Gesture="LeftDoubleClick" />

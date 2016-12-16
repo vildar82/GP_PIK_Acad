@@ -46,7 +46,7 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Margin="3" Text="Высоты визуализации елочек:" />
+                <TextBlock Grid.Row="0" Margin="3" Text="Высоты визуализации елочек, м:" />
                 <ItemsControl Grid.Row="1"
                 x:Name="icVisuals"
                 HorizontalContentAlignment="Stretch"
