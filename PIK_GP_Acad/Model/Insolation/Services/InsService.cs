@@ -161,8 +161,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             var req = dictInsReq[type];
             return req;
-        }                
-        
+        }  
 
         /// <summary>
         /// Поиск модели точки по инсоляционной точке на чертеже
@@ -244,13 +243,17 @@ namespace PIK_GP_Acad.Insolation.Services
                     insModels.Add(doc, insModel);
                     //// Инициализация расчета
                     //insModel.Initialize(doc);                    
+                    insModel.Update();
 
                     // лог включения инсоляции для текущего чертежа
                     Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }
-                // Обновление расчетов
-                insModel.IsEnabled = true;
-                insModel.Update();                
+                else
+                {
+                    // Обновление расчетов
+                    insModel.IsEnabled = true;
+                    insModel.UpdateVisual();
+                }
             }
             // Отключение расчета для текущего документа
             else
@@ -319,8 +322,6 @@ namespace PIK_GP_Acad.Insolation.Services
                 return colorDialog.Color;
             }
             return current;
-        }
-
-        
+        }       
     }
 }
