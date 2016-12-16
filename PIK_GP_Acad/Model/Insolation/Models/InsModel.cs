@@ -152,7 +152,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         /// <param name="building"></param>
         public void ChangeBuildingType (MapBuilding building)
-        {            
+        {
+            if (building == null) return;
             var pointsInBuilding = Tree.GetPointsInBuilding(building);
             foreach (var item in pointsInBuilding)
             {

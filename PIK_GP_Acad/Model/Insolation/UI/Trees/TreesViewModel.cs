@@ -70,15 +70,15 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnEditPointExecute (InsPoint insPoint)
         {
             var building = insPoint?.Building;
-            if (building == null) return;
+            //if (building == null) return;
 
-            var oldBuildingType = building.BuildingType;            
+            var oldBuildingType = building?.BuildingType ?? Elements.Buildings.BuildingTypeEnum.Living;            
 
             var insPointVM = new InsPointViewModel(insPoint);
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (InsService.ShowDialog(insPointVM) != true) return;
             // Если измениля тип здания - то пересчет всех точек на этом здании
-            if (oldBuildingType != building.BuildingType)
+            if (oldBuildingType != building?.BuildingType)
             {
                 //// Учет изменения типа здания для всех точек на этом здании                    
                 Tree.Model.ChangeBuildingType(building);                    
