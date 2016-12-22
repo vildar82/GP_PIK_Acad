@@ -22,6 +22,7 @@ namespace PIK_GP_Acad.Insolation.UI
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
             Export = new RelayCommand(OnExportExecute);
             DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
+            ShowOptions = new RelayCommand<FrontGroup>(OnShowOptionsExecute);
 
             FillHouseDb();
         }        
@@ -36,6 +37,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<House> ShowHouse { get; set; }
         public RelayCommand Export { get; set; }
         public RelayCommand DrawVisuals { get; set; }
+        public RelayCommand<FrontGroup> ShowOptions { get; set; }
         public bool HasProject { get; set; }         
 
         private void OnAddExecute ()
@@ -86,6 +88,15 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnDrawVisualsExecute()
         {
             Front.DrawVisuals();
+        }
+
+        private void OnShowOptionsExecute(FrontGroup group)
+        {
+            var fgOptionsVM = new FrontGroupOptionsViewModel(group.Options);
+            if (InsService.ShowDialog(fgOptionsVM) == true)
+            {
+                group.Update();
+            }
         }
 
         private void FillHouseDb()

@@ -52,8 +52,14 @@
                                                 <TextBox
                                                     Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                     Background="Transparent" BorderThickness="0"
-                                                    Text="{Binding FrontHeight}"
-                                                    ToolTip="Высота расчета фронтов, м. При расчете, к этой высоте, также будет прибавлен относительный уровень секций." />
+                                                    Text="{Binding FrontHeight}">
+                                                    <ToolTipService.ToolTip>
+                                                        <TextBlock TextWrapping="Wrap" MaxWidth="400">
+                                                            "Высота расчета фронтов, м. При расчете, к этой высоте, также будет прибавлен относительный уровень секций."
+                                                            "Если высота не задана (0), то высота расчета фронтов для каждой секции определяется по формуле: Уровень + H_1_этажа + 1,8, где 1,8 высота от пола до центра окна."
+                                                        </TextBlock>
+                                                    </ToolTipService.ToolTip>
+                                                </TextBox>                                                    
                                             </Grid>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <ToggleButton
@@ -63,6 +69,14 @@
                                                     ToolTip="Включение/отключение визуализации фронтов">
                                                     <Image Source="{StaticResource biFront}" />
                                                 </ToggleButton>
+                                                <Button 
+                                                    Command="{Binding ElementName=icGroups, Path=DataContext.ShowOptions}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="1"
+                                                    Style="{StaticResource btnSmall}"
+                                                    ToolTip="Настройки группы фронтов">
+                                                    <Image Source="{StaticResource biOptions}"/>
+                                                </Button>
                                                 <Button
                                                     Margin="1"
                                                     Style="{StaticResource btnSmall}"

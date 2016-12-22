@@ -30,8 +30,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Толщина линии фрона
         /// </summary>
         public double LineFrontWidth { get; set; } = 0.8;
-        //public string FrontLineLayer { get; set; } = "sapr_ins_front";
-        
+        //public string FrontLineLayer { get; set; } = "sapr_ins_front";        
 
         public static FrontOptions Default ()
         {
@@ -66,12 +65,12 @@ namespace PIK_GP_Acad.Insolation.Models
         public DicED GetExtDic (Document doc)
         {
             var dicOpt = new DicED();
-            dicOpt.AddRec("FrontOptionsRec", GetDataValues(doc));
+            dicOpt.AddRec("FrontOptionsRec", GetDataValues(doc));            
             return dicOpt;
         }
         public void SetExtDic (DicED dicOpt, Document doc)
         {
-            SetDataValues(dicOpt?.GetRec("FrontOptionsRec")?.Values, doc);
+            SetDataValues(dicOpt?.GetRec("FrontOptionsRec")?.Values, doc);            
         }
         public List<TypedValue> GetDataValues (Document doc)
         {

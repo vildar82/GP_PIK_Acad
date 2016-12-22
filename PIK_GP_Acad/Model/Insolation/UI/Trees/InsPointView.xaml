@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Параметры расчетной точки"
-    d:DesignHeight="311.666" d:DesignWidth="324.333"    
+    d:DesignHeight="271.166" d:DesignWidth="280.833"    
     WindowStartupLocation="CenterScreen"
     SizeToContent="WidthAndHeight"
     ResizeMode="NoResize"
@@ -15,7 +15,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Здание  -->
@@ -28,7 +28,7 @@
                         <DataTemplate>
                             <TextBlock Text="{Binding Converter={converters:EnumDescriptionConverter}}"/>
                             <!--ComboBox ItemsSource="{Binding Source={local:BuildingTypes {x:Type local:MyEnum}}}"-->
-                        </DataTemplate>                        
+                        </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>

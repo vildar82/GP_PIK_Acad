@@ -152,6 +152,7 @@
     <Compile Include="Model\HorizontalElevation\HorizontalElevation.cs" />
     <Compile Include="Model\HorizontalElevation\Options\HorizontalElevationOptions.cs" />
     <Compile Include="Model\InsertBlock.cs" />
+    <Compile Include="Model\Insolation\Models\Fronts\FrontGroupOptions.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\FrontModel.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\FrontGroup.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\FrontOptions.cs" />
@@ -237,10 +238,10 @@
     <Compile Include="Model\Insolation\Services\Visual\VisualHelper.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualTransient.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualDatabase.cs" />
-    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupView.xaml.cs">
-      <DependentUpon>FrontGroupView.xaml</DependentUpon>
+    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupOptionsView.xaml.cs">
+      <DependentUpon>FrontGroupOptionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupViewModel.cs" />
+    <Compile Include="Model\Insolation\UI\Fronts\FrontGroupOptionsViewModel.cs" />
     <Compile Include="Model\Insolation\UI\Fronts\FrontView.xaml.cs">
       <DependentUpon>FrontView.xaml</DependentUpon>
     </Compile>
@@ -453,7 +454,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Model\Insolation\UI\Fronts\FrontGroupView.xaml">
+    <Page Include="Model\Insolation\UI\Fronts\FrontGroupOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

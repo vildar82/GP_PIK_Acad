@@ -14,7 +14,7 @@ using MicroMvvm;
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
-    /// Настройки расчетной точки
+    /// Настройки окна
     /// </summary>    
     public class WindowOptions : ModelBase, IExtDataSave, ITypedDataValues
     {
@@ -25,7 +25,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Ширина окна, м
         /// </summary>
-        public double Width { get { return width; } set { width = value; RaisePropertyChanged(); } }
+        public double Width { get { return width; }
+            set { width = value; RaisePropertyChanged(); } }
         double width;
         /// <summary>
         /// Тип конструкции
@@ -42,13 +43,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Угол который ограничивает инсоляцию при расчете точки (симметрично с двух сотор) 
         /// [рад]
         /// </summary>
-        public double ShadowAngle { get { return shadowAngle; } set { shadowAngle = value; RaisePropertyChanged(); } }
+        public double ShadowAngle { get { return shadowAngle; }
+            set { shadowAngle = value; RaisePropertyChanged(); } }
         double shadowAngle;
         /// <summary>
         /// Если значение угла введено пользователем
         /// </summary>
         public bool IsCustomAngle { get { return isCustomAngle; } set { isCustomAngle = value; RaisePropertyChanged(); } }
         bool isCustomAngle;
+
+        public static List<double> Quarters { get; set; } = new List<double> { 0.07, 0.13, 0.26 };
+        
 
         /// <summary>
         /// Определение теневого угла - по введенным значениям
@@ -66,6 +71,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 ShadowAngle = CalcShadowAngle();
             }
+            base.OnPropertyChanged(e);
         }
 
         public WindowOptions Copy ()

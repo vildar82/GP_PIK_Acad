@@ -33,6 +33,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Front = front;
             SelectRegion = selReg;
             Name = DefineNewName();
+            Options = new FrontGroupOptions();
         }        
 
         /// <summary>
@@ -42,7 +43,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Область на чертеже
         /// </summary>
-        public Extents3d SelectRegion { get; set; }        
+        public Extents3d SelectRegion { get; set; }  
+        /// <summary>
+        /// Настройки группы фронтов
+        /// </summary>
+        public FrontGroupOptions Options { get; set; }      
         /// <summary>
         /// Пользовательское имя группы
         /// </summary>
@@ -293,12 +298,15 @@ namespace PIK_GP_Acad.Insolation.Models
             var dicGroup = new DicED();
             dicGroup.AddRec("GroupRec", GetDataValues(doc));
             dicGroup.AddInner("SelectRegion", GetExtDicSelectRegion());
+            dicGroup.AddInner("Options", Options?.GetExtDic(doc));
             return dicGroup;
         }
         public void SetExtDic (DicED dicFront, Document doc)
         {
             SetDataValues(dicFront?.GetRec("GroupRec")?.Values, doc);
             SelectRegion = GetSelectRegionFromDict(dicFront?.GetInner("SelectRegion"));
+            Options = new FrontGroupOptions();
+            Options.SetExtDic(dicFront?.GetInner("Options"), doc);
         }
         private DicED GetExtDicSelectRegion ()
         {

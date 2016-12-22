@@ -15,18 +15,13 @@ using System.Windows.Shapes;
 namespace PIK_GP_Acad.Insolation.UI
 {
     /// <summary>
-    /// Логика взаимодействия для FrontGroupView.xaml
+    /// Логика взаимодействия для FrontOptionsView.xaml
     /// </summary>
-    public partial class FrontGroupView : Window
+    public partial class FrontGroupOptionsView : Window
     {
-        public FrontGroupView()
+        public FrontGroupOptionsView()
         {
             InitializeComponent();
-        }
-
-        private void Ok(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-        }
+        }        
     }
 }

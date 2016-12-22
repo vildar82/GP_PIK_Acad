@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.UI
                 HasBuilding = true;
                 build = insPoint.Building.Building;
                 BuildingType = insPoint.Building.BuildingType;
-                WindowVM = new WindowOptionsViewModel(insPoint.Window.Copy());
+                WindowVM = new WindowOptionsViewModel(insPoint.Window);
             }                       
             Height = insPoint.Height;            
             OK = new RelayCommand(OnOkExecute);            

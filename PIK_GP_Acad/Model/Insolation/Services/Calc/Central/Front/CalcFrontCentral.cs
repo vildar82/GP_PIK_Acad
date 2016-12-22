@@ -198,8 +198,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
             // Расчет в точке
             var insPt = new InsPoint();
-            insPt.Model = model;            
-            insPt.Window = WindowOptions.Default();            
+            insPt.Model = model;
+            insPt.Window = house.FrontGroup.Options.Window;
 
             foreach (var calcFrontPt in calcPts)
             {

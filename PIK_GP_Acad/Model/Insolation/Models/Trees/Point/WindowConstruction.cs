@@ -15,6 +15,9 @@ using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {       
+    /// <summary>
+    /// Конструкция окна
+    /// </summary>
     public class WindowConstruction : ModelBase, ITypedDataValues, IEquatable<WindowConstruction>
     {
         public WindowConstruction () { }
