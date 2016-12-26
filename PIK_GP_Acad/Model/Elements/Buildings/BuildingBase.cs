@@ -17,6 +17,10 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// </summary>
     public abstract class BuildingBase : IBuilding
     {
+        public BuildingBase()
+        {
+
+        }
         public BuildingBase(ObjectId idEnt)
         {
             IdEnt = idEnt;

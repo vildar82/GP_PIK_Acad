@@ -159,6 +159,7 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\House.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\FakeBuilding.cs" />
     <Compile Include="Model\Insolation\Models\Maps\VisualsMap.cs" />
     <Compile Include="Model\Insolation\Models\Place\Place.cs" />
     <Compile Include="Model\Insolation\Models\Place\PlaceModel.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\CalcFrontCentral.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Front\FrontCalcPoint.cs" />
     <Compile Include="Model\Insolation\Services\Calc\Central\Place\CalcPlaceCentral.cs" />
+    <Compile Include="Model\Insolation\Services\Calc\Central\Trees\PolylineSeparate.cs" />
     <Compile Include="Model\Insolation\Services\DbService.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportFrontGoup.cs" />
     <Compile Include="Model\Insolation\Services\Export\ExportToDB\ExportHouseIns.cs" />

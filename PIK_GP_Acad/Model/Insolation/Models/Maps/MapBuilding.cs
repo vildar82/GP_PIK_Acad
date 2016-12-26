@@ -127,5 +127,23 @@ namespace PIK_GP_Acad.Insolation.Models
 #endif
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Создание временных домов из временных полилиний
+        /// </summary>
+        /// <param name="plsSecant">Полилинии</param>
+        /// <param name="buildingOwner">Здание образец - для заполнения параметров временных домов</param>
+        /// <returns></returns>
+        internal static List<MapBuilding> CreateFakeBuildings(List<Polyline> plsSecant, MapBuilding buildingOwner)
+        {
+            var resFakeBuilds = new List<MapBuilding>();
+            foreach (var item in plsSecant)
+            {
+                var fakeBuild = new FakeBuilding(item, buildingOwner.Building);
+                var fakeMapBuild = new MapBuilding(fakeBuild);
+                resFakeBuilds.Add(fakeMapBuild);
+            }
+            return resFakeBuilds;
+        }
     }
 }
