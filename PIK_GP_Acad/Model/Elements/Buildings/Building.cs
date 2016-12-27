@@ -40,11 +40,11 @@ namespace PIK_GP_Acad.Elements.Buildings
             ExtentsInModel = ent.GeometricExtents;
             ClassType = classType;
             FCProperties = props;
-            Floors = props.GetPropertyValue<int>(PropFloors, IdEnt, false);
-            var buildingTypeShortName = props.GetPropertyValue<string>(PropBuildingType, IdEnt, false);
+            Floors = props.GetPropertyValue(PropFloors, IdEnt, false,0);
+            var buildingTypeShortName = props.GetPropertyValue(PropBuildingType, IdEnt, false, "");
             BuildingType = GetBuildingType(buildingTypeShortName);
             Height = CalcHeight(height);
-            Elevation = props.GetPropertyValue<double>(PropElevation, IdEnt, false);
+            Elevation = props.GetPropertyValue<double>(PropElevation, IdEnt, false, 0);
             if (ClassType != null)
             {
                 IsProjectedBuilding = ClassType.ClassName.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName);                

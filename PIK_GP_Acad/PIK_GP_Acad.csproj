@@ -128,6 +128,7 @@
     <Compile Include="Model\FCS\Balance\BalanceTableService.cs" />
     <Compile Include="Model\FCS\ClassGroup.cs" />
     <Compile Include="Model\FCS\Classificator.cs" />
+    <Compile Include="Model\FCS\FCEntProps.cs" />
     <Compile Include="Model\FCS\ClassType.cs" />
     <Compile Include="Model\FCS\FCProperty.cs" />
     <Compile Include="Model\FCS\FCService.cs" />

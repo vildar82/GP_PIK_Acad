@@ -18,12 +18,12 @@ namespace PIK_GP_Acad.FCS
         /// value key (string) - имя класса,
         /// value (List FCProperty) - свойства класса объекта
         /// </summary>
-        static Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>> tags = new Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>> ();
+        static Dictionary<ObjectId, FCEntProps> tags = new Dictionary<ObjectId,FCEntProps>();
         public static void Init (Database db)
         {
             try
             {
-                tags = new Dictionary<ObjectId, KeyValuePair<string, List<FCProperty>>>();
+                tags = new Dictionary<ObjectId, FCEntProps>();
                 // Чтение всех классификаторов чертежа
                 using (var t = db.TransactionManager.StartTransaction())
                 {
@@ -57,7 +57,7 @@ namespace PIK_GP_Acad.FCS
                                     {
                                         if (!tags.ContainsKey(idSoft))
                                         {
-                                            tags.Add(idSoft, new KeyValuePair<string, List<FCProperty>>(item.Key, props));
+                                            tags.Add(idSoft, new FCEntProps(item.Key, idSoft, props));
                                         }                                                                                
                                     }
                                 }
@@ -76,14 +76,14 @@ namespace PIK_GP_Acad.FCS
 
         private static List<FCProperty> GetProperties (DataTable dtItem, int r)
         {
-            List<FCProperty> props = new List<FCProperty>();
+            var props = new List<FCProperty>();
 
             for (int c = 0; c < dtItem.NumColumns; c++)
             {
                 var col = dtItem.GetColumnNameAt(c);
                 if (col == "id" || col == "isTagged") continue;
                 var cel = dtItem.GetCellAt(r, c);
-                FCProperty prop = new FCProperty(col, cel.Value);
+                var prop = new FCProperty(col, cel.Value);
                 props.Add(prop);
             }
             return props;
@@ -93,7 +93,7 @@ namespace PIK_GP_Acad.FCS
         /// Получение классификации объекта - имени класса и свойств
         /// Перед использованием нужно первый раз вызвать Init для сканирования объектов чертежа
         /// </summary>        
-        public static bool GetTag (ObjectId idEnt, out KeyValuePair<string, List<FCProperty>> tag)
+        public static bool GetEntityProperties (ObjectId idEnt, out FCEntProps tag)
         {
             bool foundTag = false;
             if (tags.TryGetValue(idEnt, out tag))
@@ -103,7 +103,7 @@ namespace PIK_GP_Acad.FCS
             return foundTag;
         }
 
-        public static T GetPropertyValue<T> (this List<FCProperty> props, string name, ObjectId idEnt, bool isRequired)
+        public static T GetPropertyValue<T> (this List<FCProperty> props, string name, ObjectId idEnt, bool isRequired, T defaultValue)
         {
             T resVal = default(T);
             var prop = props.Find(p => p.Name.EqualsIgroreCaseAndSpecChars(name));
@@ -132,6 +132,7 @@ namespace PIK_GP_Acad.FCS
                     {
                         Logger.Log.Error(ex, err);
                     }
+                    resVal = defaultValue;
                 }
             }
             return resVal;

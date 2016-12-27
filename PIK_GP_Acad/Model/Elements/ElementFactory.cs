@@ -86,25 +86,25 @@ namespace PIK_GP_Acad.Elements
         private static IClassificator GetClassificator (Entity ent, IClassTypeService classService)
         {
             IClassificator res = null;            
-            KeyValuePair<string, List<FCProperty>> tag;
-            if (FCService.GetTag(ent.Id, out tag))
+            FCEntProps fcEntProps;
+            if (FCService.GetEntityProperties(ent.Id, out fcEntProps))
             {
                 ClassType clType;
                 if (classService == null)
                 {
-                    clType = new ClassType(tag.Key, tag.Key, null, 0);
+                    clType = new ClassType(fcEntProps.Class, fcEntProps.Class, null, 0);
                 }
                 else
                 {
-                    clType = classService?.GetClassType(tag.Key);
+                    clType = classService?.GetClassType(fcEntProps.Class);
                 }
 
                 // Если класс проектируемого здания или есть параметр высоты, то это здание ???!!! Сомнительно. Нужна более строгая идентификайция зданий
-                var height = tag.Value.GetPropertyValue<double>(Building.PropHeight, ent.Id, false);
+                var height = fcEntProps.GetPropertyValue<double>(Building.PropHeight, 0);
                 if (clType.ClassName.EqualsIgroreCaseAndSpecChars(Building.ProjectedBuildingClassName) ||
                     height != 0)
                 {
-                    var building = new Building(ent, height, tag.Value, clType);
+                    var building = new Building(ent, height,  fcEntProps.GetProperties(), clType);
                     res = building;
                 }
                 else
