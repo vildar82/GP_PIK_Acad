@@ -242,9 +242,14 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                     insModels.Add(doc, insModel);
                     //// Инициализация расчета
-                    //insModel.Initialize(doc);                    
-                    insModel.Update();
-
+                    //insModel.Initialize(doc);   
+                    try
+                    {
+                        insModel.Update();
+                    }
+                    catch(UserBreakException)
+                    {
+                    }
                     // лог включения инсоляции для текущего чертежа
                     Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }

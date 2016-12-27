@@ -19,8 +19,7 @@ namespace PIK_GP_Acad.Insolation.UI
             EditOptions = new RelayCommand(OnEditOptionsExecute);
             ShowPlace = new RelayCommand<Place>(OnShowPlaceExecute);
             Delete = new RelayCommand<Place>(OnDeleteExecute);
-        }
-        
+        }        
 
         /// <summary>
         /// Модель

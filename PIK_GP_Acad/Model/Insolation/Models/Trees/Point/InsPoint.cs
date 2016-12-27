@@ -81,6 +81,10 @@ namespace PIK_GP_Acad.Insolation.Models
                 Illums = Model.CalcService.CalcTrees.CalcPoint(this, withOwnerBuilding);
                 InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building?.BuildingType ?? BuildingTypeEnum.Living);
             }
+            catch(UserBreakException)
+            {
+                throw;
+            }
             catch
             {
                 building?.Contour?.Dispose();                

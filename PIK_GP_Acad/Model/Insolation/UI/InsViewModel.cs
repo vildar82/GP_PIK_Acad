@@ -62,7 +62,14 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnUpdateExecute ()
         {
-            Model?.Update();
+            try
+            {
+                Model?.Update();
+            }
+            catch(Exception ex)
+            {
+                InsService.ShowMessage(ex, "");
+            }
         }
 
         private void UpdateBinding ()

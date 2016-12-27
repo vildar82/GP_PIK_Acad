@@ -103,6 +103,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private string GetLevelsInfo (List<Tile> tiles)
         {
+            if (tiles == null) return null;
             var groupTiles = tiles.GroupBy(g => g.Level.TotalTimeH).OrderByDescending(o=>o.Key)
                 .Select(s=> $"{s.Key}ч.-{s.Sum(i=>i.Area).Round(2)}м{General.Symbols.Square}");
             var levelsInfo = string.Join(", ", groupTiles);

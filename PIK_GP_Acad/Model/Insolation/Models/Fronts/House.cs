@@ -157,6 +157,10 @@ namespace PIK_GP_Acad.Insolation.Models
                 VisualFront.FrontLines = frontLinesMerged;
                 VisualFront.VisualUpdate();
             }
+            catch(UserBreakException)
+            {
+                throw;
+            }
             catch(Exception ex)
             {
                 AddError(ex.ToString());

@@ -225,6 +225,10 @@ namespace PIK_GP_Acad.Insolation.Services
                     calcFrontPt.InsValue = insValue.Requirement.Type;
                     calcFrontPt.IsCalulated = true;
                 }
+                catch(UserBreakException)
+                {
+                    throw;
+                }
                 catch
                 {
                     calcFrontPt.InsValue = InsRequirementEnum.None;

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.Insolation.Models;
+using Autodesk.AutoCAD.DatabaseServices;
+using AcadLib;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -24,8 +26,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         public List<IIlluminationArea> CalcPoint (InsPoint insPoint, bool withOwnerBuilding = true)
         {
-            List<IIlluminationArea> illumAreas = new List<IIlluminationArea>();
-            
+            if (HostApplicationServices.Current.UserBreak())
+                throw new UserBreakException();
+
+            var illumAreas = new List<IIlluminationArea>();            
             if (withOwnerBuilding && insPoint.Building == null)
             {
                 return illumAreas;

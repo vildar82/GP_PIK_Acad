@@ -56,12 +56,16 @@ namespace PIK_GP_Acad.Insolation.Services
                 insPt.Height = 0;
                 foreach (var tile in tiles)
                 {
-                    insPt.Point = tile.Point.Convert3d();                    
+                    insPt.Point = tile.Point.Convert3d();
                     try
                     {
                         var illums = calcTrees.CalcPoint(insPt, false);
                         tile.InsValue = calcService.CalcTimeAndGetRate(illums, Elements.Buildings.BuildingTypeEnum.Living);
                         tile.Level = DefineLevel(tile.InsValue.TotalTime);
+                    }
+                    catch (UserBreakException)
+                    {
+                        throw;
                     }
                     catch
                     {

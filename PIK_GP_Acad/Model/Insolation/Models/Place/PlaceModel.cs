@@ -27,6 +27,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public ObservableCollection<Place> Places { get; set; } = new ObservableCollection<Place>();
 
         public PlaceOptions Options { get; set; }
+        /// <summary>
+        /// Включен/выключен расчет площадок.
+        /// </summary>
+        public bool IsEnableCalc { get; set; }             
 
         public void Initialize (InsModel insModel)
         {
@@ -122,7 +126,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var dicPlace = new DicED();
             dicPlace.AddInner("Options", Options.GetExtDic(doc));
-
+            dicPlace.AddRec("PlaceRec", GetDataValues(doc));
             // Сохранение площадок            
             foreach (var item in Places)
             {
@@ -136,15 +140,20 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Options = new PlaceOptions();
             Options.SetExtDic(dicPlace?.GetInner("Options"), doc);
+            SetDataValues(dicPlace?.GetRec("PlaceRec")?.Values, doc);
         }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
-            return null;
+            var tvk = new TypedValueExtKit();
+            tvk.Add("IsEnableCalc", IsEnableCalc);            
+            return tvk.Values;
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
-        {            
+        {
+            var dictValues = values?.ToDictionary();
+            IsEnableCalc = dictValues.GetValue("IsEnableCalc", true);            
         }
 
         public void Dispose ()
