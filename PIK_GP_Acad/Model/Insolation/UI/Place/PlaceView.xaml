@@ -51,7 +51,7 @@
                                 Margin="1"
                                 Style="{StaticResource tbtnSmall}"
                                 IsChecked="{Binding IsVisualPlaceOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                ToolTip="Включение/отключение визуализации фронтов">
+                                ToolTip="Включение/отключение расчета площадки">
                                     <Image Source="{StaticResource biPlace}" />
                                 </ToggleButton>
                                 <Button Style="{StaticResource btnSmall}"
@@ -80,14 +80,22 @@
                 ToolTip="Добавить площадку - выбор полилинии на чертеже">
                 <Image Source="{StaticResource biAdd}" />
             </Button>
-            <Button    
-                Grid.Column="1"
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <ToggleButton
+                                Margin="1"
+                                Style="{StaticResource tbtnNormal}"
+                                IsChecked="{Binding Place.IsEnableCalc, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                ToolTip="Включение/отключение расчета площадок">
+                    <Image Source="{StaticResource biPlace}" />
+                </ToggleButton>                
+                <Button                    
                 Margin="1"
                 Style="{StaticResource btnNormal}"
                 Command="{Binding EditOptions}"
                 ToolTip="Настройки площадок">
-                <Image Source="{StaticResource biOptions}" />
-            </Button>
+                    <Image Source="{StaticResource biOptions}" />
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

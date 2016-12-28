@@ -30,7 +30,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Включен/выключен расчет площадок.
         /// </summary>
-        public bool IsEnableCalc { get; set; }             
+        public bool IsEnableCalc { get { return isEnableCalc; } set { isEnableCalc = value; RaisePropertyChanged(); } }
+        bool isEnableCalc;
 
         public void Initialize (InsModel insModel)
         {
@@ -78,6 +79,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Update ()
         {
+            if (!isEnableCalc) return;
+
             if (Places.Count == 0)
             {
                 var placesId = Model.Map?.Places;

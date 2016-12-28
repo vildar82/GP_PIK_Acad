@@ -32,7 +32,7 @@
                 Style="{StaticResource ToggleButtonOnOff}"
                 BorderThickness="0"
                 IsChecked="{Binding Path=(service:InsService.InsActivate)}"
-                ToolTip="Включение/отключение инсоляции для документа." />
+                ToolTip="Включение/отключение расчета инсоляции для текущего документа." />
             <Button
                 Grid.Row="0"
                 Margin="2"

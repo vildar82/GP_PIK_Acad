@@ -114,13 +114,15 @@
                         Grid.Column="0"
                         Margin="2"
                         Command="{Binding AddLevel}"
-                        Content="Добавить" />
+                        Content="Добавить" 
+                        ToolTip="Добавить уровень освещенности"/>
                     <Button
                         Grid.Column="1"
                         MinWidth="40"
                         Margin="2"
                         Command="{Binding ResetLevels}"
-                        Content="Сброс" ToolTip="Сброс уровней освещенности площадок на стандартные" />
+                        Content="Сброс" 
+                        ToolTip="Сброс уровней освещенности площадок на стандартные" />
                 </Grid>
             </Grid>
         </ScrollViewer>
