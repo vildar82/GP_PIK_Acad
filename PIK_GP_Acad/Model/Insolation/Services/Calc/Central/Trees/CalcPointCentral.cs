@@ -562,7 +562,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 {
                     yShadowLine = lineShadow.StartPoint.Y;
 #if TEST
-                    EntityHelper.AddEntityToCurrentSpace(lineShadow);
+                    //EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
                     using (var ptsIntersect = new Point3dCollection())
                     {
@@ -583,7 +583,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 }
 
 #if TEST
-                EntityHelper.AddEntityToCurrentSpace(lineZero);
+                //EntityHelper.AddEntityToCurrentSpace(lineZero);
 #endif
                 List<Point3d> ptsIntersectZero;
                 using (var ptsIntersect = new Point3dCollection())

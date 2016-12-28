@@ -74,7 +74,7 @@ namespace PIK_GP_Acad.Insolation.Services
             List<FrontValue> resFrontLines = new List<FrontValue>();            
 
             // Расчитанные точки сегмента
-            calcPoints = GetFrontCalcPoints(seg, delta);
+            calcPoints = CalcFrontPoints(seg, delta);
             // Определение фронтов
             var ptsIsCalced = calcPoints;//.Where(p => p.IsCalulated).ToList(); ???!!!
             var fPtPrew = ptsIsCalced.First();
@@ -83,7 +83,11 @@ namespace PIK_GP_Acad.Insolation.Services
             for (int i =1; i< ptsIsCalced.Count; i++)
             {
                 var item = ptsIsCalced[i];
-                if (!item.IsCorner && fPtPrew.InsValue == InsRequirementEnum.None)
+                if (item.IsCorner)
+                {
+                    item.InsValue = fPtPrew.InsValue;
+                }
+                else if (!item.IsCorner && fPtStart.InsValue == InsRequirementEnum.None)
                 {
                     fPtStart.InsValue = item.InsValue;
                 }
@@ -116,7 +120,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         resFrontLines.Add(frontLine);
                     }
                     fPtStart = item;
-                }
+                }                
                 fPtPrew = item;
             }
             // Создание послежнего фронта
@@ -164,7 +168,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Определение расчетных точек на сегменте
         /// </summary>        
-        private List<FrontCalcPoint> GetFrontCalcPoints (LineSegment2d seg, double delta)
+        private List<FrontCalcPoint> CalcFrontPoints (LineSegment2d seg, double delta)
         {
             var calcPts =new List<FrontCalcPoint>();
 
@@ -212,7 +216,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
                 insPt.Point = calcFrontPt.Point.Convert3d();
 #if TEST
-                //EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
+                EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
 #endif
                 insPt.Building = calcFrontPt.Section;
                 // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                
