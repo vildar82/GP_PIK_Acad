@@ -47,7 +47,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                         continue;
                     }
                     exportData.Date = date;
-#if TEST
+#if DEBUG
                     exportData.ToExel($@"c:\temp\exportIns_{item.Name}.xlsx");
 #else
                     // Запись инсоляции в базу - один таймштамп для группы домов

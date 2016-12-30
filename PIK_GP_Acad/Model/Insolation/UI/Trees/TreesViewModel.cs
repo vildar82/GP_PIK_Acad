@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
 using MicroMvvm;
+using AcadLib;
+using AcadLib.Statistic;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -52,13 +54,15 @@ namespace PIK_GP_Acad.Insolation.UI
             var selPt = new SelectPoint();
             InsPoint p = selPt.SelectNewPoint(Tree.Model);
             if (p != null)
-            {
+            {                
                 // Расчет и добавление точки
                 Tree.AddPoint(p);
                 // Включение зон инсоляции точки
                 p.IsVisualIllumsOn = true;
                 // Сохранение точки
                 p.SaveInsPoint();
+                // Запись статистики
+                PluginStatisticsHelper.AddStatistic();
             }
         }        
         

@@ -37,11 +37,10 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             IsVisualOn = true; // По-умолчаию визуализация включена
             Doc = doc;
-            db = doc.Database;
-            Update();
+            db = doc.Database;            
         }
 
-        public bool IsEventsOn { get; set; }
+        public bool IsEventsOn { get; set; }        
         public Document Doc { get; set; }
         public double MaxBuildingHeight => GetMaxBuildingHeight();
         public List<MapBuilding> Buildings { get; private set; }
@@ -108,6 +107,18 @@ namespace PIK_GP_Acad.Insolation.Models
             LoadMap();
             SubscribeDB();
             UpdateVisual();
+
+            if (InsService.UserSettings.EnableCheckDublicates)
+            {
+                try
+                {
+                    CheckBuildingIntersect.Check(this);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log.Error(ex, "Insolation.Map.CheckBuildingIntersect.Check().");
+                }
+            }
         }
 
         public void UpdateVisual()

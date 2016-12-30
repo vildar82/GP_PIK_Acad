@@ -30,10 +30,12 @@ namespace PIK_GP_Acad.Insolation.Services
         static InsViewModel insViewModel;
         static InsView insView;        
 
-        public static ISettings Settings { get; private set; }        
+        public static ISettings Settings { get; private set; }     
+        public static UserSettings UserSettings { get; set; }   
 
         static InsService()
         {
+            UserSettings = UserSettings.Load();
             Settings = new Settings();
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);            
@@ -84,6 +86,7 @@ namespace PIK_GP_Acad.Insolation.Services
             Application.DocumentManager.DocumentActivated += DocumentManager_DocumentActivated;
             Application.DocumentManager.DocumentToBeDestroyed += DocumentManager_DocumentToBeDestroyed;
 
+            DbService.Init();
             InsPointDrawOverrule.Start();
 
             if (palette == null)
@@ -122,6 +125,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 // ignored
             }
 
+            UserSettings.Save();
             //Settings.Save();
             //palette.Visible = false;
             foreach (var item in insModels)

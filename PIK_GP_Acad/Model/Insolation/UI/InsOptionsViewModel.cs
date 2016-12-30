@@ -42,6 +42,8 @@ namespace PIK_GP_Acad.Insolation.UI
 
             OK = new RelayCommand(OnOkExecute);
             Reset = new RelayCommand(OnResetExecute);
+
+            UserSettings = InsService.UserSettings.Copy();
         }        
 
         public InsModel InsModel { get; set;}
@@ -69,6 +71,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public List<ProjectMDM> Projects { get; set; }
         public ProjectMDM SelectedProject { get; set; }
+        public UserSettings UserSettings { get; set; }
 
         private void OnSelectedRegionNameChanged ()
         {
@@ -95,6 +98,7 @@ namespace PIK_GP_Acad.Insolation.UI
                 InsOptions.Project = SelectedProject;
             }
             InsModel.Options = InsOptions;
+            InsService.UserSettings = UserSettings;
         }
 
         private void OnResetExecute()

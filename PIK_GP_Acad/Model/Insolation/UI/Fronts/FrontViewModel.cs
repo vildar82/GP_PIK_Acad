@@ -9,6 +9,7 @@ using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
 using System.Collections.ObjectModel;
 using PIK_DB_Projects;
+using AcadLib.Statistic;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -17,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public FrontViewModel (FrontModel model)
         {
             Front = model;
-            Add = new RelayCommand(OnAddExecute);
+            Add = new RelayCommand(OnAddFrontExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
             Export = new RelayCommand(OnExportExecute);
@@ -40,7 +41,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<FrontGroup> ShowOptions { get; set; }
         public bool HasProject { get; set; }         
 
-        private void OnAddExecute ()
+        private void OnAddFrontExecute ()
         {
             // Выбор области на чертеже
             var selectGroup = new SelectGroup(Front.Model.Doc);
@@ -59,6 +60,8 @@ namespace PIK_GP_Acad.Insolation.UI
                 // Включение расчета группы
                 frontGroup.IsVisualFrontOn = true;
                 Front.AddGroup(frontGroup);
+                // Запись статистики
+                PluginStatisticsHelper.AddStatistic();
             }
             catch(Exception ex)
             {

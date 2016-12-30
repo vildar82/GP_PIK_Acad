@@ -5,20 +5,22 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
     xmlns:local="clr-namespace:PIK_GP_Acad.Insolation.UI"
+    xmlns:ls="clr-namespace:PIK_GP_Acad.Insolation.Services"
     Title="Настройки проекта"
-    d:DesignHeight="173" d:DesignWidth="311"
+    d:DesignHeight="197.714" d:DesignWidth="297.692"
     d:DataContext="{d:DesignInstance local:DesignInsRegionViewModel,
                                      IsDesignTimeCreatable=True}"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize" SizeToContent="WidthAndHeight">
     <Window.Resources>
-        <!--<ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />-->
+        <!--<ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/ControlStyles.xaml" />-->        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="5" Orientation="Horizontal">
@@ -54,8 +56,15 @@
                 </StackPanel>
             </Grid>
         </GroupBox>
+        <Grid Grid.Row="2" Margin="2">
+            <StackPanel  Orientation="Horizontal" Margin="1">
+                <TextBlock Text="Проверка наложения зданий" Margin="2"/>
+                <CheckBox Margin="4" ToolTip="Проверка наложения зданий при расчете инсоляции."
+                          IsChecked="{Binding UserSettings.EnableCheckDublicates}"/>
+            </StackPanel>
+        </Grid>
         <StackPanel
-            Grid.Row="2"            
+            Grid.Row="3"            
             Margin="5" HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
             Orientation="Horizontal">

@@ -195,6 +195,7 @@
     <Compile Include="Model\Insolation\Models\InsValue.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\IInsPoint.cs" />
     <Compile Include="Model\Insolation\Models\Trees\Point\InsPointBase.cs" />
+    <Compile Include="Model\Insolation\Services\UserSettings.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Fronts\VisualFront.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualElement.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Place\VisualPlace.cs" />

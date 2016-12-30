@@ -14,6 +14,7 @@ using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.UI;
 using AcadLib;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -89,19 +90,15 @@ namespace PIK_GP_Acad.Insolation.Models
             }
 
             // Загрузка карты
-            if (Map != null)
-            {
-                // ??? пока ничего                
-                Map.Update();
-            }
-            else
-            {
-                Map = new Map(Doc);
+            if (Map == null)
+            {                
+                Map = new Map(Doc);                
                 Map.BuildingAdded += Map_BuildingAdded;
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;
                 Map.InsPointAdded += Map_InsPointAdded;                
-            }            
+            }
+            Map.Update();
 
             // Создание расчета елочек
             if (Tree == null)
@@ -192,7 +189,10 @@ namespace PIK_GP_Acad.Insolation.Models
             UpdateInfo = "Обновление расчета";
 
             // Перерисовка точек
-            Redrawable();            
+            Redrawable();
+
+            Inspector.Show();
+            Inspector.Clear();   
         }
 
         /// <summary>

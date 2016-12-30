@@ -15,36 +15,41 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public static class CheckBuildingIntersect
     {
-        private static Dictionary<ObjectId, HashSet<ObjectId>> dictChecked;
+        private static Dictionary<ObjectId, HashSet<ObjectId>> dictChecked;        
+
         public static void Check()
         {
-            dictChecked = new Dictionary<ObjectId, HashSet<ObjectId>>();
             var map = new Map();
-            map.LoadMap();            
+            map.LoadMap();
+            Check(map);
+            map.Unsubscribe();
+        }
 
-            using (var regions = new AcadLib.DisposableSet<Region>())
-            using (var contours = new AcadLib.DisposableSet<Polyline>())
+        public static void Check(Map map)
+        {            
+            dictChecked = new Dictionary<ObjectId, HashSet<ObjectId>>();                
+            using (var regions = new DisposableSet<Region>())
+            using (var contours = new DisposableSet<Polyline>())
             {
                 foreach (var build in map.Buildings)
                 {
                     dictChecked.Add(build.Building.IdEnt, new HashSet<ObjectId>());
                     build.InitContour();
                     contours.Add(build.Contour);
-                    var reg = AcadLib.BrepExtensions.CreateRegion(build.Contour);
+                    var reg = BrepExtensions.CreateRegion(build.Contour);
                     build.Region = reg;
                     regions.Add(reg);
                 }
-
                 foreach (var build in map.Buildings)
                 {
                     // здания в границах текущего здания
                     var nearest = map.GetBuildingsInExtents(build.ExtentsInModel);
                     if (!nearest.Any()) continue;
                     nearest.Remove(build);
-
                     // Проверка наложение с каждым ближайшим зданием
                     foreach (var nearBuild in nearest)
                     {
+                        // Чтобы не проверять два взаимно пересекающихся дома 2 раза
                         if (dictChecked[build.Building.IdEnt].Contains(nearBuild.Building.IdEnt))
                             continue;
                         dictChecked[nearBuild.Building.IdEnt].Add(build.Building.IdEnt);
@@ -52,8 +57,7 @@ namespace PIK_GP_Acad.Insolation.Models
                         CheckIntersect(build, nearBuild);
                     }
                 }
-            }
-            map.Unsubscribe();            
+            }            
         }
 
         private static void CheckIntersect(MapBuilding build1, MapBuilding build2)
@@ -65,7 +69,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (r1.NumChanges > 1 && r1.Area > 10)
                 {                    
                     Inspector.AddError($"Наложение зданий. Площадь наложения {r1.Area.Round()}", 
-                        r1.GeometricExtents, Matrix3d.Identity, System.Drawing.SystemIcons.Error);
+                        r1.GeometricExtents, Matrix3d.Identity, System.Drawing.SystemIcons.Error);                    
                 }
             }   
         }

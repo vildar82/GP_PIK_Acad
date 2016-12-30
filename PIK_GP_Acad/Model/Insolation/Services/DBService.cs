@@ -10,6 +10,23 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public static class DbService
     {
+        private static Dictionary<int, ProjectMDM> projects;
+        
+        public static void Init()
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    projects = MDMService.GetProjects().ToDictionary(k => k.Id, v => v);
+                }
+                catch(Exception ex)
+                {
+                    Logger.Log.Error(ex, "DbService.Init() - MDMService.GetProjects().");
+                }
+            });
+        }       
+
         public static ProjectMDM FindProject (int id)
         {
             ProjectMDM project = null;
@@ -17,8 +34,9 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 try
                 {
-                    var projects = MDMService.GetProjects();
-                    project = projects.Find(p => p.Id == id);
+                    if (projects == null)
+                        projects = MDMService.GetProjects().ToDictionary(k => k.Id, v => v);
+                    projects.TryGetValue(id, out project);
                 }
                 catch (Exception ex)
                 {
@@ -32,7 +50,9 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             try
             {
-                return MDMService.GetProjects();
+                if (projects == null)
+                    projects = MDMService.GetProjects().ToDictionary(k => k.Id, v => v);
+                return projects.Values.ToList();
             }
             catch (Exception ex)
             {

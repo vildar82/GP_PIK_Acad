@@ -7,6 +7,7 @@ using MicroMvvm;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib;
+using AcadLib.Statistic;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -15,7 +16,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public PlaceViewModel(PlaceModel place)
         {
             Place = place;
-            Add = new RelayCommand(OnAddExecute);
+            Add = new RelayCommand(OnAddPlaceExecute);
             EditOptions = new RelayCommand(OnEditOptionsExecute);
             ShowPlace = new RelayCommand<Place>(OnShowPlaceExecute);
             Delete = new RelayCommand<Place>(OnDeleteExecute);
@@ -34,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.UI
         /// <summary>
         /// Добавление новой площадки
         /// </summary>
-        private void OnAddExecute ()
+        private void OnAddPlaceExecute ()
         {
             var selPlace = new SelectPlace();
             var placeId = selPlace.Select();
@@ -44,6 +45,8 @@ namespace PIK_GP_Acad.Insolation.UI
             {
                 place.IsVisualPlaceOn = true;
             }
+            // Запись статистики
+            PluginStatisticsHelper.AddStatistic();
         }
 
         /// <summary>
