@@ -26,6 +26,13 @@ namespace PIK_GP_Acad.Insolation.Models
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
+        public Map()
+        {            
+            Doc = Application.DocumentManager.MdiActiveDocument;
+            db = Doc.Database;
+            IsVisualOn = false;
+        }
+
         public Map(Document doc)
         {
             IsVisualOn = true; // По-умолчаию визуализация включена
@@ -69,7 +76,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
-        private void LoadMap()
+        public void LoadMap()
         {
             IsEventsOn = false;
             FCS.FCService.Init(db);
@@ -95,7 +102,7 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public void Update()
-        {
+        {            
             Unsubscribe();
             ClearVisual();
             LoadMap();
@@ -143,31 +150,31 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
-        private void Unsubscribe()
+        public void Unsubscribe()
         {
             try
             {
                 db.ObjectAppended -= Database_ObjectAppended;
             }
             catch { }
-            //if (Buildings == null) return;
-            //using (var t = db.TransactionManager.StartTransaction())
-            //{
-            //    foreach (var item in Buildings)
-            //    {
-            //        if (item.Building.IdEnt.IsValidEx())
-            //        {
-            //            var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead);
-            //            try
-            //            {
-            //                dbo.Modified -= Building_Modified;
-            //                dbo.Erased -= Building_Erased;
-            //            }
-            //            catch { }
-            //        }
-            //    }
-            //    t.Commit();
-            //}
+            if (Buildings == null) return;
+            using (var t = db.TransactionManager.StartTransaction())
+            {
+                foreach (var item in Buildings)
+                {
+                    if (item.Building.IdEnt.IsValidEx())
+                    {
+                        var dbo = item.Building.IdEnt.GetObject(OpenMode.ForRead) as Entity;
+                        try
+                        {
+                            dbo.Modified -= Building_Modified;
+                            dbo.Erased -= Building_Erased;
+                        }
+                        catch { }
+                    }
+                }
+                t.Commit();
+            }
         }
 
         private void DefineEnt(Entity ent)
@@ -243,6 +250,12 @@ namespace PIK_GP_Acad.Insolation.Models
             var scope = new Scope(ext, items, this);
             scope.InitContour();
             return scope;
+        }
+
+        public List<MapBuilding> GetBuildingsInExtents(Extents3d ext)
+        {
+            var rectScope = new Rectangle(ext);
+            return treeBuildings.Intersects(rectScope);
         }
 
         public MapBuilding GetBuildingInPoint(Point2d pt)

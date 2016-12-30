@@ -20,7 +20,8 @@ namespace PIK_GP_Acad.Insolation.Models
         static int testIndexes;
 #endif    
         public IBuilding Building { get; set; }        
-        public Polyline Contour { get; private set; }        
+        public Polyline Contour { get; private set; }  
+        public Region Region { get; set; }
         /// <summary>
         /// Расчетная высота здания, с учетом уровня
         /// </summary>

@@ -160,6 +160,7 @@
     <Compile Include="Model\Insolation\Models\Fronts\FrontValue.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\SelectGroup.cs" />
     <Compile Include="Model\Insolation\Models\Fronts\House.cs" />
+    <Compile Include="Model\Insolation\Models\Maps\CheckBuildingIntersect.cs" />
     <Compile Include="Model\Insolation\Models\Maps\FakeBuilding.cs" />
     <Compile Include="Model\Insolation\Models\Maps\VisualsMap.cs" />
     <Compile Include="Model\Insolation\Models\Place\Place.cs" />

@@ -93,12 +93,8 @@ namespace PIK_GP_Acad
             {
                 PaletteSetCommands.Start();
             });
-        }
-
-        //
-        // Главная
-        //
-#region Главная   
+        }        
+                
         [CommandMethod(Group, nameof(GP_ParkingCalc), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
         public void GP_ParkingCalc()
         {
@@ -238,14 +234,7 @@ namespace PIK_GP_Acad
                     doc.Editor.Command("enla");
                 }                
             });
-        }
-
-#endregion Главная
-
-        //
-        // БС
-        //
-#region ГП        
+        }        
 
         [CommandMethod(Group, nameof(GP_BlockSectionInsert), CommandFlags.Modal)]        
         public void GP_BlockSectionInsert()
@@ -276,13 +265,6 @@ namespace PIK_GP_Acad
                 BlockSection.BlockSectionContours.CreateContour(doc);
             });
         }
-
-#endregion ГП
-
-        //
-        // Концепция
-        //
-#region Концепция       
 
         [CommandMethod(Group, nameof(KP_BlockSectionInsert), CommandFlags.Modal)]
         public void KP_BlockSectionInsert()
@@ -339,14 +321,6 @@ namespace PIK_GP_Acad
                 aps.Calc();
             });
         }
-#endregion Концепция
-
-        
-
-        //
-        // В разработке    
-        //        
-#region В разработке        
 
         [CommandMethod(Group, nameof(GP_FCS_Balance), CommandFlags.Modal)]
         public static void GP_FCS_Balance ()
@@ -368,8 +342,15 @@ namespace PIK_GP_Acad
                 Insolation.Services.InsService.StartInsolationPalette(doc);
             });
         }
-        
-#endregion В разработке
+
+        [CommandMethod(Group, nameof(GP_CheckBuildingsIntersects), CommandFlags.Modal)]
+        public void GP_CheckBuildingsIntersects()
+        {
+            CommandStart.Start(doc =>
+            {
+                Insolation.Models.CheckBuildingIntersect.Check();
+            });
+        }
 
         public void Initialize ()
         {
