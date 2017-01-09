@@ -10,17 +10,29 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Services;
 using MicroMvvm;
+using NetLib;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Настройки окна
     /// </summary>    
-    public class WindowOptions : ModelBase, IExtDataSave, ITypedDataValues
+    public class WindowOptions : ModelBase, IExtDataSave, ITypedDataValues, IEquatable<WindowOptions>
     {
         public WindowOptions ()
         {            
         }
+
+        public static WindowOptions Default
+        {
+            get { return defaultWindow; }
+        }
+        private static WindowOptions defaultWindow = new WindowOptions
+        {
+            Width = 1.2,
+            Quarter = 0.07,
+            Construction = WindowConstruction.WindowConstructions[0]
+        };
 
         /// <summary>
         /// Ширина окна, м
@@ -79,13 +91,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return (WindowOptions)MemberwiseClone();
         }
 
-        public static WindowOptions Default ()
-        {
-            return new WindowOptions {
-                Width = 1.2,
-                Quarter = 0.07,                                
-                Construction = WindowConstruction.WindowConstructions[0] };
-        }
+        
 
         public DicED GetExtDic (Document doc)
         {
@@ -116,11 +122,26 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            var defWin = Default();
+            var defWin = Default;
             Width = dictValues.GetValue("Width", defWin.Width);
             Quarter = dictValues.GetValue("Quarter", defWin.Quarter);
             ShadowAngle = dictValues.GetValue("ShadowAngle", defWin.ShadowAngle);
             IsCustomAngle = dictValues.GetValue("IsCustomAngle", defWin.IsCustomAngle);            
+        }
+
+        public bool Equals(WindowOptions other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            var res = IsCustomAngle == other.IsCustomAngle &&
+                Construction.Equals(other.Construction) &&
+                NetLib.MathExt.IsEqual(Width, other.Width) &&
+                NetLib.MathExt.IsEqual(Quarter, other.Quarter);
+            return res;
+        }
+        public override int GetHashCode()
+        {
+            return ShadowAngle.GetHashCode();
         }
     }
 }

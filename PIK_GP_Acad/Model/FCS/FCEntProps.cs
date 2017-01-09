@@ -14,12 +14,11 @@ namespace PIK_GP_Acad.FCS
     /// </summary>
     public class FCEntProps
     {
-        private Dictionary<string, FCProperty> dictProps;
-        private List<FCProperty> props;
+        private Dictionary<string, FCProperty> dictProps;        
         public FCEntProps(string classname, ObjectId idEnt, IEnumerable<FCProperty> props)
         {
             Class = classname;
-            IdEnt = idEnt;
+            IdEnt = idEnt;            
             this.dictProps = props.ToDictionary(k => k.Name, v => v);
         }
 
@@ -56,7 +55,7 @@ namespace PIK_GP_Acad.FCS
 
         public List<FCProperty> GetProperties()
         {
-            return props;
+            return dictProps.Values.ToList();
         }
     }
 }

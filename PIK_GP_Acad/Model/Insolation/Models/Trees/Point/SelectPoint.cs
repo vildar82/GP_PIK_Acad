@@ -37,7 +37,14 @@ namespace PIK_GP_Acad.Insolation.Models
             var pt = PromptSelectPointOnScreen(out building);
 
             var p = new InsPoint(model, pt);
-            p.Building = building;           
+            if (building == null)
+            {
+                p.Height = 0;
+            }
+            else
+            {
+                p.Building = building;
+            }
             // Окно настроек расчетной точки (парметры окна, здания, высота точки)
             var vm = new InsPointViewModel(p);            
             if (InsService.ShowDialog(vm) == true)

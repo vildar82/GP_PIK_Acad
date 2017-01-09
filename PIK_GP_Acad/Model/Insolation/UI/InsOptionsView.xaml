@@ -60,7 +60,7 @@
             <StackPanel  Orientation="Horizontal" Margin="1">
                 <TextBlock Text="Проверка наложения зданий" Margin="2"/>
                 <CheckBox Margin="4" ToolTip="Проверка наложения зданий при расчете инсоляции."
-                          IsChecked="{Binding UserSettings.EnableCheckDublicates}"/>
+                          IsChecked="{Binding EnableCheckDublicates}"/>
             </StackPanel>
         </Grid>
         <StackPanel

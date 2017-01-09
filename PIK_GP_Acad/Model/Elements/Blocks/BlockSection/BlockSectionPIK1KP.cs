@@ -12,7 +12,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// </summary>
     public class BlockSectionPIK1KP : BlockSectionKP
     {
-        public const string BlockNameMatch = "ГП_ПИК1_Секция";
+        public static new string BlockNameMatch = "ГП_ПИК1_Секция";
         public BlockSectionPIK1KP (BlockReference blRef, string blName) : base(blRef, blName)
         {
             FriendlyTypeName = "б/с ПИК1";

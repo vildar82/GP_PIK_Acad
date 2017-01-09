@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// </summary>
     public class BlockSectionKP : BlockSectionBase
     {
-        public const string BlockNameMatch = "ГП_К_Секция";       
+        public static string BlockNameMatch = "ГП_К_Секция";       
 
         public BlockSectionKP(BlockReference blRef, string blName) : base (blRef, blName)
         {

@@ -23,6 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
         Database db;
         RTree<MapBuilding> treeBuildings;
         VisualsMap visualMap;
+        InsModel insModel;
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
 
@@ -33,13 +34,13 @@ namespace PIK_GP_Acad.Insolation.Models
             IsVisualOn = false;
         }
 
-        public Map(Document doc)
+        public Map(InsModel insModel)
         {
+            this.insModel = insModel;
             IsVisualOn = true; // По-умолчаию визуализация включена
-            Doc = doc;
-            db = doc.Database;            
-        }
-
+            Doc = insModel.Doc;
+            db = Doc.Database;            
+        }        
         public bool IsEventsOn { get; set; }        
         public Document Doc { get; set; }
         public double MaxBuildingHeight => GetMaxBuildingHeight();
@@ -108,7 +109,7 @@ namespace PIK_GP_Acad.Insolation.Models
             SubscribeDB();
             UpdateVisual();
 
-            if (InsService.UserSettings.EnableCheckDublicates)
+            if (insModel?.Options?.EnableCheckDublicates ?? true)
             {
                 try
                 {

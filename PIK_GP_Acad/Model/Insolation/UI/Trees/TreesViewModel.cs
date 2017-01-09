@@ -82,7 +82,7 @@ namespace PIK_GP_Acad.Insolation.UI
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (InsService.ShowDialog(insPointVM) != true) return;
             // Если измениля тип здания - то пересчет всех точек на этом здании
-            if (oldBuildingType != building?.BuildingType)
+            if (building != null && oldBuildingType != building.BuildingType)
             {
                 //// Учет изменения типа здания для всех точек на этом здании                    
                 Tree.Model.ChangeBuildingType(building);                    

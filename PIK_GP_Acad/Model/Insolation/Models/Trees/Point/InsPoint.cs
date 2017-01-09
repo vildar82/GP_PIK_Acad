@@ -33,7 +33,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public InsPoint (InsModel model, Point3d pt) : base(pt, model)                   
         {               
-            Window = WindowOptions.Default();
+            Window = WindowOptions.Default;
             Height = DefaultHeightWindowCenter; // Высота центра окна от пола
             ReportPoint = new RelayCommand(OnReportPointExecute);
         }

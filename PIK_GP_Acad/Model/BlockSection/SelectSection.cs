@@ -9,8 +9,7 @@ namespace PIK_GP_Acad.BlockSection
 {
     public class SelectSection
     {
-        private Document _doc;
-        private string region = "Москва";
+        private Document _doc;        
         public Estimate Estimate { get; set; }
 
         public SelectSection(Document doc)

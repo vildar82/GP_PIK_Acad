@@ -44,6 +44,10 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public ProjectMDM Project { get { return project; } set { project = value; RaisePropertyChanged(); } }
         ProjectMDM project;
+        /// <summary>
+        /// Проверка наложения домов - включена/выключена
+        /// </summary>
+        public bool EnableCheckDublicates { get; set; }        
 
         public static InsOptions Default ()
         {
@@ -78,6 +82,7 @@ namespace PIK_GP_Acad.Insolation.Models
             tvk.Add("TileSize", TileSize);
             tvk.Add("ShadowDegreeStep", ShadowDegreeStep);
             tvk.Add("ProjectId", Project?.Id ?? 0);
+            tvk.Add("EnableCheckDublicates", EnableCheckDublicates);
             return tvk.Values;            
         }
 
@@ -87,7 +92,8 @@ namespace PIK_GP_Acad.Insolation.Models
             TileSize = dictValues.GetValue("TileSize", 1);
             ShadowDegreeStep = dictValues.GetValue("ShadowDegreeStep", 1);
             var id = dictValues.GetValue("ProjectId", 0);
-            Project = DbService.FindProject(id);            
+            Project = DbService.FindProject(id);
+            EnableCheckDublicates = dictValues.GetValue("EnableCheckDublicates", true);
         }
     }
 }

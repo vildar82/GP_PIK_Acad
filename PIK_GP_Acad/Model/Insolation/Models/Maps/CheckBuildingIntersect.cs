@@ -68,7 +68,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 r1.BooleanOperation(BooleanOperationType.BoolIntersect, r2);
                 if (r1.NumChanges > 1 && r1.Area > 10)
                 {                    
-                    Inspector.AddError($"Наложение зданий. Площадь наложения {r1.Area.Round()}", 
+                    Inspector.AddError($"Наложение зданий. Площадь наложения {r1.Area.Round(1)}. '{build1.GetInfo().Replace("\r\n", " ")}' и '{build2.GetInfo().Replace("\r\n", " ")}'.", 
                         r1.GeometricExtents, Matrix3d.Identity, System.Drawing.SystemIcons.Error);                    
                 }
             }   

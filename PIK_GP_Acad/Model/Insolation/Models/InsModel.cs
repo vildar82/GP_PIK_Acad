@@ -92,7 +92,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Загрузка карты
             if (Map == null)
             {                
-                Map = new Map(Doc);                
+                Map = new Map(this);                
                 Map.BuildingAdded += Map_BuildingAdded;
                 Map.BuildingErased += Map_BuildingErased;
                 Map.BuildingModified += Map_BuildingModified;

@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         static InsService()
         {
-            UserSettings = UserSettings.Load();
+            //UserSettings = UserSettings.Load();
             Settings = new Settings();
             Settings.Load();
             dictInsReq = Settings.InsRequirements.ToDictionary(k => k.Type, v => v);            
@@ -125,7 +125,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 // ignored
             }
 
-            UserSettings.Save();
+            //UserSettings.Save();
             //Settings.Save();
             //palette.Visible = false;
             foreach (var item in insModels)

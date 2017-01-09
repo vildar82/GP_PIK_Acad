@@ -88,7 +88,7 @@
                 Margin="2"
                 Style="{StaticResource btnNormal}"
                 Background="Transparent"
-                Command="{Binding SelectRegion}"
+                Command="{Binding EditInsOptions}"
                 ToolTip="Выбор региорна">
                 <Image Source="{StaticResource biOptions}" />
             </Button>

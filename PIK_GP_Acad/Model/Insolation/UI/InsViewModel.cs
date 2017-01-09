@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.UI
     {    
         public InsViewModel ()
         {            
-            SelectRegion = new RelayCommand(OnSelectRegionExecute);
+            EditInsOptions = new RelayCommand(OnEditInsOptionsExecute);
             Update = new RelayCommand(OnUpdateExecute);
         }
 
@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.UI
             }
         }
 
-        public RelayCommand SelectRegion { get; private set; }
+        public RelayCommand EditInsOptions { get; private set; }
         public RelayCommand Update { get; private set; }        
 
         public TreesViewModel TreeVM { get { return treeVM; } set { treeVM = value; RaisePropertyChanged(); } }
@@ -50,7 +50,7 @@ namespace PIK_GP_Acad.Insolation.UI
             set { RaisePropertyChanged(); }
         }
 
-        private void OnSelectRegionExecute ()
+        private void OnEditInsOptionsExecute ()
         {            
             var optVM = new InsOptionsViewModel(Model);                        
             if (InsService.ShowDialog(optVM) == true)

@@ -6,16 +6,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-    d:DesignHeight="226.667" d:DesignWidth="141"
+    d:DesignHeight="260.667" d:DesignWidth="159"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
     </UserControl.Resources>
-    <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2" HorizontalAlignment="Center"
+    <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2"
               IsEnabled="{Binding HasWindow}">
         <WrapPanel>
             <StackPanel Margin="3" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={converters:BooleanToOppositeBooleanConverter}}">
-            <TextBlock DockPanel.Dock="Top" Text="Ширина окна, м" />
+                <TextBlock DockPanel.Dock="Top" Text="Ширина окна, м" />
                 <TextBox Text="{Binding Window.Width, UpdateSourceTrigger=PropertyChanged, Converter={converters:DoubleConverter}}"/>
             </StackPanel>
             <StackPanel Margin="3" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={converters:BooleanToOppositeBooleanConverter}}">
@@ -48,6 +48,10 @@
                     <CheckBox x:Name="chkBoxCustom" IsChecked="{Binding Window.IsCustomAngle}" />
                     <TextBlock Text="Пользовательский" />
                 </StackPanel>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center">
+                <Button Margin="2" Content="Сброс" Command="{Binding Reset}"
+                    ToolTip="Сброс параметров окна на начальные."/>
             </StackPanel>
         </WrapPanel>
     </GroupBox>

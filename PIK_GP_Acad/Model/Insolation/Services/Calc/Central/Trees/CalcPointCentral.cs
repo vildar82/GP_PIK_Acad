@@ -97,6 +97,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     foreach (var bHeight in heights)
                     {
                         double heightCalc = GetHeightCalcBuilding(ptHeightCalc, bHeight.Key);
+                        if (heightCalc == 0) continue;
                         var illumsByHeight = CalcIllumsByHeight(bHeight.ToList(), heightCalc);
                         if (illumsByHeight != null && illumsByHeight.Any())
                         {
@@ -127,7 +128,10 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             // зоны тени для домов этой высоты
             // Расчетная высота (от высоты окружающих зданий отнять расчетную высоту точки)
-            return buildHeightCalc - ptHeightCalc;
+            var res = buildHeightCalc - ptHeightCalc;
+            if (res < 0)
+                return 0;
+            return res;
         }
 
         /// <summary>

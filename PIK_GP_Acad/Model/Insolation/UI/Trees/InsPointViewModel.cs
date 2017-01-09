@@ -13,12 +13,14 @@ namespace PIK_GP_Acad.Insolation.UI
 {
     public class InsPointViewModel : ViewModelBase
     {
+        private static WindowOptions defaultWindow = WindowOptions.Default;
         private IBuilding build;
         public InsPointViewModel (InsPoint insPoint)
         {
             BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
             InsPoint = insPoint;
 
+            // Точка не на здании, а в свободном месте (типа расчета площадки), окна - нет! 
             if (insPoint.Building == null)
             {
                 HasBuilding = false;
@@ -29,7 +31,14 @@ namespace PIK_GP_Acad.Insolation.UI
                 HasBuilding = true;
                 build = insPoint.Building.Building;
                 BuildingType = insPoint.Building.BuildingType;
-                WindowVM = new WindowOptionsViewModel(insPoint.Window);
+                if (WindowOptions.Default == insPoint.Window)
+                {
+                    WindowVM = new WindowOptionsViewModel(defaultWindow);
+                }
+                else
+                {
+                    WindowVM = new WindowOptionsViewModel(insPoint.Window);
+                }
             }                       
             Height = insPoint.Height;            
             OK = new RelayCommand(OnOkExecute);            
@@ -67,6 +76,7 @@ namespace PIK_GP_Acad.Insolation.UI
             {
                 InsPoint.Building.BuildingType = BuildingType;
                 InsPoint.Window = WindowVM.Window;
+                defaultWindow = WindowVM.Window;
             }            
             InsPoint.Height = Height;            
         }        

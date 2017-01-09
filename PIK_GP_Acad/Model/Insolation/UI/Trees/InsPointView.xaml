@@ -10,7 +10,7 @@
     d:DesignHeight="271.166" d:DesignWidth="280.833"    
     WindowStartupLocation="CenterScreen"
     SizeToContent="WidthAndHeight"
-    ResizeMode="NoResize"
+    ResizeMode="CanResizeWithGrip"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
