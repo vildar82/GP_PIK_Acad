@@ -40,6 +40,8 @@ namespace PIK_GP_Acad.BlockSection
         public virtual string GetParkingPlace()
         {
             // Для москвы
+            if (ParkingPlacePercent == 100)
+                return $"({ParkingPlacePer1000}/1000)";
             return $"({ParkingPlacePer1000}/1000)х{ParkingPlacePercent}%";
         }
 

@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.BlockSection
             SchoolPlacePer1000 = 135;
             ParkingPlacePer1000 = 420;
             ParkingPlaceGuestPercent = 25;
-            ParkingPlacePercent = 90;
+            ParkingPlacePercent = 100;
         }
 
         public override void TableFormatting (Table table)
