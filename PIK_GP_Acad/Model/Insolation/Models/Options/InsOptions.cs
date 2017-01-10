@@ -54,8 +54,12 @@ namespace PIK_GP_Acad.Insolation.Models
             var defaultRegion = InsService.Settings.Regions
                 .FirstOrDefault(r => r.City.Equals("Москва", StringComparison.OrdinalIgnoreCase)) ?? InsService.Settings.Regions[0];            
             InsOptions defaultOptions = new InsOptions {
-                TileSize = 1, Region = defaultRegion,
-                ShadowDegreeStep = 1, SunCalcAngleStart = 15.0, SunCalcAngleEnd = 165.0
+                TileSize = 1,
+                Region = defaultRegion,
+                ShadowDegreeStep = 1,
+                SunCalcAngleStart = 15.0,
+                SunCalcAngleEnd = 165.0,
+                EnableCheckDublicates = true
             };
             return defaultOptions;
         }
