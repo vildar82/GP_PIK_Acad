@@ -131,7 +131,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private bool CanReportAllPointsExecute()
         {
-            return Tree.Points.Any();            
+            return Tree?.Points?.Any() ?? false;            
         }
         private void OnReportAllPointsExecute()
         {
