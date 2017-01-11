@@ -8,6 +8,7 @@ using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib;
 using AcadLib.Statistic;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -54,6 +55,7 @@ namespace PIK_GP_Acad.Insolation.UI
         /// </summary>
         private void OnShowPlaceExecute (Place place)
         {
+            if ((short)Application.GetSystemVariable("TILEMODE") == 0) return;
             place.Show();
         }
 

@@ -33,7 +33,7 @@
                 Grid.Row="0"
                 Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <TextBlock Text="Шаг расчета" />
-                <TextBox Text="{Binding TileSize}" TextAlignment="Center" />
+                <TextBox Text="{Binding TileSize, Converter={converters:DoubleConverter}}" TextAlignment="Center" />
             </StackPanel>
             <Grid Grid.Column="1" Margin="5" VerticalAlignment="Center">
                 <Grid.RowDefinitions>

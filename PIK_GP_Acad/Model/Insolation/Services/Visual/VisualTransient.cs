@@ -14,10 +14,10 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public abstract class VisualTransient : IVisualService
     {
-        private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
+        private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();
         private bool isOn;
         private List<Entity> draws;
-
+        
         public abstract List<Entity> CreateVisual ();
 
         public bool VisualIsOn {

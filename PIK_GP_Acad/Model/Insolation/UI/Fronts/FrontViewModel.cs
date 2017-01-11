@@ -10,6 +10,7 @@ using PIK_GP_Acad.Insolation.Services;
 using System.Collections.ObjectModel;
 using PIK_DB_Projects;
 using AcadLib.Statistic;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -76,6 +77,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnShowHouseExecute (House house)
         {
+            if (int.Equals(Application.GetSystemVariable("TILEMODE"), 0)) return;
             house.Show();
         }
 

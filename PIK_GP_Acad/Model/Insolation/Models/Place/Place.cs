@@ -66,7 +66,6 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public string PluginName { get; set; } = InsService.PluginName;
-
         bool isVisualPlaceOn;
 
         /// <summary>

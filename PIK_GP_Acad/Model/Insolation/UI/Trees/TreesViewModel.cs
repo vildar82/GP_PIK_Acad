@@ -68,6 +68,7 @@ namespace PIK_GP_Acad.Insolation.UI
         
         private void OnShowPointExecute (InsPoint insPt)
         {
+            if ((short)Application.GetSystemVariable("TILEMODE") == 0) return;
             Tree.ShowPoint(insPt);
         }
 

@@ -118,7 +118,7 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnOkExecute()
         {
             PlaceOptions.Levels = Levels;
-            PlaceOptions.TileSize = TileSize;
+            PlaceOptions.TileSize = TileSize == 0 ? 1: TileSize;
             PlaceOptions.Transparent = (byte)(255 -TransparenceInvert);
         }
     }

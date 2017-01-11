@@ -19,7 +19,8 @@ namespace PIK_GP_Acad.Insolation.Models
     public class PlaceModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
         public PlaceModel()
-        {            
+        {
+            IsEnableCalc = true;
         }
 
         public InsModel Model { get; set; }
