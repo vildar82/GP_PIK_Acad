@@ -150,6 +150,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Show ()
         {
+            if ((short)Application.GetSystemVariable("TILEMODE") == 0) return;
             var ed = Front?.Model?.Doc?.Editor;
             if (ed == null) return;
             ed.Zoom(SelectRegion);

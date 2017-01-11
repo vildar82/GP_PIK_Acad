@@ -34,7 +34,8 @@
                                 <!--  Заголовок группы - все о группе  -->
                                 <Expander.HeaderTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
+                                        <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" 
+                                              ToolTip="{Binding Info}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="Auto" />

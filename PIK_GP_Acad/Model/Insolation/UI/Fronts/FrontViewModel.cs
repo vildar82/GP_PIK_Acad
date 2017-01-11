@@ -77,7 +77,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnShowHouseExecute (House house)
         {
-            if (int.Equals(Application.GetSystemVariable("TILEMODE"), 0)) return;
+            if ((short)Application.GetSystemVariable("TILEMODE") == 0) return;
             house.Show();
         }
 
