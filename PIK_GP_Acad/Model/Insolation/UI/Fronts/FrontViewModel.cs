@@ -19,7 +19,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public FrontViewModel (FrontModel model)
         {
             Front = model;
-            Add = new RelayCommand(OnAddFrontExecute);
+            Add = new RelayCommand(InsAddFrontExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
             Export = new RelayCommand(OnExportExecute);
@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<FrontGroup> ShowOptions { get; set; }
         public bool HasProject { get; set; }         
 
-        private void OnAddFrontExecute ()
+        private void InsAddFrontExecute ()
         {
             // Выбор области на чертеже
             var selectGroup = new SelectGroup(Front.Model.Doc);

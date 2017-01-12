@@ -24,7 +24,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public TreesViewModel (TreeModel treeModel)
         {            
             Tree = treeModel;
-            AddPoint = new RelayCommand(OnAddPointExecute);
+            AddPoint = new RelayCommand(InsAddPointExecute);
             ShowPoint = new RelayCommand<InsPoint>(OnShowPointExecute);
             EditPoint = new RelayCommand<InsPoint>(OnEditPointExecute);
             DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);
@@ -48,7 +48,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand EditTreeOptions { get; private set; }
         public RelayCommand DrawVisuals { get; private set; }        
 
-        private void OnAddPointExecute ()
+        private void InsAddPointExecute ()
         {
             // Выбор точки на чертеже и задание параметров окна
             var selPt = new SelectPoint();
