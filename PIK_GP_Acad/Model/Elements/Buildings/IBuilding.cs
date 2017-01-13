@@ -35,7 +35,8 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// </summary>        
         double Elevation { get; set; }
         Polyline GetContourInModel ();
-        BuildingTypeEnum BuildingType { get; set; }        
+        BuildingTypeEnum BuildingType { get; set; }
+        string BuildingTypeName { get; }
         /// <summary>
         /// Имя дома - объекта
         /// </summary>

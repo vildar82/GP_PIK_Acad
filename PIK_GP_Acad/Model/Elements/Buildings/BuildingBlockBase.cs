@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Elements.Buildings
     {
         private Rectangle r;
 
-        public BuildingBlockBase(BlockReference blRef, string blName) : base(blRef.Id)
+        public BuildingBlockBase(BlockReference blRef, string blName) : base(blRef)
         {
             BlockBase = new BlockBase(blRef, blName);
             ExtentsInModel = blRef.GeometricExtentsСlean();

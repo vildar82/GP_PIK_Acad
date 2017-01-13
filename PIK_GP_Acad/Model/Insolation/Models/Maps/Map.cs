@@ -12,6 +12,7 @@ using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.Elements.Buildings;
 using AcadLib.XData;
 using PIK_GP_Acad.Insolation.Services;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -193,7 +194,14 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var building = ElementFactory.Create<IBuilding>(ent);
             if (building != null)
-            {
+            {                
+                // Если это не полилиния или блок - такие объекты пока не поддерживаются
+                if (!(ent is Polyline) && !(ent is BlockReference))
+                {
+                    Inspector.AddError($"Тип здания не подходит для инсоляции - '{ent.GetRXClass().Name}', слой '{ent.Layer}'", ent, System.Drawing.SystemIcons.Error);
+                    return;
+                }
+
                 var insBuild = new MapBuilding(building);
                 Buildings.Add(insBuild);
                 var r = GetBuildingRectangle(insBuild);
@@ -224,7 +232,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             var pl = ent as Polyline;
             if (pl != null)
-            {
+            {                
                 var entExtDicExt = new EntDictExt(pl, InsService.PluginName);
                 var dic = entExtDicExt.Load();
                 if (dic != null)

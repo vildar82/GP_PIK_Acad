@@ -50,19 +50,26 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void InsAddPointExecute ()
         {
-            // Выбор точки на чертеже и задание параметров окна
-            var selPt = new SelectPoint();
-            InsPoint p = selPt.SelectNewPoint(Tree.Model);
-            if (p != null)
-            {                
-                // Расчет и добавление точки
-                Tree.AddPoint(p);
-                // Включение зон инсоляции точки
-                p.IsVisualIllumsOn = true;
-                // Сохранение точки
-                p.SaveInsPoint();
-                // Запись статистики
-                PluginStatisticsHelper.AddStatistic();
+            try
+            {
+                // Выбор точки на чертеже и задание параметров окна
+                var selPt = new SelectPoint();
+                InsPoint p = selPt.SelectNewPoint(Tree.Model);
+                if (p != null)
+                {
+                    // Расчет и добавление точки
+                    Tree.AddPoint(p);
+                    // Включение зон инсоляции точки
+                    p.IsVisualIllumsOn = true;
+                    // Сохранение точки
+                    p.SaveInsPoint();
+                    // Запись статистики
+                    PluginStatisticsHelper.AddStatistic();
+                }
+            }
+            catch(Exception ex)
+            {
+                InsService.ShowMessage(ex.Message, System.Windows.MessageBoxImage.Error);
             }
         }        
         

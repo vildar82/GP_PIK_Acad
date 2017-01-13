@@ -35,9 +35,17 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// </summary>
         public const string ProjectedBuildingClassName = "Проектируемое_здание";
 
-        public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent.Id)
-        {
+        public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent)
+        {            
             ExtentsInModel = ent.GeometricExtents;
+            if (ent is Polyline)
+            {
+                var pl = ent as Polyline;
+                if (pl.Area == 0)
+                {
+                    AddError("Площадь контура не определена.");   
+                }
+            }
             ClassType = classType;
             FCProperties = props;
             Floors = props.GetPropertyValue(PropFloors, IdEnt, false,0);

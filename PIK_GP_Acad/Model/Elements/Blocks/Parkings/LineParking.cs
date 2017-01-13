@@ -40,6 +40,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
         /// </summary>
         public int Places { get; set; }
         public int InvalidPlaces { get; set; }
+        public string Layer { get { return BlLayer; } }
 
         public LineParking (BlockReference blRef, string blName) : base(blRef, blName)
         {

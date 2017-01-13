@@ -19,13 +19,13 @@ namespace PIK_GP_Acad.Elements.Blocks.Parkings
         public bool IsInvalid { get; set; }
         public int Places { get; set; }
         public int InvalidPlaces { get; set; }
+        public string Layer { get { return BlLayer; } }
 
         public Parking (BlockReference blRef, string blName) : base(blRef, blName)
-        {
+        {            
             IdEnt = blRef.Id;
             var view = GetPropValue<string>("Вид");
-            parseView(view);
-
+            parseView(view);            
             check();
         }
 

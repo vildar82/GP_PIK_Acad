@@ -38,16 +38,23 @@ namespace PIK_GP_Acad.Insolation.UI
         /// </summary>
         private void InsAddPlaceExecute ()
         {
-            var selPlace = new SelectPlace();
-            var placeId = selPlace.Select();
-            if (!placeId.IsValidEx()) return;
-            var place = Place.AddPlace(placeId);
-            if (place != null)
+            try
             {
-                place.IsVisualPlaceOn = true;
+                var selPlace = new SelectPlace();
+                var placeId = selPlace.Select();
+                if (!placeId.IsValidEx()) return;
+                var place = Place.AddPlace(placeId);
+                if (place != null)
+                {
+                    place.IsVisualPlaceOn = true;
+                }
+                // Запись статистики
+                PluginStatisticsHelper.AddStatistic();
             }
-            // Запись статистики
-            PluginStatisticsHelper.AddStatistic();
+            catch(Exception ex)
+            {
+                InsService.ShowMessage(ex.Message, System.Windows.MessageBoxImage.Error);
+            }
         }
 
         /// <summary>

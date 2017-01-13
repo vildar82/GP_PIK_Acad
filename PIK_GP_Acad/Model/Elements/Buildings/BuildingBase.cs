@@ -21,14 +21,16 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
 
         }
-        public BuildingBase(ObjectId idEnt)
+        public BuildingBase(Entity ent)
         {
-            IdEnt = idEnt;
+            IdEnt = ent.Id;
+            Layer = ent.Layer;        
             // Загрузка значений из словаря объекта
             this.LoadDboDict();
         }
 
         public BuildingTypeEnum BuildingType { get; set; }
+        public string BuildingTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
         public Error Error { get; set; }
         public Extents3d ExtentsInModel { get; set; }
         public int Floors { get; set; }
@@ -44,6 +46,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public double HeightTypicalFloors { get; set; }
         public double HeightTechnicalFloor { get; set; }
         public string FriendlyTypeName { get; set; }
+        public string Layer { get; set; }
 
         public abstract Polyline GetContourInModel();        
 
@@ -80,6 +83,30 @@ namespace PIK_GP_Acad.Elements.Buildings
             var dictValues = values?.ToDictionary();
             HouseName = dictValues.GetValue("HouseName", "");
             HouseId = dictValues.GetValue("HouseId", 0);            
+        }
+
+        public void AddError(string msg)
+        {
+            if (Error == null)
+            {
+                Error = new Error($"Ошибка в объекте здания '{GetInfo()}', слой '{Layer}': ", IdEnt, System.Drawing.SystemIcons.Error);
+                Inspector.AddError(Error);
+            }
+            Error.AdditionToMessage(msg);
+        }
+
+        private string GetInfo()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(BuildingTypeName);
+            if (Height != 0)
+                sb.Append("H=").AppendLine(Height.ToString());
+            if (Elevation != 0)            
+                sb.Append("Уровень=").AppendLine(Elevation.ToString());
+            sb.AppendLine(IsProjectedBuilding ? "Проектируемое" : "Окр.застройка");
+            if (!string.IsNullOrEmpty(FriendlyTypeName))            
+                sb.AppendLine(FriendlyTypeName);            
+            return sb.ToString();
         }
     }
 }

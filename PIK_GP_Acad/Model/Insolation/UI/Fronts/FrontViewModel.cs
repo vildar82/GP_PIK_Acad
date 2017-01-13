@@ -43,7 +43,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public bool HasProject { get; set; }         
 
         private void InsAddFrontExecute ()
-        {
+        {            
             // Выбор области на чертеже
             var selectGroup = new SelectGroup(Front.Model.Doc);
             Extents3d selReg;

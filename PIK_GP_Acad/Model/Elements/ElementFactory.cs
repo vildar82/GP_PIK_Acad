@@ -112,7 +112,7 @@ namespace PIK_GP_Acad.Elements
                     double area = GetArea(ent, clType.UnitFactor, clType.ClassName);
                     if (area != 0)
                     {
-                        var classificator = new Classificator(ent.Id, clType, area);
+                        var classificator = new Classificator(ent, clType, area);
                         res = classificator;
                     }
                 }
@@ -137,7 +137,7 @@ namespace PIK_GP_Acad.Elements
                 }
                 else
                 {
-                    Inspector.AddError($"Неподдерживаемый тип объекта - {ent.GetType().Name}. Классификатор - {tag}",
+                    Inspector.AddError($"Неподдерживаемый тип объекта - '{ent.GetType().Name}'. Классификатор '{tag}'. Слой '{ent.Layer}'",
                             ent, System.Drawing.SystemIcons.Error);
                 }
             }
@@ -145,7 +145,7 @@ namespace PIK_GP_Acad.Elements
 
             if (res == 0)
             {
-                Inspector.AddError($"Не определена площадь объекта {tag}", ent, System.Drawing.SystemIcons.Error);
+                Inspector.AddError($"Не определена площадь объекта '{tag}'. Слой '{ent.Layer}'", ent, System.Drawing.SystemIcons.Error);
             }
 
             return res;

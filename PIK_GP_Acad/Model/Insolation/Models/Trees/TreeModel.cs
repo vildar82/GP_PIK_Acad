@@ -132,7 +132,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void UpdateVisualTree (InsPoint insPoint = null)
         {
-            VisualTrees.VisualIsOn = IsVisualTreeOn;
+            if (VisualTrees != null) 
+                VisualTrees.VisualIsOn = IsVisualTreeOn;
         }        
 
         /// <summary>

@@ -18,10 +18,12 @@ namespace PIK_GP_Acad.FCS
         public ClassType ClassType { get; set; }                
         public Error Error { get; set; }
         public double Area { get; set; }
+        public string Layer { get; }
 
-        public Classificator (ObjectId idEnt, ClassType classType, double area)
+        public Classificator (Entity ent, ClassType classType, double area)
         {
-            IdEnt = idEnt;
+            Layer = ent.Layer;
+            IdEnt = ent.Id;
             ClassType = classType;
             Area = area;
         }

@@ -20,7 +20,7 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         public PlaceModel()
         {
-            IsEnableCalc = true;
+            IsEnableCalc = false;
         }
 
         public InsModel Model { get; set; }
@@ -37,7 +37,6 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Initialize (InsModel insModel)
         {
             Model = insModel;
-
             if (Options == null)
                 Options = PlaceOptions.Default();                        
         }
@@ -80,7 +79,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Update ()
         {
-            if (!isEnableCalc) return;
+            if (!IsEnableCalc) return;
 
             if (Places.Count == 0)
             {
@@ -150,14 +149,15 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<TypedValue> GetDataValues (Document doc)
         {
             var tvk = new TypedValueExtKit();
-            tvk.Add("IsEnableCalc", IsEnableCalc);            
+            //tvk.Add("IsEnableCalc", IsEnableCalc);            
+            IsEnableCalc = false;// Долго считаются площадки. Пусть сразу никогда не считаются.
             return tvk.Values;
         }
 
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            IsEnableCalc = dictValues.GetValue("IsEnableCalc", true);            
+            IsEnableCalc = false;// dictValues.GetValue("IsEnableCalc", false); // Долго считаются площадки. Пусть сразу никогда не считаются.              
         }
 
         public void Dispose ()
