@@ -354,13 +354,20 @@ namespace PIK_GP_Acad
 
         public void Initialize ()
         {
-            // Передача списка команд для палитры ПИК в AcadLib.             
-            InitCommands();
-            PaletteSetCommands.InitPalette(CommandsPalette, nameof(PIK_Start));
+            try
+            {
+                // Передача списка команд для палитры ПИК в AcadLib.             
+                InitCommands();
+                PaletteSetCommands.InitPalette(CommandsPalette, nameof(PIK_Start));
 
-            // Загрузка сборки Civil
-            string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
-            LoadDll(fileCivilDll);
+                // Загрузка сборки Civil
+                string fileCivilDll = Path.Combine(CurDllDir, "PIK_GP_Civil.dll");
+                LoadDll(fileCivilDll);
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Log.Error(ex, "PIK_GP_ACAD.Initialize().");
+            }
         }
 
         private static void LoadDll (string  file)

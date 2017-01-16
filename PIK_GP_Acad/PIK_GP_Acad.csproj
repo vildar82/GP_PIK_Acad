@@ -68,6 +68,7 @@
     </Reference>
     <Reference Include="MicroMvvm">
       <HintPath>..\..\..\Package\MVVM\MicroMvvm.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="NetLib">
       <HintPath>..\..\..\NetLib\NetLib\NetLib\bin\Release\NetLib.dll</HintPath>
@@ -85,7 +86,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -359,100 +362,100 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_BlockSectionContour.png" />
+    <Resource Include="Resources\GP_BlockSectionContour.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_BlockSectionInsert.png" />
+    <Resource Include="Resources\GP_BlockSectionInsert.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_BlockSectionTable.png" />
+    <Resource Include="Resources\GP_BlockSectionTable.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_HorizontalElevation.png" />
+    <Resource Include="Resources\GP_HorizontalElevation.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_Isoline.png" />
+    <Resource Include="Resources\GP_Isoline.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockFrame.PNG" />
+    <Resource Include="Resources\GP_KP_BlockFrame.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionInsert.png" />
+    <Resource Include="Resources\GP_KP_BlockSectionInsert.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionTable.png" />
+    <Resource Include="Resources\GP_KP_BlockSectionTable.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockStampBooklet.PNG" />
+    <Resource Include="Resources\GP_KP_BlockStampBooklet.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockStampForm3.PNG" />
+    <Resource Include="Resources\GP_KP_BlockStampForm3.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineCross.png" />
+    <Resource Include="Resources\GP-LineCross.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineParking.png" />
+    <Resource Include="Resources\GP-LineParking.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\options.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\KP_DOO.png" />
+    <Resource Include="Resources\KP_DOO.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\KP_KP_AreaParking.png" />
+    <Resource Include="Resources\KP_KP_AreaParking.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\KP_School.png" />
+    <Resource Include="Resources\KP_School.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-ParkingTable.png" />
+    <Resource Include="Resources\GP-ParkingTable.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_Parking.png" />
+    <Resource Include="Resources\GP_Parking.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineArrow.png" />
+    <Resource Include="Resources\GP-LineArrow.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineDirMove.png" />
+    <Resource Include="Resources\GP-LineDirMove.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ArcGIS.png" />
+    <Resource Include="Resources\ArcGIS.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\KP_Parking.png" />
+    <Resource Include="Resources\KP_Parking.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineRiverside.png" />
+    <Resource Include="Resources\GP-LineRiverside.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineWaterProtectZone.png" />
+    <Resource Include="Resources\GP-LineWaterProtectZone.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineNoizeBarrier1.png" />
+    <Resource Include="Resources\GP-LineNoizeBarrier1.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineNoizeBarrier2.png" />
+    <Resource Include="Resources\GP-LineNoizeBarrier2.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP-LineNoizeBarrier3.png" />
+    <Resource Include="Resources\GP-LineNoizeBarrier3.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionTableNew.png" />
+    <Resource Include="Resources\GP_KP_BlockSectionTableNew.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_KP_BlockSectionFill.png" />
+    <Resource Include="Resources\GP_KP_BlockSectionFill.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\GP_RainGrid.png" />
+    <Resource Include="Resources\GP_RainGrid.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\enla.png" />
+    <Resource Include="Resources\enla.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Sun.ico" />
+    <Resource Include="Resources\Sun.ico" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Model\Insolation\Services\Export\ExportToDB\UI\ExportGroupsView.xaml">
@@ -535,7 +538,7 @@
     <Resource Include="Resources\draw_visuals.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Sun.png" />
+    <Resource Include="Resources\Sun.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\GP_Ins_Front.png" />

@@ -86,7 +86,10 @@ namespace PIK_GP_Acad.Insolation.Services
             dim.Color = Color.FromColor(System.Drawing.Color.Red);
             dim.Dimtxt = 1.5;
             dim.Dimscale = 0.5;
-
+            dim.LineWeight = LineWeight.ByLineWeightDefault;
+            dim.Dimclrd = dim.Color;
+            dim.Dimclre = dim.Color;
+            dim.Dimclrt = dim.Color;
             draws.Add(dim);
 
             return draws;

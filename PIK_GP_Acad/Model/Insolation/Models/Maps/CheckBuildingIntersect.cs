@@ -35,12 +35,26 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     dictChecked.Add(build.Building.IdEnt, new HashSet<ObjectId>());
                     build.InitContour();
+                    if (build.Contour == null)
+                    {
+                        Inspector.AddError($"Не определен контур здания - {build.GetInfo().ClearString()}, слой '{build.Building.Layer}'.", 
+                            build.Building.IdEnt, System.Drawing.SystemIcons.Error);
+                        continue;
+                    }
                     contours.Add(build.Contour);
-                    var reg = BrepExtensions.CreateRegion(build.Contour);
-                    build.Region = reg;
-                    regions.Add(reg);
+                    try
+                    {
+                        var reg = BrepExtensions.CreateRegion(build.Contour);
+                        build.Region = reg;
+                        regions.Add(reg);
+                    }
+                    catch(Exception ex)
+                    {
+                        Inspector.AddError($"Ошибка определения контура здания - '{build.GetInfo().ClearString()}', слой '{build.Building.Layer}'. {ex.Message}.", 
+                            build.Building.IdEnt, System.Drawing.SystemIcons.Error);
+                    }                    
                 }
-                foreach (var build in map.Buildings)
+                foreach (var build in map.Buildings.Where(w=>w.Region != null))
                 {
                     // здания в границах текущего здания
                     var nearest = map.GetBuildingsInExtents(build.ExtentsInModel);
