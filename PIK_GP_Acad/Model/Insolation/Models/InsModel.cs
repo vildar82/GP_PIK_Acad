@@ -113,6 +113,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 Front = new FrontModel();
             }
             Front.Initialize(this);
+            LoadPoints();
 
             // Расчет площадок
             if (Place == null)
