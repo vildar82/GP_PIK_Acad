@@ -83,15 +83,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
             if (Places.Count == 0)
             {
-                var placesId = Model.Map?.Places;
-                if (placesId != null)
-                {
-                    // Загрузка площадок из карты
-                    foreach (var placeId in Model.Map.Places)
-                    {
-                        AddPlace(placeId.Key, placeId.Value);
-                    }
-                }
+                AddPlacesFromMap();
             }
             else
             {
@@ -105,6 +97,19 @@ namespace PIK_GP_Acad.Insolation.Models
                 foreach (var place in Places)
                 {                    
                     place.Update();
+                }
+            }
+        }
+
+        public void AddPlacesFromMap()
+        {
+            var placesInMap = Model.Map?.Places;
+            if (placesInMap != null)
+            {
+                // Загрузка площадок из карты
+                foreach (var placeId in Model.Map.Places)
+                {
+                    AddPlace(placeId.Key, placeId.Value);
                 }
             }
         }

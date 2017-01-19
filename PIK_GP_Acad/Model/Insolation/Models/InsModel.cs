@@ -121,6 +121,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 Place = new PlaceModel();
             }
             Place.Initialize(this);
+            place.AddPlacesFromMap();
 
             doc.Database.BeginSave += Database_BeginSave;            
             Redrawable();            

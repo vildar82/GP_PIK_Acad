@@ -81,6 +81,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
+            if (!PlaceModel.IsEnableCalc) return;
             if (!IsVisualPlaceOn)
             {
                 VisualPlace?.Dispose();
