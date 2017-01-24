@@ -14,6 +14,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using AcadLib.XData;
 using AcadLib.Jigs;
 using MicroMvvm;
+using AcadLib.Statistic;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -381,7 +382,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Отчеты по всем точкам
         /// </summary>
-        public void ReportsAllPoint ()
+        public void InsPointReportsAll ()
         {
             var doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
@@ -398,6 +399,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
                 // вставка таблиц
                 doc.Editor.Drag(tables, 150);
+                PluginStatisticsHelper.AddStatistic();
             }
         }
 

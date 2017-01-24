@@ -14,6 +14,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using AcadLib.XData;
 using MicroMvvm;
+using AcadLib.Statistic;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -107,7 +108,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Отчет по точке - вставка таблицы отчета
         /// </summary>
-        public void Report()
+        public void InsPointReport()
         {
             var doc = Application.DocumentManager.MdiActiveDocument;
             if (doc == null) return;
@@ -117,6 +118,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 report.CalcRows();
                 var table = report.Create();
                 report.Insert(table, doc);
+                PluginStatisticsHelper.AddStatistic();
             }
         }
 
@@ -132,7 +134,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnReportPointExecute()
         {
-            Report();
+            InsPointReport();
         }
 
         /// <summary>
