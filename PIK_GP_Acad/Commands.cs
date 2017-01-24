@@ -43,6 +43,8 @@ namespace PIK_GP_Acad
         public const string GroupKP = "Концепция";
         public const string GroupCommon = "Общие";
 
+        private static bool isLoadedEF;
+
         public void InitCommands()
         {            
             CommandsPalette = new List<IPaletteCommand>()
@@ -89,11 +91,15 @@ namespace PIK_GP_Acad
         [CommandMethod(Group, nameof(PIK_Start), CommandFlags.Modal)]
         public void PIK_Start()
         {
-            CommandStart.Start(doc =>
+            try
             {
                 PaletteSetCommands.Start();
-            });
-        }        
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
                 
         [CommandMethod(Group, nameof(GP_ParkingCalc), CommandFlags.Modal | CommandFlags.NoPaperSpace | CommandFlags.NoBlockEditor)]
         public void GP_ParkingCalc()
@@ -339,6 +345,11 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
+                if (!isLoadedEF)
+                {
+                    LoadService.LoadEntityFramework();
+                    isLoadedEF = true;
+                }
                 Insolation.Services.InsService.StartInsolationPalette(doc);
             });
         }
