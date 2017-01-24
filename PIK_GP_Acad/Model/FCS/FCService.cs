@@ -130,7 +130,7 @@ namespace PIK_GP_Acad.FCS
                     }
                     else
                     {
-                        Logger.Log.Error(ex, err);
+                        //Logger.Log.Error(ex, err); много писем с ошибкой Этажность...
                     }
                     resVal = defaultValue;
                 }

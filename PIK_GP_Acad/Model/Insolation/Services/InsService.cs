@@ -151,8 +151,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         private static void DocumentManager_DocumentToBeDeactivated (object sender, DocumentCollectionEventArgs e)
         {
-            var insModel = GetInsModel(e?.Document);
-            insModel?.ClearVisual();
+            //var insModel = GetInsModel(e?.Document);
+            //insModel?.ClearVisual();
         }
 
         public static ICalcService GetCalcService (InsOptions options)

@@ -128,6 +128,6 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Height == 0) return false;
             if (Color == null) return false;
             return true;
-        }
+        }       
     }
 }

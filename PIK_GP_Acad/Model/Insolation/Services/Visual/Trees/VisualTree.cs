@@ -97,9 +97,12 @@ namespace PIK_GP_Acad.Insolation.Services
                     else
                     {
                         overReg.BooleanOperation(BooleanOperationType.BoolUnite, region);
+                        region.Dispose();
                     }                    
                 }
-                catch { }
+                catch
+                {
+                }
                 foreach (var item in pls)
                 {
                     item.Dispose();

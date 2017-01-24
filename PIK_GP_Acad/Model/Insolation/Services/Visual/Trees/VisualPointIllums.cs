@@ -24,7 +24,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public override List<Entity> CreateVisual ()
         {
-            List<Entity> draws = new List<Entity>();
+            var draws = new List<Entity>();
 
             if (InsPoint.Illums != null)
             {

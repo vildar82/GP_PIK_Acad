@@ -80,8 +80,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (draws != null)
             {
-                EraseDraws();
-                draws = null;
+                EraseDraws();                
             }
         }
 

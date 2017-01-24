@@ -86,8 +86,10 @@ namespace PIK_GP_Acad.Insolation.Models
             // Дефолтные настройки
             if (Options == null)
             {
-                Options = InsOptions.Default();
+                Options = InsOptions.Default();                
             }
+            // Сервис расчета            
+            DefineCalcService();
 
             // Загрузка карты
             if (Map == null)

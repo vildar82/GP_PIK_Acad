@@ -52,16 +52,23 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчет фронтов на каждом сегменте контура дома
             for (int i = 0; i < houseContour.NumberOfVertices; i++)
             {
-                using (var seg = houseContour.GetLineSegment2dAt(i))
+                try
                 {
-                    List<FrontCalcPoint> segCalcPoints;
-                    var segFronts = CalcSegment(seg, out segCalcPoints);
-                    if (segFronts != null && segFronts.Any())
+                    using (var seg = houseContour.GetLineSegment2dAt(i))
                     {
-                        resFronts.AddRange(segFronts);
+                        List<FrontCalcPoint> segCalcPoints;
+                        var segFronts = CalcSegment(seg, out segCalcPoints);
+                        if (segFronts != null && segFronts.Any())
+                        {
+                            resFronts.AddRange(segFronts);
+                        }
+                        contourSegmentsCalcPoints.Add(segCalcPoints);
                     }
-                    contourSegmentsCalcPoints.Add(segCalcPoints);
-                }               
+                }
+                catch(Exception ex)
+                {
+                    Logger.Log.Error(ex, "CalcFrontCentral.CalcHouse");
+                }              
             }
             //resFronts = FrontValue.Merge(resFronts);
             return resFronts;

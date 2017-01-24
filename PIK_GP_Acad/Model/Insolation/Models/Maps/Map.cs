@@ -183,7 +183,10 @@ namespace PIK_GP_Acad.Insolation.Models
                             dbo.Modified -= Building_Modified;
                             dbo.Erased -= Building_Erased;
                         }
-                        catch { }
+                        catch
+                        {
+                            break;
+                        }
                     }
                 }
                 t.Commit();
@@ -419,6 +422,13 @@ namespace PIK_GP_Acad.Insolation.Models
             if (db == null || db.IsDisposed) return;
             visualMap?.Dispose();
             Unsubscribe();
+            if (Buildings != null)
+            {
+                foreach (var build in Buildings)
+                {
+                    build?.Dispose();
+                }
+            }
         }
     }
 }

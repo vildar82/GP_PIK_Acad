@@ -306,6 +306,9 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 using (var reg = pls.Union(null))
                 {
+#if TEST
+            EntityHelper.AddEntityToCurrentSpace((Region)reg?.Clone());            
+#endif
                     var ptsRegByLoopType = reg.GetPoints2dByLoopType();
                     if (ptsRegByLoopType.Count == 1)
                     {
@@ -340,7 +343,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
             // Прополка полилилинии
-            Contour.Wedding(TreeModel.TolerancePoints);
+            Contour?.Wedding(TreeModel.TolerancePoints);
 #if TEST
             EntityHelper.AddEntityToCurrentSpace((Polyline)Contour?.Clone());
             TestDrawContourVertexText();

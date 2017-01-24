@@ -68,7 +68,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public List<Entity> CreateVisual (byte transparence)
         {
-            List<Entity> draws = new List<Entity>();
+            var draws = new List<Entity>();
 
             // Штриховка
             var color = InsPoint?.InsValue?.Requirement?.Color ?? System.Drawing.Color.Gray;

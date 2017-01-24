@@ -14,7 +14,7 @@ using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class MapBuilding : ModelBase, IVisualElement
+    public class MapBuilding : ModelBase, IVisualElement, IDisposable
     {
 #if DEBUG
         static int testIndexes;
@@ -98,7 +98,6 @@ namespace PIK_GP_Acad.Insolation.Models
 
             return visuals;
         }
-
         
         public override string ToString()
         {
@@ -145,6 +144,12 @@ namespace PIK_GP_Acad.Insolation.Models
                 resFakeBuilds.Add(fakeMapBuild);
             }
             return resFakeBuilds;
+        }
+
+        public void Dispose()
+        {
+            Contour?.Dispose();
+            Region?.Dispose();            
         }
     }
 }

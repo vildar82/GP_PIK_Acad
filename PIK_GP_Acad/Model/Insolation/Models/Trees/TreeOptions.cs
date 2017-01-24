@@ -46,12 +46,14 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             DicED dicTreeOpt = new DicED();
             // Записи виз настроек - для каждой высоты своя запись XRecord в словаре
+            var dicTreeVisualOpt = new DicED("TreeVisualOptions");
             foreach (var item in TreeVisualOptions)
-            {
+            {                
                 var values = item.GetDataValues(doc);
                 string name = item.Height.ToString();
-                dicTreeOpt.AddRec(name, values);
+                dicTreeVisualOpt.AddRec(name, values);
             }
+            dicTreeOpt.AddInner(dicTreeVisualOpt);
             // Transparence
             dicTreeOpt.AddRec("Rec", GetDataValues(doc));
             return dicTreeOpt;
@@ -74,11 +76,15 @@ namespace PIK_GP_Acad.Insolation.Models
 
             // Список настроек визуалных высот
             var treeVisOpts = new List<TreeVisualOption>();
-            foreach (var item in dicTreeOpt.Recs)
+            var dicTreeVisualOpt = dicTreeOpt.GetInner("TreeVisualOptions");
+            if (dicTreeVisualOpt != null)
             {
-                var treeVis = new TreeVisualOption();
-                treeVis.SetDataValues(item.Values, doc);
-                treeVisOpts.Add(treeVis);
+                foreach (var item in dicTreeVisualOpt.Recs)
+                {
+                    var treeVis = new TreeVisualOption();
+                    treeVis.SetDataValues(item.Values, doc);
+                    treeVisOpts.Add(treeVis);
+                }
             }
             // Проверка высот
             TreeVisualOption.CheckAndCorrect(ref treeVisOpts);

@@ -41,9 +41,7 @@ namespace PIK_GP_Acad
         public const string Group = AutoCAD_PIK_Manager.Commands.Group;
         public const string GroupBS = "БС";
         public const string GroupKP = "Концепция";
-        public const string GroupCommon = "Общие";
-
-        private static bool isLoadedEF;
+        public const string GroupCommon = "Общие";        
 
         public void InitCommands()
         {            
@@ -344,12 +342,9 @@ namespace PIK_GP_Acad
         public void GP_InsolationService ()
         {
             CommandStart.Start(doc =>
-            {                
-                if (!isLoadedEF)
-                {
-                    LoadService.LoadEntityFramework();
-                    isLoadedEF = true;
-                }
+            {
+                LoadService.LoadEntityFramework();
+                LoadService.LoadMDM();
                 Insolation.Services.InsService.StartInsolationPalette(doc);
             });
         }
