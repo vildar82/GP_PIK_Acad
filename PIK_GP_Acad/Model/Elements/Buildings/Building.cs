@@ -120,6 +120,15 @@ namespace PIK_GP_Acad.Elements.Buildings
         }
 
         /// <summary>
+        /// Проверка что это имя классификатора = Проектируемое здание.
+        /// </summary>
+        /// <param name="className">Имя классификатора</param>        
+        public static bool IsProjectedBuildingClass(string className)
+        {
+            return className.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName);
+        }
+
+        /// <summary>
         /// Определение высоты здания. По параметрам высот 1,тип и тех этажа, или = переданной высоте
         /// </summary>
         /// <param name="height">Высота заданная в параметре Высота в классифицированном объекте</param>        
