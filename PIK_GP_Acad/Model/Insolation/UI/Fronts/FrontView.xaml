@@ -50,10 +50,10 @@
                                                     Background="Transparent" BorderThickness="0"
                                                     FontSize="20"
                                                     Text="{Binding Name}" />
-                                                <TextBox
-                                                    Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                <TextBox VerticalAlignment="Center"
+                                                    Margin="3" HorizontalAlignment="Right"
                                                     Background="Transparent" BorderThickness="0"
-                                                    Text="{Binding FrontLevel}">
+                                                    Text="{Binding FrontLevel}" FontSize="16">
                                                     <ToolTipService.ToolTip>
                                                         <TextBlock TextWrapping="Wrap" MaxWidth="400">
                                                             Номер этажа для расчета фронтов. 
