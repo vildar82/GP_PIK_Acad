@@ -108,5 +108,16 @@ namespace PIK_GP_Acad.Elements.Buildings
                 sb.AppendLine(FriendlyTypeName);            
             return sb.ToString();
         }
+
+        public double GetLevelHeight(int level)
+        {
+            if (level > 1)
+            {
+                if (level > Floors)
+                    level = Floors;
+                return HeightFirstFloor + ((level - 2) * HeightTypicalFloors);
+            }
+            return 0;
+        }
     }
 }

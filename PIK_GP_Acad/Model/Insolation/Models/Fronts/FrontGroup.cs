@@ -34,6 +34,7 @@ namespace PIK_GP_Acad.Insolation.Models
             SelectRegion = selReg;
             Name = DefineNewName();
             Options = new FrontGroupOptions();
+            FrontLevel = 2;
         }        
 
         /// <summary>
@@ -57,9 +58,9 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Высота расчета фронтов
         /// </summary>
-        public double FrontHeight { get { return frontHeight; }
-            set { frontHeight = value; RaisePropertyChanged(); OnFrontHeightChanged(); } }
-        double frontHeight;
+        public int FrontLevel { get { return frontLevel; }
+            set { frontLevel = value; RaisePropertyChanged(); OnFrontLevelChanged(); } }
+        int frontLevel;
 
         /// <summary>
         /// Дома
@@ -137,11 +138,16 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private void OnFrontHeightChanged()
+        private void OnFrontLevelChanged()
         {
-            foreach (var item in Houses)
+            if (FrontLevel == 0)
+                FrontLevel = 2;
+            if (Houses != null)
             {
-                item.FrontHeight = FrontHeight;
+                foreach (var item in Houses)
+                {
+                    item.FrontLevel = FrontLevel;
+                }
             }
         }
 
@@ -286,6 +292,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var tvk = new TypedValueExtKit();
             tvk.Add("Name", Name);
             tvk.Add("IsVisualFrontOn", IsVisualFrontOn);
+            tvk.Add("FrontLevel", FrontLevel);
             return tvk.Values;            
         }
         public void SetDataValues (List<TypedValue> values, Document doc)
@@ -293,6 +300,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var dictValues = values?.ToDictionary();
             Name = dictValues.GetValue("Name", "Группа");
             IsVisualFrontOn = dictValues.GetValue("IsVisualFrontOn", true);
+            FrontLevel = dictValues.GetValue("FrontLevel", 2);
         }
         public DicED GetExtDic (Document doc)
         {

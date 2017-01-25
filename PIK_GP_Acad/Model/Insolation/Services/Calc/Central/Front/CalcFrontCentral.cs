@@ -227,7 +227,7 @@ namespace PIK_GP_Acad.Insolation.Services
 #endif
                 insPt.Building = calcFrontPt.Section;
                 // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                
-                insPt.Height = CalcHeightCalcPt(calcFrontPt, house.FrontHeight);                
+                insPt.Height = CalcHeightCalcPt(calcFrontPt, house.FrontLevel);                
                 insPt.Building.InitContour();
                 try
                 {
@@ -256,22 +256,13 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="calcFrontPt">Расчетная точка</param>
         /// <returns>Высота для расчета инсоляции в точке</returns>
-        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt, double frontHeight)
-        {
-            double resHeightPt =0;
-            var building = calcFrontPt.Section.Building;            
-            if (frontHeight == 0)
-            {
-                // = Уровень здания + высота от пола до центра окна + высота первого этажа (если она задана, то это нежилой этаж)
-                resHeightPt = InsPoint.DefaultHeightWindowCenter + building.HeightFirstFloor;
-            }
-            else
-            {
-                // Если задан уровень для всей группы фронтов, то прибавляем к нему только уровень секции
-                resHeightPt = frontHeight;
-            }
-            return resHeightPt;
-        }
+        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt, int frontLevel)
+        {            
+            var building = calcFrontPt.Section.Building;
+            var levelHeight = building.GetLevelHeight(frontLevel);
+            return  levelHeight + InsPoint.DefaultHeightWindowCenter;                        
+        }       
+
 
         /// <summary>
         /// Определение расчетной секции для точек

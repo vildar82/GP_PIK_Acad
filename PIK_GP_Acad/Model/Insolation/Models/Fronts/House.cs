@@ -36,6 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
             FrontGroup = frontGroup;
             Doc = FrontGroup.Front.Model.Doc;
             VisualFront = new VisualFront(Doc);
+            FrontLevel = frontGroup.FrontLevel;
             //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;            
         }   
 
@@ -71,8 +72,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Высота расчета фронтов
         /// </summary>
-        public double FrontHeight { get { return frontHeight; } set { frontHeight = value; RaisePropertyChanged(); } }
-        double frontHeight;
+        public int FrontLevel { get { return frontLevel; } set { frontLevel = value; RaisePropertyChanged(); } }        
+        int frontLevel;
 
         /// <summary>
         /// Блок-секции дома
@@ -189,7 +190,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 oldValue.Disconnect(this);
             }
             //FrontGroup.Front.DefineHouseDb();
-        }
+        }        
 
         /// <summary>
         /// Показать дом на карте
@@ -356,7 +357,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         public void SetDataFromOldHouse (House oldHouse)
         {
-            FrontHeight = oldHouse.FrontHeight;
+            FrontLevel = oldHouse.FrontLevel;
             IsVisualFront = oldHouse.IsVisualFront;
         }  
 

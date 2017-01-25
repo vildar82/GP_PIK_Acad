@@ -32,7 +32,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Уникальный номер здания в карте
         /// </summary>
-        public int Index { get; set; }
+        public int Index { get; set; }        
 
         public MapBuilding () { }
 

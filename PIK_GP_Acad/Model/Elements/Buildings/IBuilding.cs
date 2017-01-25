@@ -54,5 +54,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Обиходное название типа здания - блок-секция, детсад, школа, 
         /// </summary>
         string FriendlyTypeName { get; set; }
+        /// <summary>
+        /// Высота до заданного этажа
+        /// </summary>
+        /// <param name="frontLevel">Номер этажа</param>        
+        double GetLevelHeight(int frontLevel);
     }
 }

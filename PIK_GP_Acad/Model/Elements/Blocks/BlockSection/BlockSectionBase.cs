@@ -121,10 +121,10 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// </summary>
         /// <returns></returns>
         private double DefineHeight()
-        {            
-            HeightFirstFloor = BlockBase.GetPropValue<double>(PropHeightFirstFloor, false);
-            HeightTypicalFloors = BlockBase.GetPropValue<double>(PropHeightTypicalFloor, false);
-            HeightTechnicalFloor = BlockBase.GetPropValue<double>(PropHeightTechFloor, false);
+        {   
+            HeightFirstFloor = BlockBase.GetPropValue(PropHeightFirstFloor, 3.6, writeDefaultValue: true);
+            HeightTypicalFloors = BlockBase.GetPropValue(PropHeightTypicalFloor, 2.9, writeDefaultValue: true);
+            HeightTechnicalFloor = BlockBase.GetPropValue(PropHeightTechFloor, 1.6, writeDefaultValue: true);
             return CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
         }
 
@@ -138,9 +138,9 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
         /// <returns>Высота здания, м</returns>
         public static double CalcHeight(double h1, double hTypical, double hTech, int floors)
         {
-            if (h1 == 0) h1 = 3;
-            if (hTypical == 0) hTypical = 3;
-            if (hTech == 0) hTech = 3;
+            if (h1 == 0) h1 = 3.6;
+            if (hTypical == 0) hTypical = 2.9;
+            if (hTech == 0) hTech = 1.6;
             if (floors == 0) floors = 1;
             return h1 + (floors - 1) * hTypical + hTech;
         }

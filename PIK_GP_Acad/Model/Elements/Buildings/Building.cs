@@ -141,9 +141,9 @@ namespace PIK_GP_Acad.Elements.Buildings
             else
             {
                 // Поиск параметров Высоты 1 этажа, типового, и тех     
-                HeightFirstFloor = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightFirstFloor);
-                HeightTypicalFloors = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightTypicalFloor);
-                HeightTechnicalFloor = FCProperties.GetPropValue<double>(BlockSectionBase.PropHeightTechFloor);
+                HeightFirstFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightFirstFloor, 3.6);
+                HeightTypicalFloors = FCProperties.GetPropValue(BlockSectionBase.PropHeightTypicalFloor, 2.9);
+                HeightTechnicalFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightTechFloor,1.6);
                 height = BlockSectionBase.CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
             }
             return height;

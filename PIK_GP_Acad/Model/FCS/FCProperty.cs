@@ -22,19 +22,18 @@ namespace PIK_GP_Acad.FCS
 
     public static class FCPropertyExt
     {
-        public static T GetPropValue<T>(this IEnumerable<FCProperty> fcs, string propName)
-        {
-            T res = default(T);
+        public static T GetPropValue<T>(this IEnumerable<FCProperty> fcs, string propName, T defaultValue)
+        {            
             var prop = fcs.FirstOrDefault(p => p.Name.Equals(propName, StringComparison.OrdinalIgnoreCase));
             if (prop != null)
             {
                 try
                 {
-                    res = prop.Value.GetValue<T>();
+                    return prop.Value.GetValue<T>();
                 }
                 catch { }
             }
-            return res;
+            return defaultValue;
         }
     }
 }
