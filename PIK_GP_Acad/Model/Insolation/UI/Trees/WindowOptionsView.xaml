@@ -12,7 +12,7 @@
         <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
     </UserControl.Resources>
     <GroupBox BorderBrush="Gray" Header="Параметры окна" Margin="2"
-              IsEnabled="{Binding HasWindow}">
+              Visibility="{Binding HasWindow, Converter={converters:BooleanToHidingVisibilityConverter}}">
         <WrapPanel>
             <StackPanel Margin="3" IsEnabled="{Binding ElementName=chkBoxCustom, Path=IsChecked, Converter={converters:BooleanToOppositeBooleanConverter}}">
                 <TextBlock DockPanel.Dock="Top" Text="Ширина окна, м" />

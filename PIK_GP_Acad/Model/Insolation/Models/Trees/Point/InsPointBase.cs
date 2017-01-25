@@ -244,7 +244,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 correctPt = building.Contour.GetClosestPointTo(pt, true);
             }
 
-            if ((pt - correctPt).Length < 1)
+            if ((pt - correctPt).Length < 0.3)
             {                
                 // Точка достаточно близко к контуру - поправка точки и ОК.
                 pt = correctPt;
