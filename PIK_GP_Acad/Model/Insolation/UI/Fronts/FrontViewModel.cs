@@ -22,8 +22,8 @@ namespace PIK_GP_Acad.Insolation.UI
             Add = new RelayCommand(InsAddFrontExecute);
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
-            Export = new RelayCommand(OnExportExecute);
-            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
+            Export = new RelayCommand(InsFrontExportExecute);
+            DrawVisuals = new RelayCommand(InsFrontDrawVisualsExecute);
             ShowOptions = new RelayCommand<FrontGroup>(OnShowOptionsExecute);
 
             FillHouseDb();
@@ -81,18 +81,20 @@ namespace PIK_GP_Acad.Insolation.UI
             house.Show();
         }
 
-        private void OnExportExecute()
+        private void InsFrontExportExecute()
         {
             // Экспорт фронтов инсоляции
             Front.Export();
+            PluginStatisticsHelper.AddStatistic();
         }
 
         /// <summary>
         /// Рисование визуализации в чертеже
         /// </summary>
-        private void OnDrawVisualsExecute()
+        private void InsFrontDrawVisualsExecute()
         {
             Front.DrawVisuals();
+            PluginStatisticsHelper.AddStatistic();
         }
 
         private void OnShowOptionsExecute(FrontGroup group)

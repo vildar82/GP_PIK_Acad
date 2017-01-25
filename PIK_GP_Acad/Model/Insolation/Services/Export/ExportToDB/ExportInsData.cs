@@ -72,6 +72,9 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             }).ToList();
 
             PIK_DB_Projects.Ins.DbInsService.Save(insData);
+
+            // Открыть схему в excel
+            insData.ToExcel();
         }  
     }
 }

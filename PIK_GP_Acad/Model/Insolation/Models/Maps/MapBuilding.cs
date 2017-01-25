@@ -16,9 +16,7 @@ namespace PIK_GP_Acad.Insolation.Models
 {
     public class MapBuilding : ModelBase, IVisualElement, IDisposable
     {
-#if DEBUG
-        static int testIndexes;
-#endif    
+        public static int IndexesCounter { get; set; }
         public IBuilding Building { get; set; }        
         public Polyline Contour { get; private set; }  
         public Region Region { get; set; }
@@ -31,9 +29,10 @@ namespace PIK_GP_Acad.Insolation.Models
         public Extents3d ExtentsInModel { get { return Building.ExtentsInModel; } }
         public BuildingTypeEnum BuildingType { get; set; }        
         public string BuildinTypeName { get { return AcadLib.WPF.Converters.EnumDescriptionTypeConverter.GetEnumDescription(BuildingType); } }
-#if DEBUG
-        public int TestIndex { get; set; }
-#endif
+        /// <summary>
+        /// Уникальный номер здания в карте
+        /// </summary>
+        public int Index { get; set; }
 
         public MapBuilding () { }
 
@@ -44,9 +43,7 @@ namespace PIK_GP_Acad.Insolation.Models
             YMax = ExtentsInModel.MaxPoint.Y;
             YMin = ExtentsInModel.MinPoint.Y;
             HeightCalc = building.Height + building.Elevation;
-#if DEBUG
-            TestIndex = testIndexes++;
-#endif
+            Index = IndexesCounter++;
         }
 
         /// <summary>
@@ -123,7 +120,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 sb.AppendLine(Building.FriendlyTypeName);
             }
 #if DEBUG
-            sb.AppendLine(TestIndex.ToString());
+            sb.AppendLine(Index.ToString());
 #endif
             return sb.ToString();
         }

@@ -245,7 +245,7 @@ namespace PIK_GP_Acad.Insolation.Models
                                 foreach (var item in house.Sections)
                                 {
                                     var contourItem = item.Contour;
-                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex);
+                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex, true);
 #if TEST
                                     //EntityHelper.AddEntityToCurrentSpace((Polyline)building.Contour.Clone());
                                     //EntityHelper.AddEntityToCurrentSpace((Polyline)contourItem.Clone());

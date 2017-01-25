@@ -89,7 +89,7 @@
                 Style="{StaticResource btnNormal}"
                 Background="Transparent"
                 Command="{Binding EditInsOptions}"
-                ToolTip="Выбор региорна">
+                ToolTip="Выбор региорна и прочие настройки">
                 <Image Source="{StaticResource biOptions}" />
             </Button>
         </StackPanel>
@@ -119,7 +119,7 @@
             <!--  Вкладка - Площадка  -->
             <TabItem Background="Transparent">
                 <TabItem.Header>
-                    <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource biPlace}" ToolTip="Фронты" />
+                    <Image Height="{StaticResource NormalButtonsHeight}" Source="{StaticResource biPlace}" ToolTip="Площадки" />
                 </TabItem.Header>
                 <TabItem.Content>
                     <local:PlaceView DataContext="{Binding PlaceVM, UpdateSourceTrigger=PropertyChanged}" />

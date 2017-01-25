@@ -83,7 +83,7 @@
                                                     Style="{StaticResource btnSmall}"
                                                     Command="{Binding ElementName=icGroups, Path=DataContext.Delete}"
                                                     CommandParameter="{Binding}"
-                                                    ToolTip="Удаление блока из расчета">
+                                                    ToolTip="Удаление группы из расчета">
                                                     <Image Source="{StaticResource biClose}" />
                                                 </Button>
                                             </StackPanel>
@@ -157,7 +157,7 @@
                 Margin="1"
                 Style="{StaticResource btnNormal}"
                 Command="{Binding Add}"
-                ToolTip="Добавить блок в расчет - выбор области на чертеже">
+                ToolTip="Добавить группу в расчет - выбор области на чертеже">
                 <Image Source="{StaticResource biAdd}" />
             </Button>
             <Button
@@ -168,16 +168,16 @@
                 <Image Source="{StaticResource biOption_dots}" />
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
-                        <MenuItem Height="22" Command="{Binding Export}" Header="Экспорт фронтов">
+                        <MenuItem Height="22" Command="{Binding Export}" Header="Экспорт фронтов" ToolTip="Экспорт фронтов для архитекторов.">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biFrontExport}" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
+                        <!--<MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biDraw_visuals}" />
                             </MenuItem.Icon>
-                        </MenuItem>
+                        </MenuItem>-->
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>

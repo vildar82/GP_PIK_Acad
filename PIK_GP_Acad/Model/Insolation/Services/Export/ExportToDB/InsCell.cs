@@ -18,7 +18,8 @@ namespace PIK_GP_Acad.Insolation.Services.Export
     {
         public const double ModuleSize = 3.6;
         public static readonly Tolerance Tolerance = new Tolerance(0.01,1.5);
-        public Vector2d Direction { get; set; }
+        
+        public static int IndexCounter { get; set;}
 
         public InsCell(Point2d cellPt, List<FrontCalcPoint> calcPts, Vector2d vecModule)
         {
@@ -27,8 +28,10 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             PtCenterOrig = cellPt;
             // Определение значения инсоляции
             InsValue = GetInsValue(calcPts);
-        }       
+            Index = IndexCounter++;
+        }
 
+        public Vector2d Direction { get; set; }
         /// <summary>
         /// Индекс строки (ряда) от 0
         /// </summary>
@@ -41,6 +44,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
 
         public Point2d PtCenter { get; set; }
         public Point2d PtCenterOrig { get; set; }
+        public int Index { get; set; }             
 
         /// <summary>
         /// Определение значения инсоляции ячейки по набору расчетных точек в этом модуле
@@ -123,6 +127,14 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             text.AlignmentPoint = PtCenter.Convert3d();
             text.AdjustAlignment(HostApplicationServices.WorkingDatabase);
             EntityHelper.AddEntityToCurrentSpace(text);
+
+            var textIndex = new DBText();
+            textIndex.TextString = Index.ToString();
+            textIndex.Height = 0.25;
+            textIndex.Justify = AttachmentPoint.MiddleCenter;
+            textIndex.AlignmentPoint = new Point3d(PtCenter.X, PtCenter.Y-1.5, 0);
+            textIndex.AdjustAlignment(HostApplicationServices.WorkingDatabase);
+            EntityHelper.AddEntityToCurrentSpace(textIndex);
         }
     }
 }

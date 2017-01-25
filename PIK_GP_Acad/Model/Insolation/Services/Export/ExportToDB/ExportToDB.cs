@@ -30,6 +30,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         public void Export ()
         {
             Inspector.Clear();
+            InsCell.IndexCounter = 0;
             // Отбор групп которым присвоен идентификатор, и в группе всем корпусам назначен идентификаторы
             //List<FrontGroup> notIdentifiedGroups;
             List<FrontGroup> exportedGroups = GetExportedGroups();
@@ -46,16 +47,13 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                     {
                         continue;
                     }
-                    exportData.Date = date;
-#if DEBUG
-                    exportData.ToExel($@"c:\temp\exportIns_{item.Name}.xlsx");
-#else
+                    exportData.Date = date;                    
                     // Запись инсоляции в базу - один таймштамп для группы домов
-                    exportData.ToDb();
-#endif
+                    exportData.ToDb();                    
                 }
             }
             Inspector.Show();
+            Inspector.Clear();
         }        
 
         private List<FrontGroup> GetExportedGroups ()

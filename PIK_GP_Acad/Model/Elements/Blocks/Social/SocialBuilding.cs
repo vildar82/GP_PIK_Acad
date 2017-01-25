@@ -48,8 +48,7 @@ namespace PIK_GP_Acad.Elements.Blocks.Social
             else
             {
                 IdPlContour = plContour.Id;
-            }
-            
+            }            
         }       
 
         private int GetPlaces (string paramName)

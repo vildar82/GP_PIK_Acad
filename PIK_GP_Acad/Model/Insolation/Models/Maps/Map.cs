@@ -81,6 +81,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             IsEventsOn = false;
             FCS.FCService.Init(db);
+            MapBuilding.IndexesCounter = 0;
             Buildings = new List<MapBuilding>();
             InsPoints = new List<ObjectId>();
             Places = new List<KeyValuePair<ObjectId, DicED>>();
