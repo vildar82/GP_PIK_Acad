@@ -134,19 +134,22 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// <param name="height">Высота заданная в параметре Высота в классифицированном объекте</param>        
         private double CalcHeight(double height)
         {
+            double resHeight;
+
+            // Определение параметров - для расчета инсоляции     
+            HeightFirstFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightFirstFloor, 3.6);
+            HeightTypicalFloors = FCProperties.GetPropValue(BlockSectionBase.PropHeightTypicalFloor, 2.9);
+            HeightTechnicalFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightTechFloor, 1.6);
+
             if (height != 0)
             {
-                return height;
+                resHeight = height;
             }
             else
-            {
-                // Поиск параметров Высоты 1 этажа, типового, и тех     
-                HeightFirstFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightFirstFloor, 3.6);
-                HeightTypicalFloors = FCProperties.GetPropValue(BlockSectionBase.PropHeightTypicalFloor, 2.9);
-                HeightTechnicalFloor = FCProperties.GetPropValue(BlockSectionBase.PropHeightTechFloor,1.6);
-                height = BlockSectionBase.CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
+            {                
+                resHeight = BlockSectionBase.CalcHeight(HeightFirstFloor, HeightTypicalFloors, HeightTechnicalFloor, Floors);
             }
-            return height;
+            return resHeight;
         }        
     }
 }

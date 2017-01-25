@@ -29,10 +29,15 @@ namespace PIK_GP_Acad.FCS
             {
                 try
                 {
-                    return prop.Value.GetValue<T>();
+                    var res = prop.Value.GetValue<T>();
+                    if (EqualityComparer<T>.Default.Equals(res, default(T)))
+                    {
+                        return defaultValue;
+                    }
+                    return res;
                 }
                 catch { }
-            }
+            }            
             return defaultValue;
         }
     }
