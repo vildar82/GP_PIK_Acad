@@ -13,7 +13,7 @@ namespace PIK_GP_Acad.Elements.Buildings
     /// <summary>
     /// Здание
     /// </summary>
-    public interface IBuilding: IElement, IDboDataSave
+    public interface IBuilding: IElement, IDboDataSave, ITypedDataValues
     {
         int Floors { get; set; }
         Extents3d ExtentsInModel { get; set; }        

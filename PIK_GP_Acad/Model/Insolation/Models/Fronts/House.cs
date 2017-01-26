@@ -27,8 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
     public class House : ModelBase, IDisposable
     {
         public House ()
-        {
-
+        {     
         }
 
         public House (FrontGroup frontGroup)
@@ -175,7 +174,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnSelectedHouseDbChanged(HouseDbSel oldValue)
         {
-            if (object.ReferenceEquals(oldValue, SelectedHouseDb)) return;
+            if (ReferenceEquals(oldValue, SelectedHouseDb)) return;
             if (SelectedHouseDb != null)
             {
                 HouseId = SelectedHouseDb.Id;
@@ -248,13 +247,20 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void SaveHouseIdToSections()
         {
-            //if (string.IsNullOrEmpty(Name)) return;            
-            foreach (var item in Sections)
+            //if (string.IsNullOrEmpty(Name)) return;  
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
             {
-                if (item.Building != null)
+
+                foreach (var item in Sections)
                 {
-                    item.Building.HouseId = HouseId;
+                    if (item.Building != null && item.Building.HouseId != HouseId)
+                    {
+                        item.Building.HouseId = HouseId;
+                        item.Building.SaveDboDict();
+                    }
                 }
+                t.Commit();
             }
         }
 
