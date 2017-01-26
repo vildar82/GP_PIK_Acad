@@ -24,7 +24,7 @@ namespace PIK_GP_Acad.FCS
     {
         public static T GetPropValue<T>(this IEnumerable<FCProperty> fcs, string propName, T defaultValue)
         {            
-            var prop = fcs.FirstOrDefault(p => p.Name.Equals(propName, StringComparison.OrdinalIgnoreCase));
+            var prop = fcs?.FirstOrDefault(p => p.Name.Equals(propName, StringComparison.OrdinalIgnoreCase));
             if (prop != null)
             {
                 try

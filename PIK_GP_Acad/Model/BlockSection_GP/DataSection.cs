@@ -4,7 +4,7 @@ using System.Linq;
 using PIK_GP_Acad.Elements;
 using PIK_GP_Acad.FCS;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
     // Подсчет площедей и типоак блок-секций
     public class DataSection

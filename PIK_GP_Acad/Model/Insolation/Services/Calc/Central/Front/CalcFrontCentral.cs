@@ -223,7 +223,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
                 insPt.Point = calcFrontPt.Point.Convert3d();
 #if TEST
-                EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
+                //EntityHelper.AddEntityToCurrentSpace(new DBPoint(insPt.Point));
 #endif
                 insPt.Building = calcFrontPt.Section;
                 // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                

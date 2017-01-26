@@ -107,8 +107,8 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         /// </summary>
         public void DefineNumCell()
         {
-            Row = (int)Math.Floor(-PtCenter.Y / InsCell.ModuleSize) +1; // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
-            Column = (int)Math.Floor(PtCenter.X / InsCell.ModuleSize) +1;
+            Row = (int)Math.Floor(NetLib.DoubleExt.Round(-PtCenter.Y, 1) / ModuleSize) +1; // - т.к. в автокаде ось Y направлена вверх, а отсчет рядов идет вниз (группа перемещена в 4 четверть)
+            Column = (int)Math.Floor(NetLib.DoubleExt.Round(PtCenter.X,1) / ModuleSize) +1;
         }
 
         /// <summary>

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using AcadLib.Errors;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using PIK_GP_Acad.BlockSection;
+using PIK_GP_Acad.BlockSection_GP;
 using AcadLib;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
     public static class BlockSectionContours
     {
