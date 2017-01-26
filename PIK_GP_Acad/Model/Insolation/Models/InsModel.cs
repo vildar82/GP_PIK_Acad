@@ -404,10 +404,10 @@ namespace PIK_GP_Acad.Insolation.Models
             if (Doc == null || Doc.IsDisposed) return;
             using (Doc.LockDocument())
             {
-                Tree.Dispose();
-                Map.Dispose();
-                Place.Dispose();
-                Front.Dispose();
+                Tree?.Dispose();
+                Map?.Dispose();
+                Place?.Dispose();
+                Front?.Dispose();
                 Doc.Database.BeginSave -= Database_BeginSave;
             }
             //Doc = null;

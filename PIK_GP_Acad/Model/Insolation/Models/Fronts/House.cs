@@ -24,7 +24,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Дом - состоит из блок-секций
     /// Дом - соответствует Корпусу в проекте
     /// </summary>
-    public class House : ModelBase, IDisposable
+    public class House : ModelBase, IDisposable, IEquatable<House>
     {
         public House ()
         {     
@@ -37,10 +37,21 @@ namespace PIK_GP_Acad.Insolation.Models
             VisualFront = new VisualFront(Doc);
             FrontLevel = frontGroup.FrontLevel;
             //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;            
-        }   
+        }
+
+        public House(Document doc, int index)
+        {
+            Doc = doc;
+            Index = index;
+        }
 
         public Document Doc { get; set; }
-        public FrontGroup FrontGroup { get; set; }        
+        public FrontGroup FrontGroup { get; set; }  
+        
+        /// <summary>
+        /// Уникальный индекс (номер) дома - на карте
+        /// </summary>
+        public int Index { get; set; }      
 
         /// <summary>
         /// Имя дома - в иделе = имени объекта принятого в проекте
@@ -416,6 +427,15 @@ namespace PIK_GP_Acad.Insolation.Models
                 text.Height = 2;
                 EntityHelper.AddEntityToCurrentSpace(text);
             }
+        }
+
+        public bool Equals(House other)
+        {
+            return Index == other?.Index;
+        }
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode();
         }
     }
 }

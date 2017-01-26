@@ -14,7 +14,7 @@ using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class MapBuilding : ModelBase, IVisualElement, IDisposable
+    public class MapBuilding : ModelBase, IVisualElement, IDisposable, IEquatable<MapBuilding>
     {
         public static int IndexesCounter { get; set; }
         public IBuilding Building { get; set; }        
@@ -32,7 +32,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Уникальный номер здания в карте
         /// </summary>
-        public int Index { get; set; }        
+        public int Index { get; set; }
+        /// <summary>
+        /// Дом которому принадлежит здание
+        /// </summary>
+        public House House { get; set; }
 
         public MapBuilding () { }
 
@@ -43,7 +47,7 @@ namespace PIK_GP_Acad.Insolation.Models
             YMax = ExtentsInModel.MaxPoint.Y;
             YMin = ExtentsInModel.MinPoint.Y;
             HeightCalc = building.Height + building.Elevation;
-            Index = IndexesCounter++;
+            Index = ++IndexesCounter;
         }
 
         /// <summary>
@@ -147,6 +151,15 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Contour?.Dispose();
             Region?.Dispose();            
+        }
+
+        public bool Equals(MapBuilding other)
+        {   
+            return Index == other?.Index;                    
+        }
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode();
         }
     }
 }

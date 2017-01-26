@@ -53,7 +53,14 @@ namespace PIK_GP_Acad.Insolation.Services
                 return insModel != null && insModel.IsEnabled;
             }
             set {
-                ActivateIns(value);
+                try
+                {
+                    ActivateIns(value);
+                }
+                catch(Exception ex)
+                {
+                    ShowMessage(ex, "Ошибка.");
+                }
                 RaiseStaticPropertyChanged(nameof(InsActivate));
             }
         }
@@ -307,7 +314,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public static void ShowMessage (Exception ex, string msg)
         {
-            ShowMessage($"{msg}\n\r{ex.Message}", MessageBoxImage.Error);
+            Logger.Log.Error(ex, msg);
+            ShowMessage($"{msg}\n\r{ex.Message}", MessageBoxImage.Error);            
         }
 
         public static void ShowMessage (string msg, MessageBoxImage icon)
