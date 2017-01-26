@@ -299,7 +299,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         {
                             var ptsLoopAbove = build.Contour.GetLoopSideBetweenHorizontalIntersectPoints(
                                                 ptIntersectPrew, ptIntersect, true, true);
-                            var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p => p.Y <= ptCalc.Y).ToList());
+                            var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p => p.Y <= ptCalc.Y && p.Y >= lineShadow.StartPoint.Y).ToList());
                             if (ilumShadow != null)
                             {
                                 resIlumsShadows.Add(ilumShadow);
@@ -336,7 +336,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             IIlluminationArea ilum = null;
             // список точек и их углов к расчетной точке
-            List<Tuple<Point2d, double>> angles = new List<Tuple<Point2d, double>>();
+            var angles = new List<Tuple<Point2d, double>>();
             foreach (var iPt in points)
             {
                 // угол к расчетной точке (от 0 по часовой стрелке)

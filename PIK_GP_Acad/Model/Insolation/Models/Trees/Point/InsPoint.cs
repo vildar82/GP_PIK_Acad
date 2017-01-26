@@ -144,7 +144,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var info = new StringBuilder();
 
-            info.Append("Номер: ").Append(Number).Append(", Коорд. - ").Append(Point.ToStringEx()).Append(", Высота точки - ").Append(Height).AppendLine();
+            info.Append("Номер: ").Append(Number).Append(", Коорд. - ").Append(Point.ToStringEx()).Append(", Высота точки - ").Append(Height).Append("м.").AppendLine();
             info.Append("Инсоляция: ").Append(InsValue.Requirement.Name).Append(", Макс - ").
                 Append(InsValue.MaxContinuosTimeString).Append(", Всего - ").Append(InsValue.TotalTimeString).AppendLine();
             var building = Building;

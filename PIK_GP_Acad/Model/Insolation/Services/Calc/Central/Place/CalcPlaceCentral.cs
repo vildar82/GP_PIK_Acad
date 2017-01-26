@@ -45,7 +45,7 @@ namespace PIK_GP_Acad.Insolation.Services
             stepQuart = step * 0.25;
             using (pl = place.PlaceId.Open(OpenMode.ForRead) as Polyline)
             {
-                place.Area = pl.Area.Round(2);                    
+                place.Area = NetLib.DoubleExt.Round( pl.Area,2);                    
                 // Нарезка площадки на ячейки (tiles)
                 tiles = DividePlace();
                 //  расчет каждой ячейке (точка - без оуна и без здания)
