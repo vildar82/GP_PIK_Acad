@@ -82,9 +82,11 @@ namespace PIK_GP_Acad.Insolation.UI
             var building = insPoint?.Building;
             //if (building == null) return;
 
-            var oldBuildingType = building?.BuildingType ?? Elements.Buildings.BuildingTypeEnum.Living;            
+            var oldBuildingType = building?.BuildingType ?? Elements.Buildings.BuildingTypeEnum.Living;
 
-            var insPointVM = new InsPointViewModel(insPoint);
+            var selectedPoints = Tree.Points.Where(w => w.IsSelected).ToList();
+
+            var insPointVM = new InsPointViewModel(insPoint,selectedPoints.Count==1);
             //var uiVisualizerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
             if (InsService.ShowDialog(insPointVM) != true) return;
             // Если измениля тип здания - то пересчет всех точек на этом здании
@@ -95,7 +97,18 @@ namespace PIK_GP_Acad.Insolation.UI
             }
             else
             {
-                // Обновление только этой точки
+                if (selectedPoints.Count>1)
+                {
+                    selectedPoints.Remove(insPoint);
+                    foreach (var selPt in selectedPoints)
+                    {
+                        selPt.Height = insPoint.Height;
+                        if (insPoint.Window != null)
+                            selPt.Window = insPoint.Window;
+                        selPt.Update();
+                    }
+                }
+                // Обновление точки
                 insPoint.Update();
             }
 

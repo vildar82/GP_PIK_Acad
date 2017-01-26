@@ -15,8 +15,9 @@ namespace PIK_GP_Acad.Insolation.UI
     {
         private static WindowOptions defaultWindow = WindowOptions.Default;
         private IBuilding build;
-        public InsPointViewModel (InsPoint insPoint)
+        public InsPointViewModel (InsPoint insPoint, bool isSinglePointEdit = true)
         {
+            IsSinglePointEdit = isSinglePointEdit;
             BuildingTypes = new ObservableCollection<BuildingTypeEnum> { BuildingTypeEnum.Living, BuildingTypeEnum.Social };
             InsPoint = insPoint;
 
@@ -52,6 +53,8 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand OK { get; set; }        
 
         public ObservableCollection<BuildingTypeEnum> BuildingTypes { get; set; }    
+
+        public bool IsSinglePointEdit { get; set; }
             
         public BuildingTypeEnum BuildingType {
             get { return buildingType; }

@@ -69,7 +69,8 @@ namespace PIK_GP_Acad.Insolation.Models
         InsValue insValue;     
         public int Number { get { return number; } set { number = value; RaisePropertyChanged(); } }
         int number;
-        public WindowOptions Window { get; set; }       
+        public WindowOptions Window { get { return window; } set { window = value; RaisePropertyChanged(); } }
+        WindowOptions window;
         /// <summary>
         /// Список значений для сохранения в словарь
         /// </summary>

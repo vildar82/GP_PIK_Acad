@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
         <!--  Здание  -->
         <WrapPanel Grid.Row="0" Margin="2" HorizontalAlignment="Center">
-            <StackPanel Margin="4" IsEnabled="{Binding HasBuilding}">
+            <StackPanel Margin="4" IsEnabled="{Binding HasBuilding}" Visibility="{Binding IsSinglePointEdit, Converter={converters:BooleanToHidingVisibilityConverter}}">
                 <TextBlock Text="Тип здания:" />
                 <ComboBox ItemsSource="{Binding BuildingTypes}" 
                           SelectedItem="{Binding BuildingType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">

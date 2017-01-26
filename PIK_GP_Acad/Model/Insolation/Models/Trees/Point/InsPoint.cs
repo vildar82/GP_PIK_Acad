@@ -53,6 +53,9 @@ namespace PIK_GP_Acad.Insolation.Models
             set { isVisualIllumsOn = value; RaisePropertyChanged(); OnIsVisualIllumsOnChanged(); } }
         bool isVisualIllumsOn;
 
+        public bool IsSelected { get { return isSelected; } set { isSelected = value; RaisePropertyChanged(); } }
+        bool isSelected;
+
         /// <summary>
         /// Пока не используется
         /// ??? подумать над использованием !!! - обновление точки
@@ -144,9 +147,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var info = new StringBuilder();
 
-            info.Append("Номер: ").Append(Number).Append(", Коорд. - ").Append(Point.ToStringEx()).Append(", Высота точки - ").Append(Height).Append("м.").AppendLine();
-            info.Append("Инсоляция: ").Append(InsValue.Requirement.Name).Append(", Макс - ").
-                Append(InsValue.MaxContinuosTimeString).Append(", Всего - ").Append(InsValue.TotalTimeString).AppendLine();
+            info.Append("Номер: ").Append(Number).AppendLine().
+                Append("Координата - ").Append(Point.ToStringEx()).AppendLine().
+                Append("Высота точки - ").Append(Height).Append("м.").AppendLine();
+            info.Append("Инсоляция: ").Append(InsValue.Requirement.Name).AppendLine().
+                Append("                    Макс - ").Append(InsValue.MaxContinuosTimeString).AppendLine().
+                Append("                    Всего - ").Append(InsValue.TotalTimeString).AppendLine();
             var building = Building;
             if (building == null)
             {
@@ -156,8 +162,16 @@ namespace PIK_GP_Acad.Insolation.Models
             {                
                 info.Append("Здание: ").Append(building.BuildinTypeName).Append(", Высота - ").Append(building.Building.Height).AppendLine();
             }
-            info.Append("Окно: ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
-                Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth);
+            if (!Window.IsCustomAngle)
+            {
+                info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(), 2)).Append(General.Symbols.Degree).
+                    Append(", ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
+                    Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth).AppendLine();
+            }
+            else
+            {
+                info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(),2)).Append(General.Symbols.Degree).AppendLine();
+            }
 
             return info.ToString();
         }
@@ -238,7 +252,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            Height = dictValues.GetValue("Height", 0);
+            Height = dictValues.GetValue("Height", 0d);
             IsVisualIllumsOn = dictValues.GetValue("IsVisualIllumsOn", true);            
         }
 
