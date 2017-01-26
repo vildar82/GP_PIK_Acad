@@ -4,104 +4,134 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetLib;
+using AcadLib;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
+using System.Collections;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
     /// <summary>
     /// Дома на карте
     /// </summary>
-    public class HouseMap
+    public class HouseMap : IEnumerable<House>
     {
-        private Map map;       
+        private Map map;
+        private List<House> houses;
+        private int indexCounter;
+        private Dictionary<int, IEnumerable<MapBuilding>> dictBuildingsByHouseIndex;
 
         public HouseMap(Map map)
         {
             this.map = map;
-        }
+            indexCounter = 0;
+        }        
 
         public void DefineHouses()
         {
-            var houses = new List<House>();
+            houses = new List<House>();
+            dictBuildingsByHouseIndex = new Dictionary<int, IEnumerable<MapBuilding>>();
+
             // Определение домов
             using (var scope = new Scope(map.Buildings, map))
             {
-                var projectBuildings = scope.Buildings;//.Where(b => b.Building.IsProjectedBuilding);
-                foreach (var building in projectBuildings)
+                scope.InitBuildingsContours();
+                var buildingsWithoutHouses = scope.Buildings.ToList();// Копия списка
+                // Пока есть не распределенные по домам здания
+                while (buildingsWithoutHouses.Any())
                 {
-                    // Дом из блок-секций
-                    if (!FindHouse(ref houses, building))
+                    // Берем первое здание из списка нераспределенных зданий по домам
+                    var firstBuilding = buildingsWithoutHouses[0];                    
+                    buildingsWithoutHouses.RemoveAt(0);
+                    // Если у здания еще нет дома, то определяем его
+                    if (firstBuilding.House == null)
                     {
-                        var house = new House(this);
-                        house.Sections.Add(building);
-                        houses.Add(house);
+                        DefineHouseForBuilding(firstBuilding, scope.Buildings);
                     }
                 }
-                // Для каждого дома - создание общей полилинии
-                int countHouse = 1;
-                foreach (var house in houses)
-                {
-                    house.FrontGroup = this;
-                    house.DefineContour();
-                    // Заполнение оставшихся свойств дома
-                    house.DefineName(countHouse);
-                    countHouse++;
-                }
             }
-        }        
+            // Окончательный список домов
+            houses = dictBuildingsByHouseIndex.Select(s => s.Value.First().House).ToList();
+        }
 
-        private bool FindHouse(ref List<House> houses, MapBuilding building)
+        /// <summary>
+        /// Определение дома для здания
+        /// </summary>
+        /// <param name="building">Здание без дома</param>        
+        /// <param name="allBuildings">Все здания</param>
+        private void DefineHouseForBuilding(MapBuilding building, List<MapBuilding> allBuildings)
         {
-            var findHouses = new List<House>();
+            // Оффсет от контура здания наружу на 1м
             using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
             {
-                foreach (var house in houses)
+                var allNewHouseBuildings = new List<MapBuilding>();
+                // Поиск ближайших зданий в области оффсета
+                var nearestBuildings = map.GetBuildingsInExtents(offset.GeometricExtents);
+                nearestBuildings.Remove(building);
+                if (nearestBuildings.Any())
                 {
-                    foreach (var blInHouse in house.Sections)
+                    var newHouseBuildings = new List<MapBuilding>();
+                    newHouseBuildings.Add(building);
+                    // Найти пересечение с ближайшими зданиями
+                    foreach (var nearBuilding in nearestBuildings)
                     {
-                        using (var ptsIntersect = new Point3dCollection())
+                        var ptsIntersect = new Point3dCollection();
+                        offset.IntersectWith(nearBuilding.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                        if (ptsIntersect.Count > 0)
                         {
-                            offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                            if (ptsIntersect.Count > 0)
-                            {
-                                findHouses.Add(house);
-                                // Усреднение полилиний
-                                foreach (var item in house.Sections)
-                                {
-                                    var contourItem = item.Contour;
-                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex, true);
-#if TEST
-                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)building.Contour.Clone());
-                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)contourItem.Clone());
-#endif
-                                }
-                                break;
-                            }
+                            newHouseBuildings.Add(nearBuilding);
                         }
                     }
-                }
-            }
-            if (findHouses.Any())
-            {
-                if (findHouses.Skip(1).Any())
-                {
-                    // Объединение нескольких домов в один общий
-                    var bls = findHouses.SelectMany(s => s.Sections).ToList();
-                    bls.Add(building);
-                    var house = new House(this);
-                    house.Sections = new ObservableCollection<MapBuilding>(bls);
-                    houses.Add(house);
-                    foreach (var h in findHouses)
+                    // Найти все здания для нового дома                    
+                    foreach (var newBuild in newHouseBuildings.GroupBy(g=>g.House))
                     {
-                        houses.Remove(h);
+                        if (newBuild.Key ==null)
+                        {
+                            allNewHouseBuildings.AddRange(newBuild);
+                        }
+                        else
+                        {
+                            allNewHouseBuildings.AddRange(dictBuildingsByHouseIndex[newBuild.Key.Index]);
+                        }
                     }
                 }
                 else
                 {
-                    findHouses[0].Sections.Add(building);
+                    // Здание отдельно стоящее - дом
+                    allNewHouseBuildings.Add(building);
                 }
-                return true;
+                NewHouse(allNewHouseBuildings);
             }
-            return false;
+        }
+
+        private void NewHouse(List<MapBuilding> buildings)
+        {
+            // Если среди зданий уже есть с домами, то удаление этих домов из словаря, т.к. будет создан новый общий дом
+            var indexesHouseToRemove = buildings.Where(w => w.House != null).GroupBy(g => g.House.Index).Select(s => s.Key);
+            foreach (var indexHouseOld in indexesHouseToRemove)
+            {
+                dictBuildingsByHouseIndex.Remove(indexHouseOld);
+            }
+
+            var house = new House(map.Doc, ++indexCounter);
+            houses.Add(house);
+            foreach (var item in buildings)
+            {                
+                item.House = house;
+            }
+            // Запись зданий в словарь по индексу дома
+            dictBuildingsByHouseIndex[indexCounter] = buildings;            
+        }
+
+        public IEnumerator<House> GetEnumerator()
+        {
+            return houses.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return houses.GetEnumerator();
         }
     }
 }

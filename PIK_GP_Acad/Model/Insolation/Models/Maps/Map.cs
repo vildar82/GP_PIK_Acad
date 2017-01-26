@@ -108,7 +108,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     Houses = new HouseMap(this);
                     Houses.DefineHouses();
-                }                
+                }
 
                 t.Commit();
             }
@@ -284,7 +284,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             var scope = new Scope(items, this);
-            scope.InitContour();
+            scope.InitBuildingsContours();
             return scope;
         }
 
