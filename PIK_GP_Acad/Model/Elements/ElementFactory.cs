@@ -20,7 +20,7 @@ namespace PIK_GP_Acad.Elements
         public static Dictionary<string, Type> BlockTypes = new Dictionary<string, Type>()
             {
                 { TowerKPBS.BlockName, typeof(TowerKPBS) },
-                { BlockSectionGP.BlockNameMatch, typeof(BlockSectionGP) },
+                { BlockSectionGP.BlockSectionPrefix, typeof(BlockSectionGP) },
                 { BlockSectionKP.BlockNameMatch, typeof(BlockSectionKP) },
                 { BlockSectionPIK1KP.BlockNameMatch, typeof(BlockSectionPIK1KP) },
                 { LineParking.BlockName, typeof(LineParking) },

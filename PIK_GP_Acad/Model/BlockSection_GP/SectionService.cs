@@ -10,7 +10,7 @@ using PIK_GP_Acad.Elements.Blocks;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using PIK_GP_Acad.FCS;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
     public class SectionService
     {
@@ -76,7 +76,7 @@ namespace PIK_GP_Acad.BlockSection
 
         public static bool IsBlockNameSection (string name)
         {
-            return name.StartsWith(SettingsBS.Default.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
+            return name.StartsWith(BlockSectionGP.BlockSectionPrefix, StringComparison.OrdinalIgnoreCase);
         }
 
         public static List<BlockSectionGP> Parse (List<ObjectId> ids, out List<IArea> classes, Editor ed)

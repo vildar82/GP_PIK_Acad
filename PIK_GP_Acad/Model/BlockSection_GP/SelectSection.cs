@@ -5,7 +5,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
     public class SelectSection
     {

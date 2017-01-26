@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using PIK_GP_Acad.Elements.Blocks;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
    public class AlphanumComparatorFast : IComparer<string>
    {

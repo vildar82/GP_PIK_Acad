@@ -247,7 +247,7 @@ namespace PIK_GP_Acad
             {                
                 // Выбор и вставка блока 
                 AcadLib.Blocks.Visual.VisualInsertBlock.InsertBlock(fileBlocks, n =>
-                        n.StartsWith(BlockSection.SettingsBS.Default.BlockSectionPrefix));
+                        n.StartsWith(Elements.Blocks.BlockSection.BlockSectionGP.BlockSectionPrefix));
             });
         }
         
@@ -256,7 +256,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {                
-                BlockSection.SectionService ss = new BlockSection.SectionService(doc);
+                BlockSection_GP.SectionService ss = new BlockSection_GP.SectionService(doc);
                 ss.CalcSections();                
             });            
         }
@@ -266,7 +266,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                BlockSection.BlockSectionContours.CreateContour(doc);
+                BlockSection_GP.BlockSectionContours.CreateContour(doc);
             });
         }
 
@@ -311,7 +311,7 @@ namespace PIK_GP_Acad
         {
             CommandStart.Start(doc =>
             {
-                BlockSection.SectionService ss = new BlockSection.SectionService(doc);
+                BlockSection_GP.SectionService ss = new BlockSection_GP.SectionService(doc);
                 ss.CalcSectionsForKP();
             });
         }                               

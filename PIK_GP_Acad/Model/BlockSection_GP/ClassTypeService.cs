@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PIK_GP_Acad.FCS;
 
-namespace PIK_GP_Acad.BlockSection
+namespace PIK_GP_Acad.BlockSection_GP
 {
     public class ClassTypeService : IClassTypeService
     {
