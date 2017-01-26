@@ -39,6 +39,13 @@ namespace PIK_GP_Acad.Insolation.Models
         }
         ObservableCollection<FrontGroup> groups; 
 
+        /// <summary>
+        /// Список id корпусов (зданий) из базы для текущего проекта.
+        /// Единая коллекция из которой выбираются дома для связывания.
+        /// Дома связанные дважды с разными домами на чертеже, подсвечиваются Красным,
+        /// Уже связанные дома - подсвечиваются Зеленым,
+        /// Свободные дома для связывания - не подсвечены цветом.
+        /// </summary>
         public ObservableCollection<HouseDbSel> HousesDb { get { return housesDb; } set { housesDb = value; RaisePropertyChanged(); } }
         ObservableCollection<HouseDbSel> housesDb;
 

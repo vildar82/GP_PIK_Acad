@@ -67,7 +67,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
             if (dicEd == null) return;
             var dicBuild = dicEd.GetInner("Building");
-            SetDataValues(dicBuild.GetRec("Values")?.Values, doc);
+            SetDataValues(dicBuild?.GetRec("Values")?.Values, doc);
         }
 
         public List<TypedValue> GetDataValues(Document doc)

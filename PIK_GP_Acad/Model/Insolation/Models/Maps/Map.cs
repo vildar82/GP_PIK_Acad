@@ -55,6 +55,11 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Включение/ отключение визуализации карты при обновлениях
         /// </summary>
         public bool IsVisualOn { get; set; }
+        /// <summary>
+        /// Определение домов при загрузке капрты
+        /// </summary>
+        public bool IsDefineHousesWhenLoadMap { get; set; } = true;
+        public HouseMap Houses { get; set; }
 
         /// <summary>
         /// Добавлено здание
@@ -73,7 +78,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Добавлена расчетная точка
         /// </summary>
         public event EventHandler<ObjectId> InsPointAdded;
-
+        
         /// <summary>
         /// Определение объектов инсоляции в чертеже
         /// </summary>
@@ -98,6 +103,13 @@ namespace PIK_GP_Acad.Insolation.Models
                         DefineEnt(ent);
                     }
                 }
+
+                if (IsDefineHousesWhenLoadMap)
+                {
+                    Houses = new HouseMap(this);
+                    Houses.DefineHouses();
+                }                
+
                 t.Commit();
             }
             IsEventsOn = true;
@@ -271,7 +283,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
-            var scope = new Scope(ext, items, this);
+            var scope = new Scope(items, this);
             scope.InitContour();
             return scope;
         }

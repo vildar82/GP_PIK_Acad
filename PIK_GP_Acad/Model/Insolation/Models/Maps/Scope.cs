@@ -13,14 +13,12 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Расчетная область
     /// </summary>
     public class Scope : IDisposable
-    {
-        Extents3d ext;
+    {        
         public List<MapBuilding> Buildings { get; set; }        
         public Map Map { get; set; }
 
-        public Scope (Extents3d ext, List<MapBuilding> items, Map map)
-        {            
-            this.ext = ext;
+        public Scope (List<MapBuilding> items, Map map)
+        {   
             Map = map;
             Buildings = items;
         }
