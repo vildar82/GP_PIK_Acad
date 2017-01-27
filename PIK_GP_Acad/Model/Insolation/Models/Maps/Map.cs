@@ -284,7 +284,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var rectScope = new Rectangle(ext);
             var items = treeBuildings.Intersects(rectScope);
             var scope = new Scope(items, this);
-            scope.InitBuildingsContours();
+            scope.InitBuildingContours();
             return scope;
         }
 

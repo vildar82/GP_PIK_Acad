@@ -20,9 +20,11 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Группа - соответствует Блоку в проекте
     /// </summary>
     public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
-    {
-        private static Tolerance toleranceVertex = new Tolerance(1,1);
+    {        
 
+        /// <summary>
+        /// Для загрузки из словаря
+        /// </summary>
         public FrontGroup()
         {
 
@@ -78,12 +80,7 @@ namespace PIK_GP_Acad.Insolation.Models
         string info;
 
         public bool IsExpanded { get { return isExpanded; } set { isExpanded = value; OnIsExpandedChanged(); RaisePropertyChanged(); } }
-        bool isExpanded;
-
-        ///// <summary>
-        ///// Индентификатор группы (блока) в базе
-        ///// </summary>
-        //public int GroupId { get; set; }        
+        bool isExpanded;         
 
         /// <summary>
         /// Новая группа фронтонов
@@ -100,24 +97,6 @@ namespace PIK_GP_Acad.Insolation.Models
             group.Front = front;
             group.SetExtDic(dicGroup, null);
             return group;
-        }
-
-        /// <summary>
-        /// Обновоение расчета фронтонов и визуализации если она включена
-        /// </summary>
-        public void Update ()
-        {
-            //Document doc = Front.Model.Doc;
-            //Database db = Front.Model.Doc.Database;
-            //using (doc.LockDocument())
-            //using (var t = db.TransactionManager.StartTransaction())
-            //{
-                //Front.InitToCalc();
-                // Определение домов
-                UpdateHouses();
-
-            //    t.Commit();
-            //}
         }        
 
         private void OnIsExpandedChanged ()
@@ -168,124 +147,109 @@ namespace PIK_GP_Acad.Insolation.Models
             var name = "Группа " + index;
             return name; 
         }
-
+        
         /// <summary>
-        /// Обновление определения домов
+        /// Обновление домов в группе и расчет
         /// </summary>
-        private void UpdateHouses ()
-        {
-            // Как сохранить предыдущие данные домов
-            DisposeHouses();
+        public void Update ()
+        {            
+            // Дома в области группы - без домов из других групп
+            var housesInGroup = Front.Model.Map.Houses.GetHousesInExtents(SelectRegion).
+                    Where(w=>w.FrontGroup == null || w.FrontGroup == this);
 
-            var oldHouses = Houses.ToList();
-
-            // Считываение домов с чертежа в заданной области
-            using (var scope = Front.Model.Map.GetScope(SelectRegion))
-            {
-                var houses = CreateHouses(scope);
-                Houses = new ObservableCollection<House>(houses);
-                foreach (var house in houses)
-                {
-                    // найти этот дом в старых домах
-                    var oldHouse = oldHouses?.Find(h=>h.Name.Equals(house.Name));
-                    if (oldHouse != null)
-                    {
-                        house.SetDataFromOldHouse(oldHouse);
-                    }
-                    else
-                    {
-                        house.IsVisualFront = true;
-                    }
-                    house.Update();
-                }
-            }
-        }        
-
-        /// <summary>
-        /// Определение домов в выбранной области
-        /// </summary>        
-        public List<House> CreateHouses (Scope scope)
-        {
-            var houses = new List<House>();
-            // Определение домов
-            var projectBuildings = scope.Buildings;//.Where(b => b.Building.IsProjectedBuilding);
-            foreach (var building in projectBuildings)
-            {
-                // Дом из блок-секций
-                if (!FindHouse(ref houses, building))
-                {
-                    var house = new House(this);
-                    house.Sections.Add(building);
-                    houses.Add(house);
-                }
-            }
-            // Для каждого дома - создание общей полилинии
-            int countHouse = 1;
-            foreach (var house in houses)
+            Houses = new ObservableCollection<House>(housesInGroup);
+            foreach (var house in housesInGroup)
             {
                 house.FrontGroup = this;
-                house.DefineContour();
-                // Заполнение оставшихся свойств дома
-                house.DefineName(countHouse);
-                countHouse++;
-            }
-            return houses;
+                house.Update();
+            }            
         }        
 
-        private bool FindHouse (ref List<House> houses, MapBuilding building)
-        {            
-            var findHouses = new List<House>();
-            using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
-            {
-                foreach (var house in houses)
-                {
-                    foreach (var blInHouse in house.Sections)
-                    {
-                        using (var ptsIntersect = new Point3dCollection())
-                        {
-                            offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                            if (ptsIntersect.Count > 0)
-                            {
-                                findHouses.Add(house);
-                                // Усреднение полилиний
-                                foreach (var item in house.Sections)
-                                {
-                                    var contourItem = item.Contour;
-                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex, true);
-#if TEST
-                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)building.Contour.Clone());
-                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)contourItem.Clone());
-#endif
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (findHouses.Any())
-            {
-                if (findHouses.Skip(1).Any())
-                {
-                    // Объединение нескольких домов в один общий
-                    var bls = findHouses.SelectMany(s => s.Sections).ToList();
-                    bls.Add(building);
-                    var house = new House(this);
-                    house.Sections = new ObservableCollection<MapBuilding>(bls);
-                    houses.Add(house);
-                    foreach (var h in findHouses)
-                    {
-                        houses.Remove(h);
-                    }
-                }
-                else
-                {
-                    findHouses[0].Sections.Add(building);
-                }
-                return true;
-            }
-            return false;
-        }
+//        /// <summary>
+//        /// Определение домов в выбранной области
+//        /// </summary>        
+//        public List<House> CreateHouses (Scope scope)
+//        {
+//            var houses = new List<House>();
+//            // Определение домов
+//            var projectBuildings = scope.Buildings;//.Where(b => b.Building.IsProjectedBuilding);
+//            foreach (var building in projectBuildings)
+//            {
+//                // Дом из блок-секций
+//                if (!FindHouse(ref houses, building))
+//                {
+//                    var house = new House(this);
+//                    house.Sections.Add(building);
+//                    houses.Add(house);
+//                }
+//            }
+//            // Для каждого дома - создание общей полилинии
+//            int countHouse = 1;
+//            foreach (var house in houses)
+//            {
+//                house.FrontGroup = this;
+//                house.DefineContour();
+//                // Заполнение оставшихся свойств дома
+//                house.DefineName(countHouse);
+//                countHouse++;
+//            }
+//            return houses;
+//        }        
+
+//        private bool FindHouse (ref List<House> houses, MapBuilding building)
+//        {            
+//            var findHouses = new List<House>();
+//            using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
+//            {
+//                foreach (var house in houses)
+//                {
+//                    foreach (var blInHouse in house.Sections)
+//                    {
+//                        using (var ptsIntersect = new Point3dCollection())
+//                        {
+//                            offset.IntersectWith(blInHouse.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+//                            if (ptsIntersect.Count > 0)
+//                            {
+//                                findHouses.Add(house);
+//                                // Усреднение полилиний
+//                                foreach (var item in house.Sections)
+//                                {
+//                                    var contourItem = item.Contour;
+//                                    building.Contour.AverageVertexes(ref contourItem, toleranceVertex, true);
+//#if TEST
+//                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)building.Contour.Clone());
+//                                    //EntityHelper.AddEntityToCurrentSpace((Polyline)contourItem.Clone());
+//#endif
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            if (findHouses.Any())
+//            {
+//                if (findHouses.Skip(1).Any())
+//                {
+//                    // Объединение нескольких домов в один общий
+//                    var bls = findHouses.SelectMany(s => s.Sections).ToList();
+//                    bls.Add(building);
+//                    var house = new House(this);
+//                    house.Sections = new ObservableCollection<MapBuilding>(bls);
+//                    houses.Add(house);
+//                    foreach (var h in findHouses)
+//                    {
+//                        houses.Remove(h);
+//                    }
+//                }
+//                else
+//                {
+//                    findHouses[0].Sections.Add(building);
+//                }
+//                return true;
+//            }
+//            return false;
+//        }
 
         public List<TypedValue> GetDataValues (Document doc)
         {
@@ -374,8 +338,7 @@ namespace PIK_GP_Acad.Insolation.Models
         private void DisposeHouses()
         {
             foreach (var item in Houses)
-            {
-                item.DisposeContour();
+            {                
                 item.Dispose();
             }
         }

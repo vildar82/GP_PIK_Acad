@@ -17,6 +17,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class HouseMap : IEnumerable<House>
     {
+        private static Tolerance toleranceVertex = new Tolerance(1, 1);
         private Map map;
         private List<House> houses;
         private int indexCounter;
@@ -36,7 +37,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Определение домов
             using (var scope = new Scope(map.Buildings, map))
             {
-                scope.InitBuildingsContours();
+                scope.InitBuildingContours();
                 var buildingsWithoutHouses = scope.Buildings.ToList();// Копия списка
                 // Пока есть не распределенные по домам здания
                 while (buildingsWithoutHouses.Any())
@@ -47,62 +48,99 @@ namespace PIK_GP_Acad.Insolation.Models
                     // Если у здания еще нет дома, то определяем его
                     if (firstBuilding.House == null)
                     {
-                        DefineHouseForBuilding(firstBuilding, scope.Buildings);
+                        DefineHouseForBuilding(firstBuilding);
                     }
                 }
-            }
-            // Окончательный список домов
-            houses = dictBuildingsByHouseIndex.Select(s => s.Value.First().House).ToList();
+                // Окончательный список домов
+                foreach (var item in dictBuildingsByHouseIndex)
+                {
+                    var house = item.Value.First().House;
+                    houses.Add(house);
+                    house.Sections = new System.Collections.ObjectModel.ObservableCollection<MapBuilding>(item.Value);
+                    // Определение контуров домов                                
+                    house.DefineContour();
+                }
+            }            
+        }
+
+        /// <summary>
+        /// Дома в указанной области
+        /// </summary>
+        /// <param name="ext">Область на чертеже</param>        
+        public List<House> GetHousesInExtents(Extents3d ext)
+        {
+            return map.GetBuildingsInExtents(ext).GroupBy(g=>g.House).Select(s=>s.Key).ToList();
         }
 
         /// <summary>
         /// Определение дома для здания
         /// </summary>
-        /// <param name="building">Здание без дома</param>        
-        /// <param name="allBuildings">Все здания</param>
-        private void DefineHouseForBuilding(MapBuilding building, List<MapBuilding> allBuildings)
+        /// <param name="building">Здание без дома</param>                
+        private void DefineHouseForBuilding(MapBuilding building)
         {
-            // Оффсет от контура здания наружу на 1м
+            var allIntersectBuildings = new HashSet<MapBuilding>();
+            GetIntersectBuildings(building, ref allIntersectBuildings);
+            // Найти все связанные здания для нового дома                    
+            var allNewHouseBuildings = GetAllReferencedBuildings(allIntersectBuildings);
+            NewHouse(allNewHouseBuildings);
+        }
+
+        /// <summary>
+        /// Пересекающиеся дома
+        /// </summary>        
+        private void GetIntersectBuildings(MapBuilding building, ref HashSet<MapBuilding> intersectBuildings)
+        {            
             using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
             {
-                var allNewHouseBuildings = new List<MapBuilding>();
-                // Поиск ближайших зданий в области оффсета
-                var nearestBuildings = map.GetBuildingsInExtents(offset.GeometricExtents);
-                nearestBuildings.Remove(building);
-                if (nearestBuildings.Any())
+                // Ближайшие дома без уже найденных зданий
+                intersectBuildings.Add(building);
+                var nearestBuildings = map.GetBuildingsInExtents(offset.GeometricExtents).Except(intersectBuildings).
+                    Where(w=>w.Building.IsProjectedBuilding == building.Building.IsProjectedBuilding).ToList();                
+                var curIntersectBuildings = new List<MapBuilding>();
+                foreach (var nearBuilding in nearestBuildings)
                 {
-                    var newHouseBuildings = new List<MapBuilding>();
-                    newHouseBuildings.Add(building);
-                    // Найти пересечение с ближайшими зданиями
-                    foreach (var nearBuilding in nearestBuildings)
+                    var ptsIntersect = new Point3dCollection();
+                    offset.IntersectWith(nearBuilding.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                    if (ptsIntersect.Count > 0)
                     {
-                        var ptsIntersect = new Point3dCollection();
-                        offset.IntersectWith(nearBuilding.Contour, Intersect.OnBothOperands, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                        if (ptsIntersect.Count > 0)
+                        if (intersectBuildings.Add(nearBuilding) && nearBuilding.House == null)
                         {
-                            newHouseBuildings.Add(nearBuilding);
-                        }
-                    }
-                    // Найти все здания для нового дома                    
-                    foreach (var newBuild in newHouseBuildings.GroupBy(g=>g.House))
-                    {
-                        if (newBuild.Key ==null)
-                        {
-                            allNewHouseBuildings.AddRange(newBuild);
-                        }
-                        else
-                        {
-                            allNewHouseBuildings.AddRange(dictBuildingsByHouseIndex[newBuild.Key.Index]);
+                            curIntersectBuildings.Add(nearBuilding);
+                            // Усреднение вершин двух секций
+                            var contourItem = nearBuilding.Contour;
+                            try
+                            {
+                                building.Contour.AverageVertexes(ref contourItem, toleranceVertex, true);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
-                else
+                foreach (var intersectBuild in curIntersectBuildings)
                 {
-                    // Здание отдельно стоящее - дом
-                    allNewHouseBuildings.Add(building);
+                    GetIntersectBuildings(intersectBuild, ref intersectBuildings);
                 }
-                NewHouse(allNewHouseBuildings);
             }
+        }
+
+        /// <summary>
+        /// Все связанные здания (через их дома)
+        /// </summary>
+        /// <param name="buildings">Здания</param>
+        /// <returns>Все здания связанные с заданными зданиями</returns>
+        private List<MapBuilding> GetAllReferencedBuildings(IEnumerable<MapBuilding> buildings)
+        {
+            var allNewHouseBuildings = new List<MapBuilding>();
+            foreach (var newBuild in buildings.GroupBy(g => g.House))
+            {
+                if (newBuild.Key == null)
+                    allNewHouseBuildings.AddRange(newBuild);
+                else
+                    allNewHouseBuildings.AddRange(dictBuildingsByHouseIndex[newBuild.Key.Index]);
+            }
+            return allNewHouseBuildings;
         }
 
         private void NewHouse(List<MapBuilding> buildings)
@@ -132,6 +170,6 @@ namespace PIK_GP_Acad.Insolation.Models
         IEnumerator IEnumerable.GetEnumerator()
         {
             return houses.GetEnumerator();
-        }
+        }        
     }
 }

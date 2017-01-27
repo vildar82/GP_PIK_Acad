@@ -43,6 +43,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Doc = doc;
             Index = index;
+            VisualFront = new VisualFront(Doc);
         }
 
         public Document Doc { get; set; }
@@ -313,7 +314,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
             var pls = Sections.Select(s => s.Contour).ToList();
 
-            // Предварительное соединение полилиний (близкие точки вершин разных полилиний - в среднюю вершину)
+            // Предварительное соединение полилиний (близкие точки вершин разных полилиний - в среднюю вершину)            
             // Сделал при определении домов
 
             if (pls.Count == 1)
@@ -325,7 +326,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 using (var reg = pls.Union(null))
                 {
 #if TEST
-            EntityHelper.AddEntityToCurrentSpace((Region)reg?.Clone());            
+                    //EntityHelper.AddEntityToCurrentSpace((Region)reg?.Clone());            
 #endif
                     var ptsRegByLoopType = reg.GetPoints2dByLoopType();
                     if (ptsRegByLoopType.Count == 1)
@@ -390,8 +391,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void DisposeContour()
         {
-            Contour?.Dispose();
-            //ContourInner?.Dispose();
+            Contour?.Dispose();            
         }
 
         public void Dispose ()

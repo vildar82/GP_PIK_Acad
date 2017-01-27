@@ -193,10 +193,7 @@ namespace PIK_GP_Acad.Insolation.Models
             UpdateInfo = "Обновление расчета";
 
             // Перерисовка точек
-            Redrawable();
-
-            Inspector.Show();
-            Inspector.Clear();   
+            Redrawable();            
         }
 
         /// <summary>

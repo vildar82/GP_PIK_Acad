@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using PIK_GP_Acad.Insolation.Services;
 using PIK_GP_Acad.Insolation.Models;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.UI
 {
@@ -50,33 +51,29 @@ namespace PIK_GP_Acad.Insolation.UI
             set { RaisePropertyChanged(); }
         }
 
-        private void OnEditInsOptionsExecute ()
+        private void OnEditInsOptionsExecute()
         {
-            try
+            var optVM = new InsOptionsViewModel(Model);
+            if (InsService.ShowDialog(optVM) == true)
             {
-                var optVM = new InsOptionsViewModel(Model);
-                if (InsService.ShowDialog(optVM) == true)
-                {
-                    Model.Update();
-                    UpdateBinding();
-                }
+                OnUpdateExecute();
+                UpdateBinding();
             }
-            catch (Exception ex)
-            {
-                InsService.ShowMessage(ex, "Ошибка.");
-            }           
         }
 
         private void OnUpdateExecute ()
         {
             try
             {
+                Inspector.Clear();
                 Model?.Update();
             }
             catch(Exception ex)
             {
                 InsService.ShowMessage(ex, "");
             }
+            Inspector.Show();
+            Inspector.Clear();
         }
 
         private void UpdateBinding ()

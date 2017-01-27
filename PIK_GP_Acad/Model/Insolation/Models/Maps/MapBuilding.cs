@@ -124,7 +124,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 sb.AppendLine(Building.FriendlyTypeName);
             }
 #if DEBUG
-            sb.AppendLine(Index.ToString());
+            sb.Append("BuildingIndex=").Append(Index.ToString()).AppendLine();            
+            sb.Append("HouseIndex=").Append(House?.Index ?? 0);
 #endif
             return sb.ToString();
         }

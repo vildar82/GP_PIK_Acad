@@ -51,9 +51,19 @@ namespace PIK_GP_Acad.Insolation.UI
             {
                 selReg = selectGroup.Select();
             }
-            catch {
+            catch
+            {
                 return;
             }
+
+            // Проверка, что в указанной области нет домов из других групп
+            if (Front.Model.Map.Houses.GetHousesInExtents(selReg).Any(h=>h.FrontGroup != null))
+            {
+                // В области новой группы не должно быть домов из других групп
+                InsService.ShowMessage($"В выбранной области не должно быть домов входящих в другие группы.", System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
             // Создание группы фронтонов
             try
             {                

@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Buildings = items;
         }
 
-        public void InitBuildingsContours ()
+        public void InitBuildingContours ()
         {
             foreach (var item in Buildings)
             {
