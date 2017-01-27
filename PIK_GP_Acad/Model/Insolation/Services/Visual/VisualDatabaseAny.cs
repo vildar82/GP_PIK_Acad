@@ -12,8 +12,10 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         private List<Entity> draws = new List<Entity> ();
 
+
         public VisualDatabaseAny (Document doc) : base(doc)
         {
+            LayerVisual = SymbolUtilityServices.LayerZeroName;
         }
 
         /// <summary>

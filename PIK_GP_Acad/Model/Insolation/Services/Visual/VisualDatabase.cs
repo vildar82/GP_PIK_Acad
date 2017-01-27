@@ -22,7 +22,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private LayerInfo lay;
 
         public Document Doc { get; set; }
-        private string LayerVisual { get; set; } = LayerVisualName;
+        public string LayerVisual { get; set; } = LayerVisualName;
 
         public abstract List<Entity> CreateVisual ();
 

@@ -20,11 +20,11 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Визуализация контуров уровней площадок на чертеже
         /// </summary>
-        private VisualPlaceContours visualPlaceContours;
+        //private VisualPlaceContours visualPlaceContours;
         public VisualPlace (PlaceModel placeModel)// : base (placeModel?.Model?.Doc)
         {
             this.placeModel = placeModel;
-            visualPlaceContours = new VisualPlaceContours(placeModel);
+            //visualPlaceContours = new VisualPlaceContours(placeModel);
         }
 
         public List<Tile> Tiles { get { return tiles; }
@@ -38,7 +38,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public override List<Entity> CreateVisual ()
         {
-            visualPlaceContours.VisualIsOn = this.VisualIsOn;
+            //visualPlaceContours.VisualIsOn = this.VisualIsOn;
             return visuals?.Select(s=>(Entity)s.Clone()).ToList();
         }
 
@@ -47,7 +47,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (Tiles == null || Tiles.Count == 0) return;
 
             DisposeVisuals();
-            visualPlaceContours.DisposeVisuals();
+            //visualPlaceContours.DisposeVisuals();
             visuals = new List<Entity>();
 
             var groupLevels = Tiles.GroupBy(g => g.Level);
@@ -60,8 +60,8 @@ namespace PIK_GP_Acad.Insolation.Services
 
                 // Добавление региона в визуализацию контуров уровней площадок
                 var visOpt = new VisualOption(group.Key.Color, placeModel.Options.Transparent);
-                VisualHelper.SetEntityOpt(region, visOpt);                
-                visualPlaceContours.AddRegion(region);                
+                VisualHelper.SetEntityOpt(region, visOpt);
+                visuals.Add(region);                
 
                 var h = region.CreateHatch();                
                 VisualHelper.SetEntityOpt(h, visOpt);
@@ -71,7 +71,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public override void VisualsDelete()
         {
-            visualPlaceContours.VisualsDelete();
+            //visualPlaceContours.VisualsDelete();
             base.VisualsDelete();
         }
 
@@ -100,7 +100,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             DisposeTiles();
             DisposeVisuals();
-            visualPlaceContours.Dispose();
+            //visualPlaceContours.Dispose();
             base.Dispose();
         }
     }

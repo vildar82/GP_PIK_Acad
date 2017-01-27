@@ -88,7 +88,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            TileSize = dictValues.GetValue("TileSize", 1);
+            TileSize = dictValues.GetValue("TileSize", 1d);
             Transparent = dictValues.GetValue("Transparent", (byte)60);            
         }
     }

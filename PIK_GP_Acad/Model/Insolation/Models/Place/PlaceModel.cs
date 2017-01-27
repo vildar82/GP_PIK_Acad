@@ -130,6 +130,17 @@ namespace PIK_GP_Acad.Insolation.Models
             }
         }
 
+        public void DrawVisuals()
+        {            
+            if (Places != null)
+            {
+                foreach (var place in Places)
+                {
+                    place.VisualPlace.DrawForUser();                    
+                }
+            }
+        }
+
         public DicED GetExtDic (Document doc)
         {
             var dicPlace = new DicED();

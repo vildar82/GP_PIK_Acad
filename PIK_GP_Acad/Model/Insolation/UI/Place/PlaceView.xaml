@@ -22,7 +22,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <ItemsControl x:Name="icPlaces"  ItemsSource="{Binding Place.Places}">
+            <ItemsControl x:Name="icPlaces" ItemsSource="{Binding Place.Places}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="2" Background="Gray">
@@ -35,28 +35,25 @@
                             </Grid.ColumnDefinitions>
                             <WrapPanel Grid.Column="0">
                                 <TextBox
-                                VerticalAlignment="Center"
-                                Margin="5"
-                                Background="Transparent" BorderThickness="0"
-                                FontSize="20"
-                                Text="{Binding Name}" />
-                                <TextBlock Text="{Binding Area, StringFormat={}{0}м² :}" VerticalAlignment="Center" Margin="2" />
+                                    Margin="5" VerticalAlignment="Center"
+                                    Background="Transparent" BorderThickness="0"
+                                    FontSize="20"
+                                    Text="{Binding Name}" />
+                                <TextBlock Margin="2" VerticalAlignment="Center" Text="{Binding Area, StringFormat={}{0}м² :}" />
                                 <TextBlock
-                                Margin="1" VerticalAlignment="Center"
-                                Background="Transparent"
-                                Text="{Binding LevelsInfo}" />
+                                    Margin="1" VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    Text="{Binding LevelsInfo}" />
                             </WrapPanel>
                             <StackPanel Grid.Column="1" Margin="3" Orientation="Horizontal">
                                 <ToggleButton
-                                Margin="1"
-                                Style="{StaticResource tbtnSmall}"
-                                IsChecked="{Binding IsVisualPlaceOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                ToolTip="Включение/отключение расчета площадки">
+                                    Margin="1"
+                                    Style="{StaticResource tbtnSmall}"
+                                    IsChecked="{Binding IsVisualPlaceOn, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                    ToolTip="Включение/отключение расчета площадки">
                                     <Image Source="{StaticResource biPlace}" />
                                 </ToggleButton>
-                                <Button Style="{StaticResource btnSmall}"
-                                    Command="{Binding ElementName=icPlaces, Path=DataContext.Delete}"
-                                    CommandParameter="{Binding}">
+                                <Button Style="{StaticResource btnSmall}" Command="{Binding ElementName=icPlaces, Path=DataContext.Delete}" CommandParameter="{Binding}">
                                     <Image Source="{StaticResource biClose}" />
                                 </Button>
                             </StackPanel>
@@ -69,7 +66,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button
                 Grid.Column="0"
@@ -82,18 +79,32 @@
             </Button>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <ToggleButton
-                                Margin="1"
-                                Style="{StaticResource tbtnNormal}"
-                                IsChecked="{Binding Place.IsEnableCalc, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                ToolTip="Включение/отключение расчета площадок">
+                    Margin="1"
+                    Style="{StaticResource tbtnNormal}"
+                    IsChecked="{Binding Place.IsEnableCalc, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    ToolTip="Включение/отключение расчета площадок">
                     <Image Source="{StaticResource biPlace}" />
                 </ToggleButton>                
-                <Button                    
-                Margin="1"
-                Style="{StaticResource btnNormal}"
-                Command="{Binding EditOptions}"
-                ToolTip="Настройки площадок">
-                    <Image Source="{StaticResource biOptions}" />
+                <Button
+                    x:Name="btnDots"
+                    Grid.Column="2"
+                    Style="{StaticResource btnNormal}"
+                    Click="btnDots_Click" ContextMenuService.IsEnabled="False">
+                    <Image Source="{StaticResource biOption_dots}" />
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="cmDots">
+                            <MenuItem Height="22" Command="{Binding EditOptions}" Header="Настройки площадок">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource biOptions}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource biDraw_visuals}" />
+                                </MenuItem.Icon>
+                            </MenuItem>                            
+                        </ContextMenu>
+                    </Button.ContextMenu>
                 </Button>
             </StackPanel>
         </Grid>

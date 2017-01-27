@@ -86,7 +86,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            TotalTimeH = dictValues.GetValue("TotalTimeH", 3);
+            TotalTimeH = dictValues.GetValue("TotalTimeH", 3d);
             byte a = dictValues.GetValue("A", (byte)0);
             byte r = dictValues.GetValue("R", (byte)255);
             byte g = dictValues.GetValue("G", (byte)255);

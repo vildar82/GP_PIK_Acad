@@ -21,6 +21,7 @@ namespace PIK_GP_Acad.Insolation.UI
             EditOptions = new RelayCommand(OnEditOptionsExecute);
             ShowPlace = new RelayCommand<Place>(OnShowPlaceExecute);
             Delete = new RelayCommand<Place>(OnDeleteExecute);
+            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
         }        
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand EditOptions { get; set; }
         public RelayCommand<Place> ShowPlace { get; set; }
         public RelayCommand<Place> Delete { get; set; }
+        public RelayCommand DrawVisuals { get; private set; }
 
         /// <summary>
         /// Добавление новой площадки
@@ -78,6 +80,11 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnDeleteExecute (Place place)
         {
             Place.DeletePlace(place);
+        }
+
+        private void OnDrawVisualsExecute()
+        {
+            Place.DrawVisuals();
         }
     }
 }
