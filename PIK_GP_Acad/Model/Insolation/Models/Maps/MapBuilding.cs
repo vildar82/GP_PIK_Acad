@@ -37,6 +37,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Дом которому принадлежит здание
         /// </summary>
         public House House { get; set; }
+        public BuildingVisual Visual { get; set; }        
 
         public MapBuilding () { }
 
@@ -134,6 +135,20 @@ namespace PIK_GP_Acad.Insolation.Models
             return sb.ToString();
         }
 
+        public void UpdateVisual()
+        {
+            if (Visual == null)
+            {
+                Visual = new BuildingVisual(this);                
+            }
+            Visual?.VisualUpdate();
+        }
+
+        public void DisposeVisual()
+        {
+            Visual?.Dispose();
+        }
+
         /// <summary>
         /// Создание временных домов из временных полилиний
         /// </summary>
@@ -155,7 +170,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Dispose()
         {
             Contour?.Dispose();
-            Region?.Dispose();            
+            Region?.Dispose();
+            Visual?.Dispose();        
         }
 
         public bool Equals(MapBuilding other)

@@ -27,7 +27,9 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class House : ModelBase, IDisposable, IEquatable<House>
     {
+        private bool isInitialized;
         private bool isDefaultName;
+        private int numberHouseInGroup;
         public House ()
         {     
         }
@@ -45,7 +47,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Index = index;
             VisualFront = new VisualFront(Doc);
         }
-
+                
         public Document Doc { get; set; }
         public FrontGroup FrontGroup { get; set; }  
 
@@ -77,19 +79,6 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
         }
-
-        /// <summary>
-        /// Центр дома
-        /// </summary>        
-        public Point3d GetCenter()
-        {
-            if (Contour == null || Contour.IsDisposed)
-            {
-                throw new Exception("Полилиния контура дома не определена.");
-            }
-            return Contour.Centroid();
-        }
-
         string name;
 
         /// <summary>
@@ -101,6 +90,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 if (frontLevel != value)
                 {
                     frontLevel = value; RaisePropertyChanged(); SaveFrontLevelToSections();
+                    if (isInitialized)
+                        Update();
                 }
             }
         }      
@@ -172,10 +163,16 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Расчет фронтов дома
         /// </summary>
-        public void Update (int numberHouseInGroup)
+        public void Update (int? numberHouseInGroup = null)
         {
             if (Contour == null) return;
-            DefineName(numberHouseInGroup);
+            if (numberHouseInGroup.HasValue)
+                this.numberHouseInGroup = numberHouseInGroup.Value;
+            DefineName();
+
+            // Визуализация зданий в доме
+            UpdateVisual();
+
             var calcService = FrontGroup.Front.Model.CalcService;
             try
             {
@@ -198,6 +195,19 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 AddError(ex.ToString());
             }   
+        }
+
+
+        /// <summary>
+        /// Центр дома
+        /// </summary>        
+        public Point3d GetCenter()
+        {
+            if (Contour == null || Contour.IsDisposed)
+            {
+                throw new Exception("Полилиния контура дома не определена.");
+            }
+            return Contour.Centroid();
         }
 
         private void OnIsVisualFrontChanged ()
@@ -242,8 +252,9 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение имени дома - по блок-секциям или дефолтное по переданному индексу
         /// </summary>        
-        public void DefineName(int numberHouseInGroup)
-        {   
+        private void DefineName()
+        {
+            isInitialized = false;
             var houseNames = Sections.Where(w => !string.IsNullOrEmpty(w.Building.HouseName))
                 .GroupBy(g => g.Building.HouseName).ToList();
             if (houseNames.Count == 1)
@@ -272,6 +283,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Options = options.First().Key;
             }
+            isInitialized = true;
         }        
 
         /// <summary>
@@ -279,7 +291,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         private void SaveHouseNameToSections()
         {
-            if (isDefaultName) return;
+            if (isDefaultName || !isInitialized)
+                return;
             //if (string.IsNullOrEmpty(Name)) return;            
             using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
@@ -299,6 +312,8 @@ namespace PIK_GP_Acad.Insolation.Models
         private void SaveHouseIdToSections()
         {
             //if (string.IsNullOrEmpty(Name)) return;  
+            if (!isInitialized)
+                return;
             using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
             {
@@ -316,7 +331,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void SaveFrontLevelToSections()
         {
-            if (Sections == null || Sections.All(s=>s.Building.FrontLevel == FrontLevel))
+            if (!isInitialized || Sections == null || Sections.All(s=>s.Building.FrontLevel == FrontLevel))
                 return;            
                         
             using (Doc.LockDocument())
@@ -337,12 +352,14 @@ namespace PIK_GP_Acad.Insolation.Models
         private void SaveHouseOptions()
         {
             if (Options == null)
-            {                
+            {
                 IsOverrideOptions = false;
-                return;
-            }            
-            IsOverrideOptions = true;
-            if (Sections.All(s => s.Building.HouseOptions == Options))
+            }
+            else
+            {
+                IsOverrideOptions = true;
+            }
+            if (!isInitialized || Sections.All(s => s.Building.HouseOptions == Options))
                 return;
             using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
@@ -465,25 +482,29 @@ namespace PIK_GP_Acad.Insolation.Models
             TestDrawContourVertexText();
             //EntityHelper.AddEntityToCurrentSpace((Polyline)ContourInner?.Clone());
 #endif
-        }        
-
-        /// <summary>
-        /// Установить параметры дома из старого дома
-        /// </summary>        
-        public void SetDataFromOldHouse (House oldHouse)
-        {
-            FrontLevel = oldHouse.FrontLevel;
-            IsVisualFront = oldHouse.IsVisualFront;
         }  
 
         public void ClearVisual ()
         {
+            if (Sections != null)
+                foreach (var item in Sections)
+                {
+                    item.DisposeVisual();
+                }
             VisualFront?.VisualsDelete();
         }
 
         public void UpdateVisual ()
         {
-            VisualFront?.VisualUpdate();
+            // отрисовка зданий (с дополнениями по фронту)
+            if (Sections != null)
+                foreach (var item in Sections)
+                {
+                    item.UpdateVisual();
+                    item.Visual.IsVisualizedInFront = true;
+                }            
+            // Отрисовка фронтов
+            VisualFront?.VisualUpdate();            
         }
 
         public void DisposeContour()

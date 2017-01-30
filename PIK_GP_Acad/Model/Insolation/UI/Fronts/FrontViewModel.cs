@@ -130,7 +130,7 @@ namespace PIK_GP_Acad.Insolation.UI
                 if (!houseOptions.Equals(house.FrontGroup.Options))
                 {
                     house.Options = houseOptions;
-                    house.Update(house.FrontGroup.Houses.IndexOf(house) + 1);
+                    house.Update();
                 }
             }
         }
@@ -138,6 +138,7 @@ namespace PIK_GP_Acad.Insolation.UI
         private void OnClearOverrideOptionsExecute(House house)
         {
             house.Options = null;
+            house.Update();
         }
 
         private void FillHouseDb()

@@ -254,7 +254,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     insModels.Add(doc, insModel);
                     // Инициализация расчета
                     insModel.Initialize(doc);
-                    insModel.Map.UpdateVisual();
+                    insModel.Map.UpdateVisual();// Т.к. расчет не обновляется, то визуализация домов на карте (без отдельной визуализации домов во фронтах.)
                     // Не обновлять расчет - пусть вручную обновляют
                     //try
                     //{

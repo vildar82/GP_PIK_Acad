@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public FrontGroup()
         {
-
+            IsInitialized = false;
         }
 
         public FrontGroup(Extents3d selReg, FrontModel front)
@@ -37,12 +37,15 @@ namespace PIK_GP_Acad.Insolation.Models
             Name = DefineNewName();
             Options = new FrontGroupOptions();
             FrontLevel = 2;
+            IsInitialized = true;
         }        
 
         /// <summary>
         /// Модель
         /// </summary>
         public FrontModel Front { get; set; }
+
+        public bool IsInitialized { get; set; }
         /// <summary>
         /// Область на чертеже
         /// </summary>
@@ -97,6 +100,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var group = new FrontGroup();
             group.Front = front;
             group.SetExtDic(dicGroup, null);
+            group.IsInitialized = true;
             return group;
         }        
 
@@ -122,13 +126,18 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (FrontLevel == 0)
                 FrontLevel = 2;
-            if (Houses != null)
-            {
-                foreach (var item in Houses)
-                {
-                    item.FrontLevel = FrontLevel;
-                }
-            }
+
+            // Если группа уже инициализирована, то обновление расчета группы
+            if (IsInitialized)
+                Update();
+
+            //if (Houses != null)
+            //{
+            //    foreach (var item in Houses)
+            //    {
+            //        item.FrontLevel = FrontLevel;
+            //    }
+            //}
         }
 
         /// <summary>
@@ -161,7 +170,7 @@ namespace PIK_GP_Acad.Insolation.Models
             for (int i =0; i< housesInGroup.Count; i++)                
             {
                 var house = housesInGroup[i];
-                house.FrontGroup = this;
+                house.FrontGroup = this;                
                 house.Update(i+1);
             }
             Houses = new ObservableCollection<House>(housesInGroup.OrderBy(o=>o.Name, AcadLib.Comparers.AlphanumComparator.New));

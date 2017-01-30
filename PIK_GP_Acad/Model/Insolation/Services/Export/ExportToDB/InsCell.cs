@@ -116,7 +116,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         /// </summary>
         public void TestDraw()
         {
-            var ext = PtCenter.GetRectangleFromCenter(InsCell.ModuleSize);
+            var ext = PtCenter.GetRectangleFromCenter(ModuleSize);
             var pl = ext.GetPolyline();
             EntityHelper.AddEntityToCurrentSpace(pl);
             EntityHelper.AddEntityToCurrentSpace(new DBPoint(PtCenter.Convert3d()));

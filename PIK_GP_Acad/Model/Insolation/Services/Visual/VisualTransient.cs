@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Services
     public abstract class VisualTransient : IVisualService
     {
         private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();
-        private bool isOn;
+        protected bool isOn;
         private List<Entity> draws;
         
         public abstract List<Entity> CreateVisual ();
@@ -31,7 +31,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
-        public void VisualUpdate ()
+        public virtual void VisualUpdate ()
         {                       
             // Включение визуализации на чертеже
             if (isOn)

@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         Database db;
         RTree<MapBuilding> treeBuildings;
-        VisualsMap visualMap;
+        //VisualsMap visualMap;
         InsModel insModel;
         //RTree<Tile> treeTiles;
         //public List<Tile> Tiles { get; set; }                
@@ -118,7 +118,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Update()
         {            
             Unsubscribe();
-            ClearVisual();
+            //ClearVisual();
+            Dispose();
             LoadMap();
             SubscribeDB();
             //UpdateVisual();
@@ -140,16 +141,24 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (IsVisualOn)
             {
-                if (visualMap == null)
+                foreach (var item in Buildings)
                 {
-                    visualMap = new VisualsMap(this);
+                    item.UpdateVisual(); 
                 }
-                visualMap.VisualIsOn = true;
+                //if (visualMap == null)
+                //{
+                //    visualMap = new VisualsMap(this);
+                //}
+                //visualMap.VisualIsOn = true;
             }
             else
             {
-                visualMap?.Dispose();
-                visualMap = null;
+                foreach (var item in Buildings)
+                {
+                    item.DisposeVisual();
+                }
+                //visualMap?.Dispose();
+                //visualMap = null;
             }
         }
 
@@ -426,7 +435,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             // отписатся от всех событий
             // Удалить всю визуализацию
-            visualMap?.VisualsDelete();
+            //visualMap?.VisualsDelete();
+            if (Buildings != null)
+                foreach (var item in Buildings)
+                {
+                    item.Visual?.VisualsDelete();
+                }
             Unsubscribe();
         }
 
@@ -434,7 +448,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             if (db == null || db.IsDisposed) return;
             Houses?.Dispose();
-            visualMap?.Dispose();
+            
+            //visualMap?.Dispose();
             Unsubscribe();
             if (Buildings != null)
             {

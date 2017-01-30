@@ -187,9 +187,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
             Front.Update();
 
-            Place.Update();
-
+            // Визуализация оставшихся домов (не включенных во фронты)
             Map.UpdateVisual();
+
+            Place.Update();            
 
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
