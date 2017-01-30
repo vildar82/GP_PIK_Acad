@@ -34,22 +34,14 @@ namespace PIK_GP_Acad.Insolation.Models
                     item.InitContour();
                 }
             }
-        }
-
-        private static void DisposeBuildingContour (MapBuilding item)
-        {
-            if (item.Contour != null && !item.Contour.IsDisposed)
-            {
-                item.Contour.Dispose();
-            }
-        }
+        }       
 
         public void Dispose ()
         {
             if (Buildings == null) return;
             foreach (var item in Buildings)
             {
-                DisposeBuildingContour(item);                
+                item?.Contour?.Dispose();                
             }
             Buildings = null;
         }

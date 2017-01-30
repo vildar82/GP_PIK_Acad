@@ -189,6 +189,8 @@ namespace PIK_GP_Acad.Insolation.Models
 
             Place.Update();
 
+            Map.UpdateVisual();
+
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
 
@@ -357,10 +359,10 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void ClearVisual ()
         {
-            Map.ClearVisual();
-            Tree.ClearVisuals();
-            Front.ClearVisual();
-            Place.ClearVisual();        
+            Map?.ClearVisual();
+            Tree?.ClearVisuals();
+            Front?.ClearVisual();
+            Place?.ClearVisual();        
         }
 
         private void Map_BuildingModified (object sender, MapBuilding e)

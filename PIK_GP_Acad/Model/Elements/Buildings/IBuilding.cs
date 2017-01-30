@@ -7,6 +7,7 @@ using AcadLib.XData;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using AcadLib.RTree.SpatialIndex;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Elements.Buildings
 {
@@ -34,7 +35,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Относительный уровень
         /// </summary>        
         double Elevation { get; set; }
-        Polyline GetContourInModel ();
+        /// <summary>
+        /// Номер этажа для расчета фронтов
+        /// </summary>
+        int FrontLevel { get; set; }        
         BuildingTypeEnum BuildingType { get; set; }
         string BuildingTypeName { get; }
         /// <summary>
@@ -59,5 +63,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// </summary>
         /// <param name="frontLevel">Номер этажа</param>        
         double GetLevelHeight(int frontLevel);
+        /// <summary>
+        /// Настройки для дома, в который входит секция
+        /// </summary>
+        HouseOptions HouseOptions { get; set; }
+        Polyline GetContourInModel();
     }
 }

@@ -25,9 +25,10 @@ namespace PIK_GP_Acad.Insolation.UI
             Export = new RelayCommand(InsFrontExportExecute);
             DrawVisuals = new RelayCommand(InsFrontDrawVisualsExecute);
             ShowOptions = new RelayCommand<FrontGroup>(OnShowOptionsExecute);
-
+            ShowHouseOptions = new RelayCommand<House>(OnShowHouseOptionsExecute);
+            ClearOverrideOptions = new RelayCommand<House>(OnClearOverrideOptionsExecute);
             FillHouseDb();
-        }        
+        }
 
         /// <summary>
         /// Модель
@@ -40,6 +41,9 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand Export { get; set; }
         public RelayCommand DrawVisuals { get; set; }
         public RelayCommand<FrontGroup> ShowOptions { get; set; }
+        public RelayCommand<House> ShowHouseOptions { get; set; }
+        public RelayCommand<House> ClearOverrideOptions { get; set; }
+        
         public bool HasProject { get; set; }         
 
         private void InsAddFrontExecute ()
@@ -114,6 +118,26 @@ namespace PIK_GP_Acad.Insolation.UI
             {
                 group.Update();
             }
+        }
+
+        private void OnShowHouseOptionsExecute(House house)
+        {
+            HouseOptions houseOptions = house.Options ?? new HouseOptions(house.FrontGroup.Options);            
+
+            var fgOptionsVM = new FrontGroupOptionsViewModel(houseOptions);
+            if (InsService.ShowDialog(fgOptionsVM) == true)
+            {
+                if (!houseOptions.Equals(house.FrontGroup.Options))
+                {
+                    house.Options = houseOptions;
+                    house.Update(house.FrontGroup.Houses.IndexOf(house) + 1);
+                }
+            }
+        }
+        
+        private void OnClearOverrideOptionsExecute(House house)
+        {
+            house.Options = null;
         }
 
         private void FillHouseDb()

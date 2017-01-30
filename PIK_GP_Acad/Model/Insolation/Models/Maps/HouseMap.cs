@@ -15,7 +15,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Дома на карте
     /// </summary>
-    public class HouseMap : IEnumerable<House>
+    public class HouseMap : IEnumerable<House>, IDisposable
     {
         private static Tolerance toleranceVertex = new Tolerance(1, 1);
         private Map map;
@@ -56,7 +56,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     var house = item.Value.First().House;
                     houses.Add(house);
-                    house.Sections = new System.Collections.ObjectModel.ObservableCollection<MapBuilding>(item.Value);
+                    house.Sections = new System.Collections.ObjectModel.ObservableCollection<MapBuilding>(item.Value);                    
                     // Определение контуров домов                                
                     house.DefineContour();
                 }
@@ -170,6 +170,15 @@ namespace PIK_GP_Acad.Insolation.Models
         IEnumerator IEnumerable.GetEnumerator()
         {
             return houses.GetEnumerator();
-        }        
+        }
+
+        public void Dispose()
+        {
+            if (houses == null) return;
+            foreach (var item in houses)
+            {
+                item.Dispose();
+            }
+        }
     }
 }

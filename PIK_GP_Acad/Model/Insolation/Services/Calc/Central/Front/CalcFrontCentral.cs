@@ -78,7 +78,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             calcPoints = new List<FrontCalcPoint>();
             if (seg == null) return null;
-            List<FrontValue> resFrontLines = new List<FrontValue>();            
+            var resFrontLines = new List<FrontValue>();            
 
             // Расчитанные точки сегмента
             calcPoints = CalcFrontPoints(seg, delta);
@@ -210,7 +210,7 @@ namespace PIK_GP_Acad.Insolation.Services
             // Расчет в точке
             var insPt = new InsPoint();
             insPt.Model = model;
-            insPt.Window = house.FrontGroup.Options.Window;
+            insPt.Window = house.GetCalcFrontWindow();
 
             foreach (var calcFrontPt in calcPts)
             {
@@ -227,7 +227,7 @@ namespace PIK_GP_Acad.Insolation.Services
 #endif
                 insPt.Building = calcFrontPt.Section;
                 // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                
-                insPt.Height = CalcHeightCalcPt(calcFrontPt, house.FrontLevel);                
+                insPt.Height = CalcHeightCalcPt(calcFrontPt);                
                 insPt.Building.InitContour();
                 try
                 {
@@ -256,10 +256,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="calcFrontPt">Расчетная точка</param>
         /// <returns>Высота для расчета инсоляции в точке</returns>
-        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt, int frontLevel)
+        private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt)
         {            
             var building = calcFrontPt.Section.Building;
-            var levelHeight = building.GetLevelHeight(frontLevel);
+            var levelHeight = building.GetLevelHeight(house.GetCalcFrontLevel());
             return  levelHeight + InsPoint.DefaultHeightWindowCenter;                        
         }       
 

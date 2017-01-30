@@ -253,7 +253,8 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                     insModels.Add(doc, insModel);
                     // Инициализация расчета
-                    insModel.Initialize(doc);   
+                    insModel.Initialize(doc);
+                    insModel.Map.UpdateVisual();
                     // Не обновлять расчет - пусть вручную обновляют
                     //try
                     //{

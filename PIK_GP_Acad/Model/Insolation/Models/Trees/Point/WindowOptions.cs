@@ -89,9 +89,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public WindowOptions Copy ()
         {
             return (WindowOptions)MemberwiseClone();
-        }
-
-        
+        }        
 
         public DicED GetExtDic (Document doc)
         {

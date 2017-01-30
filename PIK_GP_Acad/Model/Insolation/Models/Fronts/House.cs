@@ -17,6 +17,7 @@ using AcadLib.XData;
 using PIK_DB_Projects;
 using PIK_GP_Acad.Insolation.UI;
 using MicroMvvm;
+using System.Windows.Media;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -26,6 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class House : ModelBase, IDisposable, IEquatable<House>
     {
+        private bool isDefaultName;
         public House ()
         {     
         }
@@ -34,9 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             FrontGroup = frontGroup;
             Doc = FrontGroup.Front.Model.Doc;
-            VisualFront = new VisualFront(Doc);
-            FrontLevel = frontGroup.FrontLevel;
-            //VisualFront.LayerVisual = FrontGroup.Front.Options.FrontLineLayer;            
+            VisualFront = new VisualFront(Doc);            
         }
 
         public House(Document doc, int index)
@@ -48,7 +48,16 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public Document Doc { get; set; }
         public FrontGroup FrontGroup { get; set; }  
+
+        /// <summary>
+        /// Настройки дома - окна для расчета фронтов
+        /// </summary>
+        public HouseOptions Options { get { return options; } set { options = value; RaisePropertyChanged(); SaveHouseOptions(); } }
+        HouseOptions options;
         
+        public bool IsOverrideOptions { get { return isOverrideOptions; } set { isOverrideOptions = value; RaisePropertyChanged(); } }
+        bool isOverrideOptions;
+
         /// <summary>
         /// Уникальный индекс (номер) дома - на карте
         /// </summary>
@@ -60,9 +69,12 @@ namespace PIK_GP_Acad.Insolation.Models
         public string Name {
             get { return name; }
             set {
-                name = value;
-                SaveHouseNameToSections();
-                RaisePropertyChanged();
+                if (name != value)
+                {
+                    name = value;
+                    SaveHouseNameToSections();
+                    RaisePropertyChanged();
+                }
             }
         }
 
@@ -83,7 +95,15 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Высота расчета фронтов
         /// </summary>
-        public int FrontLevel { get { return frontLevel; } set { frontLevel = value; RaisePropertyChanged(); } }        
+        public int FrontLevel {
+            get { return frontLevel; }
+            set {
+                if (frontLevel != value)
+                {
+                    frontLevel = value; RaisePropertyChanged(); SaveFrontLevelToSections();
+                }
+            }
+        }      
         int frontLevel;
 
         /// <summary>
@@ -152,9 +172,10 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Расчет фронтов дома
         /// </summary>
-        public void Update ()
+        public void Update (int numberHouseInGroup)
         {
             if (Contour == null) return;
+            DefineName(numberHouseInGroup);
             var calcService = FrontGroup.Front.Model.CalcService;
             try
             {
@@ -163,17 +184,17 @@ namespace PIK_GP_Acad.Insolation.Models
                 FrontLines = calcService.CalcFront.CalcHouse(this, out contourSegmentsCalcPoints);
                 ContourSegmentsCalcPoints = contourSegmentsCalcPoints;
 
-                // Объединение линий фронтов для визуализациир
+                // Объединение линий фронтов для визуализациир                
                 var frontLinesCopy = FrontLines.Select(s => s.Clone()).ToList();
                 var frontLinesMerged = FrontValue.Merge(ref frontLinesCopy);
                 VisualFront.FrontLines = frontLinesMerged;
-                VisualFront.VisualUpdate();
+                IsVisualFront = FrontGroup.IsVisualFrontOn;
             }
-            catch(UserBreakException)
+            catch (UserBreakException)
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AddError(ex.ToString());
             }   
@@ -221,41 +242,59 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Определение имени дома - по блок-секциям или дефолтное по переданному индексу
         /// </summary>        
-        public void DefineName(int countHouse)
-        {
-            if (!string.IsNullOrEmpty(Name)) return;
-            // По идентификатору !!!???                    
-
-            //TODO: FIX: определение имени дома по блок-секциям
+        public void DefineName(int numberHouseInGroup)
+        {   
             var houseNames = Sections.Where(w => !string.IsNullOrEmpty(w.Building.HouseName))
                 .GroupBy(g => g.Building.HouseName).ToList();
             if (houseNames.Count == 1)
             {
+                isDefaultName = false;
                 var houseName = houseNames.First().First();
                 Name = houseName.Building.HouseName;
-                HouseId = houseName.Building.HouseId;
+                HouseId = houseName.Building.HouseId;                
+            }
+            else
+            {
+                isDefaultName = true;
+                Name = "Дом " + numberHouseInGroup;
             }
 
-            if (string.IsNullOrEmpty(Name))
+            // Определение уровня расчета фронтов
+            var levels = Sections.Where(w => w.Building.FrontLevel != 0).GroupBy(g => g.Building.FrontLevel).ToList();
+            if (levels.Count ==1)
             {
-                Name = "Дом " + countHouse;
+                FrontLevel = levels.First().Key;
             }
-        }
+
+            // определение настроек
+            var options = Sections.Where(w => w.Building.HouseOptions != null).GroupBy(g => g.Building.HouseOptions).ToList();
+            if (options.Count == 1)
+            {
+                Options = options.First().Key;
+            }
+        }        
 
         /// <summary>
         /// Сохранение имени дома в секции
         /// </summary>
         private void SaveHouseNameToSections()
         {
+            if (isDefaultName) return;
             //if (string.IsNullOrEmpty(Name)) return;            
-            foreach (var item in Sections)
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
             {
-                if (item.Building != null)
+                foreach (var item in Sections)
                 {
-                    item.Building.HouseName = Name;                    
+                    if (item.Building != null && item.Building.HouseName != Name)
+                    {
+                        item.Building.HouseName = Name;                        
+                        item.Building.SaveDboDict();
+                    }
                 }
+                t.Commit();
             }
-        }
+        }       
 
         private void SaveHouseIdToSections()
         {
@@ -263,12 +302,56 @@ namespace PIK_GP_Acad.Insolation.Models
             using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
             {
-
                 foreach (var item in Sections)
                 {
                     if (item.Building != null && item.Building.HouseId != HouseId)
                     {
                         item.Building.HouseId = HouseId;
+                        item.Building.SaveDboDict();
+                    }
+                }
+                t.Commit();
+            }
+        }
+
+        private void SaveFrontLevelToSections()
+        {
+            if (Sections == null || Sections.All(s=>s.Building.FrontLevel == FrontLevel))
+                return;            
+                        
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
+            {
+                foreach (var item in Sections)
+                {
+                    if (item.Building != null && item.Building.FrontLevel != FrontLevel)
+                    {
+                        item.Building.FrontLevel = FrontLevel;
+                        item.Building.SaveDboDict();
+                    }
+                }
+                t.Commit();
+            }
+        }
+
+        private void SaveHouseOptions()
+        {
+            if (Options == null)
+            {                
+                IsOverrideOptions = false;
+                return;
+            }            
+            IsOverrideOptions = true;
+            if (Sections.All(s => s.Building.HouseOptions == Options))
+                return;
+            using (Doc.LockDocument())
+            using (var t = Doc.TransactionManager.StartTransaction())
+            {
+                foreach (var item in Sections)
+                {
+                    if (item.Building != null && item.Building.HouseOptions != Options)
+                    {
+                        item.Building.HouseOptions = Options;
                         item.Building.SaveDboDict();
                     }
                 }
@@ -287,6 +370,20 @@ namespace PIK_GP_Acad.Insolation.Models
                 Error = new Error("Ошибка.", ext, Matrix3d.Identity, System.Drawing.SystemIcons.Error);
             }
             Error.AdditionToMessage(message);
+        }
+
+        /// <summary>
+        /// Получение уровня расчета фронтов для этого дома
+        /// </summary>
+        /// <returns></returns>
+        public int GetCalcFrontLevel()
+        {
+            return FrontLevel == 0 ? FrontGroup.FrontLevel : FrontLevel;
+        }
+
+        public WindowOptions GetCalcFrontWindow()
+        {
+            return Options?.Window ?? FrontGroup.Options.Window;
         }
 
         private Extents3d GetExtents()
@@ -394,25 +491,24 @@ namespace PIK_GP_Acad.Insolation.Models
             Contour?.Dispose();            
         }
 
-        public void Dispose ()
-        {            
-            VisualFront?.Dispose();
+        public void DisposeVisuals()
+        {
+            VisualFront?.Dispose();            
+            FrontGroup = null;
             if (FrontLines != null)
             {
                 foreach (var item in FrontLines)
                 {
-                    if (item != null && item.Line != null && !item.Line.IsDisposed)
-                    {
-                        item.Line.Dispose();
-                    }
+                    item?.Dispose();
                 }
                 FrontLines = null;
-                if (VisualFront != null)
-                {
-                    VisualFront.FrontLines = null;
-                }
             }
-            DisposeContour();
+        }
+
+        public void Dispose ()
+        {
+            Contour?.Dispose();
+            DisposeVisuals();
         }
 
         private void TestDrawContourVertexText()

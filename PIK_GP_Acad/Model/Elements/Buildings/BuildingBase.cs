@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using AcadLib;
 using AcadLib.RTree.SpatialIndex;
+using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Elements.Buildings
 {
@@ -36,6 +37,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public int Floors { get; set; }
         public double Height { get; set; }        
         public double Elevation { get; set; }
+        public int FrontLevel { get; set; }
         public string HouseName { get; set; }
         public int HouseId { get; set; }
         public ObjectId IdEnt { get; set; }
@@ -47,6 +49,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public double HeightTechnicalFloor { get; set; }
         public string FriendlyTypeName { get; set; }
         public string Layer { get; set; }
+        public HouseOptions HouseOptions { get; set; }
 
         public abstract Polyline GetContourInModel();        
 
@@ -60,6 +63,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
             var dicBuild = new DicED("Building");
             dicBuild.AddRec("Values", GetDataValues(doc));
+            dicBuild.AddInner("HouseOptions", HouseOptions?.GetExtDic(doc));
             return dicBuild;
         }
 
@@ -68,6 +72,12 @@ namespace PIK_GP_Acad.Elements.Buildings
             if (dicEd == null) return;
             var dicBuild = dicEd.GetInner("Building");
             SetDataValues(dicBuild?.GetRec("Values")?.Values, doc);
+            var dicHouseOptions = dicBuild?.GetInner("HouseOptions");
+            if (dicHouseOptions != null)
+            {
+                HouseOptions = new HouseOptions();
+                HouseOptions.SetExtDic(dicHouseOptions, doc);
+            }
         }
 
         public List<TypedValue> GetDataValues(Document doc)
@@ -75,6 +85,7 @@ namespace PIK_GP_Acad.Elements.Buildings
             var tvk = new TypedValueExtKit();
             tvk.Add("HouseName", HouseName);
             tvk.Add("HouseId", HouseId);
+            tvk.Add("FrontLevel", FrontLevel);
             return tvk.Values;
         }
 
@@ -82,7 +93,8 @@ namespace PIK_GP_Acad.Elements.Buildings
         {
             var dictValues = values?.ToDictionary();
             HouseName = dictValues.GetValue("HouseName", "");
-            HouseId = dictValues.GetValue("HouseId", 0);            
+            HouseId = dictValues.GetValue("HouseId", 0);
+            FrontLevel = dictValues.GetValue("FrontLevel", 0);
         }
 
         public void AddError(string msg)

@@ -83,6 +83,16 @@ namespace PIK_GP_Acad.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap clean {
+            get {
+                object obj = ResourceManager.GetObject("clean", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Close {
             get {
                 object obj = ResourceManager.GetObject("Close", resourceCulture);
@@ -106,6 +116,16 @@ namespace PIK_GP_Acad.Properties {
         internal static System.Drawing.Bitmap enla {
             get {
                 object obj = ResourceManager.GetObject("enla", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap exclamation {
+            get {
+                object obj = ResourceManager.GetObject("exclamation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

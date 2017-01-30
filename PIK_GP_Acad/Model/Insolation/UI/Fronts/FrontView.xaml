@@ -34,8 +34,7 @@
                                 <!--  Заголовок группы - все о группе  -->
                                 <Expander.HeaderTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" 
-                                              ToolTip="{Binding Info}">
+                                        <Grid Margin="1,5,1,5" HorizontalAlignment="{Binding HorizontalAlignment, Mode=OneWayToSource, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}}" ToolTip="{Binding Info}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="Auto" />
@@ -50,19 +49,20 @@
                                                     Background="Transparent" BorderThickness="0"
                                                     FontSize="20"
                                                     Text="{Binding Name}" />
-                                                <TextBox VerticalAlignment="Center"
-                                                    Margin="3" HorizontalAlignment="Right"
+                                                <TextBox
+                                                    Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                     Background="Transparent" BorderThickness="0"
-                                                    Text="{Binding FrontLevel}" FontSize="16">
+                                                    FontSize="16"
+                                                    Text="{Binding FrontLevel}">
                                                     <ToolTipService.ToolTip>
-                                                        <TextBlock TextWrapping="Wrap" MaxWidth="400">
-                                                            Номер этажа для расчета фронтов. 
+                                                        <TextBlock MaxWidth="400" TextWrapping="Wrap">
+                                                            Номер этажа для расчета фронтов в группе.
                                                             1 - расчет для первого этажа = уровень здания + 1,8м до центра окна.
                                                             2 - расчет для второго этажа = уровень здания + H_1_этажа + 1,8м до центра окна.
                                                             и т.д.
                                                         </TextBlock>
                                                     </ToolTipService.ToolTip>
-                                                </TextBox>                                                    
+                                                </TextBox>
                                             </Grid>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <ToggleButton
@@ -72,13 +72,13 @@
                                                     ToolTip="Включение/отключение визуализации фронтов">
                                                     <Image Source="{StaticResource biFront}" />
                                                 </ToggleButton>
-                                                <Button 
-                                                    Command="{Binding ElementName=icGroups, Path=DataContext.ShowOptions}"
-                                                    CommandParameter="{Binding}"
+                                                <Button
                                                     Margin="1"
                                                     Style="{StaticResource btnSmall}"
-                                                    ToolTip="Настройки группы фронтов">
-                                                    <Image Source="{StaticResource biOptions}"/>
+                                                    Command="{Binding ElementName=icGroups, Path=DataContext.ShowOptions}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="Настройки окна">
+                                                    <Image Source="{StaticResource biOptions}" />
                                                 </Button>
                                                 <Button
                                                     Margin="1"
@@ -102,6 +102,8 @@
                                                         <Grid Margin="4">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition Width="Auto" />
                                                                 <ColumnDefinition Width="Auto" />
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
@@ -117,9 +119,43 @@
                                                             <TextBlock
                                                                 Grid.Column="1"
                                                                 Margin="2" VerticalAlignment="Center"
-                                                                Text="{Binding Sections.Count, StringFormat={}{0} секц.}" />
-                                                            <ComboBox
+                                                                Text="{Binding Sections.Count, StringFormat={}{0}с.}" />
+                                                            <TextBox
                                                                 Grid.Column="2"
+                                                                Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                Background="Transparent" BorderThickness="0"
+                                                                FontSize="16"
+                                                                Text="{Binding FrontLevel}">
+                                                                <ToolTipService.ToolTip>
+                                                                    <TextBlock MaxWidth="400" TextWrapping="Wrap">
+                                                                        Номер этажа для расчета фронтов дома. Если 0 - то как у группы.
+                                                                        1 - расчет для первого этажа = уровень здания + 1,8м до центра окна.
+                                                                        2 - расчет для второго этажа = уровень здания + H_1_этажа + 1,8м до центра окна.
+                                                                        и т.д.
+                                                                    </TextBlock>
+                                                                </ToolTipService.ToolTip>
+                                                            </TextBox>
+                                                            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                                                <Button
+                                                                    Margin="1"
+                                                                    Style="{StaticResource btnSmall}"
+                                                                    Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouseOptions}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip="Настройки окна">
+                                                                    <Image Source="{StaticResource biOptions}" />
+                                                                </Button>
+                                                                <Button
+                                                                    Margin="1"
+                                                                    Style="{StaticResource btnSmall}"
+                                                                    Command="{Binding ElementName=icGroups, Path=DataContext.ClearOverrideOptions}"
+                                                                    CommandParameter="{Binding}"
+                                                                    ToolTip="Очиста переопределений настроек окна"
+                                                                    Visibility="{Binding IsOverrideOptions, Converter={converters:BooleanToHidingVisibilityConverter}}">
+                                                                    <Image Source="{StaticResource biExclamation}" />
+                                                                </Button>
+                                                            </StackPanel>
+                                                            <ComboBox
+                                                                Grid.Column="4"
                                                                 MinWidth="50"
                                                                 Background="Transparent"
                                                                 ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
@@ -170,7 +206,10 @@
                 <Image Source="{StaticResource biOption_dots}" />
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
-                        <MenuItem Height="22" Command="{Binding Export}" Header="Экспорт фронтов" ToolTip="Экспорт фронтов для архитекторов.">
+                        <MenuItem
+                            Height="22"
+                            Command="{Binding Export}"
+                            Header="Экспорт фронтов" ToolTip="Экспорт фронтов для архитекторов.">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biFrontExport}" />
                             </MenuItem.Icon>

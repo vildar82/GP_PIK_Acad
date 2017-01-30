@@ -123,6 +123,10 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 sb.AppendLine(Building.FriendlyTypeName);
             }
+            if (House != null && House.FrontGroup != null)
+            {
+                sb.Append(House.FrontGroup.Name).Append(", ").AppendLine(House.Name);
+            }
 #if DEBUG
             sb.Append("BuildingIndex=").Append(Index.ToString()).AppendLine();            
             sb.Append("HouseIndex=").Append(House?.Index ?? 0);

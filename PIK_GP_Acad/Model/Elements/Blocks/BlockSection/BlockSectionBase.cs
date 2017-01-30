@@ -24,8 +24,6 @@ namespace PIK_GP_Acad.Elements.Blocks.BlockSection
     /// </summary>
     public abstract class BlockSectionBase : BuildingBlockBase, IBuilding, IInfraworksExport
     {
-        
-
         public const string PropHeightTypicalFloor = "H_Тип_этажа";
         public const string PropHeightFirstFloor = "H_1_этажа";
         public const string PropHeightTechFloor = "H_Тех_этажа";

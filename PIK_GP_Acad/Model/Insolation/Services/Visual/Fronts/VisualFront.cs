@@ -29,7 +29,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (FrontLines == null) return;
             foreach (var item in FrontLines)
             {
-                item.Line?.Dispose();
+                item?.Dispose();
             }
             FrontLines = null;
             base.Dispose();

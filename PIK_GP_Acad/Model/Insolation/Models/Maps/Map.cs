@@ -121,7 +121,7 @@ namespace PIK_GP_Acad.Insolation.Models
             ClearVisual();
             LoadMap();
             SubscribeDB();
-            UpdateVisual();
+            //UpdateVisual();
 
             if (insModel?.Options?.EnableCheckDublicates ?? true)
             {
@@ -433,6 +433,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Dispose()
         {
             if (db == null || db.IsDisposed) return;
+            Houses?.Dispose();
             visualMap?.Dispose();
             Unsubscribe();
             if (Buildings != null)

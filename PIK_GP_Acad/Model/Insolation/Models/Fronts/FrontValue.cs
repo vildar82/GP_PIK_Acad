@@ -12,7 +12,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// <summary>
     /// Фронт - полоса инсоляции одного значения
     /// </summary>
-    public class FrontValue
+    public class FrontValue : IDisposable
     {
         public FrontValue ()
         {
@@ -46,7 +46,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         /// <summary>
         /// Объединение полилиний фронтов
-        /// Переданные линии объединяются. От объединенных линии берутся точки в объединяемую линию, а добавляемая линия очищается!
+        /// Переданные линии объединяются. От объединенных линии берутся точки в объединяемую линию
         /// </summary>       
         public static List<FrontValue> Merge (ref List<FrontValue> fronts)
         {
@@ -59,11 +59,11 @@ namespace PIK_GP_Acad.Insolation.Models
                     item.Line.StartPoint.IsEqualTo (prewFront.Line.EndPoint))
                 {
                     prewFront.AddFront(item);
-                    item.Line.Dispose();                                          
+                    item.Dispose();
                 }
                 else
                 {
-                    mergedFronts.Add(prewFront);
+                    mergedFronts.Add(prewFront);                    
                     prewFront = item;                    
                 }
             }
@@ -75,7 +75,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 prewFront.Line.ReverseCurve();
                 firstFront.Line.ReverseCurve();
                 firstFront.AddFront(prewFront);
-                prewFront.Line.Dispose();
+                prewFront.Dispose();            
             }
             else
             {
@@ -101,6 +101,11 @@ namespace PIK_GP_Acad.Insolation.Models
                 Line.AddVertexAt(index++, front.Line.GetPoint2dAt(i), 0,0,0);
             }            
             Line.ConstantWidth = w;            
+        }
+
+        public void Dispose()
+        {
+            Line?.Dispose();
         }
     }
 }
