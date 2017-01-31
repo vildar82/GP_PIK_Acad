@@ -52,6 +52,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                 }
                 // Окончательный список домов
+                houses = new List<House>();
                 foreach (var item in dictBuildingsByHouseIndex)
                 {
                     var house = item.Value.First().House;
@@ -143,6 +144,30 @@ namespace PIK_GP_Acad.Insolation.Models
             return allNewHouseBuildings;
         }
 
+        /// <summary>
+        /// Определение связанных объектов для всез домов
+        /// </summary>
+        public void DefineConnections()
+        {
+            if (houses == null) return;
+            foreach (var house in houses)
+            {
+                house.DefineConnectionDbSel();
+            }
+        }
+
+        /// <summary>
+        /// Очистка связывания домов с объеектами базы
+        /// </summary>
+        public void ClearDbConnections()
+        {
+            if (houses == null) return;
+            foreach (var item in houses.Where(h=>h.SelectedHouseDb != null))
+            {
+                item.SelectedHouseDb = null;
+            }
+        }
+
         private void NewHouse(List<MapBuilding> buildings)
         {
             // Если среди зданий уже есть с домами, то удаление этих домов из словаря, т.к. будет создан новый общий дом
@@ -152,7 +177,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 dictBuildingsByHouseIndex.Remove(indexHouseOld);
             }
 
-            var house = new House(map.Doc, ++indexCounter);
+            var house = new House(map.Model, ++indexCounter);
             houses.Add(house);
             foreach (var item in buildings)
             {                

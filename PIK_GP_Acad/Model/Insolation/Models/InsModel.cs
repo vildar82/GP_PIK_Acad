@@ -50,7 +50,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Настройки инсоляции
         /// </summary>
-        public InsOptions Options { get { return options; } set { options = value; RaisePropertyChanged(); } }
+        public InsOptions Options { get { return options; } private set { options = value; RaisePropertyChanged(); } }
         InsOptions options;
         /// <summary>
         /// Расчет елочек
@@ -74,6 +74,17 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Состояние - включен/отключен расчет
         /// </summary>
         public bool IsEnabled { get; set; }
+
+        /// <summary>
+        /// Список id корпусов (зданий) из базы для текущего проекта.
+        /// Единая коллекция из которой выбираются дома для связывания.
+        /// Дома связанные дважды с разными домами на чертеже, подсвечиваются Красным,
+        /// Уже связанные дома - подсвечиваются Зеленым,
+        /// Свободные дома для связывания - не подсвечены цветом.
+        /// </summary>
+        public ObservableCollection<HouseDbSel> HousesDb { get { return housesDb; } set { housesDb = value; RaisePropertyChanged(); } }
+        ObservableCollection<HouseDbSel> housesDb;
+        private Dictionary<int, HouseDbSel> dictHousesDb;
 
         /// <summary>
         /// Общие действия и при создании нового расчета и при загрузке существующего
@@ -127,7 +138,60 @@ namespace PIK_GP_Acad.Insolation.Models
 
             doc.Database.BeginSave += Database_BeginSave;            
             Redrawable();            
-        }       
+        }
+
+        /// <summary>
+        /// Обновление списка объектов для связывания
+        /// </summary>
+        public void UpdateHousesDbSel()
+        {
+            if (Map == null) return;
+            // Очистка текущих связываний - т.к. изменился проект (этот метод вызывается только при изменении проекта текущего чертежа)
+            Map.Houses.ClearDbConnections();
+
+            // Загрузка объектов
+            var housesDb = LoadHousesDbSel();
+            HousesDb = new ObservableCollection<HouseDbSel>(housesDb);
+            dictHousesDb = housesDb.ToDictionary(k=>k.Id, v=>v);
+
+            // Определение связанных объектов для всех домов в группах
+            ConnectHousesDbSel();
+        }
+
+        /// <summary>
+        /// Определение связывания объектов для всех домов во всех группах
+        /// </summary>
+        private void ConnectHousesDbSel()
+        {
+            Map.Houses.DefineConnections();
+        }
+
+        private List<HouseDbSel> LoadHousesDbSel()
+        {            
+            var housesDbSel = new List<HouseDbSel>();
+            var project = Options.Project;
+            if (project != null)
+            {
+                var objHousesDb = DbService.GetHouses(project);
+                if (objHousesDb.Any())
+                {
+                    housesDbSel.Add(HouseDbSel.Empty);
+                    foreach (var item in objHousesDb)
+                    {
+                        var houseDbSel = new HouseDbSel(item);
+                        housesDbSel.Add(houseDbSel);
+                    }
+                }
+            }
+            return housesDbSel;
+        }
+
+        public HouseDbSel FindHouseDb(int houseId)
+        {
+            HouseDbSel houseDbSel;
+            dictHousesDb.TryGetValue(houseId, out houseDbSel);
+            return houseDbSel;
+        }
 
         public void Redrawable ()
         {
@@ -177,7 +241,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
 
             // Заново инициализация
-            Initialize(Doc);
+            Initialize(Doc);            
 
             // Сервис расчета            
             DefineCalcService();
@@ -190,7 +254,10 @@ namespace PIK_GP_Acad.Insolation.Models
             // Визуализация оставшихся домов (не включенных во фронты)
             Map.UpdateVisual();
 
-            Place.Update();            
+            Place.Update();
+
+            // Определение связанных домов
+            UpdateHousesDbSel();
 
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
@@ -223,7 +290,15 @@ namespace PIK_GP_Acad.Insolation.Models
                 res = true;
             }
             return res;
-        }        
+        }
+
+        /// <summary>
+        /// Установка настроек 
+        /// </summary>        
+        public void SetOptions(InsOptions options)
+        {   
+            Options = options;            
+        }
 
         /// <summary>
         /// Сохранение расчета в словарь чертежа
@@ -281,11 +356,11 @@ namespace PIK_GP_Acad.Insolation.Models
 
             model = new InsModel();
             model.Doc = doc;
-            model.SetDataValues(recModel?.Values, doc);
-            model.Options = opt;
+            model.SetDataValues(recModel?.Values, doc);            
             model.Tree = tree;
             model.Front = front;
             model.Place = place;
+            model.SetOptions(opt);
             //model.Initialize(doc);           
 
             return model;

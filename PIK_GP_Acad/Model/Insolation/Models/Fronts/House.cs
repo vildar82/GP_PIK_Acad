@@ -29,25 +29,24 @@ namespace PIK_GP_Acad.Insolation.Models
     {
         private bool isInitialized;
         private bool isDefaultName;
-        private int numberHouseInGroup;
-        public House ()
-        {     
-        }
+        private int numberHouseInGroup;        
 
-        public House (FrontGroup frontGroup)
-        {
-            FrontGroup = frontGroup;
-            Doc = FrontGroup.Front.Model.Doc;
-            VisualFront = new VisualFront(Doc);            
-        }
+        //public House (FrontGroup frontGroup)
+        //{
+        //    FrontGroup = frontGroup;
+        //    Doc = FrontGroup.Front.Model.Doc;
+        //    VisualFront = new VisualFront(Doc);            
+        //}
 
-        public House(Document doc, int index)
+        public House(InsModel model, int index)
         {
-            Doc = doc;
+            Model = model;
+            Doc = model.Doc;
             Index = index;
             VisualFront = new VisualFront(Doc);
         }
                 
+        public InsModel Model { get; set; }
         public Document Doc { get; set; }
         public FrontGroup FrontGroup { get; set; }  
 
@@ -133,29 +132,21 @@ namespace PIK_GP_Acad.Insolation.Models
             get { return info; }
             set { info = value; RaisePropertyChanged(); }
         }
-        string info;
+        string info;        
 
         /// <summary>
-        /// Идентификатор Корпуса в базе
+        /// Выбранный для связывания с базой объект
         /// </summary>
-        public int HouseId { get { return houseId; }
-            set {
-                if (houseId == value) return;
-                houseId = value;
-                SaveHouseIdToSections();
-                SelectedHouseDb = FrontGroup.Front.FindHouseDb(value);
-            }
-        }
-        int houseId;
-
         public HouseDbSel SelectedHouseDb {
             get { return selectedHouseDb; }
             set {
-                if (selectedHouseDb == value) return;                
-                var oldValue = selectedHouseDb;
-                selectedHouseDb = value;
+                if (value != null && selectedHouseDb?.Equals(value) == false)
+                {
+                    var oldValue = selectedHouseDb;
+                    selectedHouseDb = value;                    
+                    OnSelectedHouseDbChanged(oldValue);
+                }
                 RaisePropertyChanged();
-                OnSelectedHouseDbChanged(oldValue);
             }
         }        
         HouseDbSel selectedHouseDb;
@@ -197,6 +188,24 @@ namespace PIK_GP_Acad.Insolation.Models
             }   
         }
 
+        /// <summary>
+        /// Определение связывания дома с объектом базы - по сохраненным в секциях идентификаторам
+        /// </summary>
+        public void DefineConnectionDbSel()
+        {
+            // Если во всех секциях сохранен один идентификатор
+            var houseIds = Sections.Where(w => w.Building.HouseId != 0).GroupBy(g => g.Building.HouseId).ToList();
+            if (houseIds.Count ==1)
+            {
+                // Поиск объекта для связывания
+                var houseDbSel = Model.FindHouseDb(houseIds.First().Key);
+                if (houseDbSel != null)
+                {
+                    houseDbSel.Connect(this);
+                    SelectedHouseDb = houseDbSel;                  
+                }
+            }
+        }
 
         /// <summary>
         /// Центр дома
@@ -217,16 +226,18 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnSelectedHouseDbChanged(HouseDbSel oldValue)
         {
-            if (ReferenceEquals(oldValue, SelectedHouseDb)) return;
+            if (oldValue?.Equals(SelectedHouseDb) == true) return;
             if (SelectedHouseDb != null)
             {
-                HouseId = SelectedHouseDb.Id;
+                //HouseId = SelectedHouseDb.Id;
                 SelectedHouseDb.Connect(this);
+                // Сохранение связанного объекта в блок-секциях
+                SaveHouseIdToSections();
             }
-            else
-            {
-                HouseId = 0;
-            }
+            //else
+            //{
+            //    HouseId = 0;
+            //}
             if (oldValue!= null)
             {
                 oldValue.Disconnect(this);
@@ -262,7 +273,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 isDefaultName = false;
                 var houseName = houseNames.First().First();
                 Name = houseName.Building.HouseName;
-                HouseId = houseName.Building.HouseId;                
+                //HouseId = houseName.Building.HouseId;                
             }
             else
             {
@@ -283,6 +294,10 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 Options = options.First().Key;
             }
+
+            //// Определение связанного объекта - если во всех секциях сохранен один идентификатор
+            //DefineConnectionDbSel(); // Уже определено в InsModel
+
             isInitialized = true;
         }        
 
@@ -312,16 +327,16 @@ namespace PIK_GP_Acad.Insolation.Models
         private void SaveHouseIdToSections()
         {
             //if (string.IsNullOrEmpty(Name)) return;  
-            if (!isInitialized)
+            if (!isInitialized || Sections.All (s=>s.Building.HouseId == SelectedHouseDb.Id))
                 return;
             using (Doc.LockDocument())
             using (var t = Doc.TransactionManager.StartTransaction())
             {
                 foreach (var item in Sections)
                 {
-                    if (item.Building != null && item.Building.HouseId != HouseId)
+                    if (item.Building != null && item.Building.HouseId != SelectedHouseDb.Id)
                     {
-                        item.Building.HouseId = HouseId;
+                        item.Building.HouseId = SelectedHouseDb.Id;
                         item.Building.SaveDboDict();
                     }
                 }

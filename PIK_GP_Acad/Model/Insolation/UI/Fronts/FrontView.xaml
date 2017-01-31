@@ -101,11 +101,11 @@
                                                     <Border Margin="2" BorderBrush="Black" BorderThickness="1">
                                                         <Grid Margin="4">
                                                             <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />                                                                
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
                                                                 <ColumnDefinition Width="Auto" />
                                                                 <ColumnDefinition />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
                                                             <Grid.InputBindings>
                                                                 <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
@@ -158,7 +158,7 @@
                                                                 Grid.Column="4"
                                                                 MinWidth="50"
                                                                 Background="Transparent"
-                                                                ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.HousesDb, UpdateSourceTrigger=PropertyChanged}"
+                                                                ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.Model.HousesDb, UpdateSourceTrigger=PropertyChanged}"
                                                                 SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                 ToolTip="Связывание дома с базой данных"
                                                                 Visibility="{Binding ElementName=icGroups, Path=DataContext.HasProject, UpdateSourceTrigger=PropertyChanged, Converter={converters:BooleanToHidingVisibilityConverter}}">

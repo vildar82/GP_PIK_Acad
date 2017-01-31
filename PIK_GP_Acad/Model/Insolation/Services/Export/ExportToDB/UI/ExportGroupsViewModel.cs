@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
                 ExportGroups.Add(new GroupViewModel(item));
             }
             //NotIdentifiedGroups = new ObservableCollection<FrontGroup> (notIdentifiedGroups);
-            Export = new RelayCommand(OnExportExecute, () => exportedGroups.Any(g => g.Houses.Any(h => h.HouseId != 0)));
+            Export = new RelayCommand(OnExportExecute, () => exportedGroups.Any(g => g.Houses.Any(h => h.SelectedHouseDb != null)));
         }        
 
         public RelayCommand Export { get; set; }

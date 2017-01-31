@@ -32,7 +32,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public InsOptionsViewModel (InsModel insModel)
         {
             InsModel = insModel;
-            InsOptions =insModel.Options;
+            InsOptions =insModel.Options.Clone();
             RegionNames = new ObservableCollection<string>(dictRegions.Keys);
             // Загрузка проектов из базы
             Projects = DbService.GetProjects();
@@ -100,7 +100,7 @@ namespace PIK_GP_Acad.Insolation.UI
                 InsOptions.Project = SelectedProject;
             }
             InsOptions.EnableCheckDublicates = EnableCheckDublicates;            
-            InsModel.Options = InsOptions;
+            //InsModel.SetOptions(InsOptions);
             //InsService.UserSettings = UserSettings;            
         }
 

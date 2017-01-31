@@ -56,6 +56,7 @@ namespace PIK_GP_Acad.Insolation.UI
             var optVM = new InsOptionsViewModel(Model);
             if (InsService.ShowDialog(optVM) == true)
             {
+                Model.SetOptions(optVM.InsOptions);
                 OnUpdateExecute();
                 UpdateBinding();
             }

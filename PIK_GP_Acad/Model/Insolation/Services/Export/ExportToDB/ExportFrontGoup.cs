@@ -45,7 +45,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
             var housesTrans = new List<HouseTransform>();
             foreach (var item in front.Houses)
             {
-                if (item.HouseId == 0) continue;
+                if (item.SelectedHouseDb == null) continue;
                 var houseTrans = new HouseTransform(item);
                 housesTrans.Add(houseTrans);
                 // Нормализация дома - приведение к ортогональному виду (минимальный поворот до ортогональности вокруг точки центра дома)

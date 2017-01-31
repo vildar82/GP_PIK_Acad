@@ -15,22 +15,28 @@ using MicroMvvm;
 
 namespace PIK_GP_Acad.Insolation.Models
 {    
-    public class InsOptions : ModelBase, IExtDataSave, ITypedDataValues
+    public class InsOptions : ModelBase, IExtDataSave, ITypedDataValues, IEquatable<InsOptions>
     {
         public InsOptions ()
         {            
         }
 
         //public byte Transparence { get; set; }/* = 120;        */
-        /// <summary>
-        /// Размер ячейки карты - квадрата, на который разбивается вся карта
-        /// </summary>
-        public int TileSize { get; set; }/* = 1;*/
+        ///// <summary>
+        ///// Размер ячейки карты - квадрата, на который разбивается вся карта
+        ///// </summary>
+        //public int TileSize { get; set; }/* = 1;*/
         public InsRegion Region { get; set; }/* = InsService.Settings.Regions[0];*/
-        /// <summary>
-        /// Шаг угла луча (в градусах) при определении теней
-        /// </summary>
-        public int ShadowDegreeStep { get; set; }/* = 1;*/
+
+        public InsOptions Clone()
+        {
+            return (InsOptions)MemberwiseClone();
+        }
+
+        ///// <summary>
+        ///// Шаг угла луча (в градусах) при определении теней
+        ///// </summary>
+        //public int ShadowDegreeStep { get; set; }/* = 1;*/
         /// <summary>
         /// Начальный расчетный угол (пропуская первый час) [град]. Восход(центр) = 0град + 15
         /// </summary>
@@ -54,9 +60,9 @@ namespace PIK_GP_Acad.Insolation.Models
             var defaultRegion = InsService.Settings.Regions
                 .FirstOrDefault(r => r.City.Equals("Москва", StringComparison.OrdinalIgnoreCase)) ?? InsService.Settings.Regions[0];            
             InsOptions defaultOptions = new InsOptions {
-                TileSize = 1,
+                //TileSize = 1,
                 Region = defaultRegion,
-                ShadowDegreeStep = 1,
+                //ShadowDegreeStep = 1,
                 SunCalcAngleStart = 15.0,
                 SunCalcAngleEnd = 165.0,
                 EnableCheckDublicates = true
@@ -83,8 +89,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public List<TypedValue> GetDataValues (Document doc)
         {
             var tvk = new TypedValueExtKit();
-            tvk.Add("TileSize", TileSize);
-            tvk.Add("ShadowDegreeStep", ShadowDegreeStep);
+            //tvk.Add("TileSize", TileSize);
+            //tvk.Add("ShadowDegreeStep", ShadowDegreeStep);
             tvk.Add("ProjectId", Project?.Id ?? 0);
             tvk.Add("EnableCheckDublicates", EnableCheckDublicates);
             return tvk.Values;            
@@ -93,11 +99,19 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();            
-            TileSize = dictValues.GetValue("TileSize", 1);
-            ShadowDegreeStep = dictValues.GetValue("ShadowDegreeStep", 1);
+            //TileSize = dictValues.GetValue("TileSize", 1);
+            //ShadowDegreeStep = dictValues.GetValue("ShadowDegreeStep", 1);
             var id = dictValues.GetValue("ProjectId", 0);
             Project = DbService.FindProject(id);
             EnableCheckDublicates = dictValues.GetValue("EnableCheckDublicates", true);
         }
+
+        public bool Equals(InsOptions other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Region.Equals(other.Region) &&
+                   Project?.Id == other.Project?.Id;
+        }        
     }
 }

@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Services.Export
         public HouseTransform(House house)
         {
             this.house = house;
-            Id = house.HouseId;         
+            Id = house.SelectedHouseDb.Id;         
         }
 
         public List<InsCell> Cells { get; set; }

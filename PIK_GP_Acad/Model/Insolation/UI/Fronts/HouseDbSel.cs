@@ -25,6 +25,11 @@ namespace PIK_GP_Acad.Insolation.UI
         /// </summary>
         private HashSet<House> connectedHouses = new HashSet<House>();
 
+        public HouseDbSel()
+        {
+
+        }
+
         public HouseDbSel(ObjectMDM obj)
         {
             objectMDM = obj;
@@ -50,13 +55,16 @@ namespace PIK_GP_Acad.Insolation.UI
         public string Status { get { return status; } set { status = value; RaisePropertyChanged(); } }
         public bool IsFree { get { return connectedHouses.Count == 0; } }
 
+        public static HouseDbSel Empty { get { return empty; } }
+        static HouseDbSel empty;
+
         string status;
 
         public void Connect(House house)
         {
-            if (objectMDM == null) return;
-            connectedHouses.Add(house);
-            DefineColorAndStatus();
+            if (objectMDM == null || house == null) return;
+            if (connectedHouses.Add(house))
+                DefineColorAndStatus();
         }
 
         public void Disconnect(House house)
@@ -68,6 +76,10 @@ namespace PIK_GP_Acad.Insolation.UI
 
         public void ClearConnections()
         {
+            foreach (var item in connectedHouses)
+            {
+                item.SelectedHouseDb = null;
+            }
             connectedHouses.Clear();
             DefineColorAndStatus();
         }
@@ -99,8 +111,6 @@ namespace PIK_GP_Acad.Insolation.UI
         public bool Equals(HouseDbSel other)
         {
             return Id == other?.Id;
-        }
-
-        
+        }        
     }
 }
