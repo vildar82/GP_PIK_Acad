@@ -38,7 +38,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     build.InitContour();
                     if (build.Contour == null)
                     {
-                        Inspector.AddError($"Не определен контур здания - {NetLib.StringExt.ClearString(build.GetInfo())}, слой '{build.Building.Layer}'.", 
+                        Inspector.AddError($"Не определен контур здания - {NetLib.StringExt.ClearString(build.GetInfo())}, слой '{build.Building.Layer}'. Проверка наложения зданий.", 
                             build.Building.IdEnt, System.Drawing.SystemIcons.Error);
                         continue;
                     }
@@ -51,7 +51,7 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                     catch(Exception ex)
                     {
-                        Inspector.AddError($"Ошибка определения контура здания - '{NetLib.StringExt.ClearString(build.GetInfo())}', слой '{build.Building.Layer}'. {ex.Message}.", 
+                        Inspector.AddError($"Ошибка определения контура здания - '{NetLib.StringExt.ClearString(build.GetInfo())}', слой '{build.Building.Layer}'. {ex.Message}. Проверка наложения зданий.", 
                             build.Building.IdEnt, System.Drawing.SystemIcons.Error);
                     }                    
                 }
@@ -83,7 +83,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 r1.BooleanOperation(BooleanOperationType.BoolIntersect, r2);
                 if (r1.NumChanges > 1 && r1.Area > 13.5)
                 {                    
-                    Inspector.AddError($"Наложение зданий. Площадь наложения {NetLib.DoubleExt.Round(r1.Area,1)}. '{build1.GetInfo().Replace("\r\n", " ")}' и '{build2.GetInfo().Replace("\r\n", " ")}'.", 
+                    Inspector.AddError($"Наложение зданий. Площадь наложения {NetLib.DoubleExt.Round(r1.Area,1)}. '{build1.GetInfo().Replace("\r\n", " ")}' и '{build2.GetInfo().Replace("\r\n", " ")}'. Проверка наложения зданий.", 
                         r1.GeometricExtents, Matrix3d.Identity, System.Drawing.SystemIcons.Error);                    
                 }
             }   
