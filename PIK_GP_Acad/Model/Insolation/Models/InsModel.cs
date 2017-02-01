@@ -145,17 +145,24 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void UpdateHousesDbSel()
         {
-            if (Map == null) return;
-            // Очистка текущих связываний - т.к. изменился проект (этот метод вызывается только при изменении проекта текущего чертежа)
-            Map.Houses.ClearDbConnections();
+            try
+            {
+                if (Map == null) return;
+                // Очистка текущих связываний - т.к. изменился проект (этот метод вызывается только при изменении проекта текущего чертежа)
+                Map.Houses.ClearDbConnections();
 
-            // Загрузка объектов
-            var housesDb = LoadHousesDbSel();
-            HousesDb = new ObservableCollection<HouseDbSel>(housesDb);
-            dictHousesDb = housesDb.ToDictionary(k=>k.Id, v=>v);
+                // Загрузка объектов
+                var housesDb = LoadHousesDbSel();
+                HousesDb = new ObservableCollection<HouseDbSel>(housesDb);
+                dictHousesDb = housesDb.ToDictionary(k => k.Id, v => v);
 
-            // Определение связанных объектов для всех домов в группах
-            ConnectHousesDbSel();
+                // Определение связанных объектов для всех домов в группах
+                ConnectHousesDbSel();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex, "InsModel.UpdateHousesDbSel()");
+            }
         }
 
         /// <summary>
@@ -295,9 +302,16 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Установка настроек 
         /// </summary>        
-        public void SetOptions(InsOptions options)
-        {   
-            Options = options;            
+        public void SetOptions(InsOptions options, out bool needUpdate)
+        {
+            // Если изменился регион, то требуется обновление
+            needUpdate = options?.Region?.Latitude != Options?.Region?.Latitude;
+            // Если изменился проект - обновление объектов для связывания
+            var needUpdateHousesDbSel = Options?.Project != options?.Project;
+            Options = options;
+
+            if (needUpdateHousesDbSel)
+                UpdateHousesDbSel();
         }
 
         /// <summary>
@@ -360,7 +374,8 @@ namespace PIK_GP_Acad.Insolation.Models
             model.Tree = tree;
             model.Front = front;
             model.Place = place;
-            model.SetOptions(opt);
+            bool needUpdate; // Тут не нужно обновлять расчет
+            model.SetOptions(opt, out needUpdate);
             //model.Initialize(doc);           
 
             return model;

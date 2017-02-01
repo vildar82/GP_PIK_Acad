@@ -140,7 +140,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public HouseDbSel SelectedHouseDb {
             get { return selectedHouseDb; }
             set {
-                if (value != null && selectedHouseDb?.Equals(value) == false)
+                if (value != null && !value.Equals(selectedHouseDb))
                 {
                     var oldValue = selectedHouseDb;
                     selectedHouseDb = value;                    
@@ -156,6 +156,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update (int? numberHouseInGroup = null)
         {
+            DisposeFrontLines();
             if (Contour == null) return;
             if (numberHouseInGroup.HasValue)
                 this.numberHouseInGroup = numberHouseInGroup.Value;
@@ -531,6 +532,11 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             VisualFront?.Dispose();            
             FrontGroup = null;
+            DisposeFrontLines();
+        }
+
+        private void DisposeFrontLines ()
+        {
             if (FrontLines != null)
             {
                 foreach (var item in FrontLines)
@@ -543,7 +549,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void Dispose ()
         {
-            Contour?.Dispose();
+            Contour?.Dispose();            
             DisposeVisuals();
         }
 

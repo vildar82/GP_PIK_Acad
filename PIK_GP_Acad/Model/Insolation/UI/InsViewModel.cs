@@ -53,11 +53,13 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnEditInsOptionsExecute()
         {
-            var optVM = new InsOptionsViewModel(Model);
+            var optVM = new InsOptionsViewModel(Model.Options);
             if (InsService.ShowDialog(optVM) == true)
             {
-                Model.SetOptions(optVM.InsOptions);
-                OnUpdateExecute();
+                bool needUpdate;                
+                Model.SetOptions(optVM.InsOptions, out needUpdate);
+                if (needUpdate)
+                    OnUpdateExecute();
                 UpdateBinding();
             }
         }

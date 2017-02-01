@@ -29,10 +29,9 @@ namespace PIK_GP_Acad.Insolation.UI
             
         }
 
-        public InsOptionsViewModel (InsModel insModel)
-        {
-            InsModel = insModel;
-            InsOptions =insModel.Options.Clone();
+        public InsOptionsViewModel (InsOptions options)
+        {            
+            InsOptions = options.Clone();
             RegionNames = new ObservableCollection<string>(dictRegions.Keys);
             // Загрузка проектов из базы
             Projects = DbService.GetProjects();
@@ -45,9 +44,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
             //UserSettings = InsService.UserSettings.Copy();
             EnableCheckDublicates = InsOptions.EnableCheckDublicates;
-        }        
-
-        public InsModel InsModel { get; set;}
+        }                
 
         /// <summary>
         /// Модель

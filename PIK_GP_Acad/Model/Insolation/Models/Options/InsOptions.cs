@@ -16,10 +16,10 @@ using MicroMvvm;
 namespace PIK_GP_Acad.Insolation.Models
 {    
     public class InsOptions : ModelBase, IExtDataSave, ITypedDataValues, IEquatable<InsOptions>
-    {
+    {        
         public InsOptions ()
         {            
-        }
+        }        
 
         //public byte Transparence { get; set; }/* = 120;        */
         ///// <summary>

@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.UI
         private static Brush colorConnected = new SolidColorBrush(Colors.Green);
         private static Brush colorMoreConnections = new SolidColorBrush(Colors.Red);
         private static Brush colorFree = new SolidColorBrush(Colors.Transparent);
-
+        
         private ObjectMDM objectMDM { get; set; }
         /// <summary>
         /// Связанные дома с этим объектом базы
@@ -54,22 +54,23 @@ namespace PIK_GP_Acad.Insolation.UI
         Brush color;
         public string Status { get { return status; } set { status = value; RaisePropertyChanged(); } }
         public bool IsFree { get { return connectedHouses.Count == 0; } }
+        public bool IsEmpty { get; private set; }
 
         public static HouseDbSel Empty { get { return empty; } }
-        static HouseDbSel empty;
+        static HouseDbSel empty = new HouseDbSel() { IsEmpty = true, Id = -1000 };
 
         string status;
 
         public void Connect(House house)
         {
-            if (objectMDM == null || house == null) return;
+            if (objectMDM == null || house == null || IsEmpty) return;
             if (connectedHouses.Add(house))
                 DefineColorAndStatus();
         }
 
         public void Disconnect(House house)
         {
-            if (objectMDM == null) return;
+            if (objectMDM == null || IsEmpty) return;
             connectedHouses.Remove(house);
             DefineColorAndStatus();
         }
@@ -86,7 +87,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void DefineColorAndStatus()
         {
-            if (objectMDM == null) return;
+            if (objectMDM == null || IsEmpty) return;
             if (connectedHouses.Count ==0)
             {
                 Color = colorFree;

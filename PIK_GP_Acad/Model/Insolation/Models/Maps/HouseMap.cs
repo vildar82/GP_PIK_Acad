@@ -57,9 +57,16 @@ namespace PIK_GP_Acad.Insolation.Models
                 {
                     var house = item.Value.First().House;
                     houses.Add(house);
-                    house.Sections = new System.Collections.ObjectModel.ObservableCollection<MapBuilding>(item.Value);                    
-                    // Определение контуров домов                                
-                    house.DefineContour();
+                    house.Sections = new System.Collections.ObjectModel.ObservableCollection<MapBuilding>(item.Value);
+                    // Определение контуров домов     
+                    try
+                    {
+                        house.DefineContour();
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Log.Error(ex, "HouseMap.DefineHouses()");
+                    }
                 }
             }            
         }
