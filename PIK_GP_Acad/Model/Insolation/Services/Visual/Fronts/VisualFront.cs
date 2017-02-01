@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public override List<Entity> CreateVisual ()
         {
             if (FrontLines == null) return null;
-            return FrontLines.Select(s => (Polyline)s.Line.Clone()).Cast<Entity>().ToList();
+            return FrontLines.Select(s => (Entity)s.Line.Clone()).ToList();
         }
 
         public override void Dispose()

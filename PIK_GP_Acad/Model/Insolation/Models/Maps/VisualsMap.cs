@@ -34,7 +34,7 @@ namespace PIK_GP_Acad.Insolation.Models
                         visuals.AddRange(draws);
                     }
                 }                
-            }
+            }            
             return visuals;
         }
     }

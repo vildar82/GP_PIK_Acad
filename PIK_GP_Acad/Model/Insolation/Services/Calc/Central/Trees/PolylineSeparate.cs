@@ -65,13 +65,15 @@ namespace PIK_GP_Acad.Insolation.Services
                         ptSecEnd = ptItem.Convert2d();
                     }
 
+                    if (indexSecStart == indexSecEnd)
+                        return false;
                     // Удаление вершин отсекаемой части из полилинии дома и создание отсекаемой полилинии
                     plHead = (Polyline)pl.Clone();
 
                     var ptsSec = new List<Point2d>();
                     ptsSec.Add(ptSecStart);
 
-                    List<int> indexesToRemove = new List<int>();
+                    var indexesToRemove = new HashSet<int>();
 
                     int index = indexSecStart;
                     var ptSec = pl.GetPoint2dAt(index);

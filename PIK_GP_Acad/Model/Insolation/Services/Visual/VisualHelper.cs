@@ -13,14 +13,14 @@ namespace PIK_GP_Acad.Insolation.Services
     public static class VisualHelper
     {
         private const string textStyleName = "Insolation";
-        private const string textStyleFontFile = "romans.shx";
+        private const string textStyleFontFile = "Arial.ttf";
 
         public static ObjectId GetTextStyleId (Document doc)
         {            
             var db = doc.Database;
             ObjectId res = db.Textstyle;
 
-            //using (doc.LockDocument())
+            using (doc.LockDocument())
             using (var t = db.TransactionManager.StartTransaction())
             {
                 var textStyleTable = db.TextStyleTableId.GetObject(OpenMode.ForRead) as TextStyleTable;
@@ -93,6 +93,19 @@ namespace PIK_GP_Acad.Insolation.Services
             dbText.AlignmentPoint = opt.Position;
             dbText.AdjustAlignment(db);
             return dbText;
+        }
+
+        public static MText CreateMText (string text, VisualOption opt, double height, AttachmentPoint justify)
+        {
+            var mtext = new MText();
+            mtext.Location = opt.Position;
+            mtext.TextStyleId = GetTextStyleId(Application.DocumentManager.MdiActiveDocument);
+            mtext.Attachment = justify;
+            mtext.Height = height;
+            mtext.Contents = text;
+            mtext.Color = opt.Color;
+            //mtext.Transparency = opt.Transparency;
+            return mtext;
         }
 
         public static Circle CreateCircle (double radius, VisualOption opt)

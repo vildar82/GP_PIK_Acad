@@ -27,7 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             PlaceModel = placeModel;
             PlaceId = plId;
-            VisualPlace = new VisualPlace(placeModel);
+            //VisualPlace = new VisualPlace(placeModel);
             SetExtDic(dicPlace, Application.DocumentManager.MdiActiveDocument);
         }
 
@@ -35,7 +35,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             PlaceModel = placeModel;
             PlaceId = plId;
-            VisualPlace = new VisualPlace(placeModel);
+            //VisualPlace = new VisualPlace(placeModel);
             Name = DefineName();            
         }        
 
@@ -48,7 +48,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public double Area { get { return area; } set { area = value; RaisePropertyChanged(); } }
         double area;
               
-        public List<Tile> Tiles { get; set; }
+        //public List<Tile> Tiles { get; set; }
         public string LevelsInfo { get { return levelsInfo; } set { levelsInfo = value; RaisePropertyChanged(); } }
         string levelsInfo;
 
@@ -61,7 +61,7 @@ namespace PIK_GP_Acad.Insolation.Models
             set {
                 isVisualPlaceOn = value;
                 RaisePropertyChanged();
-                OnVisualPlaceChanged();
+                OnIsVisualPlaceChanged();
             }
         }
 
@@ -85,15 +85,17 @@ namespace PIK_GP_Acad.Insolation.Models
             if (!IsVisualPlaceOn)
             {
                 VisualPlace?.Dispose();
-                Tiles = null;
+                VisualPlace = null;                
                 return;
             }
-            Tiles = PlaceModel.Model.CalcService.CalcPlace.CalcPlace(this);
+            var tiles = PlaceModel.Model.CalcService.CalcPlace.CalcPlace(this);
             // Суммирование освещенностей по уровням
-            LevelsInfo = GetLevelsInfo(Tiles);
+            LevelsInfo = GetLevelsInfo(tiles);
             // Визуализация ячеек
-            VisualPlace.Tiles = Tiles;
-            VisualPlace.VisualUpdate();
+            if (VisualPlace == null)
+                VisualPlace = new VisualPlace(this);
+            VisualPlace.Tiles = tiles;
+            VisualPlace.VisualIsOn = true;
         }
 
         public void ClearVisual ()
@@ -104,24 +106,32 @@ namespace PIK_GP_Acad.Insolation.Models
         private string GetLevelsInfo (List<Tile> tiles)
         {
             if (tiles == null) return null;
-            var groupTiles = tiles.GroupBy(g => g.Level.TotalTimeH).OrderByDescending(o=>o.Key)
-                .Select(s=> $"{s.Key}ч.-{NetLib.DoubleExt.Round(s.Sum(i=>i.Area),2)}м{General.Symbols.Square}");
-            var levelsInfo = string.Join(", ", groupTiles);
-            var minLevel = PlaceModel.Options.Levels.Min(o => o.TotalTimeH);
-            levelsInfo = levelsInfo.Replace("0ч.", $"<{minLevel}ч.");
-            return levelsInfo;
+            try
+            {
+                var groupTiles = tiles.GroupBy(g => g.Level.TotalTimeH).OrderByDescending(o => o.Key)
+                    .Select(s => $"{s.Key}ч.-{NetLib.DoubleExt.Round(s.Sum(i => i.Area), 2)}м{General.Symbols.Square}");
+                var levelsInfo = string.Join(", ", groupTiles);
+                var minLevel = PlaceModel.Options.Levels.Min(o => o.TotalTimeH);
+                levelsInfo = levelsInfo.Replace("0ч.", $"<{minLevel}ч.");
+                return levelsInfo;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log.Error(ex, "Place.GetLevelsInfo()");
+                return null;
+            }
         }        
 
-        private void OnVisualPlaceChanged ()
-        {   
-            if (!IsVisualPlaceOn || (IsVisualPlaceOn && Tiles == null && PlaceModel != null && PlaceModel.Places.Contains(this)))
-            {
-                Update();
-            }
-            if (VisualPlace != null)
+        private void OnIsVisualPlaceChanged ()
+        {            
+            if (VisualPlace != null && VisualPlace.Tiles != null)
             {
                 VisualPlace.VisualIsOn = IsVisualPlaceOn;
             }
+            else
+            {
+                Update();
+            }            
         }
 
         private string DefineName ()

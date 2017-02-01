@@ -14,9 +14,8 @@ using Autodesk.AutoCAD.Colors;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class CalcPointCentral
-    {
-        Plane plane = new Plane();
+    public class CalcPointCentral : IDisposable
+    {        
         InsPoint insPt;
         MapBuilding buildingOwner;
         Map map;
@@ -28,6 +27,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Здания из отсеченных полилиний собственного дома расчетной точки
         /// </summary>
         List<MapBuilding> secantBuildings;
+        Polyline plHead;
         public IllumAreaBase StartAnglesIllum { get; set; }
         public bool WithOwnerBuilding { get; set; }
 
@@ -168,8 +168,7 @@ namespace PIK_GP_Acad.Insolation.Services
                             item.InitContour();
                         }
 
-                        if (item.Contour.IsPointInsidePolygon(ptCalc) ||
-                            item.Contour.IsPointOnPolyline(ptCalc))
+                        if (item.Contour.IsPointInsidePolyline(ptCalc, true))
                         {
                             resInside = true;
                         }
@@ -263,13 +262,16 @@ namespace PIK_GP_Acad.Insolation.Services
                 //EntityHelper.AddEntityToCurrentSpace(lineZero);
 #endif
                 var ptsIntersects = new Point3dCollection();
-                lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
-                var pts = build.Contour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
-                pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
-                if (pts.Any())
+                using (var plane = new Plane())
                 {
-                    var ilumShadow = GetIllumShadow(pts);
-                    return ilumShadow;
+                    lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                    var pts = build.Contour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
+                    pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
+                    if (pts.Any())
+                    {
+                        var ilumShadow = GetIllumShadow(pts);
+                        return ilumShadow;
+                    }
                 }
             }
             return null;
@@ -278,11 +280,14 @@ namespace PIK_GP_Acad.Insolation.Services
         private List<IIlluminationArea> GetBuildingLineShadowBoundary (MapBuilding build, Line lineShadow,
             Intersect intersectMode)
         {
-            List<IIlluminationArea> resIlumsShadows = new List<IIlluminationArea>();
+            var resIlumsShadows = new List<IIlluminationArea>();
             if (lineShadow.Length < 1) return resIlumsShadows;
             // Дом на границе тени, нужно строить линию пересечения с домом
-            Point3dCollection ptsIntersects = new Point3dCollection();
-            lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+            var ptsIntersects = new Point3dCollection();
+            using (var plane = new Plane())
+            {
+                lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+            }
             
             // Между каждыми точками пересечения определение петли полилинии и определение тени
             if (ptsIntersects.Count > 1)
@@ -570,19 +575,25 @@ namespace PIK_GP_Acad.Insolation.Services
 #endif
                     using (var ptsIntersect = new Point3dCollection())
                     {
-                        contour.IntersectWith(lineShadow, Intersect.OnBothOperands, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                        ptsIntersectShadow = ptsIntersect.Cast<Point3d>().ToList();
+                        using (var plane = new Plane())
+                        {
+                            contour.IntersectWith(lineShadow, Intersect.OnBothOperands, plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                            ptsIntersectShadow = ptsIntersect.Cast<Point3d>().ToList();
+                        }
                         // !!!??? Если есть пересечения с линией тени, тогда нужно разделить полилинию дома на собственную часть и внешнюю (которую считать отдельно)
                     }
-                    if (ptsIntersectShadow.Count>1)
+                    if (ptsIntersectShadow.Count > 1)
                     {
-                        // Отсечение части дома - по точкам пересечения.
-                        Polyline plHead;
+                        // Отсечение части дома - по точкам пересечения.                        
                         List<Polyline> plsSecant;
-                        contour.Separate(ptCalc, ptsIntersectShadow, out plHead, out plsSecant);
-                        contour = plHead;
-                        // из отсеченных частей сделать здания для дальнейшего расчета - когда будут перебираться внешние дома при расчете точки
-                        secantBuildings = MapBuilding.CreateFakeBuildings(plsSecant, buildingOwner);
+                        if (contour.Separate(ptCalc, ptsIntersectShadow, out plHead, out plsSecant))
+                        {
+                            if (plHead != null)
+                                contour = plHead;
+                            // из отсеченных частей сделать здания для дальнейшего расчета - когда будут перебираться внешние дома при расчете точки
+                            if (plsSecant != null && plsSecant.Any())
+                                secantBuildings = MapBuilding.CreateFakeBuildings(plsSecant, buildingOwner);
+                        }
                     }
                 }
 
@@ -777,6 +788,19 @@ namespace PIK_GP_Acad.Insolation.Services
             Line lineShadow = new Line(new Point3d(ptCalc.X + xRayToStart, yShadow, 0),
                               new Point3d(ptCalc.X + xRayToEnd, yShadow, 0));
             return lineShadow;
+        }
+
+        public void Dispose()
+        {
+            plHead?.Dispose();
+            if (secantBuildings != null)
+            {
+                foreach (var item in secantBuildings)
+                {
+                    ((FakeBuilding)item.Building)?.Dispose();
+                    item?.Dispose();
+                }
+            }
         }
     }
 }

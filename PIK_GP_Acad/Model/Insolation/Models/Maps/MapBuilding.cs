@@ -89,14 +89,18 @@ namespace PIK_GP_Acad.Insolation.Models
             var ptText = plContour.Centroid();
 
             // Текст описания здания
-            var textInfo = new MText();
-            textInfo.Location = ptText;
-            textInfo.Attachment = AttachmentPoint.MiddleCenter;
-            textInfo.Height = 2;
-            textInfo.Contents = this.GetInfo();
-            textInfo.Color = color;
-            //textInfo.Transparency = transp;
+            var vopt = new VisualOption(System.Drawing.Color.White, ptText);
+            var textInfo = VisualHelper.CreateMText(GetInfo(), vopt, 2, AttachmentPoint.MiddleCenter);
             visuals.Add(textInfo);
+
+            //var textInfo = new MText();
+            //textInfo.Location = ptText;
+            //textInfo.Attachment = AttachmentPoint.MiddleCenter;
+            //textInfo.Height = 2;
+            //textInfo.Contents = this.GetInfo();
+            //textInfo.Color = color;
+            //textInfo.Transparency = transp;
+            //visuals.Add(textInfo);
 
             return visuals;
         }
@@ -113,10 +117,10 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(BuildinTypeName);
-            sb.Append("H=").AppendLine(Building.Height.ToString());
+            sb.Append("H=").Append(Building.Height.ToString()).AppendLine("м.");
             if (Building.Elevation != 0)
             {
-                sb.Append("Уровень=").AppendLine(Building.Elevation.ToString());
+                sb.Append("Уровень=").Append(Building.Elevation.ToString()).AppendLine("м.");
             }
             string projected = Building.IsProjectedBuilding ? "Проектируемое" : "Окр.застройка";
             sb.AppendLine(projected);

@@ -38,7 +38,7 @@ namespace PIK_GP_Acad.Insolation.Services
             contourSegmentsCalcPoints = new List<List<FrontCalcPoint>>();
             if (house == null) return null;
 
-            List<FrontValue> resFronts = new List<FrontValue>();
+            var resFronts = new List<FrontValue>();
 
             this.house = house;
             front = house.FrontGroup?.Front;
@@ -53,7 +53,7 @@ namespace PIK_GP_Acad.Insolation.Services
             for (int i = 0; i < houseContour.NumberOfVertices; i++)
             {
                 try
-                {
+                {                    
                     using (var seg = houseContour.GetLineSegment2dAt(i))
                     {
                         List<FrontCalcPoint> segCalcPoints;
@@ -65,7 +65,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         contourSegmentsCalcPoints.Add(segCalcPoints);
                     }
                 }
-                catch(Exception ex)
+                catch(Exception ex) // houseContour.GetLineSegment2dAt(i) - если сегмент не линейный
                 {
                     Logger.Log.Error(ex, "CalcFrontCentral.CalcHouse");
                 }              
@@ -78,8 +78,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             calcPoints = new List<FrontCalcPoint>();
             if (seg == null) return null;
-            var resFrontLines = new List<FrontValue>();            
-
+            var resFrontLines = new List<FrontValue>();
             // Расчитанные точки сегмента
             calcPoints = CalcFrontPoints(seg, delta);
             // Определение фронтов
@@ -87,54 +86,62 @@ namespace PIK_GP_Acad.Insolation.Services
             var fPtPrew = ptsIsCalced.First();
             //fPtPrew.InsValue = ptsIsCalced.Skip(1).First().InsValue;
             var fPtStart = fPtPrew;
-            for (int i =1; i< ptsIsCalced.Count; i++)
+            try
             {
-                var item = ptsIsCalced[i];
-                if (item.IsCorner)
+                for (int i = 1; i < ptsIsCalced.Count; i++)
                 {
-                    item.InsValue = fPtPrew.InsValue;
-                }
-                else if (!item.IsCorner && fPtStart.InsValue == InsRequirementEnum.None)
-                {
-                    fPtStart.InsValue = item.InsValue;
-                }
-                else if (fPtPrew.InsValue != item.InsValue && !item.IsCorner)
-                {
-                    // значение инс след точки
-                    var iNext = i + 1;
-                    if (iNext < ptsIsCalced.Count)
+                    var item = ptsIsCalced[i];
+                    if (item.IsCorner)
                     {
-                        var itemNext = ptsIsCalced[iNext];
-                        if (itemNext.IsCorner)
+                        item.InsValue = fPtPrew.InsValue;
+                    }
+                    else if (!item.IsCorner && fPtStart.InsValue == InsRequirementEnum.None)
+                    {
+                        fPtStart.InsValue = item.InsValue;
+                    }
+                    else if (fPtPrew.InsValue != item.InsValue && !item.IsCorner)
+                    {
+                        // значение инс след точки
+                        var iNext = i + 1;
+                        if (iNext < ptsIsCalced.Count)
                         {
-                            i++;
-                            fPtPrew = itemNext;
-                            continue;
-                        }
-                        else
-                        {
-                            if (itemNext.InsValue == fPtPrew.InsValue)
+                            var itemNext = ptsIsCalced[iNext];
+                            if (itemNext.IsCorner)
                             {
-                                // Инс след точки совпадает с предыдущей - текущую игнорим.
+                                i++;
+                                fPtPrew = itemNext;
                                 continue;
                             }
+                            else
+                            {
+                                if (itemNext.InsValue == fPtPrew.InsValue)
+                                {
+                                    // Инс след точки совпадает с предыдущей - текущую игнорим.
+                                    continue;
+                                }
+                            }
                         }
+                        // Создание фронта
+                        var frontLine = CreateFrontLine(fPtStart, fPtPrew, seg);
+                        if (frontLine != null)
+                        {
+                            resFrontLines.Add(frontLine);
+                        }
+                        fPtStart = item;
                     }
-                    // Создание фронта
-                    var frontLine = CreateFrontLine(fPtStart, fPtPrew, seg);
-                    if (frontLine != null)
-                    {
-                        resFrontLines.Add(frontLine);
-                    }
-                    fPtStart = item;
-                }                
-                fPtPrew = item;
+                    fPtPrew = item;
+                }
+
+                // Создание послежнего фронта
+                var frontLineLast = CreateFrontLine(fPtStart, fPtPrew, seg);
+                if (frontLineLast != null)
+                {
+                    resFrontLines.Add(frontLineLast);
+                }
             }
-            // Создание послежнего фронта
-            var frontLineLast = CreateFrontLine(fPtStart, fPtPrew, seg);
-            if (frontLineLast != null)
-            {
-                resFrontLines.Add(frontLineLast);
+            catch(Exception ex)
+            {                
+                Logger.Log.Error(ex, "CalcFrontCentral.CalcSegment()");
             }
             return resFrontLines;
         }
@@ -229,23 +236,26 @@ namespace PIK_GP_Acad.Insolation.Services
                 // Уточнение высоты расчета фронта с учетом параметров заданных в здании (Section) - если не задана общая высота для фронта пользователем                
                 insPt.Height = CalcHeightCalcPt(calcFrontPt);                
                 insPt.Building.InitContour();
-                try
+                using (insPt.Building.Contour)
                 {
-                    var illums = calcTrees.CalcPoint(insPt);
-                    var insValue = calcService.CalcTimeAndGetRate(illums, calcFrontPt.Section.BuildingType);
-                    calcFrontPt.InsValue = insValue.Requirement.Type;
-                    calcFrontPt.IsCalulated = true;
-                }
-                catch(UserBreakException)
-                {
-                    throw;
-                }
-                catch
-                {
-                    calcFrontPt.InsValue = InsRequirementEnum.None;
-                    calcFrontPt.IsCorner = true;
-                    // На угловых точках - может не рассчитаться пока
-                    // Пропустить!?
+                    try
+                    {
+                        var illums = calcTrees.CalcPoint(insPt);
+                        var insValue = calcService.CalcTimeAndGetRate(illums, calcFrontPt.Section.BuildingType);
+                        calcFrontPt.InsValue = insValue.Requirement.Type;
+                        calcFrontPt.IsCalulated = true;
+                    }
+                    catch (UserBreakException)
+                    {
+                        throw;
+                    }
+                    catch
+                    {
+                        calcFrontPt.InsValue = InsRequirementEnum.None;
+                        calcFrontPt.IsCorner = true;
+                        // На угловых точках - может не рассчитаться пока
+                        // Пропустить!?
+                    }
                 }
             }
             return calcPts;

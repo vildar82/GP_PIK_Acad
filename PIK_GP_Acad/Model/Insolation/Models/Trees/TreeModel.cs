@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>    
     public class TreeModel : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
     {
-        public static Tolerance TolerancePoints = new Tolerance(0.02, 0.1);
+        public static Tolerance TolerancePoints = new Tolerance(0.01, 0.1);
         private bool isVisualTreeOnOffForLoad;        
 
         /// <summary>

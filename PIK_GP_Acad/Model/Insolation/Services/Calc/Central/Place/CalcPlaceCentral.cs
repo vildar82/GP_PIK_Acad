@@ -89,44 +89,46 @@ namespace PIK_GP_Acad.Insolation.Services
             var ext = pl.GeometricExtents;
             var horTiles = Divide(ext.MinPoint.X, ext.MaxPoint.X);
             var verticTiles = Divide(ext.MinPoint.Y, ext.MaxPoint.Y);
-            var plane = new Plane();            
-            foreach (var horT in horTiles)
+            using (var plane = new Plane())
             {
-                // Построение вертик линии
-                using (var verticLine = new Line(new Point3d(horT, ext.MinPoint.Y, 0), new Point3d(horT, ext.MaxPoint.Y, 0)))
+                foreach (var horT in horTiles)
                 {
-                    // пересечение вертик линии c контуром
-                    var ptsIntersect = new Point3dCollection();
-                    verticLine.IntersectWith(pl, Intersect.OnBothOperands,plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                    if (ptsIntersect.Count == 0) continue;
-                    if (ptsIntersect.Count==1)
+                    // Построение вертик линии
+                    using (var verticLine = new Line(new Point3d(horT, ext.MinPoint.Y, 0), new Point3d(horT, ext.MaxPoint.Y, 0)))
                     {
-                        //var pt = new Point2d(horT,ptsIntersect[0].Y);
-                        //resTiles.Add(new Tile(pt));
-                    }
-                    else
-                    {
-                        var pts = ptsIntersect.Cast<Point3d>().OrderBy(o => o.Y);                       
-                        var ptIntersectLower = pts.First();                        
-                        foreach (var ptIntersectTop in pts.Skip(1))
+                        // пересечение вертик линии c контуром
+                        var ptsIntersect = new Point3dCollection();
+                        verticLine.IntersectWith(pl, Intersect.OnBothOperands, plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                        if (ptsIntersect.Count == 0) continue;
+                        if (ptsIntersect.Count == 1)
                         {
-                            var ptMid = ptIntersectLower.Center(ptIntersectTop);                            
-                            if (pl.IsPointInsidePolygon(ptMid))
+                            //var pt = new Point2d(horT,ptsIntersect[0].Y);
+                            //resTiles.Add(new Tile(pt));
+                        }
+                        else
+                        {
+                            var pts = ptsIntersect.Cast<Point3d>().OrderBy(o => o.Y);
+                            var ptIntersectLower = pts.First();
+                            foreach (var ptIntersectTop in pts.Skip(1))
                             {
-                                foreach (var vertT in verticTiles)
+                                var ptMid = ptIntersectLower.Center(ptIntersectTop);
+                                if (pl.IsPointInsidePolygon(ptMid))
                                 {
-                                    if (vertT >= ptIntersectTop.Y)
+                                    foreach (var vertT in verticTiles)
                                     {
-                                        break;
+                                        if (vertT >= ptIntersectTop.Y)
+                                        {
+                                            break;
+                                        }
+                                        else if (vertT - ptIntersectLower.Y >= stepQuart)
+                                        {
+                                            var pt = new Point2d(horT, vertT);
+                                            resTiles.Add(new Tile(pt, step, step));
+                                        }
                                     }
-                                    else if(vertT - ptIntersectLower.Y >= stepQuart)
-                                    {                                        
-                                        var pt = new Point2d(horT, vertT);
-                                        resTiles.Add(new Tile(pt, step, step));
-                                    }                                                                     
                                 }
+                                ptIntersectLower = ptIntersectTop;
                             }
-                            ptIntersectLower = ptIntersectTop;
                         }
                     }
                 }

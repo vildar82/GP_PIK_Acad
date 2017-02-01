@@ -82,8 +82,11 @@ namespace PIK_GP_Acad.Insolation.Models
             try
             {
                 building?.InitContour();
-                Illums = Model.CalcService.CalcTrees.CalcPoint(this, withOwnerBuilding);
-                InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building?.BuildingType ?? BuildingTypeEnum.Living);
+                using (building?.Contour)
+                {
+                    Illums = Model.CalcService.CalcTrees.CalcPoint(this, withOwnerBuilding);
+                    InsValue = Model.CalcService.CalcTimeAndGetRate(Illums, building?.BuildingType ?? BuildingTypeEnum.Living);
+                }
             }
             catch(UserBreakException)
             {
@@ -161,17 +164,17 @@ namespace PIK_GP_Acad.Insolation.Models
             else
             {                
                 info.Append("Здание: ").Append(building.BuildinTypeName).Append(", Высота - ").Append(building.Building.Height).AppendLine();
-            }
-            if (!Window.IsCustomAngle)
-            {
-                info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(), 2)).Append(General.Symbols.Degree).
-                    Append(", ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
-                    Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth).AppendLine();
-            }
-            else
-            {
-                info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(),2)).Append(General.Symbols.Degree).AppendLine();
-            }
+                if (!Window.IsCustomAngle)
+                {
+                    info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(), 2)).Append(General.Symbols.Degree).
+                        Append(", ширина - ").Append(Window.Width).Append(", Глубина четверти - ").Append(Window.Quarter).
+                        Append(", Конструкция - ").Append(Window.Construction.Name).Append(" ").Append(Window.Construction.Depth).AppendLine();
+                }
+                else
+                {
+                    info.Append("Окно: теневой угол - ").Append(NetLib.DoubleExt.Round(Window.ShadowAngle.ToDegrees(), 2)).Append(General.Symbols.Degree).AppendLine();
+                }
+            }            
 
             return info.ToString();
         }

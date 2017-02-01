@@ -114,9 +114,7 @@ namespace PIK_GP_Acad.Insolation.Models
         //Polyline contourInner;        
 
         public VisualFront VisualFront { get; set; }
-
-        public List<FrontValue> FrontLines { get; set; }
-
+        //public List<FrontValue> FrontLines { get; set; }
         public List<List<FrontCalcPoint>> ContourSegmentsCalcPoints { get; set; }        
 
         public bool IsVisualFront {
@@ -156,7 +154,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update (int? numberHouseInGroup = null)
         {
-            DisposeFrontLines();
+            //DisposeFrontLines();
             if (Contour == null) return;
             if (numberHouseInGroup.HasValue)
                 this.numberHouseInGroup = numberHouseInGroup.Value;
@@ -170,13 +168,13 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 // Отдельные линии инсоляции
                 List<List<FrontCalcPoint>> contourSegmentsCalcPoints;
-                FrontLines = calcService.CalcFront.CalcHouse(this, out contourSegmentsCalcPoints);
+                var frontLines = calcService.CalcFront.CalcHouse(this, out contourSegmentsCalcPoints);
                 ContourSegmentsCalcPoints = contourSegmentsCalcPoints;
 
                 // Объединение линий фронтов для визуализациир                
-                var frontLinesCopy = FrontLines.Select(s => s.Clone()).ToList();
-                var frontLinesMerged = FrontValue.Merge(ref frontLinesCopy);
-                VisualFront.FrontLines = frontLinesMerged;
+                //var frontLinesCopy = FrontLines.Select(s => s.Clone()).ToList();
+                var frontLinesMerged = FrontValue.Merge(ref frontLines);
+                VisualFront.FrontLines = frontLinesMerged;                
                 IsVisualFront = FrontGroup.IsVisualFrontOn;
             }
             catch (UserBreakException)
@@ -490,7 +488,7 @@ namespace PIK_GP_Acad.Insolation.Models
                         }
                     }
                 }
-            }
+            }            
             // Прополка полилилинии
             Contour?.Wedding(TreeModel.TolerancePoints);
 #if TEST
@@ -532,20 +530,20 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             VisualFront?.Dispose();            
             FrontGroup = null;
-            DisposeFrontLines();
+            //DisposeFrontLines();
         }
 
-        private void DisposeFrontLines ()
-        {
-            if (FrontLines != null)
-            {
-                foreach (var item in FrontLines)
-                {
-                    item?.Dispose();
-                }
-                FrontLines = null;
-            }
-        }
+        //private void DisposeFrontLines ()
+        //{
+            //if (FrontLines != null)
+            //{
+            //    foreach (var item in FrontLines)
+            //    {
+            //        item?.Dispose();
+            //    }
+            //    FrontLines = null;
+            //}
+        //}
 
         public void Dispose ()
         {

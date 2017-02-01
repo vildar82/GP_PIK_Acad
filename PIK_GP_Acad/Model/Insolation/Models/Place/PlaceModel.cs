@@ -38,7 +38,8 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             Model = insModel;
             if (Options == null)
-                Options = PlaceOptions.Default();                        
+                Options = PlaceOptions.Default();
+            AddPlacesFromMap();                     
         }
 
         public Place AddPlace (ObjectId placeId)
@@ -62,8 +63,7 @@ namespace PIK_GP_Acad.Insolation.Models
             var place = FindPlace(plId);
             if (place != null) return; // Такая площадка уже есть.
             place = new Place(plId, dicPlace, this);
-            Places.Add(place);
-            place.Update();
+            Places.Add(place);            
         }
 
         public void DeletePlace (Place place)
@@ -79,32 +79,28 @@ namespace PIK_GP_Acad.Insolation.Models
             return findPlace;
         }
 
-        public void Update ()
-        {
+        public void Update()
+        {               
+            AddPlacesFromMap();
+
             if (!IsEnableCalc) return;
 
-            if (Places.Count == 0)
-            {
-                AddPlacesFromMap();
+            // Очистка удаленных контуров
+            var deletedPlaces = Places.Where(p => !p.PlaceId.IsValidEx()).ToList();
+            foreach (var item in deletedPlaces)
+            {                
+                Places.Remove(item);
+                item.Dispose();
             }
-            else
-            {
-                // Очистка удаленных контуров
-                var deletedPlaces = Places.Where(p => !p.PlaceId.IsValidEx()).ToList();
-                foreach (var item in deletedPlaces)
-                {
-                    item.Delete();
-                    Places.Remove(item);
-                }
-                foreach (var place in Places)
-                {                    
-                    place.Update();
-                }
+            foreach (var place in Places)
+            {                
+                place.Update();
             }
         }
 
         public void AddPlacesFromMap()
         {
+            DisposePlaces();
             Places = new ObservableCollection<Place>();
             var placesInMap = Model.Map?.Places;
             if (placesInMap != null)
@@ -112,7 +108,10 @@ namespace PIK_GP_Acad.Insolation.Models
                 // Загрузка площадок из карты
                 foreach (var placeId in Model.Map.Places)
                 {
-                    AddPlace(placeId.Key, placeId.Value);
+                    if (placeId.Key.IsValidEx())
+                    {
+                        AddPlace(placeId.Key, placeId.Value);
+                    }                    
                 }
             }
         }
@@ -139,8 +138,9 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 var visuals = new List<IVisualService>();
                 foreach (var place in Places)
-                {                    
-                    visuals.Add(place.VisualPlace);
+                {               
+                    if (place?.VisualPlace != null)     
+                        visuals.Add(place.VisualPlace);
                 }
                 VisualDatabaseAny.DrawVisualsForUser(visuals);
             }
@@ -181,7 +181,7 @@ namespace PIK_GP_Acad.Insolation.Models
             IsEnableCalc = false;// dictValues.GetValue("IsEnableCalc", false); // Долго считаются площадки. Пусть сразу никогда не считаются.              
         }
 
-        public void Dispose ()
+        public void DisposePlaces ()
         {
             if (Places != null)
             {
@@ -190,6 +190,10 @@ namespace PIK_GP_Acad.Insolation.Models
                     item.Dispose();
                 }
             }
-        }        
+        }
+        public void Dispose()
+        {
+            DisposePlaces();
+        }
     }
 }

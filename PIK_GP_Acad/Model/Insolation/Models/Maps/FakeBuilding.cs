@@ -12,7 +12,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
-    public class FakeBuilding : BuildingBase
+    public class FakeBuilding : BuildingBase, IDisposable
     {
         private Polyline fakePl;
         Rectangle r;
@@ -30,11 +30,16 @@ namespace PIK_GP_Acad.Insolation.Models
         public override Rectangle Rectangle {
             get { return r; }
             set { r = value; }
-        }
+        }       
 
         public override Polyline GetContourInModel()
         {
             return (Polyline)fakePl.Clone();
-        }       
+        }
+
+        public void Dispose()
+        {
+            fakePl?.Dispose();
+        }
     }
 }

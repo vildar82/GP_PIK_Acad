@@ -36,12 +36,14 @@ namespace PIK_GP_Acad.Insolation.Services
             }
 
             var doc = insPoint.Model.Doc;
-            var calcPt = new CalcPointCentral(insPoint, insService);
-            calcPt.WithOwnerBuilding = withOwnerBuilding;
-            // Расчет освещенности в точке            
-            illumAreas = calcPt.Calc();
-            insPoint.AngleStartOnPlane = calcPt.StartAnglesIllum.AngleStartOnPlane;
-            insPoint.AngleEndOnPlane = calcPt.StartAnglesIllum.AngleEndOnPlane;
+            using (var calcPt = new CalcPointCentral(insPoint, insService))
+            {
+                calcPt.WithOwnerBuilding = withOwnerBuilding;
+                // Расчет освещенности в точке            
+                illumAreas = calcPt.Calc();
+                insPoint.AngleStartOnPlane = calcPt.StartAnglesIllum.AngleStartOnPlane;
+                insPoint.AngleEndOnPlane = calcPt.StartAnglesIllum.AngleEndOnPlane;
+            }
             return illumAreas;
         }
     }
