@@ -30,7 +30,7 @@ namespace PIK_GP_Acad.Insolation.UI
             DeletePoint = new RelayCommand<InsPoint>(OnDeletePointExecute);            
             ReportAllPoints = new RelayCommand(OnReportAllPointsExecute, CanReportAllPointsExecute);
             EditTreeOptions = new RelayCommand(OnEditTreeOptionsExecute);
-            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
+            DrawVisuals = new RelayCommand(InsTreesDrawVisuals);
         }        
 
         /// <summary>
@@ -137,9 +137,10 @@ namespace PIK_GP_Acad.Insolation.UI
         /// <summary>
         /// Рисование визуализации в чертеже
         /// </summary>
-        private void OnDrawVisualsExecute ()
+        private void InsTreesDrawVisuals ()
         {
             Tree.DrawVisuals();
+            PluginStatisticsHelper.AddStatistic();
         }
 
         private bool CanReportAllPointsExecute()

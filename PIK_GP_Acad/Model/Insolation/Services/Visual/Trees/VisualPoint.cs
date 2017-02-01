@@ -19,32 +19,27 @@ namespace PIK_GP_Acad.Insolation.Services
     /// Визуализация описания точки на чертеже  - через DrwableOverrule, а не TransientGraphics
     /// Перерисовыватся точка на чертеже - из объекта InsPointDraw (который находит соответствующую точку)
     /// </summary>
-    public class VisualPoint : IVisualService
+    public class VisualPoint : VisualTransient
     {
-        private bool isOn;
+        public InsPoint InsPoint { get; set; }                
 
-        public InsPoint InsPoint { get; set; }
-
-        public bool VisualIsOn {
-            get { return isOn; }
-            set {
-                isOn = value;
-                VisualUpdate();
-            }
-        }
-
-        public VisualPoint (InsPoint insPoint)
+        public VisualPoint (InsPoint insPoint) : base("ins_sapr_angle")
         {
             InsPoint = insPoint;
         }
 
-        public List<Entity> CreateVisual ()
+        public override List<Entity> GetDraws()
         {
-            List<Entity> draws = new List<Entity>();
+            return CreateVisual();
+        }
 
-            //// Кружок (положение точки)
-            //var optCircle = new VisualOption(System.Drawing.Color.Yellow, InsPoint.Point);
-            //draws.Add(CreateCircle(0.5, optCircle));
+        public override List<Entity> CreateVisual ()
+        {
+            draws = new List<Entity>();
+
+            // Кружок (положение точки)
+            var optCircle = new VisualOption(InsPoint.InsValue.Requirement.Color, InsPoint.Point);
+            draws.Add(CreateCircle(0.5, optCircle));
 
             // Подпись
             // Макимальная непрерывная инсоляция            
@@ -61,29 +56,32 @@ namespace PIK_GP_Acad.Insolation.Services
             return draws;
         }
 
-        public void VisualUpdate ()
+        public override void VisualUpdate ()
         {
             // Перерисовать точку
             //Autodesk.AutoCAD.ApplicationServices.Application.UpdateScreen();
         }
 
-        public void VisualsDelete ()
+        public override void VisualsDelete ()
         {
             // ??? overrule - думаю не нужно удалять            
         }
 
-        public void Dispose ()
+        public override void Dispose ()
         {
-            
+            if (draws == null) return;
+            foreach (var item in draws)
+            {
+                item?.Dispose();
+            }
         }
 
-        public void DrawForUser()
-        {
-            var doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
-            var visDbAny = new VisualDatabaseAny(doc);
-            visDbAny.AddVisual(this);
-            visDbAny.Draw();
+        protected override void DrawVisuals(List<Entity> draws)
+        {            
+        }
+
+        protected override void EraseDraws()
+        {            
         }
     }
 }

@@ -14,86 +14,68 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация графики в чертеже (в базе чертежа)
     /// </summary>
-    public abstract class  VisualDatabase : IVisualService
+    public abstract class  VisualDatabase : VisualBase
     {        
-        private const string LayerVisualName = "sapr_ins_visuals";
-        private bool isOn;
-        private List<ObjectId> draws;
-        private LayerInfo lay;
+        private const string LayerVisualName = "ins_sapr_visuals"; // Слой для отрисовки визуализации при расчете. layerForUser - слой для отрисовки визуализации для пользователя   
+        internal List<ObjectId> draws;
+        protected Document doc; 
 
-        public Document Doc { get; set; }
-        public string LayerVisual { get; set; } = LayerVisualName;
-
-        public abstract List<Entity> CreateVisual ();
-
-        public VisualDatabase (Document doc)
+        public VisualDatabase(Document doc, string layerForUser = null) : base(layerForUser)
         {
-            this.Doc = doc;
+            this.doc = doc;
         }
 
-        public bool VisualIsOn {
-            get { return isOn; }
-            set {
-                isOn = value;
-                VisualUpdate();
-            }
-        }
-
-        /// <summary>
-        /// Включение/отключение визуализации (без перестроений)
-        /// </summary>
-        public void VisualUpdate ()
-        {            
-            EraseDraws();
-            // Включение визуализации на чертеже
-            if (isOn)
-            {
-                draws = new List<ObjectId>();
-                var ds = CreateVisual();
-                if (ds != null && ds.Count != 0)
+        protected override void DrawVisuals(List<Entity> ds)
+        {
+            draws = new List<ObjectId>();
+            if (ds != null && ds.Count != 0)
+            {                
+                using (doc.LockDocument())
+                using (var t = doc.TransactionManager.StartTransaction())
                 {
-                    using (Doc.LockDocument())
-                    using (var t = Doc.TransactionManager.StartTransaction())
+                    var db = doc.Database;
+                    var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
+                    var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
+
+                    // Слой для визуализации                    
+                    var idLayerVisual = GetLayerForVisual(LayerVisualName);
+
+                    foreach (var d in ds)
                     {
-                        var db = Doc.Database;
-                        var msId = SymbolUtilityServices.GetBlockModelSpaceId(db);
-                        var ms = msId.GetObject(OpenMode.ForWrite) as BlockTableRecord;
-
-                        // Слой для визуализации
-                        var idLayerVisual = GetLayerForVisual(db);
-
-                        foreach (var d in ds)
+                        if (d.Id.IsNull)
                         {
-                            if (d.Id.IsNull)
-                            {
-                                d.LayerId = idLayerVisual;                
-                                ms.AppendEntity(d);
-                                t.AddNewlyCreatedDBObject(d, true);
-                            }
-                            draws.Add(d.Id);
+                            if (d.LayerId != idLayerVisual)
+                                d.LayerId = idLayerVisual;
+                            ms.AppendEntity(d);
+                            t.AddNewlyCreatedDBObject(d, true);
                         }
-                        t.Commit();
+                        draws.Add(d.Id);
                     }
+                    t.Commit();
                 }
             }
-        }
+        }        
 
-        private void EraseDraws ()
+        protected override void EraseDraws ()
         {
-            if (draws != null && draws.Any() && Doc != null && !Doc.IsDisposed)
+            if (draws != null && draws.Any() && doc != null && !doc.IsDisposed)
             {
-                using (new WorkingDatabaseSwitcher(Doc.Database))
+                using (new WorkingDatabaseSwitcher(doc.Database))
                 {
-                    using (Doc.LockDocument())
-                    using (var t = Doc.TransactionManager.StartTransaction())
+                    using (doc.LockDocument())
+                    using (var t = doc.TransactionManager.StartTransaction())
                     {
                         foreach (var item in draws)
                         {
                             if (!item.IsValidEx()) continue;
                             try
                             {
-                                var ent = item.GetObject(OpenMode.ForWrite, false, true);
-                                ent.Erase();                            
+                                var ent = item.GetObject(OpenMode.ForWrite, false, true) as Entity;
+                                // Удаляем, только, если слой остался прежним
+                                if (ent.Layer == LayerForUser)
+                                {
+                                    ent.Erase();
+                                }
                             }
                             catch { }
                         }
@@ -101,39 +83,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                 }
             }
-        }              
-
-        public void VisualsDelete ()
-        {
-            try
-            {
-                EraseDraws();
-            }
-            catch { }
-        }
-
-        private ObjectId GetLayerForVisual (Database db)
-        {
-            if (lay == null)
-            {
-                lay = new LayerInfo(LayerVisual);
-            }
-            return lay.CheckLayerState();            
-        }
-
-        public virtual void Dispose ()
-        {
-            EraseDraws();
-        }
-
-        public void DrawForUser()
-        {
-            var doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
-            var visDbAny = new VisualDatabaseAny(doc);
-            visDbAny.AddVisual(this);
-            visDbAny.Draw();
-        }
+        }                                              
 
         /// <summary>
         /// Проверка, это элемент визуализации

@@ -17,7 +17,7 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         public InsPoint InsPoint { get; set; }
 
-        public VisualPointIllums(InsPoint insPoint)
+        public VisualPointIllums(InsPoint insPoint) : base("ins_sapr_angle")
         {
             InsPoint = insPoint;
         }
@@ -30,9 +30,9 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 var transp = InsPoint?.Model?.Tree?.TreeOptions?.Transparence ?? 60;
                 foreach (var item in InsPoint.Illums)
-                {
+                {                    
                     draws.AddRange(item.CreateVisual(transp));
-                }
+                }                
             }
             return draws;
         }       

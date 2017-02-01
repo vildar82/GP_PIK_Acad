@@ -9,14 +9,14 @@ using PIK_GP_Acad.Insolation.Models;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
-    public class VisualFront : VisualDatabase, IDisposable
+    public class VisualFront : VisualTransient
     {
-        public VisualFront(Document doc): base(doc)
+        public VisualFront(Document doc): base("ins_sapr_front")
         {
 
         }
 
-        public List<FrontValue> FrontLines { get; set; }
+        public List<FrontValue> FrontLines { get; set; }            
 
         public override List<Entity> CreateVisual ()
         {

@@ -107,7 +107,7 @@ namespace PIK_GP_Acad.Insolation.Services
             if (opt.Color != null)
                 ent.Color = opt.Color;
             if (opt.Transparency.Alpha != 0)
-                ent.Transparency = opt.Transparency;
+                ent.Transparency = opt.Transparency;            
         }
 
         /// <summary>

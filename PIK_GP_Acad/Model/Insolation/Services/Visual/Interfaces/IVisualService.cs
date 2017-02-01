@@ -14,6 +14,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// Включение/выключение визуализации
         /// </summary>
         bool VisualIsOn { get; set; }
+        string LayerForUser { get; set; }
 
         /// <summary>
         /// Обновление визуализации
@@ -23,10 +24,6 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <summary>
         /// Удаление визуализации
         /// </summary>
-        void VisualsDelete ();
-        /// <summary>
-        /// Отрисовка визуализации для пользователя
-        /// </summary>
-        void DrawForUser();        
+        void VisualsDelete ();        
     }
 }

@@ -185,10 +185,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             foreach (var group in Groups)
             {
+                var viuals = new List<IVisualService>();
                 foreach (var item in group.Houses)
                 {
-                    item.VisualFront.DrawForUser();
+                    viuals.Add(item.VisualFront);                    
                 }
+                VisualDatabaseAny.DrawVisualsForUser(viuals);
             }
         }
 

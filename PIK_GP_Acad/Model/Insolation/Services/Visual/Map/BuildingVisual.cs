@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (IsVisualizedInFront == true)
                 return null;
-            return building.CreateVisual();
+            return building.CreateVisual();                        
         }
 
         public override void VisualUpdate()

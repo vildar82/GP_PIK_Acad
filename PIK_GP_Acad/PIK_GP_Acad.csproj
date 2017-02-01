@@ -240,6 +240,7 @@
     <Compile Include="Model\Insolation\Models\Trees\Point\SelectPoint.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Interfaces\IVisualService.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\Report\InsPointReport.cs" />
+    <Compile Include="Model\Insolation\Services\Visual\VisualBase.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualDatabaseAny.cs" />
     <Compile Include="Model\Insolation\Services\Visual\VisualOption.cs" />
     <Compile Include="Model\Insolation\Services\Visual\Trees\VisualPointIllums.cs" />

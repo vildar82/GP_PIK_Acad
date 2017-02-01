@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Services
     /// </summary>
     public class VisualTree : VisualTransient
     {
-        public VisualTree (TreeModel model) //: base (model.Doc)
+        public VisualTree (TreeModel model) : base ("ins_sapr_tree")
         {
             TreeModel = model;
         }

@@ -214,11 +214,11 @@
                                 <Image Source="{StaticResource biFrontExport}" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <!--<MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
+                        <MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biDraw_visuals}" />
                             </MenuItem.Icon>
-                        </MenuItem>-->
+                        </MenuItem>
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>

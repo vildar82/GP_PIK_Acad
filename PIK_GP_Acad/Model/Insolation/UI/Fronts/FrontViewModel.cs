@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.UI
             Delete = new RelayCommand<FrontGroup>(OnDeleteExecute);
             ShowHouse = new RelayCommand<House>(OnShowHouseExecute);
             Export = new RelayCommand(InsFrontExportExecute);
-            DrawVisuals = new RelayCommand(InsFrontDrawVisualsExecute);
+            DrawVisuals = new RelayCommand(InsFrontDrawVisuals);
             ShowOptions = new RelayCommand<FrontGroup>(OnShowOptionsExecute);
             ShowHouseOptions = new RelayCommand<House>(OnShowHouseOptionsExecute);
             ClearOverrideOptions = new RelayCommand<House>(OnClearOverrideOptionsExecute);
@@ -105,7 +105,7 @@ namespace PIK_GP_Acad.Insolation.UI
         /// <summary>
         /// Рисование визуализации в чертеже
         /// </summary>
-        private void InsFrontDrawVisualsExecute()
+        private void InsFrontDrawVisuals()
         {
             Front.DrawVisuals();
             PluginStatisticsHelper.AddStatistic();

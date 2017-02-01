@@ -17,14 +17,10 @@ namespace PIK_GP_Acad.Insolation.Services
     {
         private List<Entity> visuals;
         private PlaceModel placeModel;
-        /// <summary>
-        /// Визуализация контуров уровней площадок на чертеже
-        /// </summary>
-        //private VisualPlaceContours visualPlaceContours;
-        public VisualPlace (PlaceModel placeModel)// : base (placeModel?.Model?.Doc)
+                
+        public VisualPlace (PlaceModel placeModel)
         {
-            this.placeModel = placeModel;
-            //visualPlaceContours = new VisualPlaceContours(placeModel);
+            this.placeModel = placeModel;            
         }
 
         public List<Tile> Tiles { get { return tiles; }
@@ -37,8 +33,7 @@ namespace PIK_GP_Acad.Insolation.Services
         List<Tile> tiles;
 
         public override List<Entity> CreateVisual ()
-        {
-            //visualPlaceContours.VisualIsOn = this.VisualIsOn;
+        {            
             return visuals?.Select(s=>(Entity)s.Clone()).ToList();
         }
 
@@ -46,8 +41,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {
             if (Tiles == null || Tiles.Count == 0) return;
 
-            DisposeVisuals();
-            //visualPlaceContours.DisposeVisuals();
+            DisposeVisuals();            
             visuals = new List<Entity>();
 
             var groupLevels = Tiles.GroupBy(g => g.Level);
@@ -67,13 +61,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 VisualHelper.SetEntityOpt(h, visOpt);
                 visuals.Add(h);
             }
-        }
-
-        public override void VisualsDelete()
-        {
-            //visualPlaceContours.VisualsDelete();
-            base.VisualsDelete();
-        }
+        }        
 
         private void DisposeVisuals()
         {
@@ -99,8 +87,7 @@ namespace PIK_GP_Acad.Insolation.Services
         public override void Dispose()
         {
             DisposeTiles();
-            DisposeVisuals();
-            //visualPlaceContours.Dispose();
+            DisposeVisuals();            
             base.Dispose();
         }
     }

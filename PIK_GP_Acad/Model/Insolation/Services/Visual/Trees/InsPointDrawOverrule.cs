@@ -71,8 +71,9 @@ namespace PIK_GP_Acad.Insolation.Models
                 foreach (var item in draws)
                 {
                     item.WorldDraw(wd);
-                    item.Dispose();
-                }                
+                    item.Dispose(); // ???
+                }
+                return true;
             }
             return base.WorldDraw(drawable, wd);                        
         }

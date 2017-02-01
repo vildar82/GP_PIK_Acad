@@ -12,48 +12,38 @@ namespace PIK_GP_Acad.Insolation.Services
     /// <summary>
     /// Визуализация графики - через TransientManager
     /// </summary>
-    public abstract class VisualTransient : IVisualService
+    public abstract class VisualTransient : VisualBase
     {
-        private Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();
-        protected bool isOn;
-        private List<Entity> draws;
-        
-        public abstract List<Entity> CreateVisual ();
+        public static Autodesk.AutoCAD.Geometry.IntegerCollection vps = new Autodesk.AutoCAD.Geometry.IntegerCollection();        
+        protected List<Entity> draws;
 
-        public bool VisualIsOn {
-            get { return isOn; }
-            set {
-                isOn = value;
-                VisualUpdate();
-            }
+        public VisualTransient(string layer = null) : base(layer)
+        {
+
+        }
+
+        public virtual List<Entity> GetDraws()
+        {
+            return draws;
         }
 
         /// <summary>
         /// Включение/отключение визуализации (без перестроений)
         /// </summary>
-        public virtual void VisualUpdate ()
-        {                       
-            // Включение визуализации на чертеже
-            if (isOn)
+        protected override void DrawVisuals(List<Entity> draws)
+        {
+            this.draws = draws;
+            if (draws != null)
             {
-                UpdateDraws();
-                if (draws != null)
-                {                    
-                    var tm = TransientManager.CurrentTransientManager;
-                    foreach (var d in draws)
-                    {
-                        tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
-                    }
+                var tm = TransientManager.CurrentTransientManager;
+                foreach (var d in draws)
+                {
+                    tm.AddTransient(d, TransientDrawingMode.Main, 0, vps);
                 }
-            }
-            // Выключение
-            else
-            {
-                EraseDraws();
             }
         }
 
-        private void EraseDraws ()
+        protected override void EraseDraws ()
         {
             if (draws == null || draws.Count == 0) return;
             var tm = TransientManager.CurrentTransientManager;
@@ -63,34 +53,6 @@ namespace PIK_GP_Acad.Insolation.Services
                 item.Dispose();
             }
             draws = null;
-        }
-
-        private void UpdateDraws ()
-        {
-            EraseDraws();
-            draws = CreateVisual();            
-        }
-
-        public virtual void VisualsDelete ()
-        {
-            EraseDraws();
-        }
-
-        public virtual void Dispose ()
-        {
-            if (draws != null)
-            {
-                EraseDraws();                
-            }
-        }
-
-        public void DrawForUser()
-        {
-            var doc = Application.DocumentManager.MdiActiveDocument;
-            if (doc == null) return;
-            var visDbAny = new VisualDatabaseAny(doc);
-            visDbAny.AddVisual(this);            
-            visDbAny.Draw();
-        }
+        }        
     }
 }

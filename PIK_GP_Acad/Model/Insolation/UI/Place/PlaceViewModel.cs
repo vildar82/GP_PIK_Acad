@@ -21,7 +21,7 @@ namespace PIK_GP_Acad.Insolation.UI
             EditOptions = new RelayCommand(OnEditOptionsExecute);
             ShowPlace = new RelayCommand<Place>(OnShowPlaceExecute);
             Delete = new RelayCommand<Place>(OnDeleteExecute);
-            DrawVisuals = new RelayCommand(OnDrawVisualsExecute);
+            DrawVisuals = new RelayCommand(InsPlaceDrawVisuals);
         }        
 
         /// <summary>
@@ -82,9 +82,10 @@ namespace PIK_GP_Acad.Insolation.UI
             Place.DeletePlace(place);
         }
 
-        private void OnDrawVisualsExecute()
+        private void InsPlaceDrawVisuals()
         {
             Place.DrawVisuals();
+            PluginStatisticsHelper.AddStatistic();
         }
     }
 }

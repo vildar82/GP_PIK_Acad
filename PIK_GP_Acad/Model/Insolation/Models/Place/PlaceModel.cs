@@ -134,10 +134,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             if (Places != null)
             {
+                var visuals = new List<IVisualService>();
                 foreach (var place in Places)
-                {
-                    place.VisualPlace.DrawForUser();                    
+                {                    
+                    visuals.Add(place.VisualPlace);
                 }
+                VisualDatabaseAny.DrawVisualsForUser(visuals);
             }
         }
 
