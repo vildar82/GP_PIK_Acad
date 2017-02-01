@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private List<Entity> visuals;
         private PlaceModel placeModel;
                 
-        public VisualPlace (PlaceModel placeModel)
+        public VisualPlace (PlaceModel placeModel) : base("ins_sapr_place")
         {
             this.placeModel = placeModel;            
         }

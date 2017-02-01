@@ -16,15 +16,16 @@ using MicroMvvm;
 namespace PIK_GP_Acad.Insolation.Models
 {
     public class TreeVisualOption : ModelBase, ITypedDataValues
-    {
-        Color color;
-        int height;
+    {        
         public Color Color { get { return color; } set { color = value; RaisePropertyChanged(); } }
-        public int Height { get { return height; } set { height = value; RaisePropertyChanged(); } }
+        Color color;
+
+        public double Height { get { return height; } set { height = value; RaisePropertyChanged(); } }
+        double height;
 
         public TreeVisualOption () { }
 
-        public TreeVisualOption(Color color, int height)
+        public TreeVisualOption(Color color, double height)
         {
             Color = color;
             Height = height;
@@ -59,7 +60,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            Height = dictValues.GetValue("Height", 35);
+            Height = dictValues.GetValue("Height", 35d);
             byte a = dictValues.GetValue("A", (byte)0);
             byte r = dictValues.GetValue("R", (byte)255);
             byte g = dictValues.GetValue("G", (byte)255);
@@ -90,7 +91,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private static void CheckHeights (ref List<TreeVisualOption> treeVisOpts)
         {
-            var intComparer = new AcadLib.Comparers.IntEqualityComparer(1);
+            var intComparer = new AcadLib.Comparers.DoubleEqualityComparer(1);
             // Сортировка по высоте
             treeVisOpts.Sort((t1, t2) => t1.Height.CompareTo(t2.Height));
             

@@ -59,7 +59,9 @@ namespace PIK_GP_Acad.Insolation.Models
         public void AddPlace (ObjectId plId, DicED dicPlace)
         {
             if (!plId.IsValidEx()) return;
-            var place = new Place(plId, dicPlace, this);
+            var place = FindPlace(plId);
+            if (place != null) return; // Такая площадка уже есть.
+            place = new Place(plId, dicPlace, this);
             Places.Add(place);
             place.Update();
         }
@@ -103,6 +105,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void AddPlacesFromMap()
         {
+            Places = new ObservableCollection<Place>();
             var placesInMap = Model.Map?.Places;
             if (placesInMap != null)
             {
