@@ -18,29 +18,30 @@ namespace PIK_GP_Acad.Insolation.Services
         public static ObjectId GetTextStyleId (Document doc)
         {            
             var db = doc.Database;
-            ObjectId res = db.Textstyle;
+            return db.GetTextStylePIK();
 
-            using (doc.LockDocument())
-            using (var t = db.TransactionManager.StartTransaction())
-            {
-                var textStyleTable = db.TextStyleTableId.GetObject(OpenMode.ForRead) as TextStyleTable;
-                if (textStyleTable.Has(textStyleName))
-                {
-                    res = textStyleTable[textStyleName];
-                }
-                else
-                {
-                    textStyleTable.UpgradeOpen();
-                    var insTextStyle = new TextStyleTableRecord();
-                    insTextStyle.Name = textStyleName;
-                    res = textStyleTable.Add(insTextStyle);
-                    t.AddNewlyCreatedDBObject(insTextStyle, true);
-                }
-                CheckTextStyle(res);
+            //ObjectId res = db.Textstyle;
+            //using (doc.LockDocument())
+            //using (var t = db.TransactionManager.StartTransaction())
+            //{
+            //    var textStyleTable = db.TextStyleTableId.GetObject(OpenMode.ForRead) as TextStyleTable;
+            //    if (textStyleTable.Has(textStyleName))
+            //    {
+            //        res = textStyleTable[textStyleName];
+            //    }
+            //    else
+            //    {
+            //        textStyleTable.UpgradeOpen();
+            //        var insTextStyle = new TextStyleTableRecord();
+            //        insTextStyle.Name = textStyleName;
+            //        res = textStyleTable.Add(insTextStyle);
+            //        t.AddNewlyCreatedDBObject(insTextStyle, true);
+            //    }
+            //    CheckTextStyle(res);
 
-                t.Commit();
-            }
-            return res;
+            //    t.Commit();
+            //}
+            //return res;
         }
 
         public static Autodesk.AutoCAD.DatabaseServices.Polyline CreatePolyline (List<Point2d> points, VisualOption opt)

@@ -83,6 +83,7 @@ namespace PIK_GP_Acad.Insolation.Services
             var ptDim2 = PtOrig + (PtEnd - PtOrig) / 2;
             var dim = new LineAngularDimension2(PtOrig.Convert3d(), ptDim1.Convert3d(), 
                 PtOrig.Convert3d(), ptDim2.Convert3d(), ptCenter.Convert3d(), Time.ToHours(), ObjectId.Null);
+            dim.DimensionStyle = HostApplicationServices.WorkingDatabase.GetDimAngularStylePIK();
             dim.Color = Color.FromColor(System.Drawing.Color.Red);
             dim.Dimtxt = 1.5;
             dim.Dimscale = 0.5;
