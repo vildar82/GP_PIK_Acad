@@ -14,6 +14,7 @@ using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.UI;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Services
 {
@@ -223,6 +224,7 @@ namespace PIK_GP_Acad.Insolation.Services
         /// <param name="onOff">Включение или выключение расчета</param>
         private static void ActivateIns (bool onOff)
         {
+            Inspector.Clear();
             var doc = Application.DocumentManager.MdiActiveDocument;                                    
                         
             if (insViewModel == null)
@@ -287,6 +289,7 @@ namespace PIK_GP_Acad.Insolation.Services
             }
             // Переключение на модель (или на null)                
             insViewModel.Model = insModel;
+            Inspector.Show();
         }
 
         /// <summary>

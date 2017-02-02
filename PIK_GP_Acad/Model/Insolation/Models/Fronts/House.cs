@@ -18,7 +18,6 @@ using PIK_DB_Projects;
 using PIK_GP_Acad.Insolation.UI;
 using MicroMvvm;
 using System.Windows.Media;
-using System.Drawing;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -453,9 +452,17 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             else
             {
+                foreach (var item in pls)
+                {
+                    item.Wedding(TreeModel.TolerancePoints);
+#if DEBUG
+                    //EntityHelper.AddEntityToCurrentSpace((Entity)item?.Clone());
+#endif
+                }
+
                 using (var reg = pls.Union(null))
                 {
-#if TEST
+#if DEBUG
                     //EntityHelper.AddEntityToCurrentSpace((Region)reg?.Clone());            
 #endif
                     var ptsRegByLoopType = reg.GetPoints2dByLoopType();
@@ -480,6 +487,9 @@ namespace PIK_GP_Acad.Insolation.Models
                             var plsLoop = ptsRegByLoopType.Select(s => s.Key.Cast<Point2d>().ToList().CreatePolyline()).ToList();
                             try
                             {
+#if DEBUG
+                                //EntityHelper.AddEntityToCurrentSpace(plsLoop);
+#endif
                                 var plMerged = plsLoop.Merge(2);
                                 Contour = plMerged;
                             }

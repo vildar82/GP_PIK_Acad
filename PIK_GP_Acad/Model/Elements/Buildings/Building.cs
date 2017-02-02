@@ -14,6 +14,7 @@ using AcadLib;
 using AcadLib.Extensions;
 using PIK_GP_Acad.Elements.Blocks.BlockSection;
 using NetLib;
+using AcadLib.Geometry;
 
 namespace PIK_GP_Acad.Elements.Buildings
 {
@@ -83,7 +84,7 @@ namespace PIK_GP_Acad.Elements.Buildings
                     if (plCopy.Elevation !=0)
                     {
                         plCopy.Elevation = 0;
-                    }
+                    }                    
                     return plCopy;
                 }
                 else if (ent is Hatch)
