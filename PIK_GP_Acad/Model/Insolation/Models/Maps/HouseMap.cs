@@ -9,6 +9,7 @@ using AcadLib;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using System.Collections;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -65,6 +66,8 @@ namespace PIK_GP_Acad.Insolation.Models
                     }
                     catch(Exception ex)
                     {
+                        Inspector.AddError($"Ошибка определения контура дома - {ex.Message}", 
+                            house.GetExtents(), Matrix3d.Identity, System.Drawing.SystemIcons.Error);
                         Logger.Log.Error(ex, "HouseMap.DefineHouses()");
                     }
                 }

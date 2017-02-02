@@ -255,6 +255,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     // Инициализация расчета
                     insModel.Initialize(doc);
                     insModel.Map.UpdateVisual();// Т.к. расчет не обновляется, то визуализация домов на карте (без отдельной визуализации домов во фронтах.)
+                    insModel.Map.WriteReport(); // Отчет по количеству определенных объеков на карте
                     // Не обновлять расчет - пусть вручную обновляют
                     //try
                     //{
@@ -315,6 +316,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
         public static void ShowMessage (Exception ex, string msg)
         {
+            if (ex is CancelByUserException) return;
             Logger.Log.Error(ex, msg);
             ShowMessage($"{msg}\n\r{ex.Message}", MessageBoxImage.Error);            
         }

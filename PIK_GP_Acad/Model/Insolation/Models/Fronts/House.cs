@@ -18,6 +18,7 @@ using PIK_DB_Projects;
 using PIK_GP_Acad.Insolation.UI;
 using MicroMvvm;
 using System.Windows.Media;
+using System.Drawing;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -78,7 +79,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
         }
-        string name;
+        string name;        
 
         /// <summary>
         /// Высота расчета фронтов
@@ -155,7 +156,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void Update (int? numberHouseInGroup = null)
         {
             //DisposeFrontLines();
-            if (Contour == null) return;
+            if (Contour == null)
+                return;
             if (numberHouseInGroup.HasValue)
                 this.numberHouseInGroup = numberHouseInGroup.Value;
             DefineName();
@@ -417,7 +419,7 @@ namespace PIK_GP_Acad.Insolation.Models
             return Options?.Window ?? FrontGroup.Options.Window;
         }
 
-        private Extents3d GetExtents()
+        public Extents3d GetExtents()
         {
             if (Contour != null)
             {

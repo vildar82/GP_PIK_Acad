@@ -240,7 +240,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                 }
 #if TEST                
-                //EntityHelper.AddEntityToCurrentSpace(lineShadow);
+                EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
             }
             // Объединение совпадающих зон теней
@@ -288,6 +288,9 @@ namespace PIK_GP_Acad.Insolation.Services
             {
                 lineShadow.IntersectWith(build.Contour, intersectMode, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
             }
+
+            // Точки пересечения дома с нулевой линей
+            var ptsZeroIntersects = GetZeroLineIntersects(build);
             
             // Между каждыми точками пересечения определение петли полилинии и определение тени
             if (ptsIntersects.Count > 1)
@@ -303,8 +306,10 @@ namespace PIK_GP_Acad.Insolation.Services
                         try
                         {
                             var ptsLoopAbove = build.Contour.GetLoopSideBetweenHorizontalIntersectPoints(
-                                                ptIntersectPrew, ptIntersect, true, true);
-                            var ilumShadow = GetIllumShadow(ptsLoopAbove.Where(p => p.Y <= ptCalc.Y && p.Y >= lineShadow.StartPoint.Y).ToList());
+                                                ptIntersectPrew, ptIntersect, true, true).
+                                                Where(p => p.Y <= ptCalc.Y && p.Y >= lineShadow.StartPoint.Y).ToList();
+                            ptsLoopAbove.AddRange(ptsZeroIntersects);
+                            var ilumShadow = GetIllumShadow(ptsLoopAbove);
                             if (ilumShadow != null)
                             {
                                 resIlumsShadows.Add(ilumShadow);
@@ -332,6 +337,21 @@ namespace PIK_GP_Acad.Insolation.Services
             //    resIlumsShadows.Add(ilumShadow);
             //}            
             return resIlumsShadows;
+        }
+
+        private List<Point2d> GetZeroLineIntersects(MapBuilding build)
+        {
+            var pts = new List<Point2d>();
+            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
+            {
+                var ptsIntersects = new Point3dCollection();
+                using (var plane = new Plane())
+                {
+                    lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                    pts = ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()).ToList();
+                }
+            }
+            return pts;
         }
 
         /// <summary>

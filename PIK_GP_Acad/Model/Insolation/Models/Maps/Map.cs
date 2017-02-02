@@ -461,5 +461,32 @@ namespace PIK_GP_Acad.Insolation.Models
                 }
             }
         }
+
+        /// <summary>
+        /// Вывести статистику определенных объектов на карте
+        /// </summary>
+        public void WriteReport()
+        {
+            var ed = Doc.Editor;
+            ed.WriteMessage($"\nОпределенно объектов инсоляции на чертеже:");
+            // Здания
+            var groupsBuildings = Buildings.GroupBy(g => g.Building.IsProjectedBuilding).Select(s=> {
+                if (s.Key)
+                {
+                    // Проектируемые
+                    return $"Проектируемые-{s.Count()}шт.";
+                }
+                else
+                {
+                    // Окружающие
+                    return $"Окр.застройка-{s.Count()}шт.";
+                }
+            });
+            ed.WriteMessage($"\nЗданий: {Buildings?.Count ?? 0} шт. {string.Join(", ",groupsBuildings)}");
+            // Точек
+            ed.WriteMessage($"\nРасчетных точек: {InsPoints?.Count ?? 0} шт.");
+            // Площадок
+            ed.WriteMessage($"\nПлощадок: {Places?.Count ?? 0} шт.");
+        }
     }
 }

@@ -64,10 +64,10 @@ namespace PIK_GP_Acad.Insolation.UI
                     // Запись статистики
                     PluginStatisticsHelper.AddStatistic();
                 }
-            }
+            }            
             catch(Exception ex)
             {
-                InsService.ShowMessage(ex.Message, System.Windows.MessageBoxImage.Error);
+                InsService.ShowMessage(ex, "Ошибка");
             }
         }        
         

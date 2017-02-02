@@ -21,11 +21,13 @@ namespace PIK_GP_Acad.Insolation.Models
         public PlaceModel()
         {
             IsEnableCalc = false;
+            Places = new ObservableCollection<Place>();
         }
 
         public InsModel Model { get; set; }
 
-        public ObservableCollection<Place> Places { get; set; } = new ObservableCollection<Place>();
+        public ObservableCollection<Place> Places { get { return places;  } set { places = value; RaisePropertyChanged(); } }
+        private ObservableCollection<Place> places;
 
         public PlaceOptions Options { get; set; }
         /// <summary>

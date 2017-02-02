@@ -55,7 +55,7 @@ namespace PIK_GP_Acad.Insolation.UI
             }
             catch(Exception ex)
             {
-                InsService.ShowMessage(ex.Message, System.Windows.MessageBoxImage.Error);
+                InsService.ShowMessage(ex, "Ошибка");
             }
         }
 

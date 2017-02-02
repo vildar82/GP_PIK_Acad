@@ -11,6 +11,7 @@ using AcadLib;
 using AcadLib.Geometry;
 using Autodesk.AutoCAD.Colors;
 using MicroMvvm;
+using Autodesk.AutoCAD.Geometry;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -86,7 +87,8 @@ namespace PIK_GP_Acad.Insolation.Models
             visuals.Add(plContour);
 
             // точка вставки текста
-            var ptText = plContour.Centroid();
+            //var ptText = plContour.Centroid();
+            var ptText = GetCenter(plContour);
 
             // Текст описания здания
             var vopt = new VisualOption(System.Drawing.Color.White, ptText);
@@ -104,7 +106,12 @@ namespace PIK_GP_Acad.Insolation.Models
 
             return visuals;
         }
-        
+
+        private Point3d GetCenter(Polyline plContour)
+        {
+            return plContour.GeometricExtents.Center();
+        }
+
         public override string ToString()
         {
             return GetInfo();

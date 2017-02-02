@@ -165,13 +165,12 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             // Дома в области группы - без домов из других групп
             var housesInGroup = Front.Model.Map.Houses.GetHousesInExtents(SelectRegion).
-                    Where(w=>w.FrontGroup == null || w.FrontGroup == this).ToList();
-            
-            for (int i =0; i< housesInGroup.Count; i++)                
+                    Where(w=>w.FrontGroup == null || w.FrontGroup == this).ToList();            
+            for (int i = 0; i < housesInGroup.Count; i++)
             {
                 var house = housesInGroup[i];
-                house.FrontGroup = this;                
-                house.Update(i+1);
+                house.FrontGroup = this;
+                house.Update(i + 1);                
             }
             Houses = new ObservableCollection<House>(housesInGroup.OrderBy(o=>o.Name, AcadLib.Comparers.AlphanumComparator.New));
         }        
