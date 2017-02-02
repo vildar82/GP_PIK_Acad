@@ -20,8 +20,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// Группа - соответствует Блоку в проекте
     /// </summary>
     public class FrontGroup : ModelBase, IExtDataSave, ITypedDataValues, IDisposable
-    {        
-
+    {   
         /// <summary>
         /// Для загрузки из словаря
         /// </summary>

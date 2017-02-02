@@ -27,8 +27,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class House : ModelBase, IDisposable, IEquatable<House>
     {
-        private bool isInitialized;
-        private bool isDefaultName;
+        private bool isInitialized;        
         private int numberHouseInGroup;        
 
         //public House (FrontGroup frontGroup)
@@ -269,15 +268,13 @@ namespace PIK_GP_Acad.Insolation.Models
             var houseNames = Sections.Where(w => !string.IsNullOrEmpty(w.Building.HouseName))
                 .GroupBy(g => g.Building.HouseName).ToList();
             if (houseNames.Count == 1)
-            {
-                isDefaultName = false;
+            {                
                 var houseName = houseNames.First().First();
                 Name = houseName.Building.HouseName;
                 //HouseId = houseName.Building.HouseId;                
             }
             else
-            {
-                isDefaultName = true;
+            {                
                 Name = "Дом " + numberHouseInGroup;
             }
 
@@ -306,7 +303,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         private void SaveHouseNameToSections()
         {
-            if (isDefaultName || !isInitialized)
+            if (!isInitialized)
                 return;
             //if (string.IsNullOrEmpty(Name)) return;            
             using (Doc.LockDocument())

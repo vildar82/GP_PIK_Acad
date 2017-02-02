@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -53,7 +53,7 @@
                                                     Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                     Background="Transparent" BorderThickness="0"
                                                     FontSize="16"
-                                                    Text="{Binding FrontLevel}">
+                                                    Text="{Binding FrontLevel, StringFormat={}{0}эт.}">
                                                     <ToolTipService.ToolTip>
                                                         <TextBlock MaxWidth="400" TextWrapping="Wrap">
                                                             Номер этажа для расчета фронтов в группе.
@@ -108,7 +108,7 @@
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
                                                             <Grid.InputBindings>
-                                                                <MouseBinding Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}" Gesture="LeftClick" />
+                                                                <MouseBinding Gesture="LeftClick" Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}"  />
                                                             </Grid.InputBindings>
                                                             <TextBox
                                                                 Grid.Column="0"
@@ -125,7 +125,7 @@
                                                                 Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
                                                                 Background="Transparent" BorderThickness="0"
                                                                 FontSize="16"
-                                                                Text="{Binding FrontLevel}">
+                                                                Text="{Binding FrontLevel, StringFormat={}{0}эт.}">
                                                                 <ToolTipService.ToolTip>
                                                                     <TextBlock MaxWidth="400" TextWrapping="Wrap">
                                                                         Номер этажа для расчета фронтов дома. Если 0 - то как у группы.
@@ -135,7 +135,7 @@
                                                                     </TextBlock>
                                                                 </ToolTipService.ToolTip>
                                                             </TextBox>
-                                                            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                                            <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
                                                                 <Button
                                                                     Margin="1"
                                                                     Style="{StaticResource btnSmall}"
@@ -156,6 +156,7 @@
                                                             </StackPanel>
                                                             <ComboBox
                                                                 Grid.Column="4"
+                                                                HorizontalAlignment="Right"
                                                                 MinWidth="50"
                                                                 Background="Transparent"
                                                                 ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.Model.HousesDb, UpdateSourceTrigger=PropertyChanged}"
