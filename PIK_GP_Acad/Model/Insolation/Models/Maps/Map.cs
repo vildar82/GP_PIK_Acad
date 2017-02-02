@@ -270,12 +270,12 @@ namespace PIK_GP_Acad.Insolation.Models
                         Places.Add(new KeyValuePair<ObjectId, DicED>(pl.Id, dicPlace));
                     }
                 }
-                // Если она на  слое sapr_ins_visuals - удаление
-                if (VisualDatabase.IsVisualElement(ent))
-                {
-                    ent.UpgradeOpen();
-                    ent.Erase();
-                }
+                //// Если она на  слое sapr_ins_visuals - удаление
+                //if (VisualDatabase.IsVisualElement(ent))
+                //{
+                //    ent.UpgradeOpen();
+                //    ent.Erase();
+                //}
             }
         }
 

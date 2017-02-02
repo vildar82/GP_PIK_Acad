@@ -36,7 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
             PlaceModel = placeModel;
             PlaceId = plId;
             //VisualPlace = new VisualPlace(placeModel);
-            Name = DefineName();            
+            DefineName();            
         }        
 
         public PlaceModel PlaceModel { get; set; }
@@ -134,9 +134,9 @@ namespace PIK_GP_Acad.Insolation.Models
             }            
         }
 
-        private string DefineName ()
+        private void DefineName ()
         {
-            string name;
+            //string name;
             // TODO: Загрузить словарь полилинии площадки
             var doc = Application.DocumentManager.MdiActiveDocument;
             if (doc != null)
@@ -146,8 +146,11 @@ namespace PIK_GP_Acad.Insolation.Models
                     this.LoadDboDict();
                 }
             }
-            name = $"Площадка {PlaceModel.Places.Count + 1}";
-            return name;
+            if (string.IsNullOrEmpty(Name))
+            {
+                Name = $"Площадка {PlaceModel.Places.Count + 1}";
+            }
+            //return name;
         }
 
         /// <summary>
@@ -216,8 +219,8 @@ namespace PIK_GP_Acad.Insolation.Models
         public void SetDataValues (List<TypedValue> values, Document doc)
         {
             var dictValues = values?.ToDictionary();
-            Name = dictValues.GetValue("Name", "Площадка");
-            IsVisualPlaceOn = dictValues.GetValue("IsVisualPlaceOn", true);            
+            Name = dictValues.GetValue("Name", $"Площадка {(PlaceModel?.Places?.Count + 1) ?? 1}");
+            isVisualPlaceOn = dictValues.GetValue("IsVisualPlaceOn", true);            
         }
     }
 }

@@ -85,13 +85,13 @@ namespace PIK_GP_Acad.Insolation.Services
             }
         }                                              
 
-        /// <summary>
-        /// Проверка, это элемент визуализации
-        /// </summary>                
-        public static bool IsVisualElement(Entity ent)
-        {
-            var res = ent.Layer.Equals(LayerVisualName, StringComparison.OrdinalIgnoreCase);
-            return res;
-        }
+        ///// <summary>
+        ///// Проверка, это элемент визуализации
+        ///// </summary>                
+        //public static bool IsVisualElement(Entity ent)
+        //{
+        //    var res = ent.Layer.Equals(LayerVisualName, StringComparison.OrdinalIgnoreCase);
+        //    return res;
+        //}
     }
 }
