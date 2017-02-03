@@ -74,6 +74,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Состояние - включен/отключен расчет
         /// </summary>
         public bool IsEnabled { get; set; }
+        public bool HasProject { get { return hasProject; } set { hasProject = value; RaisePropertyChanged(); } }
+        bool hasProject;
 
         /// <summary>
         /// Список id корпусов (зданий) из базы для текущего проекта.
@@ -308,6 +310,7 @@ namespace PIK_GP_Acad.Insolation.Models
             // Если изменился проект - обновление объектов для связывания
             var needUpdateHousesDbSel = Options?.Project != options?.Project;
             Options = options;
+            HasProject = Options?.Project != null;
 
             if (needUpdateHousesDbSel)
                 UpdateHousesDbSel();

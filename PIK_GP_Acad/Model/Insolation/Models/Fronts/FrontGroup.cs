@@ -56,7 +56,8 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Пользовательское имя группы
         /// </summary>
-        public string Name { get { return name; } set { name = value; RaisePropertyChanged(); } }
+        public string Name { get { return name; }
+            set { name = value; RaisePropertyChanged(); if (IsInitialized) UpdateBuildingVisual(); } }
         string name;
 
         /// <summary>
@@ -340,6 +341,17 @@ namespace PIK_GP_Acad.Insolation.Models
                 foreach (var item in houses)
                 {
                     item.UpdateVisual();
+                }
+            }
+        }
+
+        private void UpdateBuildingVisual()
+        {
+            if (Houses != null)
+            {
+                foreach (var item in houses)
+                {
+                    item.UpdateBuildingsVisual();
                 }
             }
         }

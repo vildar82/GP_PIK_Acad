@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PIK_GP_Acad.Insolation.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,19 @@ namespace PIK_GP_Acad.Insolation.UI
             cmDots.DataContext = DataContext;
             cmDots.Visibility = Visibility.Visible;
             cmDots.IsOpen = true;
+        }
+        
+        private void rowDoubleClick(object sender, MouseButtonEventArgs e)
+        {            
+            var row = sender as Control;
+            if (row != null)
+            {
+                var house = row.DataContext as House;
+                if (house != null)
+                {
+                    house.Show();
+                }
+            }            
         }
     }
 }

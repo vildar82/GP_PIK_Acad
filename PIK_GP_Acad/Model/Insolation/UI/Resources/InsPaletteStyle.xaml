@@ -15,6 +15,8 @@
     <BitmapImage x:Key="biOptions" UriSource="/PIK_GP_Acad;component/Resources/options.png" />
     <BitmapImage x:Key="biClose" UriSource="/PIK_GP_Acad;component/Resources/Close.png" />
     <BitmapImage x:Key="biClean" UriSource="/PIK_GP_Acad;component/Resources/Clean.png" />
+    <BitmapImage x:Key="biShow" UriSource="/PIK_GP_Acad;component/Resources/Show.png" />
+    <BitmapImage x:Key="biSelectExtents" UriSource="/PIK_GP_Acad;component/Resources/select.bmp" />
     <BitmapImage x:Key="biExclamation" UriSource="/PIK_GP_Acad;component/Resources/exclamation.png" />
     <BitmapImage x:Key="biAdd" UriSource="/PIK_GP_Acad;component/Resources/Add.png" />
     <BitmapImage x:Key="biOption_dots" UriSource="/PIK_GP_Acad;component/Resources/option_dots.png" />

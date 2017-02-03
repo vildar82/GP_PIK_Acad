@@ -26,8 +26,7 @@ namespace PIK_GP_Acad.Insolation.UI
             DrawVisuals = new RelayCommand(InsFrontDrawVisuals);
             ShowOptions = new RelayCommand<FrontGroup>(OnShowOptionsExecute);
             ShowHouseOptions = new RelayCommand<House>(OnShowHouseOptionsExecute);
-            ClearOverrideOptions = new RelayCommand<House>(OnClearOverrideOptionsExecute);
-            FillHouseDb();
+            ClearOverrideOptions = new RelayCommand<House>(OnClearOverrideOptionsExecute);            
         }
 
         /// <summary>
@@ -43,8 +42,6 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<FrontGroup> ShowOptions { get; set; }
         public RelayCommand<House> ShowHouseOptions { get; set; }
         public RelayCommand<House> ClearOverrideOptions { get; set; }
-        
-        public bool HasProject { get; set; }         
 
         private void InsAddFrontExecute ()
         {            
@@ -60,11 +57,11 @@ namespace PIK_GP_Acad.Insolation.UI
                 return;
             }
 
-            // Проверка, что в указанной области нет домов из других групп
-            if (Front.Model.Map.Houses.GetHousesInExtents(selReg).Any(h=>h.FrontGroup != null))
+            // Проверка, что в указанной области есть свободные дома
+            if (!Front.Model.Map.Houses.GetHousesInExtents(selReg).Any(h=>h.FrontGroup == null))
             {
                 // В области новой группы не должно быть домов из других групп
-                InsService.ShowMessage($"В выбранной области не должно быть домов входящих в другие группы.", System.Windows.MessageBoxImage.Error);
+                InsService.ShowMessage($"В выбранной области нет домов не входящих в другие группы.", System.Windows.MessageBoxImage.Error);
                 return;
             }
 
@@ -90,8 +87,8 @@ namespace PIK_GP_Acad.Insolation.UI
         }
 
         private void OnShowHouseExecute (House house)
-        {
-            if ((short)Application.GetSystemVariable("TILEMODE") == 0) return;
+        {            
+            if (house == null) return;
             house.Show();
         }
 
@@ -113,9 +110,13 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnShowOptionsExecute(FrontGroup group)
         {
-            var fgOptionsVM = new FrontGroupOptionsViewModel(group.Options);
+            var fgOptionsVM = new FrontGroupOptionsViewModel(group.Options, group);
             if (InsService.ShowDialog(fgOptionsVM) == true)
             {
+                if (fgOptionsVM.SelectedExtents != null)
+                {
+                    group.SelectRegion = fgOptionsVM.SelectedExtents.Value;
+                }
                 group.Update();
             }
         }
@@ -124,7 +125,7 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             HouseOptions houseOptions = house.Options ?? new HouseOptions(house.FrontGroup.Options);            
 
-            var fgOptionsVM = new FrontGroupOptionsViewModel(houseOptions);
+            var fgOptionsVM = new FrontGroupOptionsViewModel(houseOptions, null);
             if (InsService.ShowDialog(fgOptionsVM) == true)
             {
                 if (!houseOptions.Equals(house.FrontGroup.Options))
@@ -139,12 +140,6 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             house.Options = null;
             house.Update();
-        }
-
-        private void FillHouseDb()
-        {
-            var project = Front?.Model?.Options?.Project;
-            HasProject = project != null;            
-        }
+        }        
     }
 }

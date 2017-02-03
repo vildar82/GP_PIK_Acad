@@ -13,8 +13,39 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />                
+                <ResourceDictionary Source="/PIK_GP_Acad;component/Model/Insolation/UI/Resources/InsPaletteStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <!--  body content datagrid cell vertical centering  -->
+            <Style x:Key="DataGridCell" TargetType="{x:Type DataGridCell}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Background" Value="{x:Null}" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{x:Null}" />
+                        <Setter Property="BorderBrush" Value="{x:Null}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="DataGridRow" TargetType="{x:Type DataGridRow}">
+                <EventSetter Event="MouseDoubleClick" Handler="rowDoubleClick" />
+                <Setter Property="Background" Value="{x:Null}" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{x:Null}" />
+                        <Setter Property="BorderBrush" Value="{x:Null}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -30,7 +61,13 @@
                         <Border
                             Margin="5"
                             Background="Gray" BorderBrush="Gray" BorderThickness="1">
-                            <Expander Content="{Binding}" Header="{Binding}" IsExpanded="{Binding IsExpanded}">
+                            <Expander
+                                MaxHeight="450"
+                                Content="{Binding}"
+                                Header="{Binding}"
+                                IsExpanded="{Binding IsExpanded}"
+                                ScrollViewer.CanContentScroll="True"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto">
                                 <!--  Заголовок группы - все о группе  -->
                                 <Expander.HeaderTemplate>
                                     <DataTemplate>
@@ -95,47 +132,56 @@
                                 <!--  Список домов в группе  -->
                                 <Expander.ContentTemplate>
                                     <DataTemplate>
-                                        <ItemsControl ItemsSource="{Binding Houses}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border Margin="2" BorderBrush="Black" BorderThickness="1">
-                                                        <Grid Margin="4">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />                                                                
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Grid.InputBindings>
-                                                                <MouseBinding Gesture="LeftClick" Command="{Binding ElementName=icGroups, Path=DataContext.ShowHouse}" CommandParameter="{Binding}"  />
-                                                            </Grid.InputBindings>
-                                                            <TextBox
-                                                                Grid.Column="0"
-                                                                Margin="2" VerticalAlignment="Center"
-                                                                Background="Transparent" BorderThickness="0"
-                                                                FontSize="15"
-                                                                Text="{Binding Name}" />
-                                                            <TextBlock
-                                                                Grid.Column="1"
-                                                                Margin="2" VerticalAlignment="Center"
-                                                                Text="{Binding Sections.Count, StringFormat={}{0}с.}" />
-                                                            <TextBox
-                                                                Grid.Column="2"
-                                                                Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                                Background="Transparent" BorderThickness="0"
-                                                                FontSize="16"
-                                                                Text="{Binding FrontLevel, StringFormat={}{0}эт.}">
-                                                                <ToolTipService.ToolTip>
-                                                                    <TextBlock MaxWidth="400" TextWrapping="Wrap">
-                                                                        Номер этажа для расчета фронтов дома. Если 0 - то как у группы.
-                                                                        1 - расчет для первого этажа = уровень здания + 1,8м до центра окна.
-                                                                        2 - расчет для второго этажа = уровень здания + H_1_этажа + 1,8м до центра окна.
-                                                                        и т.д.
-                                                                    </TextBlock>
-                                                                </ToolTipService.ToolTip>
-                                                            </TextBox>
-                                                            <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <!--<ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="HandlePreviewMouseWheel">-->
+                                        <DataGrid
+                                            Name="dgHouses"
+                                            Background="Transparent"
+                                            AutoGenerateColumns="False"
+                                            CellStyle="{StaticResource DataGridCell}"
+                                            RowStyle="{StaticResource DataGridRow}"
+                                            HeadersVisibility="None" IsSynchronizedWithCurrentItem="True"
+                                            ItemsSource="{Binding Houses}"
+                                            RowBackground="Transparent" RowHeight="28" ScrollViewer.CanContentScroll="True"
+                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                            VerticalGridLinesBrush="Transparent">                                                                                        
+                                            <DataGrid.Columns>
+                                                <!--  Имя дома  -->
+                                                <DataGridTextColumn
+                                                    Width="Auto" MinWidth="15"
+                                                    Binding="{Binding Name}"
+                                                    IsReadOnly="False" TextBlock.FontSize="16" />
+                                                <!--  Кол. секций  -->
+                                                <DataGridTemplateColumn Width="Auto" IsReadOnly="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Sections.Count, StringFormat={}{0}с.}"  ToolTip="Кол. секций в доме"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <!--  Уровень  -->
+                                                <DataGridTextColumn
+                                                    Width="Auto" MinWidth="15"
+                                                    Binding="{Binding FrontLevel}"
+                                                    IsReadOnly="False">
+                                                    <DataGridTextColumn.ElementStyle>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="ToolTipService.ToolTip" Value="Номер этажа для расчета фронтов дома. Если 0 - то как у группы." />
+                                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                        </Style>
+                                                    </DataGridTextColumn.ElementStyle>
+                                                </DataGridTextColumn>
+                                                <DataGridTemplateColumn Width="Auto" IsReadOnly="False">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="эт." MaxWidth="12"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <!--  Кнопка настроек окна и !  -->
+                                                <DataGridTemplateColumn Width="Auto">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Grid.Column="3" HorizontalAlignment="Right" Orientation="Horizontal">
                                                                 <Button
                                                                     Margin="1"
                                                                     Style="{StaticResource btnSmall}"
@@ -154,15 +200,22 @@
                                                                     <Image Source="{StaticResource biExclamation}" />
                                                                 </Button>
                                                             </StackPanel>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <!--  Привязка к базе  -->
+                                                <DataGridTemplateColumn Width="*">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
                                                             <ComboBox
                                                                 Grid.Column="4"
-                                                                HorizontalAlignment="Right"
                                                                 MinWidth="50"
+                                                                HorizontalAlignment="Left"
                                                                 Background="Transparent"
-                                                                ItemsSource="{Binding ElementName=icGroups, Path=DataContext.Front.Model.HousesDb, UpdateSourceTrigger=PropertyChanged}"
+                                                                ItemsSource="{Binding Model.HousesDb, UpdateSourceTrigger=PropertyChanged}"
                                                                 SelectedItem="{Binding SelectedHouseDb, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                                 ToolTip="Связывание дома с базой данных"
-                                                                Visibility="{Binding ElementName=icGroups, Path=DataContext.HasProject, UpdateSourceTrigger=PropertyChanged, Converter={converters:BooleanToHidingVisibilityConverter}}">
+                                                                Visibility="{Binding Model.HasProject, UpdateSourceTrigger=PropertyChanged, Converter={converters:BooleanToHidingVisibilityConverter}}">
                                                                 <ComboBox.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Margin="2" Background="{Binding Color, UpdateSourceTrigger=PropertyChanged}">
@@ -171,11 +224,12 @@
                                                                     </DataTemplate>
                                                                 </ComboBox.ItemTemplate>
                                                             </ComboBox>
-                                                        </Grid>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                        <!--</ScrollViewer>-->
                                     </DataTemplate>
                                 </Expander.ContentTemplate>
                             </Expander>

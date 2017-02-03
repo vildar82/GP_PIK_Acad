@@ -42,7 +42,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Model = model;
             Doc = model.Doc;
             Index = index;
-            VisualFront = new VisualFront(Doc);
+            VisualFront = new VisualFront(Doc);            
         }
                 
         public InsModel Model { get; set; }
@@ -71,9 +71,11 @@ namespace PIK_GP_Acad.Insolation.Models
             set {
                 if (name != value)
                 {
-                    name = value;
-                    SaveHouseNameToSections();
+                    name = value;                    
                     RaisePropertyChanged();
+                    SaveHouseNameToSections();
+                    // Обновление визуализации
+                    if (isInitialized) UpdateBuildingsVisual();
                 }
             }
         }
@@ -251,6 +253,10 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             try
             {
+                if (Application.DocumentManager.MdiActiveDocument != Doc || 
+                    (short)Application.GetSystemVariable("TILEMODE") == 0)
+                    return;
+
                 using (Doc.LockDocument())
                 {
                     Doc.Editor.Zoom(GetExtents());
@@ -520,14 +526,21 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateVisual ()
         {
             // отрисовка зданий (с дополнениями по фронту)
+            UpdateBuildingsVisual();
+            // Отрисовка фронтов
+            VisualFront?.VisualUpdate();            
+        }
+
+        public void UpdateBuildingsVisual()
+        {
             if (Sections != null)
                 foreach (var item in Sections)
                 {
+                    if (item.Visual != null)
+                        item.Visual.IsVisualizedInFront = false;
                     item.UpdateVisual();
                     item.Visual.IsVisualizedInFront = true;
-                }            
-            // Отрисовка фронтов
-            VisualFront?.VisualUpdate();            
+                }
         }
 
         public void DisposeContour()
