@@ -68,9 +68,7 @@ namespace PIK_GP_Acad.Insolation.UI
             // Создание группы фронтонов
             try
             {                
-                var frontGroup = FrontGroup.New(selReg, Front);
-                // Включение расчета группы
-                frontGroup.IsVisualFrontOn = true;
+                var frontGroup = FrontGroup.New(selReg, Front);                
                 Front.AddGroup(frontGroup);
                 // Запись статистики
                 PluginStatisticsHelper.AddStatistic();

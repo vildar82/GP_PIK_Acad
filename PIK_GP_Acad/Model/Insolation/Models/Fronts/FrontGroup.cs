@@ -36,6 +36,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Name = DefineNewName();
             Options = new FrontGroupOptions();
             FrontLevel = 2;
+            IsVisualFrontOn = true; // По умолчанию для новой группы добавляемой пользователем - включана визуализация
             IsInitialized = true;
         }        
 
@@ -76,7 +77,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Включение/отключение визуализации расчета фронтонов
         /// </summary>
         public bool IsVisualFrontOn { get { return isVisualFrontOn; }
-            set { isVisualFrontOn = value; OnIsVisualIllumsChanges(); RaisePropertyChanged(); } }        
+            set { isVisualFrontOn = value; RaisePropertyChanged(); OnIsVisualIllumsChanges(); } }        
         bool isVisualFrontOn;        
 
         public string Info { get { return info; } set { info = value; RaisePropertyChanged(); } }
@@ -114,12 +115,41 @@ namespace PIK_GP_Acad.Insolation.Models
         
         private void OnIsVisualIllumsChanges ()
         {
-            if (houses == null) return;
-            // Включение/выключение визуализации фронтов во всех домах
-            foreach (var item in Houses)
+            if (!IsInitialized)
+                return;
+
+            if (IsVisualFrontOn)
             {
-                item.IsVisualFront = IsVisualFrontOn;
-            }            
+                // обновление расчета
+                Update();
+            }
+            else
+            {
+                // Очистка расчета
+                Dispose();
+            }
+
+            //if (houses == null) return;
+            //// Включение/выключение визуализации фронтов во всех домах
+            //foreach (var item in Houses)
+            //{
+            //    if (IsVisualFrontOn)
+            //    {
+            //        // Включение визуализации и обновление расчета фронтов
+            //        item.VisualFront.VisualsDelete();
+            //        item.Update();    
+            //        if (!item.IsVisualFront)
+            //        {
+            //            item.IsVisualFront = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // Отключение визуализации
+            //        item.IsVisualFront = false;
+            //    }
+            //    item.IsVisualFront = IsVisualFrontOn;
+            //}            
         }
 
         private void OnFrontLevelChanged()
@@ -361,6 +391,8 @@ namespace PIK_GP_Acad.Insolation.Models
             foreach (var item in Houses)
             {                
                 item.DisposeVisuals();
+                // Обновление визуализации дома - без подписи группы
+                item.UpdateBuildingsVisual();
             }
         }
 

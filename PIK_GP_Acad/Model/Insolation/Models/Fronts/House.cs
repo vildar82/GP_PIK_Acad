@@ -120,7 +120,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public bool IsVisualFront {
             get { return isVisualFront; }
-            set { isVisualFront = value; OnIsVisualFrontChanged(); RaisePropertyChanged(); }
+            set { isVisualFront = value; RaisePropertyChanged(); OnIsVisualFrontChanged(); }
         }
         bool isVisualFront;
 
@@ -154,8 +154,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Расчет фронтов дома
         /// </summary>
         public void Update (int? numberHouseInGroup = null)
-        {
-            //DisposeFrontLines();
+        {            
             if (Contour == null)
                 return;
             if (numberHouseInGroup.HasValue)
@@ -163,7 +162,10 @@ namespace PIK_GP_Acad.Insolation.Models
             DefineName();
 
             // Визуализация зданий в доме
-            UpdateVisual();
+            UpdateBuildingsVisual();
+
+            // Очистка визуализации фронтов
+            VisualFront.Dispose();
 
             var calcService = FrontGroup.Front.Model.CalcService;
             try
@@ -222,7 +224,15 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void OnIsVisualFrontChanged ()
         {
-            VisualFront.VisualIsOn = IsVisualFront;            
+            if (IsVisualFront)
+            {
+                VisualFront.VisualIsOn = true;
+            }
+            else
+            {
+                VisualFront.Dispose(); // Т.к. при включении обновляется расчет фронтов
+            }
+            
         }        
 
         private void OnSelectedHouseDbChanged(HouseDbSel oldValue)
@@ -534,12 +544,12 @@ namespace PIK_GP_Acad.Insolation.Models
         public void UpdateBuildingsVisual()
         {
             if (Sections != null)
-                foreach (var item in Sections)
+                foreach (var building in Sections)
                 {
-                    if (item.Visual != null)
-                        item.Visual.IsVisualizedInFront = false;
-                    item.UpdateVisual();
-                    item.Visual.IsVisualizedInFront = true;
+                    if (building.Visual != null)
+                        building.Visual.IsVisualizedInFront = false;
+                    building.UpdateVisual();
+                    building.Visual.IsVisualizedInFront = true;
                 }
         }
 
