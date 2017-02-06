@@ -7,7 +7,6 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Test_GP_Acad.Tests.Insolation;
 
-[assembly: CommandClass(typeof(Test_GP_Acad.Commands))]
 
 namespace Test_GP_Acad
 {   
