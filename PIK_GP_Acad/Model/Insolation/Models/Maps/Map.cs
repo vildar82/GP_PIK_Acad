@@ -13,6 +13,7 @@ using PIK_GP_Acad.Elements.Buildings;
 using AcadLib.XData;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib.Errors;
+using System.Diagnostics;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -115,6 +116,8 @@ namespace PIK_GP_Acad.Insolation.Models
                 t.Commit();
             }
             IsEventsOn = true;
+
+            Debug.WriteLine($"На карте определено: зданий {Buildings.Count}, точек {InsPoints.Count}, площадок {Places.Count}");
         }
 
         public void Update()
@@ -383,10 +386,11 @@ namespace PIK_GP_Acad.Insolation.Models
         private void Building_Erased(object sender, ObjectErasedEventArgs e)
         {
             // Определение удаленного здания
-            MapBuilding building = FindBuildingByEnt(e.DBObject.Id);
+            var building = FindBuildingByEnt(e.DBObject.Id);
             if (building != null)
-            {
+            {                
                 Buildings.Remove(building);
+                building.Dispose();
                 var r = GetBuildingRectangle(building);
                 treeBuildings.Delete(r, building);
 

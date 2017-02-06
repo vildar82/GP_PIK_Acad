@@ -179,7 +179,8 @@ namespace PIK_GP_Acad.Insolation.Models
             if (DBPointId.IsNull) return;
             var doc = Model.Doc;
             using (doc.LockDocument())
-            {             
+            {
+                Dispose();
                 if (DBPointId.IsValidEx())
                 {
                     var dbPt = DBPointId.Open(OpenMode.ForWrite, false, true);

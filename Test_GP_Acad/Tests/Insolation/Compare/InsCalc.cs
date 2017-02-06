@@ -3,6 +3,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Models;
 using PIK_GP_Acad.Insolation.Services;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Test_GP_Acad.Tests.Insolation.Compare
@@ -25,7 +26,12 @@ namespace Test_GP_Acad.Tests.Insolation.Compare
             var dbIns = docIns.Database;
 
             // Очистка инс объектов
-            InsCompare.GetInsObjects(calcFile, a => { a.UpgradeOpen(); a.Erase(); });
+            InsCompare.GetInsObjects(calcFile, a =>
+            {
+                a.UpgradeOpen();
+                a.Erase();
+                Debug.WriteLine($"Erase - {a}");
+            });
 
             using (docIns.LockDocument())
             using (var t = dbIns.TransactionManager.StartTransaction())

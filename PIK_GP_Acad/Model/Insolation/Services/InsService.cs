@@ -270,7 +270,8 @@ namespace PIK_GP_Acad.Insolation.Services
                     Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }
                 else
-                {                    
+                {
+                    insModel.Initialize(doc);
                     insModel.UpdateVisual();
                 }
                 // Обновление расчетов

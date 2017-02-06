@@ -46,8 +46,9 @@ namespace Test_GP_Acad.Tests.Insolation.Compare
                     var ent = idEnt.GetObject(OpenMode.ForRead) as Entity;
 
                     if (!InsObjects.IsInsObject(ent) ||
-                        ent is Circle || ent is DBText || ent is MText || ent is Dimension)
+                        ent is Circle || ent is DBPoint || ent is DBText || ent is MText || ent is Dimension)
                         continue;
+
                     action(ent);
                 }
                 t.Commit();

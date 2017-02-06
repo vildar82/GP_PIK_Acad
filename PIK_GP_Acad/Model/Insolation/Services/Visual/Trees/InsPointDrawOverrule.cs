@@ -51,7 +51,7 @@ namespace PIK_GP_Acad.Insolation.Models
         public override int SetAttributes (Drawable drawable, DrawableTraits traits)
         {
             var dbPt = drawable as DBPoint;
-            IInsPoint insPoint = InsService.FindInsPoint(dbPt.Position, dbPt.Database);
+            var insPoint = InsService.FindInsPoint(dbPt.Position, dbPt.Database);
             if (insPoint != null && insPoint.InsValue != null)
             {
                 traits.TrueColor = Color.FromColor(insPoint.InsValue.Requirement.Color).EntityColor;
@@ -64,7 +64,7 @@ namespace PIK_GP_Acad.Insolation.Models
         {
             var dbPt = drawable as DBPoint;
             // Найти инсоляционную точку
-            IInsPoint insPoint = InsService.FindInsPoint(dbPt.Position, dbPt.Database);
+            var insPoint = InsService.FindInsPoint(dbPt.Position, dbPt.Database);
             if (insPoint != null && insPoint.VisualPoint != null)
             {                   
                 var draws = insPoint.VisualPoint.CreateVisual();
