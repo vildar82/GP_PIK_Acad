@@ -193,7 +193,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
-            if (Front.Model == null)
+            if (!IsVisualFrontOn || Front.Model == null)
                 return;
             // Дома в области группы - без домов из других групп
             var housesInGroup = Front.Model.Map.Houses.GetHousesInExtents(SelectRegion).

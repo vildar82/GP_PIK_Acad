@@ -255,7 +255,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                     insModels.Add(doc, insModel);
                     // Инициализация расчета
-                    insModel.Initialize(doc);
+                    insModel.Initialize(doc);                    
                     insModel.Map.UpdateVisual();// Т.к. расчет не обновляется, то визуализация домов на карте (без отдельной визуализации домов во фронтах.)
                     insModel.Map.WriteReport(); // Отчет по количеству определенных объеков на карте
                     // Не обновлять расчет - пусть вручную обновляют
@@ -273,9 +273,9 @@ namespace PIK_GP_Acad.Insolation.Services
                 {
                     insModel.Initialize(doc);
                     insModel.UpdateVisual();
-                }
-                // Обновление расчетов
+                }                
                 insModel.IsEnabled = true;
+                insModel.Front.Update(); // Расчет групп
             }
             // Отключение расчета для текущего документа
             else

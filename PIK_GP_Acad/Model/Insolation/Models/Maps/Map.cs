@@ -148,7 +148,8 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 foreach (var item in Buildings)
                 {
-                    item.UpdateVisual(); 
+                    if (item.House?.FrontGroup == null)
+                        item.UpdateVisual(); 
                 }
                 //if (visualMap == null)
                 //{
