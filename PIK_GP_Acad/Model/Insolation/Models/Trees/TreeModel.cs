@@ -367,7 +367,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 //{
                     foreach (var item in Points)
                     {
-                        item.ClearVisual();
+                        item?.ClearVisual();
                     }
                     //t.Commit();
                 //}

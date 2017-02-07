@@ -10,6 +10,7 @@ using PIK_GP_Acad.Insolation.Services;
 using AcadLib.XData;
 using Autodesk.AutoCAD.ApplicationServices;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -81,21 +82,29 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
-            if (!PlaceModel.IsEnableCalc) return;
-            if (!IsVisualPlaceOn)
+            try
             {
-                VisualPlace?.Dispose();
-                VisualPlace = null;                
-                return;
+                if (!PlaceModel.IsEnableCalc) return;
+                if (!IsVisualPlaceOn)
+                {
+                    VisualPlace?.Dispose();
+                    VisualPlace = null;
+                    return;
+                }
+                var tiles = PlaceModel.Model.CalcService.CalcPlace.CalcPlace(this);
+                // Суммирование освещенностей по уровням
+                LevelsInfo = GetLevelsInfo(tiles);
+                // Визуализация ячеек
+                if (VisualPlace == null)
+                    VisualPlace = new VisualPlace(this);
+                VisualPlace.Tiles = tiles;
+                VisualPlace.VisualIsOn = true;
             }
-            var tiles = PlaceModel.Model.CalcService.CalcPlace.CalcPlace(this);
-            // Суммирование освещенностей по уровням
-            LevelsInfo = GetLevelsInfo(tiles);
-            // Визуализация ячеек
-            if (VisualPlace == null)
-                VisualPlace = new VisualPlace(this);
-            VisualPlace.Tiles = tiles;
-            VisualPlace.VisualIsOn = true;
+            catch(Exception ex)
+            {
+                Inspector.AddError($"Ошибка расчета площадки {Name} - {ex.Message}", PlaceId, System.Drawing.SystemIcons.Error);
+                Logger.Log.Error(ex, "Place.Update()");
+            }
         }
 
         public void ClearVisual ()

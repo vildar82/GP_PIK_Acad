@@ -53,6 +53,15 @@ namespace PIK_GP_Acad.Insolation.Services
                 item.Dispose();
             }
             draws = null;
-        }        
+        }
+
+        public static void EraseAll()
+        {
+            try
+            {
+                TransientManager.CurrentTransientManager.EraseTransients(TransientDrawingMode.Main, 0, vps);
+            }
+            catch { }
+        }
     }
 }

@@ -15,6 +15,7 @@ using PIK_GP_Acad.Insolation.UI;
 using AcadLib;
 using MicroMvvm;
 using AcadLib.Errors;
+using Autodesk.AutoCAD.GraphicsInterface;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -137,8 +138,7 @@ namespace PIK_GP_Acad.Insolation.Models
             }
             Place.Initialize(this);            
 
-            doc.Database.BeginSave += Database_BeginSave;            
-            Redrawable();            
+            doc.Database.BeginSave += Database_BeginSave; 
         }
 
         /// <summary>
@@ -199,12 +199,7 @@ namespace PIK_GP_Acad.Insolation.Models
             HouseDbSel houseDbSel;
             dictHousesDb.TryGetValue(houseId, out houseDbSel);
             return houseDbSel;
-        }
-
-        public void Redrawable ()
-        {
-            // ????
-        }
+        }        
 
         private void Database_BeginSave (object sender, DatabaseIOEventArgs e)
         {
@@ -248,20 +243,18 @@ namespace PIK_GP_Acad.Insolation.Models
                 Doc = doc;
             }
 
-            // Заново инициализация
-            Initialize(Doc);            
+            // инициализация
+            Initialize(Doc);
 
-            // Сервис расчета            
-            DefineCalcService();
+            // Точки рассчитаны при Initialize()
 
-            // Загрузка точек всех типов и добавление в расчеты
-            LoadPoints();
-
+            // Расчет фронтов
             Front.Update();
 
             // Визуализация оставшихся домов (не включенных во фронты)
             Map.UpdateVisual();
 
+            // Расчет площадок
             Place.Update();
 
             // Определение связанных домов
@@ -270,8 +263,7 @@ namespace PIK_GP_Acad.Insolation.Models
             IsUpdateRequired = false;
             UpdateInfo = "Обновление расчета";
 
-            // Перерисовка точек
-            Redrawable();            
+            Map.WriteReport(); // Отчет по количеству определенных объеков на карте
         }
 
         /// <summary>
@@ -419,7 +411,15 @@ namespace PIK_GP_Acad.Insolation.Models
 
             foreach (var idPt in idPoints)
             {
-                DefinePoint(idPt);
+                try
+                {
+                    DefinePoint(idPt);
+                }
+                catch(Exception ex)
+                {
+                    Inspector.AddError($"Ошибка расчета точки - {ex.Message}", idPt, System.Drawing.SystemIcons.Error);
+                    Logger.Log.Error(ex, "LoadPoints()");
+                }
             }
 
             Tree.UpdateVisualTree();
@@ -455,7 +455,8 @@ namespace PIK_GP_Acad.Insolation.Models
             Map?.ClearVisual();
             Tree?.ClearVisuals();
             Front?.ClearVisual();
-            Place?.ClearVisual();        
+            Place?.ClearVisual();            
+            VisualTransient.EraseAll();
         }
 
         private void Map_BuildingModified (object sender, MapBuilding e)

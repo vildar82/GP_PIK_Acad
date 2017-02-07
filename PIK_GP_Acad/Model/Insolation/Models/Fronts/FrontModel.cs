@@ -144,25 +144,30 @@ namespace PIK_GP_Acad.Insolation.Models
             // Определение корпусов проекта
             //DefineHouseDb();
             // Расчет групп фронтов
-            foreach (var item in groups)
+            if (Groups != null)
             {
-                item.Update();
-            }            
+                foreach (var item in Groups)
+                {   
+                    item?.Update();
+                }
+            }    
         }
 
         public void ClearVisual ()
         {
+            if (Groups == null) return;
             foreach (var item in Groups)
             {
-                item.ClearVisual();
+                item?.ClearVisual();
             }
         }
 
         public void UpdateVisual ()
         {
+            if (Groups == null) return;
             foreach (var item in Groups)
             {
-                item.UpdateVisual();
+                item?.UpdateVisual();
             }
         }     
 

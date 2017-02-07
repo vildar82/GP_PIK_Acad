@@ -12,6 +12,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -193,18 +194,26 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
-            if (!IsVisualFrontOn || Front.Model == null)
+            if (!IsVisualFrontOn || Front?.Model == null)
                 return;
-            // Дома в области группы - без домов из других групп
-            var housesInGroup = Front.Model.Map.Houses.GetHousesInExtents(SelectRegion).
-                    Where(w=>w.FrontGroup == null || w.FrontGroup == this).ToList();            
-            for (int i = 0; i < housesInGroup.Count; i++)
+            try
             {
-                var house = housesInGroup[i];
-                house.FrontGroup = this;
-                house.Update(i + 1);                
+                // Дома в области группы - без домов из других групп
+                var housesInGroup = Front.Model.Map.Houses.GetHousesInExtents(SelectRegion).
+                        Where(w => w.FrontGroup == null || w.FrontGroup == this).ToList();
+                for (int i = 0; i < housesInGroup.Count; i++)
+                {
+                    var house = housesInGroup[i];
+                    house.FrontGroup = this;
+                    house.Update(i + 1);
+                }
+                Houses = new ObservableCollection<House>(housesInGroup.OrderBy(o => o.Name, AcadLib.Comparers.AlphanumComparator.New));
             }
-            Houses = new ObservableCollection<House>(housesInGroup.OrderBy(o=>o.Name, AcadLib.Comparers.AlphanumComparator.New));
+            catch(Exception ex)
+            {
+                Inspector.AddError($"Ошибка расчета фронтов '{Name}' - {ex.Message}", SelectRegion, Matrix3d.Identity, System.Drawing.SystemIcons.Error );
+                Logger.Log.Error(ex, "FrontGroup.Update()");
+            }
         }        
 
 //        /// <summary>
@@ -372,7 +381,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 foreach (var item in houses)
                 {
-                    item.UpdateVisual();
+                    item?.UpdateVisual();
                 }
             }
         }

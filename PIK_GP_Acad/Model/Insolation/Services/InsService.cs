@@ -255,9 +255,9 @@ namespace PIK_GP_Acad.Insolation.Services
                     }
                     insModels.Add(doc, insModel);
                     // Инициализация расчета
-                    insModel.Initialize(doc);                    
-                    insModel.Map.UpdateVisual();// Т.к. расчет не обновляется, то визуализация домов на карте (без отдельной визуализации домов во фронтах.)
-                    insModel.Map.WriteReport(); // Отчет по количеству определенных объеков на карте
+                    //insModel.Initialize(doc);                    
+                    //insModel.Map.UpdateVisual();// Т.к. расчет не обновляется, то визуализация домов на карте (без отдельной визуализации домов во фронтах.)
+                    
                     // Не обновлять расчет - пусть вручную обновляют
                     //try
                     //{
@@ -269,13 +269,13 @@ namespace PIK_GP_Acad.Insolation.Services
                     // лог включения инсоляции для текущего чертежа
                     Logger.Log.Info($"Включение расчета инсоляции для чертежа - {doc.Name}");
                 }
-                else
-                {
-                    insModel.Initialize(doc);
-                    insModel.UpdateVisual();
-                }                
+                //else
+                //{
+                //    insModel.Initialize(doc);
+                //    insModel.UpdateVisual();
+                //}                
                 insModel.IsEnabled = true;
-                insModel.Front.Update(); // Расчет групп
+                insModel.Update();                
             }
             // Отключение расчета для текущего документа
             else

@@ -144,6 +144,7 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void UpdateVisual()
         {
+            if (Buildings == null) return;
             if (IsVisualOn)
             {
                 foreach (var item in Buildings)
@@ -161,7 +162,7 @@ namespace PIK_GP_Acad.Insolation.Models
             {
                 foreach (var item in Buildings)
                 {
-                    item.DisposeVisual();
+                    item?.DisposeVisual();
                 }
                 //visualMap?.Dispose();
                 //visualMap = null;

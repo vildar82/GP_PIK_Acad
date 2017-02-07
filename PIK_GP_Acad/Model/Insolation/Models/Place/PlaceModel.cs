@@ -10,6 +10,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using PIK_GP_Acad.Insolation.Services;
 using MicroMvvm;
+using AcadLib.Errors;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -82,21 +83,29 @@ namespace PIK_GP_Acad.Insolation.Models
         }
 
         public void Update()
-        {               
-            AddPlacesFromMap();
+        {
+            try
+            {
+                AddPlacesFromMap();
 
-            if (!IsEnableCalc) return;
+                if (!IsEnableCalc) return;
 
-            // Очистка удаленных контуров
-            var deletedPlaces = Places.Where(p => !p.PlaceId.IsValidEx()).ToList();
-            foreach (var item in deletedPlaces)
-            {                
-                Places.Remove(item);
-                item.Dispose();
+                // Очистка удаленных контуров
+                var deletedPlaces = Places.Where(p => !p.PlaceId.IsValidEx()).ToList();
+                foreach (var item in deletedPlaces)
+                {
+                    Places.Remove(item);
+                    item.Dispose();
+                }
+                foreach (var place in Places)
+                {
+                    place.Update();
+                }
             }
-            foreach (var place in Places)
-            {                
-                place.Update();
+            catch(Exception ex)
+            {
+                Inspector.AddError($"Ошибка расчета площадок - {ex.Message}");
+                Logger.Log.Error(ex, "PlaceModel.Update()");
             }
         }
 
@@ -128,9 +137,10 @@ namespace PIK_GP_Acad.Insolation.Models
 
         public void ClearVisual ()
         {
+            if (Places == null) return;
             foreach (var item in Places)
             {
-                item.ClearVisual();
+                item?.ClearVisual();
             }
         }
 
