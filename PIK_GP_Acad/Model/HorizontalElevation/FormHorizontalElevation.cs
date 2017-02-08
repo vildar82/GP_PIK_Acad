@@ -10,39 +10,53 @@ using System.Windows.Forms;
 
 namespace PIK_GP_Acad.HorizontalElevation
 {
-   public partial class FormHorizontalElevation : Form
-   {
-      public double StartElevation { get; private set; }
-      public double StepElevation { get; private set; }
+    public partial class FormHorizontalElevation : Form
+    {
+        public double StartElevation { get; private set; }
+        public double StepElevation { get; private set; }
+        public Color Color { get; set; }
 
-      public FormHorizontalElevation(double startElev , double stepElev )
-      {
-         InitializeComponent();
 
-         textBoxStartElevation.Text = startElev.ToString();
-         textBoxStepElevation.Text = stepElev.ToString();
-      }
+        public FormHorizontalElevation(double startElev, double stepElev, Color color)
+        {
+            InitializeComponent();
 
-      private void buttonStart_Click(object sender, EventArgs e)
-      {         
-         StartElevation = checkDouble(textBoxStartElevation);
-         StepElevation = checkDouble(textBoxStepElevation);
-      }
+            Color = color;
+            textBoxStartElevation.Text = startElev.ToString();
+            textBoxStepElevation.Text = stepElev.ToString();
+            bColor.BackColor = Color;
+        }
 
-      private double checkDouble(TextBox tb)
-      {
-         double val;
-         if (!double.TryParse(tb.Text, out val))
-         {
-            errorProvider1.SetError(tb, "Должно быть число");
-            this.DialogResult = DialogResult.None;
-         }
-         return val;
-      }
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            StartElevation = checkDouble(textBoxStartElevation);
+            StepElevation = checkDouble(textBoxStepElevation);
+        }
 
-      private void buttonoptions_Click(object sender, EventArgs e)
-      {
-         HorizontalElevationOptions.Show();
-      }
-   }
+        private double checkDouble(TextBox tb)
+        {
+            double val;
+            if (!double.TryParse(tb.Text, out val))
+            {
+                errorProvider1.SetError(tb, "Должно быть число");
+                DialogResult = DialogResult.None;
+            }
+            return val;
+        }
+
+        private void buttonoptions_Click(object sender, EventArgs e)
+        {
+            HorizontalElevationOptions.Show();
+        }
+
+        private void bColor_Click(object sender, EventArgs e)
+        {
+            var color = HorizontalElevationService.SelectColor(Color);
+            if (color != null)
+            {
+                Color = color;
+                bColor.BackColor = color;
+            }
+        }
+    }
 }
