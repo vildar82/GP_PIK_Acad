@@ -101,7 +101,7 @@ namespace PIK_GP_Acad.Elements
 
                 // Если класс проектируемого здания или есть параметр высоты, то это здание ???!!! Сомнительно. Нужна более строгая идентификайция зданий
                 var height = fcEntProps.GetPropertyValue<double>(Building.PropHeight, 0);
-                if (height != 0 || Building.IsProjectedBuildingClass(clType.ClassName))
+                if (height != 0 || Building.IsBuildingClass(clType.ClassName))
                 {
                     var building = new Building(ent, height,  fcEntProps.GetProperties(), clType);
                     res = building;

@@ -35,6 +35,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Классификатор проектируемых зданий
         /// </summary>
         public const string ProjectedBuildingClassName = "Проектируемое_здание";
+        public const string SurroundBuildingClassName = "Окружающие_здания";
 
         public Building(Entity ent, double height, List<FCProperty> props, ClassType classType) : base(ent)
         {            
@@ -124,9 +125,10 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Проверка что это имя классификатора = Проектируемое здание.
         /// </summary>
         /// <param name="className">Имя классификатора</param>        
-        public static bool IsProjectedBuildingClass(string className)
+        public static bool IsBuildingClass(string className)
         {
-            return className.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName);
+            return className.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName) ||
+                className.EqualsIgroreCaseAndSpecChars(SurroundBuildingClassName);
         }
 
         /// <summary>
