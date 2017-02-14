@@ -15,29 +15,23 @@ namespace PIK_GP_Acad.Insolation.UI
     /// Настройки группы фронтов
     /// </summary>
     public class FrontGroupOptionsViewModel : ViewModelBase
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="group">Группа - для изменения границ группы на чертеже</param>
-        public FrontGroupOptionsViewModel(FrontGroupOptions options, FrontGroup group)
+    {        
+        public FrontGroupOptionsViewModel(FrontGroupOptions options, bool hasSelectExtents, int frontLevel)
         {
-            if (group != null)
-            {
-                HasSelectButton = true;
-                FrontFroup = group;
-            }
+            HasSelectButton = hasSelectExtents;
+            FrontLevel = frontLevel;
             Options = options;
             WindowVM = new WindowOptionsViewModel(Options.Window);
             OK = new RelayCommand(OnOkExecute);
             SelectExtents = new RelayCommand(OnSelectExtentsExecute);
         }        
-
-        public FrontGroup FrontFroup { get; set; }
+        
         public FrontGroupOptions Options { get; set; }
 
         public WindowOptionsViewModel WindowVM { get; set; }
+        public int FrontLevel { get { return frontLevel; } set { frontLevel = value; RaisePropertyChanged(); } }
+        private int frontLevel;
+
         public bool? DialogResult { get { return dlgres; } set { dlgres = value; RaisePropertyChanged(); } }
         bool? dlgres;
 

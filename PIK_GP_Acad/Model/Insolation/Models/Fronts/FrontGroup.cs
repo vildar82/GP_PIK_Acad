@@ -37,8 +37,7 @@ namespace PIK_GP_Acad.Insolation.Models
             Name = DefineNewName();
             Options = new FrontGroupOptions();
             FrontLevel = 2;
-            IsVisualFrontOn = true; // По умолчанию для новой группы добавляемой пользователем - включана визуализация
-            IsInitialized = true;
+            IsVisualFrontOn = true; // По умолчанию для новой группы добавляемой пользователем - включана визуализация            
         }        
 
         /// <summary>
@@ -194,7 +193,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>
         public void Update ()
         {
-            if (!IsVisualFrontOn || Front?.Model == null)
+            if (!IsVisualFrontOn || Front?.Model == null || !IsInitialized)
                 return;
             try
             {

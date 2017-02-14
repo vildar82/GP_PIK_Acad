@@ -23,7 +23,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// <summary>
         /// Вид окон для расчета фронтов
         /// </summary>
-        public WindowOptions Window { get; set; } = WindowOptions.Default;        
+        public WindowOptions Window { get; set; } = WindowOptions.Default;       
 
         public DicED GetExtDic(Document doc)
         {

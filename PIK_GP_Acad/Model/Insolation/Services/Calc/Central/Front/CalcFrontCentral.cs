@@ -269,7 +269,7 @@ namespace PIK_GP_Acad.Insolation.Services
         private double CalcHeightCalcPt(FrontCalcPoint calcFrontPt)
         {            
             var building = calcFrontPt.Section.Building;
-            var levelHeight = building.GetLevelHeight(house.GetCalcFrontLevel());
+            var levelHeight = building.GetLevelHeight(house.FrontLevel);
             return  levelHeight + InsPoint.DefaultHeightWindowCenter;                        
         }       
 

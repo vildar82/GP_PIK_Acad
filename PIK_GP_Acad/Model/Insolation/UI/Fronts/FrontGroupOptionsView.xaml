@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:xc="clr-namespace:ExCastle.Wpf"
-    Title="FrontOptionsView"
+    Title="Настройки фронтов"
     Width="286.5" Height="232.5"
     xc:DialogCloser.DialogResult="{Binding DialogResult}"
     mc:Ignorable="d">
@@ -22,9 +22,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <local:WindowOptionsView Grid.Row="0" DataContext="{Binding WindowVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-        <Grid Grid.Row="1" Margin="2" HorizontalAlignment="Stretch">
+        <WrapPanel Grid.Row="0" Margin="1">
+            <TextBlock Text="Этаж расчета фронтов:" Margin="1"/>
+            <TextBox Text="{Binding FrontLevel}" MinWidth="30" Margin="1"/>
+        </WrapPanel>
+        <local:WindowOptionsView Grid.Row="1" DataContext="{Binding WindowVM, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        <Grid Grid.Row="2" Margin="2" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>

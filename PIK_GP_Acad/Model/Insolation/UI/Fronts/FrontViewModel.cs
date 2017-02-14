@@ -44,7 +44,7 @@ namespace PIK_GP_Acad.Insolation.UI
         public RelayCommand<House> ClearOverrideOptions { get; set; }
 
         private void InsAddFrontExecute ()
-        {            
+        {   
             // Выбор области на чертеже
             var selectGroup = new SelectGroup(Front.Model.Doc);
             Extents3d selReg;
@@ -68,10 +68,18 @@ namespace PIK_GP_Acad.Insolation.UI
             // Создание группы фронтонов
             try
             {                
-                var frontGroup = FrontGroup.New(selReg, Front);                
-                Front.AddGroup(frontGroup);
-                // Запись статистики
-                PluginStatisticsHelper.AddStatistic();
+                var frontGroup = FrontGroup.New(selReg, Front);
+
+                // Диалог настроек фронта
+                var fgOptionsVM = new FrontGroupOptionsViewModel(frontGroup.Options, false, frontGroup.FrontLevel);
+                if (InsService.ShowDialog(fgOptionsVM) == true)
+                {
+                    frontGroup.FrontLevel = fgOptionsVM.FrontLevel;
+                    frontGroup.IsInitialized = true;
+                    Front.AddGroup(frontGroup);
+                    // Запись статистики
+                    PluginStatisticsHelper.AddStatistic();
+                }                
             }
             catch(Exception ex)
             {
@@ -108,7 +116,7 @@ namespace PIK_GP_Acad.Insolation.UI
 
         private void OnShowOptionsExecute(FrontGroup group)
         {
-            var fgOptionsVM = new FrontGroupOptionsViewModel(group.Options, group);
+            var fgOptionsVM = new FrontGroupOptionsViewModel(group.Options, true, group.FrontLevel);
             if (InsService.ShowDialog(fgOptionsVM) == true)
             {
                 if (fgOptionsVM.SelectedExtents != null)
@@ -123,12 +131,16 @@ namespace PIK_GP_Acad.Insolation.UI
         {
             HouseOptions houseOptions = house.Options ?? new HouseOptions(house.FrontGroup.Options);            
 
-            var fgOptionsVM = new FrontGroupOptionsViewModel(houseOptions, null);
+            var fgOptionsVM = new FrontGroupOptionsViewModel(houseOptions, false, house.FrontLevel);
             if (InsService.ShowDialog(fgOptionsVM) == true)
-            {
-                if (!houseOptions.Equals(house.FrontGroup.Options))
+            {                
+                house.Options = houseOptions;
+                if (house.FrontLevel != fgOptionsVM.FrontLevel)
                 {
-                    house.Options = houseOptions;
+                    house.FrontLevel = fgOptionsVM.FrontLevel; // Будет обновлен прасчет
+                }
+                else
+                {
                     house.Update();
                 }
             }

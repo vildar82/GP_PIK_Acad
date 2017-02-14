@@ -85,14 +85,22 @@ namespace PIK_GP_Acad.Insolation.Models
         /// Высота расчета фронтов
         /// </summary>
         public int FrontLevel {
-            get { return frontLevel; }
+            // Если 0, то уровень фронта
+            get { return frontLevel != 0 ? frontLevel: FrontGroup.FrontLevel; }
             set {
-                if (frontLevel != value)
+                if (value == frontLevel) return;                
+                if (value == FrontGroup.FrontLevel)
                 {
-                    frontLevel = value; RaisePropertyChanged(); SaveFrontLevelToSections();
-                    if (isInitialized)
-                        Update();
-                }
+                    frontLevel = 0;
+                }     
+                else
+                {
+                    frontLevel = value;
+                }           
+                RaisePropertyChanged();
+                SaveFrontLevelToSections();
+                if (isInitialized)
+                    Update();
             }
         }      
         int frontLevel;
@@ -231,8 +239,7 @@ namespace PIK_GP_Acad.Insolation.Models
             else
             {
                 VisualFront.Dispose(); // Т.к. при включении обновляется расчет фронтов
-            }
-            
+            }            
         }        
 
         private void OnSelectedHouseDbChanged(HouseDbSel oldValue)
@@ -295,11 +302,16 @@ namespace PIK_GP_Acad.Insolation.Models
             }
 
             // Определение уровня расчета фронтов
-            var levels = Sections.Where(w => w.Building.FrontLevel != 0).GroupBy(g => g.Building.FrontLevel).ToList();
+            var levels = Sections.Where(w => w.Building.FrontLevel != 0).
+                GroupBy(g => g.Building.FrontLevel).ToList();
             if (levels.Count ==1)
             {
-                FrontLevel = levels.First().Key;
-            }
+                var level = levels.First().Key;
+                if (level != FrontGroup.FrontLevel)
+                {
+                    FrontLevel = level;
+                }                
+            }            
 
             // определение настроек
             var options = Sections.Where(w => w.Building.HouseOptions != null).GroupBy(g => g.Building.HouseOptions).ToList();
@@ -415,16 +427,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 Error = new Error("Ошибка.", ext, Matrix3d.Identity, System.Drawing.SystemIcons.Error);
             }
             Error.AdditionToMessage(message);
-        }
-
-        /// <summary>
-        /// Получение уровня расчета фронтов для этого дома
-        /// </summary>
-        /// <returns></returns>
-        public int GetCalcFrontLevel()
-        {
-            return FrontLevel == 0 ? FrontGroup.FrontLevel : FrontLevel;
-        }
+        }        
 
         public WindowOptions GetCalcFrontWindow()
         {
