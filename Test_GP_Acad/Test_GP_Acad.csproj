@@ -62,13 +62,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Insolation\Compare\InsCalc.cs" />
     <Compile Include="Tests\Insolation\Compare\InsCompare.cs" />
     <Compile Include="Tests\Insolation\Compare\InsObjects.cs" />
     <Compile Include="Tests\Insolation\Compare\TestCompareInsolation.cs" />
-    <Compile Include="Tests\Insolation\TestInsolationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

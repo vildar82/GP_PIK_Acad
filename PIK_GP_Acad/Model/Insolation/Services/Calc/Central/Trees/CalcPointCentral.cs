@@ -222,39 +222,71 @@ namespace PIK_GP_Acad.Insolation.Services
                 // перебор домов одной высоты
                 foreach (var build in buildings)
                 {
-                    // Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
-                    if (build.YMin >= (lineShadow.StartPoint.Y-0.1))
+                    // Если дом полностью ниже линии тени или полностью выше уровня расчетной точки, то пропускаем - дом не загораживает точку
+                    if (build.YMax < lineShadow.StartPoint.Y || build.YMin > ptCalc.Y)
                     {
+                        continue;
+                    }
+                                        
+                    if (build.YMin < lineShadow.StartPoint.Y)
+                    {
+                        // Если дом пересекается с линией тени, то отсечение нижней части дома и разделение дома на части
+                        using (var plsSecant = new DisposableSet<Polyline>(build.Contour.SeparateHorizontal(lineShadow)))
+                        {
+                            foreach (var plSecant in plsSecant)
+                            {
+                                var ilumShadow = GetBuildingZeroLineShadows(plSecant);                                
+                                if (ilumShadow != null)
+                                {
+                                    illumShadows.Add(ilumShadow);
+                                }
+                            }
+                        }                                                
+                    }
+                    else
+                    {
+                        // Дом полность выше линии тени - весь загораживает точку
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetBuildingZeroLineShadows(build);
+                        var ilumShadow = GetBuildingZeroLineShadows(build.Contour);
                         //var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
                             illumShadows.Add(ilumShadow);
                         }
                     }
-                    else if (build.YMax >= (lineShadow.StartPoint.Y-0.1))
-                    {
-                        var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
-                        illumShadows.AddRange(ilumsBoundary);
-                    }
+
+                    //// Если дом полностью выше линии тени (сечения), то он полностью затеняет точку
+                    //if (build.YMin >= (lineShadow.StartPoint.Y-0.1))
+                    //{
+                    //    // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
+                    //    var ilumShadow = GetBuildingZeroLineShadows(build.Contour);
+                    //    //var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
+                    //    if (ilumShadow != null)
+                    //    {
+                    //        illumShadows.Add(ilumShadow);
+                    //    }
+                    //}
+                    //else if (build.YMax >= (lineShadow.StartPoint.Y-0.1))
+                    //{
+                    //    var ilumsBoundary = GetBuildingLineShadowBoundary(build, lineShadow, Intersect.ExtendThis);
+                    //    illumShadows.AddRange(ilumsBoundary);
+                    //}
                 }
-#if TEST                
-                EntityHelper.AddEntityToCurrentSpace(lineShadow);
+#if DEBUG                
+                //EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
             }
             // Объединение совпадающих зон теней
             illumShadows = IllumAreaBase.Merge(illumShadows);
             return illumShadows;
         }
-
-
+        
         /// <summary>
         /// Определение зон теней от дома, который выше расчетной линии тени  - по линии через 0
         /// </summary>
         /// <param name="build"></param>        
         /// <returns></returns>
-        private IIlluminationArea GetBuildingZeroLineShadows(MapBuilding build)
+        private IIlluminationArea GetBuildingZeroLineShadows(Polyline buildContour)
         {
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
             {
@@ -264,8 +296,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ptsIntersects = new Point3dCollection();
                 using (var plane = new Plane())
                 {
-                    lineZero.IntersectWith(build.Contour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
-                    var pts = build.Contour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
+                    lineZero.IntersectWith(buildContour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                    var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
                     pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
                     if (pts.Any())
                     {
@@ -481,13 +513,13 @@ namespace PIK_GP_Acad.Insolation.Services
             var startParam = contour.GetParameterAtPointTry(ptCalc);
 
             // Если параметр близок к целому числу - то это вершина - угол! - окно не учитывается!?
-            if (startParam.IsWholeNumber(0.01))
-            {
-                // Углы не считать!
-                throw new Exception("Угол не считается.");
-                //CorrectStartAnglesByOwnerCorner(Convert.ToInt32(startParam));
-            }
-            else
+            //if (startParam.IsWholeNumber(0.01))
+            //{
+            //    // Углы не считать!
+            //    //throw new Exception("Угол не считается.");
+            //    //CorrectStartAnglesByOwnerCorner(Convert.ToInt32(startParam));
+            //}
+            //else
             {
                 var segStartIndex = (int)startParam;
                 var segOwner = contour.GetLineSegment2dAt(segStartIndex);
@@ -590,14 +622,14 @@ namespace PIK_GP_Acad.Insolation.Services
                 using (var lineShadow = GetLineShadow(buildHeightCalc))
                 {
                     yShadowLine = lineShadow.StartPoint.Y;
-#if TEST
+#if DEBUG
                     //EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
                     using (var ptsIntersect = new Point3dCollection())
                     {
                         using (var plane = new Plane())
                         {
-                            contour.IntersectWith(lineShadow, Intersect.OnBothOperands, plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
+                            contour.IntersectWith(lineShadow, Intersect.ExtendArgument, plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
                             ptsIntersectShadow = ptsIntersect.Cast<Point3d>().ToList();
                         }
                         // !!!??? Если есть пересечения с линией тени, тогда нужно разделить полилинию дома на собственную часть и внешнюю (которую считать отдельно)
@@ -606,8 +638,8 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         // Отсечение части дома - по точкам пересечения.                        
                         List<Polyline> plsSecant;
-                        if (contour.Separate(ptCalc, ptsIntersectShadow, out plHead, out plsSecant))
-                        {
+                        contour.Separate(ptCalc, ptsIntersectShadow, out plHead, out plsSecant);
+                        { 
                             if (plHead != null)
                                 contour = plHead;
                             // из отсеченных частей сделать здания для дальнейшего расчета - когда будут перебираться внешние дома при расчете точки
@@ -624,7 +656,7 @@ namespace PIK_GP_Acad.Insolation.Services
                 using (var ptsIntersect = new Point3dCollection())
                 {
                     contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                    ptsIntersectZero = ptsIntersect.Cast<Point3d>().OrderBy(o => o.X).ToList();
+                    ptsIntersectZero = ptsIntersect.Cast<Point3d>().Where(p=>!p.IsEqualTo(ptCalc)).OrderBy(o => o.X).ToList();
                 }                
 
                 // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.                    

@@ -18,7 +18,7 @@ namespace PIK_GP_Acad.Insolation.Models
     /// </summary>
     public class HouseMap : IEnumerable<House>, IDisposable
     {
-        private static Tolerance toleranceVertex = new Tolerance(1, 1);
+        private static Tolerance toleranceVertex = new Tolerance(0.1, 0.1);
         private Map map;
         private List<House> houses;
         private int indexCounter;
@@ -103,6 +103,9 @@ namespace PIK_GP_Acad.Insolation.Models
         {            
             using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
             {
+#if DEBUG
+                //EntityHelper.AddEntityToCurrentSpace(offset.Clone() as Entity);
+#endif
                 // Ближайшие дома без уже найденных зданий
                 intersectBuildings.Add(building);
                 var nearestBuildings = map.GetBuildingsInExtents(offset.GeometricExtents).Except(intersectBuildings).

@@ -11,6 +11,41 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public static class PolylineSeparate
     {
+        public static List<Polyline> SeparateHorizontal(this Polyline pl, Line lineHor)
+        {
+            var plsSecant = new List<Polyline>();
+            var ptsCol = new Point3dCollection();
+            pl.IntersectWith(lineHor, Intersect.ExtendArgument, ptsCol, IntPtr.Zero, IntPtr.Zero);
+            var ptsIntersect = ptsCol.Cast<Point3d>().OrderBy(o => o.X).ToList();
+            var ptPrew = ptsIntersect[0];
+            for (int i = 1; i < ptsIntersect.Count; i++)
+            {
+                var ptNext = ptsIntersect[i];
+                if (pl.IsPointInsidePolyline(ptPrew.Center(ptNext)))
+                {
+                    // Петля выше точек пересечения
+                    var ptsLoopAbove = pl.GetLoopSideBetweenHorizontalIntersectPoints(
+                        ptPrew, ptNext, true, true);
+                    plsSecant.Add(ptsLoopAbove.CreatePolyline());
+
+                    i++;
+                    if (ptsIntersect.Count > i)
+                    {
+                        ptPrew = ptsIntersect[i];                        
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    ptPrew = ptNext;
+                }
+            }
+            return plsSecant;
+        }
+
         /// <summary>
         /// Определение отсекаемых полилиний от основной полинини по точкам пересечения.
         /// Оспользуется для определения теневых углов от собстаенного дома, когдв дом имеет сложную форму и имеет пересечения с линией тени от расчетной точки.
