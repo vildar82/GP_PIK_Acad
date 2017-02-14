@@ -24,7 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0" Margin="1">
+        <WrapPanel Grid.Row="0" Margin="1" HorizontalAlignment="Center">
             <TextBlock Text="Этаж расчета фронтов:" Margin="1"/>
             <TextBox Text="{Binding FrontLevel}" MinWidth="30" Margin="1"/>
         </WrapPanel>
