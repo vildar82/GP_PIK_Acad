@@ -235,7 +235,7 @@ namespace PIK_GP_Acad.Insolation.Services
                         {
                             foreach (var plSecant in plsSecant)
                             {
-                                var ilumShadow = GetBuildingZeroLineShadows(plSecant);                                
+                                var ilumShadow = GetBuildingZeroLineShadows(plSecant, lineShadow.StartPoint.Y);                                
                                 if (ilumShadow != null)
                                 {
                                     illumShadows.Add(ilumShadow);
@@ -247,7 +247,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         // Дом полность выше линии тени - весь загораживает точку
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetBuildingZeroLineShadows(build.Contour);
+                        var ilumShadow = GetBuildingZeroLineShadows(build.Contour, lineShadow.StartPoint.Y);
                         //var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
@@ -286,18 +286,19 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="build"></param>        
         /// <returns></returns>
-        private IIlluminationArea GetBuildingZeroLineShadows(Polyline buildContour)
+        private IIlluminationArea GetBuildingZeroLineShadows(Polyline buildContour, double lineShadowY)
         {
             using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 100, ptCalc.Y, 0)))
             {
-#if TEST
+#if DEBUG
                 //EntityHelper.AddEntityToCurrentSpace(lineZero);
+                //EntityHelper.AddEntityToCurrentSpace(buildContour.Clone() as Entity);
 #endif
                 var ptsIntersects = new Point3dCollection();
                 using (var plane = new Plane())
                 {
-                    lineZero.IntersectWith(buildContour, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
-                    var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y).ToList();
+                    buildContour.IntersectWith(lineZero, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                    var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y && p.Y> lineShadowY).ToList();
                     pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
                     if (pts.Any())
                     {
