@@ -231,10 +231,13 @@ namespace PIK_GP_Acad.Insolation.Services
                     if (build.YMin < lineShadow.StartPoint.Y)
                     {
                         // Если дом пересекается с линией тени, то отсечение нижней части дома и разделение дома на части
-                        using (var plsSecant = new DisposableSet<Polyline>(build.Contour.SeparateHorizontal(lineShadow)))
+                        using (var plsSecant = new DisposableSet<Polyline>(build.Contour.SeparateHorizontal(lineShadow, true)))
                         {
                             foreach (var plSecant in plsSecant)
                             {
+#if DEBUG
+                                //EntityHelper.AddEntityToCurrentSpace(plSecant.Clone() as Entity);
+#endif
                                 var ilumShadow = GetBuildingZeroLineShadows(plSecant, lineShadow.StartPoint.Y);                                
                                 if (ilumShadow != null)
                                 {
@@ -297,8 +300,8 @@ namespace PIK_GP_Acad.Insolation.Services
                 var ptsIntersects = new Point3dCollection();
                 using (var plane = new Plane())
                 {
-                    buildContour.IntersectWith(lineZero, Intersect.ExtendThis, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
-                    var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y && p.Y> lineShadowY).ToList();
+                    buildContour.IntersectWith(lineZero, Intersect.ExtendArgument, plane, ptsIntersects, IntPtr.Zero, IntPtr.Zero);
+                    var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y && p.Y>= lineShadowY).ToList();
                     pts.AddRange(ptsIntersects.Cast<Point3d>().Select(s => s.Convert2d()));
                     if (pts.Any())
                     {
@@ -614,76 +617,82 @@ namespace PIK_GP_Acad.Insolation.Services
             bool isCorrect = true;
             var contour = buildingOwner.Contour;
             // Линия через точку ноль - Горизонтально
-            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 1, ptCalc.Y, 0)))
+            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 1, ptCalc.Y-0.2, 0)))
             {
-                // Линия тени - пересечение собственного дома с ней?    
-                double yShadowLine;
+                // Линия тени - пересечение собственного дома с ней?                    
                 var ptHeightCalc = GetPtCalcHeight();
                 var buildHeightCalc = GetHeightCalcBuilding(ptHeightCalc, buildingOwner.HeightCalc);
                 using (var lineShadow = GetLineShadow(buildHeightCalc))
                 {
-                    yShadowLine = lineShadow.StartPoint.Y;
-#if DEBUG
-                    //EntityHelper.AddEntityToCurrentSpace(lineShadow);
-#endif
-                    using (var ptsIntersect = new Point3dCollection())
+                    var yShadowLine = lineShadow.StartPoint.Y;
+
+                    using (var plsSecant = new DisposableSet<Polyline>())
                     {
-                        using (var plane = new Plane())
+                        Line lineSeparate;
+                        bool above;
+                        // Отсечение части контура выше/ниже линии тени                
+                        if (buildingOwner.YMin < yShadowLine)
                         {
-                            contour.IntersectWith(lineShadow, Intersect.ExtendArgument, plane, ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                            ptsIntersectShadow = ptsIntersect.Cast<Point3d>().ToList();
+                            lineSeparate = lineShadow;
+                            above = true;
                         }
-                        // !!!??? Если есть пересечения с линией тени, тогда нужно разделить полилинию дома на собственную часть и внешнюю (которую считать отдельно)
-                    }
-                    if (ptsIntersectShadow.Count > 1)
-                    {
-                        // Отсечение части дома - по точкам пересечения.                        
-                        List<Polyline> plsSecant;
-                        contour.Separate(ptCalc, ptsIntersectShadow, out plHead, out plsSecant);
-                        { 
-                            if (plHead != null)
-                                contour = plHead;
-                            // из отсеченных частей сделать здания для дальнейшего расчета - когда будут перебираться внешние дома при расчете точки
-                            if (plsSecant != null && plsSecant.Any())
-                                secantBuildings = MapBuilding.CreateFakeBuildings(plsSecant, buildingOwner);
-                        }
-                    }
-                }
+                        else
+                        {
+                            lineSeparate = lineZero;
+                            above = false;
+                        }        
+                        var pls = contour.SeparateHorizontal(lineSeparate, above);
 
-#if TEST
-                //EntityHelper.AddEntityToCurrentSpace(lineZero);
+                        if (pls != null && pls.Any())
+                            plsSecant.AddRange(pls);
+                        // Определение зон теней от этих контуров
+                        foreach (var item in plsSecant)
+                        {
+#if DEBUG
+                            //EntityHelper.AddEntityToCurrentSpace(item.Clone() as Entity);
 #endif
-                List<Point3d> ptsIntersectZero;
-                using (var ptsIntersect = new Point3dCollection())
-                {
-                    contour.IntersectWith(lineZero, Intersect.ExtendArgument, new Plane(), ptsIntersect, IntPtr.Zero, IntPtr.Zero);
-                    ptsIntersectZero = ptsIntersect.Cast<Point3d>().Where(p=>!p.IsEqualTo(ptCalc)).OrderBy(o => o.X).ToList();
-                }                
-
-                // Разделить точки левее стартовой и правее (Запад/Восток) - для каждой петли свойестороны найти максимальный ограничивающий угол.                    
-                double westAngle;
-                if (GetStartAngleBySideIntersects(contour, ptsIntersectZero, ptsIntersectShadow, yShadowLine, false, true, false, out westAngle))
-                {
-                    if (westAngle < StartAnglesIllum.AngleEndOnPlane)
-                    {
-                        StartAnglesIllum.AngleEndOnPlane = westAngle;
+                            var ilumShadow = GetBuildingZeroLineShadows(item, yShadowLine);
+                            // Ограничение страртовых углов, если нужно
+                            LimitStartAngles(ilumShadow);
+                        }
                     }
+#if DEBUG
+                    //EntityHelper.AddEntityToCurrentSpace(lineShadow.Clone() as Entity);
+#endif
                 }
-                else
-                    isCorrect = false;
-
-                double eastAngle;
-                if (GetStartAngleBySideIntersects(contour, ptsIntersectZero, ptsIntersectShadow, yShadowLine, true, true, false, out eastAngle))
-                {
-                    if (eastAngle > StartAnglesIllum.AngleStartOnPlane)
-                    {
-                        StartAnglesIllum.AngleStartOnPlane = eastAngle;
-                    }
-                }
-                else
-                    isCorrect = false;
             }
             return isCorrect;
+        }
+
+        /// <summary>
+        /// Ограничение стартовых углов 
+        /// </summary>
+        /// <param name="ilumShadow"></param>
+        private void LimitStartAngles(IIlluminationArea ilumShadow)
+        {
+            if (ilumShadow == null) return;
+
+            if (ilumShadow.AngleStartOnPlane >= StartAnglesIllum.AngleStartOnPlane &&
+                ilumShadow.AngleEndOnPlane<= StartAnglesIllum.AngleEndOnPlane)
+            {
+                StartAnglesIllum.AngleEndOnPlane = ilumShadow.AngleStartOnPlane;
+            }
+            else if(ilumShadow.AngleEndOnPlane<= StartAnglesIllum.AngleEndOnPlane &&
+                ilumShadow.AngleStartOnPlane <= StartAnglesIllum.AngleStartOnPlane)
+            {
+                StartAnglesIllum.AngleStartOnPlane = ilumShadow.AngleEndOnPlane;
+            }
+
+            //if (ilumShadow.AngleEndOnPlane > StartAnglesIllum.AngleStartOnPlane &&
+            //    ilumShadow.AngleStartOnPlane< StartAnglesIllum.AngleStartOnPlane)
+            //{
+            //    StartAnglesIllum.AngleStartOnPlane = ilumShadow.AngleEndOnPlane;
+            //}
+            //else if (ilumShadow.AngleStartOnPlane < StartAnglesIllum.AngleEndOnPlane &&
+            //    ilumShadow.AngleEndOnPlane > StartAnglesIllum.AngleEndOnPlane)
+            //{
+            //    StartAnglesIllum.AngleEndOnPlane = ilumShadow.AngleStartOnPlane;
+            //}            
         }
 
         ///// <summary>

@@ -11,21 +11,30 @@ namespace PIK_GP_Acad.Insolation.Services
 {
     public static class PolylineSeparate
     {
-        public static List<Polyline> SeparateHorizontal(this Polyline pl, Line lineHor)
+        /// <summary>
+        /// Отсечение части полилиний от контура по горизонтальной линии
+        /// </summary>
+        /// <param name="pl">Контур</param>
+        /// <param name="lineHor">Горизонтальная линия</param>
+        /// <param name="above">Выше или ниже гориз. линии</param>
+        public static List<Polyline> SeparateHorizontal(this Polyline pl, Line lineHor, bool above)
         {
             var plsSecant = new List<Polyline>();
             var ptsCol = new Point3dCollection();
             pl.IntersectWith(lineHor, Intersect.ExtendArgument, ptsCol, IntPtr.Zero, IntPtr.Zero);
+            if (ptsCol.Count == 0)
+                return plsSecant;
             var ptsIntersect = ptsCol.Cast<Point3d>().OrderBy(o => o.X).ToList();
             var ptPrew = ptsIntersect[0];
             for (int i = 1; i < ptsIntersect.Count; i++)
             {
                 var ptNext = ptsIntersect[i];
-                if (pl.IsPointInsidePolyline(ptPrew.Center(ptNext)))
+                if (pl.IsPointInsidePolygon(ptPrew.Center(ptNext)))
                 {
-                    // Петля выше точек пересечения
+                    // Петля выше точек пересечения                    
                     var ptsLoopAbove = pl.GetLoopSideBetweenHorizontalIntersectPoints(
-                        ptPrew, ptNext, true, true);
+                        ptPrew, ptNext, above, true);                    
+                    
                     plsSecant.Add(ptsLoopAbove.CreatePolyline());
 
                     i++;
