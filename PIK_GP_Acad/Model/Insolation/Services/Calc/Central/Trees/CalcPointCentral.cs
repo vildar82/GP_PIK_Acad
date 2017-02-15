@@ -359,19 +359,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     ptIntersectPrew = ptIntersect;
                 }
             }
-
-            //// Точки выше найденного пересечения
-            //var ptsContour = build.Contour.GetPoints();
-            //var ptsAboveLine = ptsContour.Where(p => p.Y >= lineShadow.StartPoint.Y).ToList();
-            //foreach (Point3d item in ptsIntersects)
-            //{
-            //    ptsAboveLine.Add(item.Convert2d());
-            //}
-            //var ilumShadow = GetIllumShadow(ptsAboveLine);
-            //if (ilumShadow != null)
-            //{
-            //    resIlumsShadows.Add(ilumShadow);
-            //}            
+            
             return resIlumsShadows;
         }
 
@@ -628,37 +616,14 @@ namespace PIK_GP_Acad.Insolation.Services
 
                     using (var plsSecant = new DisposableSet<Polyline>())
                     {
-                        Line lineSeparate;
-                        bool above;
-                        // Отсечение части контура выше/ниже линии тени                
-                        if (buildingOwner.YMin < yShadowLine)
+                        var plsSecantBelowZero = contour.SeparateHorizontal(lineZero, false);
+                        foreach (var plSecant in plsSecantBelowZero)
                         {
-                            lineSeparate = lineShadow;
-                            above = true;
-                        }
-                        else
-                        {
-                            lineSeparate = lineZero;
-                            above = false;
-                        }        
-                        var pls = contour.SeparateHorizontal(lineSeparate, above);
-
-                        if (pls != null && pls.Any())
-                            plsSecant.AddRange(pls);
-                        // Определение зон теней от этих контуров
-                        foreach (var item in plsSecant)
-                        {
-#if DEBUG
-                            //EntityHelper.AddEntityToCurrentSpace(item.Clone() as Entity);
-#endif
-                            var ilumShadow = GetBuildingZeroLineShadows(item, yShadowLine);
+                            var ilumShadow = GetBuildingZeroLineShadows(plSecant, yShadowLine);
                             // Ограничение страртовых углов, если нужно
                             LimitStartAngles(ilumShadow);
                         }
-                    }
-#if DEBUG
-                    //EntityHelper.AddEntityToCurrentSpace(lineShadow.Clone() as Entity);
-#endif
+                    }                        
                 }
             }
             return isCorrect;
