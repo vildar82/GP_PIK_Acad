@@ -101,7 +101,7 @@ namespace PIK_GP_Acad.Insolation.Models
         /// </summary>        
         private void GetIntersectBuildings(MapBuilding building, ref HashSet<MapBuilding> intersectBuildings)
         {            
-            using (var offset = building.Contour.Offset(1, OffsetSide.Out).First())
+            using (var offset = building.Contour.Offset(0.2, OffsetSide.Out).First())
             {
 #if DEBUG
                 //EntityHelper.AddEntityToCurrentSpace(offset.Clone() as Entity);
