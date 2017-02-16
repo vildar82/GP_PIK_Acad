@@ -238,7 +238,7 @@ namespace PIK_GP_Acad.Insolation.Services
 #if DEBUG
                                 //EntityHelper.AddEntityToCurrentSpace(plSecant.Clone() as Entity);
 #endif
-                                var ilumShadow = GetBuildingZeroLineShadows(plSecant, lineShadow.StartPoint.Y, null);                                
+                                var ilumShadow = GetBuildingZeroLineShadows(plSecant, lineShadow.StartPoint.Y);                                
                                 if (ilumShadow != null)
                                 {
                                     illumShadows.Add(ilumShadow);
@@ -250,7 +250,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     {
                         // Дом полностью выше линии тени - весь загораживает точку
                         // Найти точку начала тени и конца (с минимальным и макс углом к точке расчета)
-                        var ilumShadow = GetBuildingZeroLineShadows(build.Contour, lineShadow.StartPoint.Y, null);
+                        var ilumShadow = GetBuildingZeroLineShadows(build.Contour, lineShadow.StartPoint.Y);
                         //var ilumShadow = GetIllumShadow(build.Contour.GetPoints().Where(p=>p.Y<ptCalc.Y).ToList());
                         if (ilumShadow != null)
                         {
@@ -289,14 +289,10 @@ namespace PIK_GP_Acad.Insolation.Services
         /// </summary>
         /// <param name="build"></param>        
         /// <returns></returns>
-        private IIlluminationArea GetBuildingZeroLineShadows(Polyline buildContour, double lineShadowY, List<Point2d> ptsAdd)
+        private IIlluminationArea GetBuildingZeroLineShadows(Polyline buildContour, double lineShadowY)
         {
             var ptsIntersect = GetLineIntersects(buildContour, ptCalc.Y);
-            var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y && p.Y >= lineShadowY).ToList();
-            if (ptsAdd != null && ptsAdd.Any())
-            {
-                pts.AddRange(ptsAdd);
-            }
+            var pts = buildContour.GetPoints().Where(p => p.Y < ptCalc.Y && p.Y >= lineShadowY).ToList();           
             if (ptsIntersect.Any())
             {
                 pts.AddRange(ptsIntersect);
@@ -570,15 +566,29 @@ namespace PIK_GP_Acad.Insolation.Services
                         {
 #if DEBUG
                             //EntityHelper.AddEntityToCurrentSpace(plSecant);
-#endif
-                            List<Point2d> ptsAdd = null;
+#endif                            
                             if (ptsIntersectShadow != null && ptsIntersectShadow.Any())
                             {
-                                ptsAdd = ptsIntersectShadow.Where(p => plSecant.IsPointOnPolyline(p.Convert3d(), 0)).ToList();
+                                // Отсеч полилинии выше линии тени
+                                using (var plsSecantAboveShadow = new DisposableSet<Polyline>(plSecant.SeparateHorizontal(lineShadow, true)))
+                                {
+                                    foreach (var plSecantAboveShadow in plsSecantAboveShadow)
+                                    {
+#if DEBUG
+                                        //EntityHelper.AddEntityToCurrentSpace(plSecantAboveShadow);
+#endif
+                                        var ilumShadow = GetBuildingZeroLineShadows(plSecantAboveShadow, yShadowLine);
+                                        // Ограничение страртовых углов, если нужно
+                                        LimitStartAngles(ilumShadow);
+                                    }                                    
+                                }
                             }
-                            var ilumShadow = GetBuildingZeroLineShadows(plSecant, yShadowLine, ptsAdd);
-                            // Ограничение страртовых углов, если нужно
-                            LimitStartAngles(ilumShadow);
+                            else
+                            {
+                                var ilumShadow = GetBuildingZeroLineShadows(plSecant, yShadowLine);
+                                // Ограничение страртовых углов, если нужно
+                                LimitStartAngles(ilumShadow);
+                            }
                         }
                     }                        
                 }
