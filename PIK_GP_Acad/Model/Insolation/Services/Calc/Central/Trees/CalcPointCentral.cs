@@ -565,8 +565,7 @@ namespace PIK_GP_Acad.Insolation.Services
 
                     // Отсечение полилиний от контура ниже линии 0                        
                     using (var plsSecantBelowZero = new DisposableSet<Polyline>(contour.SeparateHorizontal(lineZero, false)))
-                    {
-                        
+                    {                        
                         foreach (var plSecant in plsSecantBelowZero)
                         {
 #if DEBUG
