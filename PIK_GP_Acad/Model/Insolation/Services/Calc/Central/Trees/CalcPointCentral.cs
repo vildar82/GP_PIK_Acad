@@ -541,7 +541,7 @@ namespace PIK_GP_Acad.Insolation.Services
         {            
             var contour = buildingOwner.Contour;
             // Линия через точку ноль - Горизонтально
-            using (var lineZero = new Line(ptCalc, new Point3d(ptCalc.X + 1, ptCalc.Y, 0)))
+            using (var lineZero = new Line(new Point3d(ptCalc.X, ptCalc.Y - 0.1, 0), new Point3d(ptCalc.X + 1, ptCalc.Y-0.1, 0)))
             {
                 // Линия тени - пересечение собственного дома с ней?                    
                 var ptHeightCalc = GetPtCalcHeight();
@@ -551,23 +551,21 @@ namespace PIK_GP_Acad.Insolation.Services
 #if DEBUG
                     //EntityHelper.AddEntityToCurrentSpace(lineShadow);
 #endif
-                    var yShadowLine = lineShadow.StartPoint.Y;
-
-                    List<Point2d> ptsIntersectShadow = null;
-                    if (buildingOwner.YMin < yShadowLine)
-                    {
-                        ptsIntersectShadow = GetLineIntersects(contour, yShadowLine);
-                    }
+                    var yShadowLine = lineShadow.StartPoint.Y;                    
 
                     // Отсечение полилиний от контура ниже линии 0                        
                     using (var plsSecantBelowZero = new DisposableSet<Polyline>(contour.SeparateHorizontal(lineZero, false)))
                     {                        
                         foreach (var plSecant in plsSecantBelowZero)
-                        {
+                        {                            
 #if DEBUG
                             //EntityHelper.AddEntityToCurrentSpace(plSecant);
 #endif                            
-                            if (ptsIntersectShadow != null && ptsIntersectShadow.Any())
+                            if (plSecant.IsPointOnPolyline(ptCalc, 0.01))
+                            { 
+                                continue;
+                            }
+                            if (buildingOwner.YMin < yShadowLine)
                             {
                                 // Отсеч полилинии выше линии тени
                                 using (var plsSecantAboveShadow = new DisposableSet<Polyline>(plSecant.SeparateHorizontal(lineShadow, true)))
