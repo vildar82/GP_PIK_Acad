@@ -261,14 +261,14 @@
                 <Image Source="{StaticResource biOption_dots}" />
                 <Button.ContextMenu>
                     <ContextMenu x:Name="cmDots">
-                        <MenuItem
+                        <!--<MenuItem
                             Height="22"
                             Command="{Binding Export}"
                             Header="Экспорт фронтов" ToolTip="Экспорт фронтов для архитекторов.">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biFrontExport}" />
                             </MenuItem.Icon>
-                        </MenuItem>
+                        </MenuItem>-->
                         <MenuItem Height="22" Command="{Binding DrawVisuals}" Header="Отрисовка визуализации в чертеже">
                             <MenuItem.Icon>
                                 <Image Source="{StaticResource biDraw_visuals}" />
