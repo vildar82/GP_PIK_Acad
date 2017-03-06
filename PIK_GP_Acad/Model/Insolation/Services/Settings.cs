@@ -54,6 +54,7 @@ namespace PIK_GP_Acad.Insolation.Services
                     new InsRegion (RegionEnum.Central,"Московская область", "Одинцово",55 ),
                     new InsRegion (RegionEnum.Central,"Новосибирская область","Новосибирск",55 ),
                     new InsRegion (RegionEnum.Central,"Ярославская область","Ярославль",57 ),
+                    new InsRegion (RegionEnum.Central,"Свердловская область","Екатеринбург",56.5 )                    
                 };
             }            
             return regions;
