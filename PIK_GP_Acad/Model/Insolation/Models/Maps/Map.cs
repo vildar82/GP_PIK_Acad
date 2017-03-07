@@ -224,7 +224,18 @@ namespace PIK_GP_Acad.Insolation.Models
 
         private void DefineEnt(Entity ent)
         {
-            var building = ElementFactory.Create<IBuilding>(ent);
+            if (ent == null) return;
+            IBuilding building = null;
+            try
+            {
+                building = ElementFactory.Create<IBuilding>(ent);
+            }
+            catch(Exception ex)
+            {
+                Inspector.AddError($"Ошибка при определении здания - {ex.Message}", ent);
+                return;
+            }
+
             if (building != null)
             {                
                 // Если это не полилиния или блок - такие объекты пока не поддерживаются
