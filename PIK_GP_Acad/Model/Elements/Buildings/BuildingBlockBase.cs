@@ -24,6 +24,7 @@ namespace PIK_GP_Acad.Elements.Buildings
             ExtentsInModel = blRef.GeometricExtentsСlean();
             Floors = BlockBase.GetPropValue<int>("^ЭТАЖ", exactMatch: false);
             IsProjectedBuilding = true;
+            IsVisible = BlockBase.IsVisible;
         }
 
         public BlockBase BlockBase { get; set; }

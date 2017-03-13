@@ -59,6 +59,7 @@ namespace PIK_GP_Acad.Elements.Buildings
             {
                 IsProjectedBuilding = ClassType.ClassName.EqualsIgroreCaseAndSpecChars(ProjectedBuildingClassName);                
             }
+            IsVisible = ent.IsVisibleLayerOnAndUnfrozen();
         }        
 
         public List<FCProperty> FCProperties { get; set; }               

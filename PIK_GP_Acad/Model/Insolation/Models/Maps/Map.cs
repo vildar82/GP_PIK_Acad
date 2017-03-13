@@ -14,6 +14,7 @@ using AcadLib.XData;
 using PIK_GP_Acad.Insolation.Services;
 using AcadLib.Errors;
 using System.Diagnostics;
+using AcadLib.Extensions;
 
 namespace PIK_GP_Acad.Insolation.Models
 {
@@ -225,7 +226,7 @@ namespace PIK_GP_Acad.Insolation.Models
         private void DefineEnt(Entity ent)
         {
             if (ent == null) return;
-            IBuilding building = null;
+            IBuilding building = null;            
             try
             {
                 building = ElementFactory.Create<IBuilding>(ent);
@@ -236,7 +237,7 @@ namespace PIK_GP_Acad.Insolation.Models
                 return;
             }
 
-            if (building != null)
+            if (building != null && building.IsVisible)
             {                
                 // Если это не полилиния или блок - такие объекты пока не поддерживаются
                 if (!(ent is Polyline) && !(ent is BlockReference))

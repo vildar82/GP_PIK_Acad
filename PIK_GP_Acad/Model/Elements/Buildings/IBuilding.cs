@@ -67,6 +67,11 @@ namespace PIK_GP_Acad.Elements.Buildings
         /// Настройки для дома, в который входит секция
         /// </summary>
         HouseOptions HouseOptions { get; set; }
+        /// <summary>
+        /// Здание видимо на чертеже - не изолировано, слой включен (для полилиний) и разморожен (для всех типов)
+        /// </summary>
+        bool IsVisible { get; set; }
+
         Polyline GetContourInModel();
     }
 }

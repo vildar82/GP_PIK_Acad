@@ -50,6 +50,7 @@ namespace PIK_GP_Acad.Elements.Buildings
         public string FriendlyTypeName { get; set; }
         public string Layer { get; set; }
         public HouseOptions HouseOptions { get; set; }
+        public bool IsVisible { get; set; }
 
         public abstract Polyline GetContourInModel();        
 
